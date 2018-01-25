@@ -1,0 +1,45 @@
+[/]
+list=['b1dcc9dd-5262-4d8d-a863-c897e6d979b9', 'dd69adbd-856e-415c-96f1-8fc51f78c919', '45d868e8-c015-4410-a4a9-15a67ab44667']
+default='dd69adbd-856e-415c-96f1-8fc51f78c919'
+
+[:b1dcc9dd-5262-4d8d-a863-c897e6d979b9]
+foreground-color='rgb(243,243,243)'
+visible-name='Dark'
+palette=['rgb(0,0,0)', 'rgb(204,0,0)', 'rgb(78,154,6)', 'rgb(196,160,0)', 'rgb(52,101,164)', 'rgb(117,80,123)', 'rgb(6,152,154)', 'rgb(211,215,207)', 'rgb(85,87,83)', 'rgb(239,41,41)', 'rgb(138,226,52)', 'rgb(252,233,79)', 'rgb(114,159,207)', 'rgb(173,127,168)', 'rgb(52,226,226)', 'rgb(238,238,236)']
+custom-command='tmux'
+use-system-font=false
+cursor-colors-set=false
+highlight-colors-set=false
+use-theme-colors=false
+use-custom-command=false
+font='Monospace 14'
+scrollback-unlimited=true
+bold-color-same-as-fg=true
+background-color='rgb(30,30,30)'
+scrollbar-policy='never'
+
+[:dd69adbd-856e-415c-96f1-8fc51f78c919]
+visible-name='Defaults'
+custom-command='tmux'
+use-system-font=false
+use-custom-command=false
+exit-action='close'
+font='Monospace 14'
+scrollback-unlimited=true
+scrollbar-policy='never'
+
+[:45d868e8-c015-4410-a4a9-15a67ab44667]
+foreground-color='rgb(0,0,0)'
+visible-name='Light'
+palette=['rgb(0,0,0)', 'rgb(204,0,0)', 'rgb(78,154,6)', 'rgb(196,160,0)', 'rgb(52,101,164)', 'rgb(117,80,123)', 'rgb(6,152,154)', 'rgb(211,215,207)', 'rgb(85,87,83)', 'rgb(239,41,41)', 'rgb(138,226,52)', 'rgb(252,233,79)', 'rgb(114,159,207)', 'rgb(173,127,168)', 'rgb(52,226,226)', 'rgb(238,238,236)']
+custom-command='tmux'
+use-system-font=false
+cursor-colors-set=true
+highlight-colors-set=true
+use-theme-colors=false
+use-custom-command=false
+font='Monospace 14'
+scrollback-unlimited=true
+bold-color-same-as-fg=false
+background-color='rgb(243,243,243)'
+scrollbar-policy='never'
