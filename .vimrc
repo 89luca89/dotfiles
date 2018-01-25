@@ -50,6 +50,9 @@ augroup end
 " this defines the default code style for formatting
 " check <-- https://gist.github.com/andrewseidl/8066c18e97c40086c183 -->
 " for a comparison
+    " Ctrl+L Format Code
+noremap <C-L> :FormatCode<CR>
+inoremap <C-L> <Esc>:FormatCode<CR>a
 Glaive codefmt clang_format_style=Chromium
 augroup autoformat_settings
   autocmd FileType c,cpp,proto,javascript AutoFormatBuffer clang-format
@@ -58,7 +61,8 @@ augroup autoformat_settings
   autocmd FileType java AutoFormatBuffer clang-format
   autocmd FileType python AutoFormatBuffer autopep8
   autocmd FileType rust AutoFormatBuffer rustfmt
-  autocmd FileType sh AutoFormatBuffer shfmt
+  autocmd FileType sh noremap <buffer> <C-L> :%!shfmt<CR>                            
+  autocmd FileType sh inoremap <buffer> <C-L> <Esc>:%!shfmt<CR>a 
 augroup END
 
 " set ctrlp to same working directory as nerdtree
@@ -155,10 +159,6 @@ noremap <C-N> :NERDTreeFind<CR>R<c-w><c-p>
 """ Code lint/format
     " Ctrl+N in Normal mode will perform a simple syntax check
 noremap <C-m> :<C-u>SyntasticCheck<CR>
-
-    " Ctrl+L Format Code
-noremap <C-L> :FormatCode<CR>
-inoremap <C-L> <Esc>:FormatCode<CR>a
 
 """ Tabs Navigation
     " navigate tabs Tab (fw) S-Tab (prev)
