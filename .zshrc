@@ -88,7 +88,6 @@ export PATH=$PATH:$HOME/.cargo/bin
 
 alias ssh='assh wrapper ssh'
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 # FUZZY FINDER
 alias s='fzf'
 alias cs='fzf | xargs code'
@@ -96,7 +95,6 @@ alias gs='fzf | xargs gedit'
 # BREW PATH
 PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 [ -f $HOME/.zsh-history-substring-search.zsh ] && source $HOME/.zsh-history-substring-search.zsh
 
 # Launch only if not running

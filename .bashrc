@@ -90,7 +90,6 @@ alias ssh='assh wrapper ssh'
 # BASH COMPLETION
 source /usr/share/bash-completion/bash_completion 
 
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 # FUZZY FINDER
 alias s='fzf'
 alias cs='fzf | xargs code'
