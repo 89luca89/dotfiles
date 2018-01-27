@@ -5,25 +5,17 @@ set rtp+=~/.vim/bundle/Vundle.vim
 
 call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
-" code formatting
-Plugin 'google/vim-glaive'
-Plugin 'google/vim-maktaba'
-Plugin 'google/vim-codefmt'
 " utilities
 Plugin 'ctrlpvim/ctrlp.vim'             " fuzzy finder
-Plugin 'qpkorr/vim-bufkill'             " fix buffer behaviour
-Plugin 'scrooloose/nerdtree'            " file explorer
 Plugin 'vim-airline/vim-airline'        " tabs and statusline
 Plugin 'vim-airline/vim-airline-themes'
 " languages
-" syntastic+ycm covers already: bash,c,c++,js,html, Go, JavaScript, Python, Rust
-Plugin 'davidhalter/jedi-vim'           " python
+" syntastic+ycm covers already: bash, c, c++, js, html, Go, JavaScript, Python
 Plugin 'fatih/vim-go'                   " go
 Plugin 'rust-lang/rust.vim'             " rust
 Plugin 'artur-shaik/vim-javacomplete2'  " java
-Plugin 'pearofducks/ansible-vim'        " yaml+ansible
-Plugin 'scrooloose/syntastic'           " linting
 " autocompletion
+Plugin 'vim-syntastic/syntastic'        " linting
 Plugin 'Valloric/YouCompleteMe'         " code completion engine (all language depend from this)
 Plugin 'ludovicchabant/vim-gutentags'   " tags navigation Ctrl+] or Ctrl+click to jump, to use together with YCM GoTo on supported langs.
 " color schemes
@@ -31,14 +23,16 @@ Plugin 'tomasiser/vim-code-dark'
 Plugin 'acarapetis/vim-colors-github'
 
 call vundle#end()             " required
-call glaive#Install()
 
 filetype plugin indent on     " required
 
-" Autocomplete
+" Autocomplete c/c++ already use omnicomplete
 augroup omnifuncs
   autocmd!
+  autocmd FileType c set omnifunc=ccomplete#Complete
+  autocmd FileType cpp set omnifunc=cppcomplete#CompleteCPP
   autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+  autocmd FileType php set omnifunc=phpcomplete#CompletePHP
   autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
   autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
   autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
@@ -46,26 +40,30 @@ augroup omnifuncs
   autocmd FileType java setlocal omnifunc=javacomplete#Complete
   autocmd FileType java JCEnable
 augroup end
+
 " Formatting
-" this defines the default code style for formatting
-" check <-- https://gist.github.com/andrewseidl/8066c18e97c40086c183 -->
-" for a comparison
     " Ctrl+L Format Code
-noremap <C-L> :FormatCode<CR>
-inoremap <C-L> <Esc>:FormatCode<CR>a
-Glaive codefmt clang_format_style=Chromium
 augroup autoformat_settings
-  autocmd FileType c,cpp,proto,javascript AutoFormatBuffer clang-format
-  autocmd FileType go AutoFormatBuffer gofmt
-  autocmd FileType html,css,json AutoFormatBuffer js-beautify
-  autocmd FileType java AutoFormatBuffer clang-format
-  autocmd FileType python AutoFormatBuffer autopep8
-  autocmd FileType rust AutoFormatBuffer rustfmt
-  autocmd FileType sh noremap <buffer> <C-L> :%!shfmt<CR>                            
-  autocmd FileType sh inoremap <buffer> <C-L> <Esc>:%!shfmt<CR>a 
+  autocmd FileType go noremap <buffer> <C-L> <Esc>:w<CR>:%!gofmt %<CR>
+  autocmd FileType go inoremap <buffer> <C-L> <Esc>:w<CR>:%!gofmt %<CR>a
+  autocmd FileType html,css,json noremap <buffer> <C-L> <Esc>:w<CR>:%!js-beautify %<CR>
+  autocmd FileType html,css,json inoremap <buffer> <C-L> <Esc>:w<CR>:%!js-beautify %<CR>a
+  autocmd FileType rust noremap <buffer> <C-L> <Esc>:w<CR>:%!rustfmt %<CR>
+  autocmd FileType rust inoremap <buffer> <C-L> <Esc>:w<CR>:%!rustfmt %<CR>a
+  autocmd FileType python noremap <buffer> <C-L> <Esc>:w<CR>:%!autopep8 %<CR>
+  autocmd FileType python inoremap <buffer> <C-L> <Esc>:w<CR>:%!autopep8 %<CR>a
+  autocmd FileType c,cpp,proto,javascript,java noremap <buffer> <C-L> <Esc>:w<CR>:%!clang-format -style=Chromium %<CR>
+  autocmd FileType c,cpp,proto,javascript,java inoremap <buffer> <C-L> <Esc>:w<CR>:%!clang-format -style=Chromium %<CR>a
+  autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:%!shfmt %<CR>
+  autocmd FileType sh inoremap <buffer> <C-L> <Esc>:w<CR><Esc>:%!shfmt %<CR>a
 augroup END
 
-" set ctrlp to same working directory as nerdtree
+" netrw as project drawer
+let g:netrw_banner = 0
+let g:netrw_liststyle = 3
+let g:netrw_winsize = 15
+
+" set ctrlp to same working directory
 let g:ctrlp_working_path_mode = 'ra'
 let g:ctrlp_match_window = 'min:4,max:30'
 let g:ctrlp_show_hidden = 1
@@ -89,8 +87,9 @@ let g:gutentags_ctags_extra_args = ['--recurse=yes']
 "==============================================================================
 """  Syntastic
 " C/C++
-let g:clang_c_options = '--std=gnu11'
-let g:clang_cpp_options = '-std=c++11 -stdlib=libc++'
+let g:syntastic_c_compiler_options = '--std=gnu11'
+let g:syntastic_cpp_compiler = 'clang++'
+let g:syntastic_cpp_compiler_options = ' -std=c++11 -stdlib=libc++'
 " Yaml
 let g:syntastic_yaml_checkers = ['js-yaml']
 " Json
@@ -121,7 +120,14 @@ function! Make()
     terminal++rows=30++quit "make clean"
 endfunction
 
+augroup ProjectDrawer
+  autocmd!
+  autocmd VimEnter * :Lexplore
+augroup END
+
 "==============================================================================
+    " Ctrl+B open/close file explorer
+noremap <C-B> :Lexplore<CR>
 
 " Ctrl-E show/hide errors window
 map <silent> <C-E> :<C-u>call ToggleErrors()<CR>
@@ -151,11 +157,6 @@ endfunction
 
 """ KEYBIDDINGS
 "==============================================================================
-    " Ctrl+B open/close file explorer
-noremap <C-B> :NERDTreeToggle<CR>
-    " Ctrl+N relocate file explorer to opened file
-noremap <C-N> :NERDTreeFind<CR>R<c-w><c-p>
-
 """ Code lint/format
     " Ctrl+N in Normal mode will perform a simple syntax check
 noremap <C-m> :<C-u>SyntasticCheck<CR>
@@ -164,17 +165,15 @@ noremap <C-m> :<C-u>SyntasticCheck<CR>
     " navigate tabs Tab (fw) S-Tab (prev)
 map <Tab> :bn<CR>
 map <S-Tab> :bp<CR>
-    " Ctrl+C close buffer (:bd default, :BD corrected behaviour)
-noremap <C-c> :BD<CR>
+    " Ctrl+C close buffer ( pipe commands to fix behaviour with splits and
+    " netrw)
+noremap <C-c> :bp<bar>sp<bar>bn<bar>bd<CR>
 
 """ Ctrl+P/T fuzzy finders
     " Ctrl+T fuzzy find ctags
 noremap <C-T> :CtrlPTag<CR>
     " Ctrl+P fuzzy find files
 noremap <C-P> :CtrlP<CR>
-
-    " Ctrl+Y Copy file to clipboard
-noremap <C-Y> <Esc>:<C-u>w !xclip -i  -selection clipboard<CR><CR>
 
 " " Resize split window horizontally and vertically
 " Shortcuts to Shift-Alt-Arrows - Alt is mapped as M in vim
@@ -191,8 +190,6 @@ syntax on
 " Working with split screen nicely
 " Resize Split When the window is resized"
 au VimResized * :wincmd =
-" Omnicompletion
-au InsertLeave * if pumvisible() == 0|pclose|endif
 " Persistent undo
 set history=500
 set undofile
@@ -214,7 +211,6 @@ set wildmenu                          " Tab autocomplete in command mode
 set backspace=indent,eol,start        " http://vi.stackexchange.com/a/2163
 set laststatus=2                      " Show status line on startup
 set splitright splitbelow             " Open new splits to the right and bottom
-set lazyredraw                        " Reduce the redraw frequency
 set nowrap                            " Don't wrap long lines
 set autoindent smartindent                              " always set autoindenting on
 set expandtab shiftwidth=4 tabstop=4 softtabstop=4      " Four spaces for tabs everywhere
