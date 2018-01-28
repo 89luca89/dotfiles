@@ -111,7 +111,11 @@ let g:syntastic_enable_signs = 1
 "
 " Ctrl+] will perform GoTo. Available for c, c++, objc, objcpp, cs, go, javascript, python, rust
 " will use ctags if not compatible
+" Ctrl+? will get the *Docs
 autocmd FileType c,cpp,objc,objcpp,cs,go,javascript,python,rust noremap <buffer> <C-]> :<C-u>YcmCompleter GoTo<CR>
+autocmd FileType c,cpp,objc,objcpp,cs,go,javascript,python,rust noremap <buffer> <C-?> :<C-u>YcmCompleter GetDoc<CR>
+
+
 " F-9 will perform a Generic makefile
 noremap <F9> :<C-u>call Make()<CR>
 function! Make()
