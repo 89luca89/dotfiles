@@ -162,8 +162,7 @@ noremap <C-m> :<C-u>SyntasticCheck<CR>
     " navigate tabs Tab (fw) S-Tab (prev)
 map <Tab> :bn<CR>
 map <S-Tab> :bp<CR>
-    " Ctrl+C close buffer ( pipe commands to fix behaviour with splits and
-    " netrw)
+    " Ctrl+C close buffer ( pipe commands to fix behaviour with splits and netrw)
 noremap <C-c> :bp<bar>sp<bar>bn<bar>bd<CR>
 
 """ Ctrl+P/T fuzzy finders
@@ -201,6 +200,7 @@ set t_Co=256
 set background=dark
 colorscheme codedark
 
+set autochdir                         " set pwd based on the opened file
 set mouse=a                           " it's always useful to use the mouse then needed
 set hidden                            " change buffer without saving
 set cursorline                        " highlight current line
