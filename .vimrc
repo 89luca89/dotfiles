@@ -32,7 +32,6 @@ augroup omnifuncs
   autocmd FileType c set omnifunc=ccomplete#Complete
   autocmd FileType cpp set omnifunc=cppcomplete#CompleteCPP
   autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-  autocmd FileType php set omnifunc=phpcomplete#CompletePHP
   autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
   autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
   autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
@@ -118,11 +117,6 @@ function! Make()
     terminal++rows=30++quit "make clean"
 endfunction
 
-augroup ProjectDrawer
-  autocmd!
-  autocmd VimEnter * :Lexplore
-augroup END
-
 "==============================================================================
     " Ctrl+B open/close file explorer
 noremap <C-B> :Lexplore<CR>
@@ -200,7 +194,6 @@ set noswapfile
 set encoding=utf8
 set t_Co=256
 set background=dark
-set termguicolors
 colorscheme codedark
 
 set mouse=a                           " it's always useful to use the mouse then needed
