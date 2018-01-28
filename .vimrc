@@ -11,13 +11,13 @@ Plugin 'vim-airline/vim-airline'        " tabs and statusline
 Plugin 'vim-airline/vim-airline-themes'
 " languages
 " syntastic+ycm covers already: bash, c, c++, js, html, Go, JavaScript, Python
-Plugin 'fatih/vim-go'                   " go
 Plugin 'rust-lang/rust.vim'             " rust
+Plugin 'fatih/vim-go'                   " go
 Plugin 'artur-shaik/vim-javacomplete2'  " java
 " autocompletion
 Plugin 'vim-syntastic/syntastic'        " linting
-Plugin 'Valloric/YouCompleteMe'         " code completion engine (all language depend from this)
 Plugin 'ludovicchabant/vim-gutentags'   " tags navigation Ctrl+] or Ctrl+click to jump, to use together with YCM GoTo on supported langs.
+Plugin 'Valloric/YouCompleteMe'         " code completion engine (all language depend from this)
 " color schemes
 Plugin 'tomasiser/vim-code-dark'
 Plugin 'acarapetis/vim-colors-github'
@@ -87,7 +87,6 @@ let g:gutentags_ctags_extra_args = ['--recurse=yes']
 """  Syntastic
 " C/C++
 let g:syntastic_c_compiler_options = '--std=gnu11'
-let g:syntastic_cpp_compiler = 'clang++'
 let g:syntastic_cpp_compiler_options = ' -std=c++11 -stdlib=libc++'
 " Yaml
 let g:syntastic_yaml_checkers = ['js-yaml']
