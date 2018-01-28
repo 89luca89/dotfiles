@@ -19,8 +19,7 @@ Plugin 'vim-syntastic/syntastic'        " linting
 Plugin 'Valloric/YouCompleteMe'         " code completion engine (all language depend from this)
 Plugin 'ludovicchabant/vim-gutentags'   " tags navigation Ctrl+] or Ctrl+click to jump, to use together with YCM GoTo on supported langs.
 " color schemes
-Plugin 'tomasiser/vim-code-dark'
-Plugin 'acarapetis/vim-colors-github'
+Plugin 'lifepillar/vim-solarized8'
 
 call vundle#end()             " required
 
@@ -146,11 +145,9 @@ map <silent> <C-D> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
   if &background == 'light'
         let g:airline_theme='jellybeans'
-        colorscheme codedark
         set background=dark
     else
         let g:airline_theme='papercolor'
-        colorscheme github
         set background=light
     endif
 endfunction
@@ -202,7 +199,8 @@ set noswapfile
 set encoding=utf8
 set t_Co=256
 set background=dark
-colorscheme codedark
+set termguicolors
+colorscheme solarized8_flat
 
 set mouse=a                           " it's always useful to use the mouse then needed
 set hidden                            " change buffer without saving
