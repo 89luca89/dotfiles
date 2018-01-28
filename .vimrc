@@ -80,7 +80,7 @@ let g:gutentags_enabled = 1
 let g:gutentags_generate_on_empty_buffer = 1
 let g:gutentags_cache_dir = "~/.vim/tags"
 let g:gutentags_resolve_symlinks = 1
-let g:gutentags_ctags_extra_args = ['--recurse=yes']
+let g:gutentags_ctags_extra_args = ['--recurse=yes', '--extra=+f', '--fields=afmikKlnsStz']
 
 "==============================================================================
 """  Syntastic
@@ -109,8 +109,9 @@ let g:syntastic_enable_signs = 1
 """ GENERIC PROGRAMMING
 "==============================================================================
 "
-" F-3 will perform GoTo. Available for c, c++, objc, objcpp, cs, go, javascript, python, rust
-nnoremap <F3>:<C-u>YcmCompleter GoTo<CR>
+" Ctrl+] will perform GoTo. Available for c, c++, objc, objcpp, cs, go, javascript, python, rust
+" will use ctags if not compatible
+autocmd FileType c,cpp,objc,objcpp,cs,go,javascript,python,rust noremap <buffer> <C-]> :<C-u>YcmCompleter GoTo<CR>
 " F-9 will perform a Generic makefile
 noremap <F9> :<C-u>call Make()<CR>
 function! Make()
@@ -119,7 +120,7 @@ endfunction
 
 "==============================================================================
     " Ctrl+B open/close file explorer
-noremap <C-B> :Lexplore<CR>
+noremap <C-B> :<C-u>Lexplore<CR>
 
 " Ctrl-E show/hide errors window
 map <silent> <C-E> :<C-u>call ToggleErrors()<CR>
