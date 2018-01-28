@@ -43,6 +43,7 @@ augroup end
 
 " Formatting
     " Ctrl+L Format Code
+" This performs a write, and then pipes the file to the formatter 
 augroup autoformat_settings
   autocmd FileType go noremap <buffer> <C-L> <Esc>:w<CR>:%!gofmt %<CR>
   autocmd FileType go inoremap <buffer> <C-L> <Esc>:w<CR>:%!gofmt %<CR>a
@@ -65,8 +66,6 @@ let g:netrw_winsize = 15
 
 " set ctrlp to same working directory
 let g:ctrlp_working_path_mode = 'ra'
-let g:ctrlp_match_window = 'min:4,max:30'
-let g:ctrlp_show_hidden = 1
 " exclude compiled files class and svns
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/]\.(git|hg|svn|bin|out)$',
