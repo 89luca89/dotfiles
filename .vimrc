@@ -200,6 +200,7 @@ set t_Co=256
 set background=dark
 colorscheme codedark
 
+set shell=zsh
 set autochdir                         " set pwd based on the opened file
 set mouse=a                           " it's always useful to use the mouse then needed
 set hidden                            " change buffer without saving
