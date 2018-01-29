@@ -117,7 +117,7 @@ autocmd FileType c,cpp,objc,objcpp,cs,go,javascript,python,rust noremap <buffer>
 
 " F-8 willl perform advanced code analyzing for JAVA
 " depends on PMD and this file https://gist.github.com/89luca89/37930d89082d48441cd6fa42d1bd9bea
-autocmd FileType java noremap <buffer> <F8> :<C-u>:new<CR>:0read !analyze-pmd.sh<CR>
+autocmd FileType java noremap <buffer> <F8> :<C-u>:new<CR>:0read !analyze-pmd.sh<CR>gg
 
 " F-9 will perform a Generic makefile
 noremap <F9> :<C-u>call Make()<CR>
