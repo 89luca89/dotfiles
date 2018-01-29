@@ -115,6 +115,9 @@ let g:syntastic_enable_signs = 1
 autocmd FileType c,cpp,objc,objcpp,cs,go,javascript,python,rust noremap <buffer> <C-]> :<C-u>YcmCompleter GoTo<CR>
 autocmd FileType c,cpp,objc,objcpp,cs,go,javascript,python,rust noremap <buffer> <C-?> :<C-u>YcmCompleter GetDoc<CR>
 
+" F-8 willl perform advanced code analyzing for JAVA
+" depends on PMD and this file https://gist.github.com/89luca89/37930d89082d48441cd6fa42d1bd9bea
+autocmd FileType java noremap <buffer> <F8> :<C-u>:new<CR>:0read !analyze-pmd.sh<CR>
 
 " F-9 will perform a Generic makefile
 noremap <F9> :<C-u>call Make()<CR>
@@ -163,7 +166,7 @@ noremap <C-m> :<C-u>SyntasticCheck<CR>
 map <Tab> :bn<CR>
 map <S-Tab> :bp<CR>
     " Ctrl+C close buffer ( pipe commands to fix behaviour with splits and netrw)
-noremap <C-c> :bp<bar>sp<bar>bn<bar>bd<CR>
+noremap <C-c> :bp<bar>sp<bar>bn<bar>bd!<CR>
 
 """ Ctrl+P/T fuzzy finders
     " Ctrl+T fuzzy find ctags
