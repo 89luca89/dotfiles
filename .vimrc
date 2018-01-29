@@ -20,7 +20,7 @@ Plugin 'ludovicchabant/vim-gutentags'   " tags navigation Ctrl+] or Ctrl+click t
 Plugin 'Valloric/YouCompleteMe'         " code completion engine (all language depend from this)
 " color schemes
 Plugin 'tomasiser/vim-code-dark'
-Plugin 'acarapetis/vim-colors-github'
+Plugin 'endel/vim-github-colorscheme'
 
 call vundle#end()             " required
 
@@ -203,7 +203,8 @@ set t_Co=256
 set background=dark
 colorscheme codedark
 
-set shell=zsh
+set listchars=tab:\__,trail:.
+set list
 set autochdir                         " set pwd based on the opened file
 set mouse=a                           " it's always useful to use the mouse then needed
 set hidden                            " change buffer without saving
