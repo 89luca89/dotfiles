@@ -185,7 +185,17 @@ syntax on
 
 " Working with split screen nicely
 " Resize Split When the window is resized"
-au VimResized * :wincmd =
+autocmd VimResized * :wincmd =
+
+" Pick the right theme on start
+autocmd VimEnter * call GetTheme()
+function! GetTheme()
+  let l:SystemTheme = system('gsettings get org.gnome.desktop.interface gtk-theme')
+  if l:SystemTheme !~ "dark"
+        call ToggleTheme()
+  endif
+endfunction
+
 " Persistent undo
 set history=500
 set undofile
