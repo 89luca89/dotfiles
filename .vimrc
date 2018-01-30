@@ -73,7 +73,6 @@ let g:ctrlp_custom_ignore = {
 
 " enable buffer list on top in airline and show only filename
 let g:airline#extensions#tabline#enabled = 1
-let g:airline_theme='jellybeans'
 
 " setup gutentags
 let g:gutentags_enabled = 1
@@ -206,6 +205,20 @@ set encoding=utf8
 set t_Co=256
 set background=dark
 colorscheme codedark
+let g:airline_theme='jellybeans'
+
+augroup StartTheme
+  autocmd!
+  autocmd VimEnter * call GetTheme()
+augroup END
+" do a Ctrl+D if we have a light theme to switch.
+function! GetTheme()
+    let mytheme = system('gsettings get org.gnome.desktop.interface gtk-theme')
+    if mytheme !~ "dark"
+        call feedkeys("\<C-D>")
+    endif
+endfunction
+
 
 set listchars=tab:\__,trail:.
 set list
