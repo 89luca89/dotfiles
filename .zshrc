@@ -1,3 +1,10 @@
+# If we do not have ohmyzsh, install it.
+if [ ! -d "$HOME/.oh-my-zsh" ]; then
+	git clone https://github.com/robbyrussell/oh-my-zsh $HOME/.oh-my-zsh
+	git clone https://github.com/zsh-users/zsh-autosuggestions.git $HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+	git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
+fi
+
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
 
@@ -8,8 +15,8 @@ fpath=(/usr/local/share/zsh-completions $fpath)
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it ll load a random theme each
 # time that oh-my-zsh is loaded.
-#ZSH_THEME="gentoo"
-ZSH_THEME="robbyrussell"
+ZSH_THEME="gentoo"
+#ZSH_THEME="robbyrussell"
 #ZSH_THEME="gianu"
 #ZSH_THEME="lukerandall"
 
@@ -88,10 +95,6 @@ export PATH=$PATH:$HOME/.cargo/bin
 
 alias ssh='assh wrapper ssh'
 
-# FUZZY FINDER
-alias s='fzf'
-alias cs='fzf | xargs code'
-alias gs='fzf | xargs gedit'
 # BREW PATH
 PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
 
@@ -99,9 +102,3 @@ PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
 
 # Launch only if not running
 #if [ ! $(ps -ef | grep "syndaemon" | grep -v grep | awk '{ print $2}') ]; then syndaemon -i 0.5 -K -R -d 2> /dev/null ; fi
-
-PATH="/home/luca-linux/perl5/bin${PATH:+:${PATH}}"; export PATH;
-PERL5LIB="/home/luca-linux/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
-PERL_LOCAL_LIB_ROOT="/home/luca-linux/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
-PERL_MB_OPT="--install_base \"/home/luca-linux/perl5\""; export PERL_MB_OPT;
-PERL_MM_OPT="INSTALL_BASE=/home/luca-linux/perl5"; export PERL_MM_OPT;
