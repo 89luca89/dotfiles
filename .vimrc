@@ -157,6 +157,10 @@ endfunction
 
 """ KEYBIDDINGS
 "==============================================================================
+""" Visual Mode
+    """ Ctrl-C copy visual selection to clipboard
+vmap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
+
 """ Code lint/format
     " Ctrl+N in Normal mode will perform a simple syntax check
 noremap <C-m> :<C-u>SyntasticCheck<CR>
