@@ -159,7 +159,7 @@ endfunction
 "==============================================================================
 """ Visual Mode
     """ Ctrl-C copy visual selection to clipboard
-vmap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
+vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 
 """ Code lint/format
     " Ctrl+N in Normal mode will perform a simple syntax check
@@ -170,7 +170,7 @@ noremap <C-m> :<C-u>SyntasticCheck<CR>
 map <Tab> :bn<CR>
 map <S-Tab> :bp<CR>
     " Ctrl+C close buffer ( pipe commands to fix behaviour with splits and netrw)
-noremap <C-c> :bp<bar>sp<bar>bn<bar>bd!<CR>
+nnoremap <C-c> :bp<bar>sp<bar>bn<bar>bd!<CR>
 
 """ Ctrl+P/T fuzzy finders
     " Ctrl+T fuzzy find ctags
