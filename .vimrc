@@ -207,11 +207,8 @@ set background=dark
 colorscheme codedark
 let g:airline_theme='jellybeans'
 
-augroup StartTheme
-  autocmd!
-  autocmd VimEnter * call GetTheme()
-augroup END
 " do a Ctrl+D if we have a light theme to switch.
+autocmd VimEnter * call GetTheme()
 function! GetTheme()
     let mytheme = system('gsettings get org.gnome.desktop.interface gtk-theme')
     if mytheme !~ "dark"
@@ -219,9 +216,6 @@ function! GetTheme()
     endif
 endfunction
 
-
-set listchars=tab:\__,trail:.
-set list
 set autochdir                         " set pwd based on the opened file
 set mouse=a                           " it's always useful to use the mouse then needed
 set hidden                            " change buffer without saving
