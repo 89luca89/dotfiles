@@ -6,16 +6,17 @@ set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
 " utilities
+Plugin 'scrooloose/nerdtree'
 Plugin 'ctrlpvim/ctrlp.vim'             " fuzzy finder
 Plugin 'vim-airline/vim-airline'        " tabs and statusline
 Plugin 'vim-airline/vim-airline-themes'
 " languages
-" syntastic+ycm covers already: bash, c, c++, js, html, Go, JavaScript, Python
+" syntastic+ycm covers already: bash, c, c++, js, html, JavaScript, Python
 Plugin 'rust-lang/rust.vim'             " rust
 Plugin 'fatih/vim-go'                   " go
-Plugin 'artur-shaik/vim-javacomplete2'  " java
 " autocompletion
-Plugin 'vim-syntastic/syntastic'        " linting
+Plugin 'artur-shaik/vim-javacomplete2'  " java
+Plugin 'scrooloose/syntastic'           " linting
 Plugin 'ludovicchabant/vim-gutentags'   " tags navigation Ctrl+] or Ctrl+click to jump, to use together with YCM GoTo on supported langs.
 Plugin 'Valloric/YouCompleteMe'         " code completion engine (all language depend from this)
 " color schemes
@@ -43,25 +44,22 @@ augroup end
 " Formatting
     " Ctrl+L Format Code
 " This performs a write, and then pipes the file to the formatter 
+" :w save file, :mkview remember line, :%!formatter % to format and output,
+" :loadview to return to previous line
 augroup autoformat_settings
-  autocmd FileType go noremap <buffer> <C-L> <Esc>:w<CR>:%!gofmt %<CR>
-  autocmd FileType go inoremap <buffer> <C-L> <Esc>:w<CR>:%!gofmt %<CR>a
-  autocmd FileType html,css,json noremap <buffer> <C-L> <Esc>:w<CR>:%!js-beautify %<CR>
-  autocmd FileType html,css,json inoremap <buffer> <C-L> <Esc>:w<CR>:%!js-beautify %<CR>a
-  autocmd FileType rust noremap <buffer> <C-L> <Esc>:w<CR>:%!rustfmt %<CR>
-  autocmd FileType rust inoremap <buffer> <C-L> <Esc>:w<CR>:%!rustfmt %<CR>a
-  autocmd FileType python noremap <buffer> <C-L> <Esc>:w<CR>:%!autopep8 %<CR>
-  autocmd FileType python inoremap <buffer> <C-L> <Esc>:w<CR>:%!autopep8 %<CR>a
-  autocmd FileType c,cpp,proto,javascript,java noremap <buffer> <C-L> <Esc>:w<CR>:%!clang-format -style=Chromium %<CR>
-  autocmd FileType c,cpp,proto,javascript,java inoremap <buffer> <C-L> <Esc>:w<CR>:%!clang-format -style=Chromium %<CR>a
-  autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:%!shfmt %<CR>
-  autocmd FileType sh inoremap <buffer> <C-L> <Esc>:w<CR><Esc>:%!shfmt %<CR>a
+  autocmd FileType go noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!gofmt %<CR>:loadview<CR>
+  autocmd FileType go inoremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!gofmt %<CR>:loadview<CR>a
+  autocmd FileType html,css,json noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!js-beautify %<CR>:loadview<CR>
+  autocmd FileType html,css,json inoremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!js-beautify %<CR>:loadview<CR>a
+  autocmd FileType rust noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!rustfmt %<CR>:loadview<CR>
+  autocmd FileType rust inoremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!rustfmt %<CR>:loadview<CR>a
+  autocmd FileType python noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!autopep8 %<CR>:loadview<CR>
+  autocmd FileType python inoremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!autopep8 %<CR>:loadview<CR>a
+  autocmd FileType c,cpp,proto,javascript,java noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!clang-format -style=Chromium %<CR>:loadview<CR>
+  autocmd FileType c,cpp,proto,javascript,java inoremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!clang-format -style=Chromium %<CR>:loadview<CR>a
+  autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!shfmt %<CR>:loadview<CR>
+  autocmd FileType sh inoremap <buffer> <C-L> <Esc>:w<CR><Esc>:mkview<CR>:%!shfmt %<CR>:loadview<CR>a
 augroup END
-
-" netrw as project drawer
-let g:netrw_banner = 0
-let g:netrw_liststyle = 3
-let g:netrw_winsize = 15
 
 " set ctrlp to same working directory
 let g:ctrlp_working_path_mode = 'ra'
@@ -91,7 +89,7 @@ let g:syntastic_yaml_checkers = ['js-yaml']
 " Json
 let g:syntastic_json_checkers = ['jsonlint']
 " Java
-let g:syntastic_java_ceeckers=['javac']
+let g:syntastic_java_checkers=['javac']
 let g:syntastic_java_javac_config_file_enabled = 1  " enables definition of .syntastic_java_config file for custom classpaths
 " Go
 let g:syntastic_go_checkers=['golint', 'go']
@@ -126,7 +124,9 @@ endfunction
 
 "==============================================================================
     " Ctrl+B open/close file explorer
-noremap <C-B> :<C-u>Lexplore<CR>
+noremap <C-B> :NERDTreeToggle<CR>
+    " Ctrl+N relocate file explorer to opened file
+noremap <C-N> :NERDTreeFind<CR>R<c-w><c-p>
 
 " Ctrl-E show/hide errors window
 map <silent> <C-E> :<C-u>call ToggleErrors()<CR>
@@ -144,7 +144,7 @@ endfunction
 map <silent> <C-D> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
   if &background == 'light'
-        let g:airline_theme='jellybeans'
+        let g:airline_theme='codedark'
         colorscheme codedark
         set background=dark
     else
@@ -168,7 +168,7 @@ noremap <C-m> :<C-u>SyntasticCheck<CR>
     " navigate tabs Tab (fw) S-Tab (prev)
 map <Tab> :bn<CR>
 map <S-Tab> :bp<CR>
-    " Ctrl+C close buffer ( pipe commands to fix behaviour with splits and netrw)
+    " Ctrl+C close buffer ( pipe commands to fix behaviour with splits and netrw/nerdtree)
 nnoremap <C-c> :bp<bar>sp<bar>bn<bar>bd!<CR>
 
 """ Ctrl+P/T fuzzy finders
@@ -191,7 +191,8 @@ syntax on
 
 " Working with split screen nicely
 " Resize Split When the window is resized"
-au VimResized * :wincmd =
+autocmd VimResized * :wincmd =
+autocmd VimEnter * :NERDTree
 " Persistent undo
 set history=500
 set undofile
@@ -205,18 +206,8 @@ set encoding=utf8
 set t_Co=256
 set background=dark
 colorscheme codedark
-let g:airline_theme='jellybeans'
+let g:airline_theme='codedark'
 
-" do a Ctrl+D if we have a light theme to switch.
-autocmd VimEnter * call GetTheme()
-function! GetTheme()
-    let mytheme = system('gsettings get org.gnome.desktop.interface gtk-theme')
-    if mytheme !~ "dark"
-        call feedkeys("\<C-D>")
-    endif
-endfunction
-
-set autochdir                         " set pwd based on the opened file
 set mouse=a                           " it's always useful to use the mouse then needed
 set hidden                            " change buffer without saving
 set cursorline                        " highlight current line
