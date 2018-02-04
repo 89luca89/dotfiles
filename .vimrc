@@ -68,9 +68,14 @@ let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/]\.(git|hg|svn|bin|out)$',
   \ 'file': '\v\.(exe|so|dll|class|bin|out)$',
   \ }
+" Use Ripgrep = superfast
+set grepprg=rg\ --color=never
+let g:ctrlp_user_command = 'rg %s --files --color=never --glob ""'
 
 " enable buffer list on top in airline and show only filename
 let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#syntastic#enabled = 1
+let g:airline#extensions#branch#enabled = 1
 
 " setup gutentags
 let g:gutentags_enabled = 1
@@ -89,14 +94,14 @@ let g:syntastic_yaml_checkers = ['js-yaml']
 " Json
 let g:syntastic_json_checkers = ['jsonlint']
 " Java
-let g:syntastic_java_checkers=['javac']
 let g:syntastic_java_javac_config_file_enabled = 1  " enables definition of .syntastic_java_config file for custom classpaths
+let g:syntastic_java_checkers=['javac']
 " Go
 let g:syntastic_go_checkers=['golint', 'go']
 " Rust
 let g:syntastic_rust_checkers = ['rustc', 'cargo']
 " Python
-let g:syntastic_python_checkers = ['pylint', 'flake8', 'pycodestyle']
+let g:syntastic_python_checkers = ['python', 'pylint', 'flake8', 'pycodestyle']
 " Generic Options
 let g:syntastic_check_on_open = 0
 let g:syntastic_always_populate_loc_list = 1
@@ -107,20 +112,16 @@ let g:syntastic_enable_signs = 1
 "==============================================================================
 "
 " Ctrl+] will perform GoTo. Available for c, c++, objc, objcpp, cs, go, javascript, python, rust
-" will use ctags if not compatible
+" will use CtrlPTags if not compatible
 " Ctrl+? will get the *Docs
-autocmd FileType c,cpp,objc,objcpp,cs,go,javascript,python,rust noremap <buffer> <C-]> :<C-u>YcmCompleter GoTo<CR>
-autocmd FileType c,cpp,objc,objcpp,cs,go,javascript,python,rust noremap <buffer> <C-?> :<C-u>YcmCompleter GetDoc<CR>
+map <silent> <M-z> :<C-u>execute '!zeal ' . &filetype . ":" . expand("<cword>") . " &"<CR><CR>
+map <silent> <C-]> :CtrlPTag<cr><C-\>w
+autocmd FileType c,cpp,objc,objcpp,cs,go,javascript,python,rust map <buffer> <C-]> :<C-u>YcmCompleter GoTo<CR>
+autocmd FileType c,cpp,objc,objcpp,cs,go,javascript,python,rust map <buffer> <C-?> :<C-u>YcmCompleter GetDoc<CR>
 
 " F-8 willl perform advanced code analyzing for JAVA
 " depends on PMD and this file https://gist.github.com/89luca89/37930d89082d48441cd6fa42d1bd9bea
 autocmd FileType java noremap <buffer> <F8> :<C-u>:new<CR>:0read !analyze-pmd.sh<CR>gg
-
-" F-9 will perform a Generic makefile
-noremap <F9> :<C-u>call Make()<CR>
-function! Make()
-    terminal++rows=30++quit "make clean"
-endfunction
 
 "==============================================================================
     " Ctrl+B open/close file explorer
@@ -159,10 +160,6 @@ endfunction
 """ Visual Mode
     """ Ctrl-C copy visual selection to clipboard
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
-
-""" Code lint/format
-    " Ctrl+N in Normal mode will perform a simple syntax check
-noremap <C-m> :<C-u>SyntasticCheck<CR>
 
 """ Tabs Navigation
     " navigate tabs Tab (fw) S-Tab (prev)
@@ -218,8 +215,9 @@ set splitright splitbelow             " Open new splits to the right and bottom
 set nowrap                            " Don't wrap long lines
 set autoindent smartindent                              " always set autoindenting on
 set expandtab shiftwidth=4 tabstop=4 softtabstop=4      " Four spaces for tabs everywhere
-set hlsearch incsearch ignorecase smartcase             " Highlight search results, ignore case if search is all lowercase
+set hlsearch incsearch ignorecase smartcase nohlsearch  " Highlight search results, ignore case if search is all lowercase
 set nowrap                            " play nicely with long lines
 set ruler
 let &colorcolumn="80"
 set number                            " Enable line numbers
+
