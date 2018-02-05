@@ -114,7 +114,8 @@ let g:syntastic_enable_signs = 1
 " Ctrl+] will perform GoTo. Available for c, c++, objc, objcpp, cs, go, javascript, python, rust
 " will use CtrlPTags if not compatible
 " Ctrl+? will get the *Docs
-map <silent> <M-z> :<C-u>execute '!zeal ' . &filetype . ":" . expand("<cword>") . " &"<CR><CR>
+let g:subtype = "*"
+map <silent> <M-z> :<C-u>execute '!zeal ' . &filetype . "," . subtype . ":" . expand("<cword>") . " &>> /dev/null &"<CR><CR>
 map <silent> <C-]> :CtrlPTag<cr><C-\>w
 autocmd FileType c,cpp,objc,objcpp,cs,go,javascript,python,rust map <buffer> <C-]> :<C-u>YcmCompleter GoTo<CR>
 autocmd FileType c,cpp,objc,objcpp,cs,go,javascript,python,rust map <buffer> <C-?> :<C-u>YcmCompleter GetDoc<CR>
