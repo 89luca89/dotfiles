@@ -21,7 +21,7 @@ Plugin 'ludovicchabant/vim-gutentags'   " tags navigation Ctrl+] or Ctrl+click t
 Plugin 'Valloric/YouCompleteMe'         " code completion engine (all language depend from this)
 " color schemes
 Plugin 'tomasiser/vim-code-dark'
-Plugin 'endel/vim-github-colorscheme'
+Plugin 'flazz/vim-colorschemes'
 
 call vundle#end()             " required
 
