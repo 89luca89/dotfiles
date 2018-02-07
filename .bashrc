@@ -1,5 +1,4 @@
 #########################
-############ BASH-IT CONF
 
 # If we do not have bash-it, install it.
 if [ ! -d "$HOME/.bash_it" ]; then
@@ -46,9 +45,6 @@ alias top='top -o %CPU'
 alias open='xdg-open'
 
 # TMUX SHORTCUTS
-#alias sv='tmux split -v'
-#alias sh='tmux split -h'
-#alias s='tmux select-pane -t'
 alias newsock='tmux -S /tmp/tmux-1000/tmux-session-$(date "+%d-%m-%y-%H-%M")'
 alias sock1-create='tmux -S /tmp/tmux-1000/session-1'
 alias sock2-create='tmux -S /tmp/tmux-1000/session-2'
@@ -81,5 +77,5 @@ alias ssh='assh wrapper ssh'
 # BASH COMPLETION
 source /usr/share/bash-completion/bash_completion
 
-# BREW PATH
-PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
+# Launch only if not running
+#if [ ! $(ps -ef | grep "syndaemon" | grep -v grep | awk '{ print $2}') ]; then syndaemon -i 0.5 -K -R -d 2> /dev/null ; fi
