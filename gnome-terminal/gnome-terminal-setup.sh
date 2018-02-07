@@ -1,3 +1,5 @@
+#!/bin/bash
+
 dconf load /org/gnome/terminal/legacy/profiles:/ < ~/dotfiles/gnome-terminal/gnome-terminal-profiles
 
 gsettings set org.gnome.Terminal.ProfilesList list "['b1dcc9dd-5262-4d8d-a863-c897e6d979b9', '5ceb187c-9775-421c-80c9-96d949e5bff3', '4086292e-8f46-4425-b4e5-9754922925fe']"

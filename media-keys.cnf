@@ -6,18 +6,8 @@ email='Explorer'
 www='HomePage'
 search='<Shift><Super>a'
 home='<Super>e'
-custom-keybindings=['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom6/']
+custom-keybindings=['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/']
 previous='<Super>1'
-
-[custom-keybindings/custom6]
-binding='<Shift><Super>k'
-command='gnome-terminal -e "/home/luca-linux/.config/mpv/mpv_yt_client"'
-name='MINITUBE-2'
-
-[custom-keybindings/custom5]
-binding='<Super>d'
-command='/home/luca-linux/bin/switch-theme.sh'
-name='Switch-theme'
 
 [custom-keybindings/custom4]
 binding='<Super>k'
