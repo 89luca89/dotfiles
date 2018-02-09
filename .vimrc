@@ -116,10 +116,10 @@ let g:syntastic_enable_signs = 1
 " On compatible langs, ú will open the GetDoc for the function.
 " Ctrl+? will get the Docsets on Zeal/Dash
 let g:subtype = ""
-map <silent> <C-?> :<C-u>execute '!zeal ' . &filetype . "," . subtype . ":" . expand("<cword>") . " &>> /dev/null &"<CR><CR>
+map <silent> <leader>[ :<C-u>execute '!zeal ' . &filetype . "," . subtype . ":" . expand("<cword>") . " &>> /dev/null &"<CR><CR>
 map <silent> <C-]> :CtrlPTag<cr><C-\>w
 autocmd FileType c,cpp,objc,objcpp,cs,go,javascript,python,rust map <buffer> <C-]> :<C-u>YcmCompleter GoTo<CR>
-autocmd FileType c,cpp,objc,objcpp,cs,go,javascript,python,rust map <buffer> <M-z> :<C-u>YcmCompleter GetDoc<CR>
+autocmd FileType c,cpp,objc,objcpp,cs,go,javascript,python,rust map <buffer> <leader>] :<C-u>YcmCompleter GetDoc<CR>
 " Ctrl+T fuzzy find ctags
 noremap <C-T> :CtrlPTag<CR>
 " Ctrl+P fuzzy find files
