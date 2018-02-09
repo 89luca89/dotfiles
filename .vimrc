@@ -7,19 +7,19 @@ call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
 " utilities
 Plugin 'scrooloose/nerdtree'
-Plugin 'Xuyuanp/nerdtree-git-plugin'
 Plugin 'ctrlpvim/ctrlp.vim'             " fuzzy finder
 Plugin 'vim-airline/vim-airline'        " tabs and statusline
 Plugin 'vim-airline/vim-airline-themes'
 " languages
 " syntastic+ycm covers already: bash, c, c++, js, html, JavaScript, Python
+Plugin 'sheerun/vim-polyglot'           " lang packs!
 Plugin 'rust-lang/rust.vim'             " rust
 Plugin 'fatih/vim-go'                   " go
 " autocompletion
-Plugin 'artur-shaik/vim-javacomplete2'  " java
 Plugin 'scrooloose/syntastic'           " linting
 Plugin 'ludovicchabant/vim-gutentags'   " tags navigation Ctrl+] or Ctrl+click to jump, to use together with YCM GoTo on supported langs.
 Plugin 'Valloric/YouCompleteMe'         " code completion engine (all language depend from this)
+Plugin 'artur-shaik/vim-javacomplete2'  " java
 " color schemes
 Plugin 'flazz/vim-colorschemes'
 
@@ -46,6 +46,8 @@ augroup end
 " This performs a write, and then pipes the file to the formatter 
 " :w save file, :mkview remember line, :%!formatter % to format and output,
 " :loadview to return to previous line
+" autocmd BufWritePre calls Ctrl-L before saving, this will then auto-fmt when
+" saving
 augroup autoformat_settings
   autocmd FileType go noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!gofmt %<CR>:loadview<CR>
   autocmd FileType go inoremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!gofmt %<CR>:loadview<CR>a
@@ -60,6 +62,7 @@ augroup autoformat_settings
   autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!shfmt %<CR>:loadview<CR>
   autocmd FileType sh inoremap <buffer> <C-L> <Esc>:w<CR><Esc>:mkview<CR>:%!shfmt %<CR>:loadview<CR>a
 augroup END
+autocmd BufWritePre * execute "normal \<C-L>"
 
 """ CtrlP
 " set ctrlp to same working directory
@@ -75,23 +78,6 @@ let g:ctrlp_user_command = 'rg %s --files --color=never --glob ""'
 
 """ Airline -> bufferline
 let g:airline#extensions#tabline#enabled = 1
-
-""" NERDTree setup
-let NERDTreeAutoDeleteBuffer = 1
-let NERDTreeMinimalUI = 1
-let NERDTreeDirArrows = 1
-let g:NERDTreeIndicatorMapCustom = {
-    \ "Modified"  : "✹",
-    \ "Staged"    : "✚",
-    \ "Untracked" : "✭",
-    \ "Renamed"   : "➜",
-    \ "Unmerged"  : "═",
-    \ "Deleted"   : "✖",
-    \ "Dirty"     : "✗",
-    \ "Clean"     : "✔︎",
-    \ 'Ignored'   : '☒',
-    \ "Unknown"   : "?"
-    \ }
 
 """ GutenTags
 let g:gutentags_enabled = 1
@@ -127,6 +113,7 @@ let g:syntastic_enable_signs = 1
 "
 " Ctrl+] will perform GoTo. Available for c, c++, objc, objcpp, cs, go, javascript, python, rust
 " will use CtrlPTags if not compatible
+" On compatible langs, ú will open the GetDoc for the function.
 " Ctrl+? will get the Docsets on Zeal/Dash
 let g:subtype = ""
 map <silent> <C-?> :<C-u>execute '!zeal ' . &filetype . "," . subtype . ":" . expand("<cword>") . " &>> /dev/null &"<CR><CR>
