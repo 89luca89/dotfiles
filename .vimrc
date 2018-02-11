@@ -204,7 +204,6 @@ let g:airline_theme='jellybeans'
 set lazyredraw ttyfast
 set mouse=a                           " it's always useful to use the mouse then needed
 set hidden                            " change buffer without saving
-set cursorline                        " highlight current line
 set wildmenu                          " Tab autocomplete in command mode
 set backspace=indent,eol,start        " http://vi.stackexchange.com/a/2163
 set laststatus=2                      " Show status line on startup
