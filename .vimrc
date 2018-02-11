@@ -197,7 +197,6 @@ set noswapfile
 
 " play nicely with modern graphics
 set encoding=utf8
-set t_Co=256
 set background=dark
 colorscheme onedark
 let g:airline_theme='jellybeans'
