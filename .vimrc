@@ -150,11 +150,9 @@ endfunction
 map <silent> <C-D> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
   if &background == 'light'
-        let g:airline_theme='jellybeans'
         colorscheme onedark
         set background=dark
     else
-        let g:airline_theme='base16'
         colorscheme github
         set background=light
     endif
@@ -181,6 +179,16 @@ noremap <S-M-Up> :2winc+<cr>
 noremap <S-M-Down> :2winc-<cr>
 noremap <S-M-Left> :2winc><cr>
 noremap <S-M-Right> :2winc<<cr>
+
+" Fix tmux-256 term
+if &term =~ '^screen'
+    " tmux will send xterm-style keys when its xterm-keys option is on
+    execute "set <xUp>=\e[1;*A"
+    execute "set <xDown>=\e[1;*B"
+    execute "set <xRight>=\e[1;*C"
+    execute "set <xLeft>=\e[1;*D"
+endif
+
 " ==========================================================================="
 
 syntax on
@@ -199,7 +207,7 @@ set noswapfile
 set encoding=utf8
 set background=dark
 colorscheme onedark
-let g:airline_theme='jellybeans'
+let g:airline_theme='base16'
 
 set lazyredraw ttyfast
 set mouse=a                           " it's always useful to use the mouse then needed
@@ -210,7 +218,7 @@ set laststatus=2                      " Show status line on startup
 set splitright splitbelow             " Open new splits to the right and bottom
 set autoindent smartindent                              " always set autoindenting on
 set expandtab shiftwidth=4 tabstop=4 softtabstop=4      " Four spaces for tabs everywhere
-set hlsearch incsearch ignorecase smartcase nohlsearch  " Highlight search results, ignore case if search is all lowercase
+set hlsearch incsearch ignorecase smartcase             " Highlight search results, ignore case if search is all lowercase
 set nowrap                            " play nicely with long lines
 set ruler
 let &colorcolumn="80"
