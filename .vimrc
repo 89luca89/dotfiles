@@ -75,6 +75,8 @@ let g:ctrlp_custom_ignore = {
 " Use Ripgrep = superfast
 set grepprg=rg\ --color=never
 let g:ctrlp_user_command = 'rg %s --files --color=never --glob ""'
+let g:ctrlp_lazy_update = 1
+let g:ctrlp_clear_cache_on_exit = 0
 
 """ Airline -> bufferline
 let g:airline#extensions#tabline#enabled = 1
@@ -207,7 +209,8 @@ set noswapfile
 set encoding=utf8
 set background=dark
 colorscheme onedark
-let g:airline_theme='base16'
+let g:airline_theme='zenburn'
+
 
 set lazyredraw ttyfast
 set mouse=a                           " it's always useful to use the mouse then needed
