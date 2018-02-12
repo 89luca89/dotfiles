@@ -152,9 +152,11 @@ endfunction
 map <silent> <C-D> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
   if &background == 'light'
+        let g:airline_theme='jellybeans'
         colorscheme onedark
         set background=dark
-    else
+    else   
+        let g:airline_theme='zenburn'
         colorscheme github
         set background=light
     endif
@@ -209,8 +211,7 @@ set noswapfile
 set encoding=utf8
 set background=dark
 colorscheme onedark
-let g:airline_theme='zenburn'
-
+let g:airline_theme='jellybeans'
 
 set lazyredraw ttyfast
 set mouse=a                           " it's always useful to use the mouse then needed
