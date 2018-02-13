@@ -21,6 +21,7 @@ Plugin 'ludovicchabant/vim-gutentags'   " tags navigation Ctrl+] or Ctrl+click t
 Plugin 'Valloric/YouCompleteMe'         " code completion engine (all language depend from this)
 Plugin 'artur-shaik/vim-javacomplete2'  " java
 " color schemes
+Plugin 'tomasiser/vim-code-dark'
 Plugin 'flazz/vim-colorschemes'
 
 call vundle#end()             " required
@@ -152,8 +153,8 @@ endfunction
 map <silent> <C-D> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
   if &background == 'light'
-        let g:airline_theme='jellybeans'
-        colorscheme onedark
+        let g:airline_theme='codedark'
+        colorscheme codedark
         set background=dark
     else   
         let g:airline_theme='zenburn'
@@ -210,8 +211,8 @@ set noswapfile
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
-colorscheme onedark
-let g:airline_theme='jellybeans'
+colorscheme codedark
+let g:airline_theme='codedark'
 
 set lazyredraw ttyfast
 set mouse=a                           " it's always useful to use the mouse then needed
