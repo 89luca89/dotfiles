@@ -7,7 +7,7 @@ use-theme-colors=false
 font='Monospace 12'
 scrollback-unlimited=false
 scroll-on-keystroke=true
-background-color='rgb(255,255,255)'
+background-color='rgb(238,238,238)'
 scrollbar-policy='never'
 
 [/]
