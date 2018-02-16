@@ -10,6 +10,7 @@ Plugin 'scrooloose/nerdtree'
 Plugin 'ctrlpvim/ctrlp.vim'             " fuzzy finder
 Plugin 'vim-airline/vim-airline'        " tabs and statusline
 Plugin 'vim-airline/vim-airline-themes'
+Plugin 'ryanoasis/vim-devicons'         " show some icons!
 " languages
 " syntastic+ycm covers already: bash, c, c++, js, html, JavaScript, Python
 Plugin 'sheerun/vim-polyglot'           " lang packs!
@@ -44,7 +45,7 @@ augroup end
 
 " Formatting
     " Ctrl+L Format Code
-" This performs a write, and then pipes the file to the formatter 
+" This performs a write, and then pipes the file to the formatter
 " :w save file, :mkview remember line, :%!formatter % to format and output,
 " :loadview to return to previous line
 " autocmd BufWritePre calls Ctrl-L before saving, this will then auto-fmt when
@@ -154,10 +155,10 @@ endfunction
 map <silent> <C-D> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
   if &background == 'light'
-        let g:airline_theme='codedark'
+        let g:airline_theme='minimalist'
         colorscheme codedark
         set background=dark
-    else   
+    else
         let g:airline_theme='zenburn'
         colorscheme github
         set background=light
@@ -214,7 +215,11 @@ set noswapfile
 set encoding=utf8
 set background=dark
 colorscheme codedark
-let g:airline_theme='codedark'
+let g:airline_theme='minimalist'
+
+" NERDTreee setup
+let g:NERDTreeWinSize=40
+let g:WebDevIconsUnicodeDecorateFolderNodes = 1
 
 set lazyredraw ttyfast
 set mouse=a                           " it's always useful to use the mouse then needed
