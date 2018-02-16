@@ -139,6 +139,7 @@ noremap <C-N> :NERDTreeFind<CR>R<c-w><c-p>
 
 " Ctrl-E show/hide errors window
 map <silent> <C-E> :<C-u>call ToggleErrors()<CR>
+map <silent> <C-M> :<C-u>SyntasticCheck<CR>
 function! ToggleErrors()
     if empty(filter(tabpagebuflist(), 'getbufvar(v:val, "&buftype") is# "quickfix"'))
          " No location/quickfix list shown, open syntastic error location panel
@@ -201,7 +202,8 @@ syntax on
 " Working with split screen nicely
 " Resize Split When the window is resized"
 autocmd VimResized * :wincmd =
-autocmd VimEnter * :NERDTree
+autocmd StdinReadPre * let s:std_in=1
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 " Persistent undo
 set undofile
 set undodir=$HOME/.vim/undo
