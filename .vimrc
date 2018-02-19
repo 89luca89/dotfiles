@@ -6,11 +6,9 @@ set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
 " utilities
-Plugin 'scrooloose/nerdtree'
+Plugin 'scrooloose/nerdtree'            " split file manager
 Plugin 'ctrlpvim/ctrlp.vim'             " fuzzy finder
 Plugin 'vim-airline/vim-airline'        " tabs and statusline
-Plugin 'vim-airline/vim-airline-themes'
-Plugin 'ryanoasis/vim-devicons'         " show some icons!
 " languages
 " syntastic+ycm covers already: bash, c, c++, js, html, JavaScript, Python
 Plugin 'sheerun/vim-polyglot'           " lang packs!
@@ -18,12 +16,12 @@ Plugin 'rust-lang/rust.vim'             " rust
 Plugin 'fatih/vim-go'                   " go
 " autocompletion
 Plugin 'scrooloose/syntastic'           " linting
-Plugin 'ludovicchabant/vim-gutentags'   " tags navigation Ctrl+] or Ctrl+click to jump, to use together with YCM GoTo on supported langs.
-Plugin 'Valloric/YouCompleteMe'         " code completion engine (all language depend from this)
 Plugin 'artur-shaik/vim-javacomplete2'  " java
+Plugin 'Valloric/YouCompleteMe'         " code completion engine (all language depend from this)
+Plugin 'ludovicchabant/vim-gutentags'   " tags navigation Ctrl+] or Ctrl+click to jump, to use together with YCM GoTo on supported langs.
 " color schemes
 Plugin 'tomasiser/vim-code-dark'
-Plugin 'flazz/vim-colorschemes'
+Plugin 'endel/vim-github-colorscheme'
 
 call vundle#end()             " required
 
@@ -81,6 +79,7 @@ let g:ctrlp_lazy_update = 1
 let g:ctrlp_clear_cache_on_exit = 0
 
 """ Airline -> bufferline
+let g:airline#extensions#tabline#fnamemod = ':t'
 let g:airline#extensions#tabline#enabled = 1
 
 """ GutenTags
@@ -91,22 +90,16 @@ let g:gutentags_resolve_symlinks = 1
 let g:gutentags_ctags_extra_args = ['--recurse=yes', '--extra=+f', '--fields=afmikKlnsStz']
 
 """  Syntastic
-" C/C++
-let g:syntastic_c_compiler_options = '--std=gnu11'
-let g:syntastic_cpp_compiler_options = ' -std=c++11 -stdlib=libc++'
-" Yaml
-let g:syntastic_yaml_checkers = ['js-yaml']
-" Json
-let g:syntastic_json_checkers = ['jsonlint']
+let g:syntastic_c_compiler_options = '--std=gnu11'                  " C
+let g:syntastic_cpp_compiler_options = ' -std=c++11 -stdlib=libc++' " C++
+let g:syntastic_yaml_checkers = ['js-yaml']                         " Yaml
+let g:syntastic_json_checkers = ['jsonlint']                        " Json
 " Java
 let g:syntastic_java_javac_config_file_enabled = 1  " enables definition of .syntastic_java_config file for custom classpaths
 let g:syntastic_java_checkers=['javac']
-" Go
-let g:syntastic_go_checkers=['golint', 'go']
-" Rust
-let g:syntastic_rust_checkers = ['rustc', 'cargo']
-" Python
-let g:syntastic_python_checkers = ['python', 'pylint', 'flake8', 'pycodestyle']
+let g:syntastic_go_checkers=['golint', 'go']                        " Go
+let g:syntastic_rust_checkers = ['rustc', 'cargo']                  " Rust
+let g:syntastic_python_checkers = ['python', 'pylint', 'flake8']    " Python
 " Generic Options
 let g:syntastic_check_on_open = 0
 let g:syntastic_always_populate_loc_list = 1
@@ -136,7 +129,7 @@ autocmd FileType java noremap <buffer> <F8> :<C-u>:new<CR>:0read !analyze-pmd.sh
 " Ctrl+B open/close file explorer
 noremap <C-B> :NERDTreeToggle<CR>
 " Ctrl+N relocate file explorer to opened file
-noremap <C-N> :NERDTreeFind<CR>R<c-w><c-p>
+noremap <C-N> :NERDTreeFind<CR>
 
 " Ctrl-E show/hide errors window
 map <silent> <C-E> :<C-u>call ToggleErrors()<CR>
@@ -155,19 +148,14 @@ endfunction
 map <silent> <C-D> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
   if &background == 'light'
-        let g:airline_theme='minimalist'
         colorscheme codedark
         set background=dark
     else
-        let g:airline_theme='zenburn'
         colorscheme github
         set background=light
+        hi VertSplit ctermbg=NONE guibg=NONE
     endif
 endfunction
-
-
-" 2xESC exit terminal mode
-tnoremap <ESC><ESC> <C-\><C-N>
 
 """ Visual Mode
     """ Ctrl-C copy visual selection to clipboard
@@ -203,8 +191,6 @@ syntax on
 " Working with split screen nicely
 " Resize Split When the window is resized"
 autocmd VimResized * :wincmd =
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 " Persistent undo
 set undofile
 set undodir=$HOME/.vim/undo
@@ -215,11 +201,6 @@ set noswapfile
 set encoding=utf8
 set background=dark
 colorscheme codedark
-let g:airline_theme='minimalist'
-
-" NERDTreee setup
-let g:NERDTreeWinSize=40
-let g:WebDevIconsUnicodeDecorateFolderNodes = 1
 
 set lazyredraw ttyfast
 set mouse=a                           " it's always useful to use the mouse then needed
@@ -232,6 +213,5 @@ set autoindent smartindent                              " always set autoindenti
 set expandtab shiftwidth=4 tabstop=4 softtabstop=4      " Four spaces for tabs everywhere
 set hlsearch incsearch ignorecase smartcase             " Highlight search results, ignore case if search is all lowercase
 set nowrap                            " play nicely with long lines
-set ruler
 let &colorcolumn="80"
 set number                            " Enable line numbers
