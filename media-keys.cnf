@@ -16,7 +16,7 @@ name='MINITUBE'
 
 [custom-keybindings/custom0]
 binding='<Primary><Alt>t'
-command='gnome-terminal'
+command='terminator'
 name='Terminal'
 
 [custom-keybindings/custom3]
