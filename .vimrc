@@ -154,7 +154,7 @@ function! ToggleTheme()
         set background=dark
     else
         colorscheme github
-        AirlineTheme zenburn
+        AirlineTheme papercolor
         set background=light
         hi VertSplit ctermbg=NONE guibg=NONE
     endif
