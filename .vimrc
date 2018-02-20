@@ -9,6 +9,7 @@ Plugin 'VundleVim/Vundle.vim'
 Plugin 'scrooloose/nerdtree'            " split file manager
 Plugin 'ctrlpvim/ctrlp.vim'             " fuzzy finder
 Plugin 'vim-airline/vim-airline'        " tabs and statusline
+Plugin 'vim-airline/vim-airline-themes'
 " languages
 " syntastic+ycm covers already: bash, c, c++, js, html, JavaScript, Python
 Plugin 'sheerun/vim-polyglot'           " lang packs!
@@ -149,9 +150,11 @@ map <silent> <C-D> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
   if &background == 'light'
         colorscheme codedark
+        AirlineTheme codedark
         set background=dark
     else
         colorscheme github
+        AirlineTheme zenburn
         set background=light
         hi VertSplit ctermbg=NONE guibg=NONE
     endif
@@ -175,6 +178,11 @@ noremap <S-M-Down> :2winc-<cr>
 noremap <S-M-Left> :2winc><cr>
 noremap <S-M-Right> :2winc<<cr>
 
+" Terminal splits   leader+t/leader+v
+tnoremap <Esc><Esc> <C-\><C-n>                              " exit terminal mode
+map <silent> <leader>t :<C-U>terminal++rows=15<CR>
+map <silent> <leader>v :<C-U>60vs<CR>:terminal++curwin<CR>
+
 " Fix tmux-256 term
 if &term =~ '^screen'
     " tmux will send xterm-style keys when its xterm-keys option is on
@@ -188,9 +196,6 @@ endif
 
 syntax on
 
-" Working with split screen nicely
-" Resize Split When the window is resized"
-autocmd VimResized * :wincmd =
 " Persistent undo
 set undofile
 set undodir=$HOME/.vim/undo
@@ -202,7 +207,7 @@ set encoding=utf8
 set background=dark
 colorscheme codedark
 
-set lazyredraw ttyfast
+set lazyredraw ttyfast synmaxcol=200 noshowcmd
 set mouse=a                           " it's always useful to use the mouse then needed
 set hidden                            " change buffer without saving
 set wildmenu                          " Tab autocomplete in command mode
