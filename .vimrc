@@ -154,7 +154,7 @@ function! ToggleTheme()
         set background=dark
     else
         colorscheme github
-        AirlineTheme papercolor
+        AirlineTheme zenburn
         set background=light
         hi VertSplit ctermbg=NONE guibg=NONE
     endif
@@ -193,6 +193,10 @@ if &term =~ '^screen'
 endif
 
 " ==========================================================================="
+" set cursor shapes by mode
+let &t_SI = "\<Esc>[6 q"
+let &t_SR = "\<Esc>[4 q"
+let &t_EI = "\<Esc>[2 q"
 
 syntax on
 
