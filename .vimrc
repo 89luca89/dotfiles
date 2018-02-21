@@ -212,6 +212,7 @@ set noswapfile
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
+set termguicolors
 colorscheme codedark
 
 set lazyredraw ttyfast synmaxcol=200 noshowcmd
