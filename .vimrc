@@ -9,7 +9,6 @@ Plugin 'VundleVim/Vundle.vim'
 Plugin 'scrooloose/nerdtree'            " split file manager
 Plugin 'ctrlpvim/ctrlp.vim'             " fuzzy finder
 Plugin 'vim-airline/vim-airline'        " tabs and statusline
-Plugin 'vim-airline/vim-airline-themes'
 " languages
 " syntastic+ycm covers already: bash, c, c++, js, html, JavaScript, Python
 Plugin 'sheerun/vim-polyglot'           " lang packs!
@@ -21,8 +20,7 @@ Plugin 'artur-shaik/vim-javacomplete2'  " java
 Plugin 'Valloric/YouCompleteMe'         " code completion engine (all language depend from this)
 Plugin 'ludovicchabant/vim-gutentags'   " tags navigation Ctrl+] or Ctrl+click to jump, to use together with YCM GoTo on supported langs.
 " color schemes
-Plugin 'tomasiser/vim-code-dark'
-Plugin 'endel/vim-github-colorscheme'
+Plugin 'flazz/vim-colorschemes'
 
 call vundle#end()             " required
 
@@ -149,15 +147,16 @@ endfunction
 map <silent> <C-D> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
   if &background == 'light'
-        colorscheme codedark
-        AirlineTheme codedark
+        colorscheme onedark
         set background=dark
+        highlight Normal ctermbg=NONE
+        highlight nonText ctermbg=NONE
     else
         colorscheme github
-        AirlineTheme zenburn
         set background=light
-        hi VertSplit ctermbg=NONE guibg=NONE
     endif
+    hi VertSplit ctermbg=NONE guibg=NONE term=NONE gui=NONE cterm=NONE
+    AirlineTheme zenburn
 endfunction
 
 """ Visual Mode
@@ -183,22 +182,13 @@ tnoremap <Esc><Esc> <C-\><C-n>                              " exit terminal mode
 map <silent> <leader>t :<C-U>terminal++rows=15<CR>
 map <silent> <leader>v :<C-U>60vs<CR>:terminal++curwin<CR>
 
-" Fix tmux-256 term
-if &term =~ '^screen'
-    " tmux will send xterm-style keys when its xterm-keys option is on
-    execute "set <xUp>=\e[1;*A"
-    execute "set <xDown>=\e[1;*B"
-    execute "set <xRight>=\e[1;*C"
-    execute "set <xLeft>=\e[1;*D"
-endif
-
 " ==========================================================================="
 " set cursor shapes by mode
 let &t_SI = "\<Esc>[6 q"
 let &t_SR = "\<Esc>[4 q"
 let &t_EI = "\<Esc>[2 q"
 
--" Resize Split When the window is resized"
+" Resize Split When the window is resized"
 autocmd VimResized * :wincmd =
 
 syntax on
@@ -212,7 +202,10 @@ set noswapfile
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
-colorscheme codedark
+colorscheme onedark
+highlight Normal ctermbg=NONE
+highlight nonText ctermbg=NONE
+let g:airline_theme='zenburn'
 
 set lazyredraw ttyfast synmaxcol=200 noshowcmd
 set mouse=a                           " it's always useful to use the mouse then needed
