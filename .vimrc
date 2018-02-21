@@ -20,7 +20,8 @@ Plugin 'artur-shaik/vim-javacomplete2'  " java
 Plugin 'Valloric/YouCompleteMe'         " code completion engine (all language depend from this)
 Plugin 'ludovicchabant/vim-gutentags'   " tags navigation Ctrl+] or Ctrl+click to jump, to use together with YCM GoTo on supported langs.
 " color schemes
-Plugin 'flazz/vim-colorschemes'
+Plugin 'blueshirts/darcula'
+Plugin 'endel/vim-github-colorscheme'
 
 call vundle#end()             " required
 
@@ -78,7 +79,6 @@ let g:ctrlp_lazy_update = 1
 let g:ctrlp_clear_cache_on_exit = 0
 
 """ Airline -> bufferline
-let g:airline#extensions#tabline#fnamemod = ':t'
 let g:airline#extensions#tabline#enabled = 1
 
 """ GutenTags
@@ -147,16 +147,14 @@ endfunction
 map <silent> <C-D> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
   if &background == 'light'
-        colorscheme onedark
+        colorscheme darcula
         set background=dark
-        highlight Normal ctermbg=NONE
-        highlight nonText ctermbg=NONE
+        highlight LineNr ctermbg=NONE ctermfg=240
     else
         colorscheme github
         set background=light
+        highlight VertSplit ctermbg=NONE guibg=NONE term=NONE gui=NONE cterm=NONE
     endif
-    hi VertSplit ctermbg=NONE guibg=NONE term=NONE gui=NONE cterm=NONE
-    AirlineTheme zenburn
 endfunction
 
 """ Visual Mode
@@ -202,12 +200,11 @@ set noswapfile
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
-colorscheme onedark
-highlight Normal ctermbg=NONE
-highlight nonText ctermbg=NONE
+colorscheme darcula
+highlight LineNr ctermbg=NONE ctermfg=240
 let g:airline_theme='zenburn'
 
-set lazyredraw ttyfast synmaxcol=200 noshowcmd
+set lazyredraw ttyfast synmaxcol=200 ttimeoutlen=50 noshowcmd
 set mouse=a                           " it's always useful to use the mouse then needed
 set hidden                            " change buffer without saving
 set wildmenu                          " Tab autocomplete in command mode
@@ -218,5 +215,5 @@ set autoindent smartindent                              " always set autoindenti
 set expandtab shiftwidth=4 tabstop=4 softtabstop=4      " Four spaces for tabs everywhere
 set hlsearch incsearch ignorecase smartcase             " Highlight search results, ignore case if search is all lowercase
 set nowrap                            " play nicely with long lines
-let &colorcolumn="80"
 set number                            " Enable line numbers
+let &colorcolumn="80"
