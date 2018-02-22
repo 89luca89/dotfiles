@@ -149,12 +149,12 @@ function! ToggleTheme()
   if &background == 'light'
         colorscheme darcula
         set background=dark
-        highlight LineNr ctermbg=NONE ctermfg=240
     else
         colorscheme github
         set background=light
-        highlight VertSplit ctermbg=NONE guibg=NONE term=NONE gui=NONE cterm=NONE
-    endif
+        highlight! def link NonText Normal
+  endif
+  AirlineTheme zenburn
 endfunction
 
 """ Visual Mode
@@ -199,12 +199,11 @@ set noswapfile
 
 " play nicely with modern graphics
 set encoding=utf8
-set background=dark
+set termguicolors background=dark numberwidth=5
 colorscheme darcula
-highlight LineNr ctermbg=NONE ctermfg=240
 let g:airline_theme='zenburn'
 
-set lazyredraw ttyfast synmaxcol=200 ttimeoutlen=50 noshowcmd
+set lazyredraw ttyfast synmaxcol=200 ttimeoutlen=20 noshowcmd
 set mouse=a                           " it's always useful to use the mouse then needed
 set hidden                            " change buffer without saving
 set wildmenu                          " Tab autocomplete in command mode
