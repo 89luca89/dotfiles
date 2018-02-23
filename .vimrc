@@ -199,9 +199,13 @@ set noswapfile
 
 " play nicely with modern graphics
 set encoding=utf8
-set termguicolors background=dark numberwidth=5
+set background=dark numberwidth=5
 colorscheme darcula
 let g:airline_theme='zenburn'
+if &term !~# '^screen'
+    set termguicolors
+endif
+
 
 set lazyredraw ttyfast synmaxcol=200 ttimeoutlen=20 noshowcmd
 set mouse=a                           " it's always useful to use the mouse then needed
