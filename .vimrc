@@ -99,6 +99,7 @@ let g:syntastic_java_checkers=['javac']
 let g:syntastic_go_checkers=['golint', 'go']                        " Go
 let g:syntastic_rust_checkers = ['rustc', 'cargo']                  " Rust
 let g:syntastic_python_checkers = ['python', 'pylint', 'flake8']    " Python
+let g:syntastic_python_flake8_args='--max-line-length=80'
 " Generic Options
 let g:syntastic_check_on_open = 0
 let g:syntastic_always_populate_loc_list = 1
@@ -202,9 +203,9 @@ set encoding=utf8
 set background=dark numberwidth=5
 colorscheme darcula
 let g:airline_theme='zenburn'
-if &term !~# '^screen'
-    set termguicolors
-endif
+let &t_8f="\<Esc>[38;2;%lu;%lu;%lum"
+let &t_8b="\<Esc>[48;2;%lu;%lu;%lum"
+set termguicolors
 
 
 set lazyredraw ttyfast synmaxcol=200 ttimeoutlen=20 noshowcmd
