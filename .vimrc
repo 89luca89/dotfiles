@@ -9,8 +9,7 @@ Plugin 'VundleVim/Vundle.vim'
 Plugin 'scrooloose/nerdtree'            " split file manager
 Plugin 'ctrlpvim/ctrlp.vim'             " fuzzy finder
 Plugin 'vim-airline/vim-airline'        " tabs and statusline
-" languages
-" syntastic+ycm covers already: bash, c, c++, js, html, JavaScript, Python
+" languages: syntastic+ycm covers already: bash, c, c++, js, html, JavaScript, Python
 Plugin 'sheerun/vim-polyglot'           " lang packs!
 Plugin 'rust-lang/rust.vim'             " rust
 Plugin 'fatih/vim-go'                   " go
@@ -153,7 +152,6 @@ function! ToggleTheme()
     else
         colorscheme github
         set background=light
-        highlight! def link NonText Normal
   endif
   AirlineTheme zenburn
 endfunction
@@ -176,11 +174,6 @@ noremap <S-M-Down> :2winc-<cr>
 noremap <S-M-Left> :2winc><cr>
 noremap <S-M-Right> :2winc<<cr>
 
-" Terminal splits   leader+t/leader+v
-tnoremap <Esc><Esc> <C-\><C-n>                              " exit terminal mode
-map <silent> <leader>t :<C-U>terminal++rows=15<CR>
-map <silent> <leader>v :<C-U>60vs<CR>:terminal++curwin<CR>
-
 " ==========================================================================="
 " set cursor shapes by mode
 let &t_SI = "\<Esc>[6 q"
@@ -189,8 +182,6 @@ let &t_EI = "\<Esc>[2 q"
 
 " Resize Split When the window is resized"
 autocmd VimResized * :wincmd =
-
-syntax on
 
 " Persistent undo
 set undofile
@@ -203,10 +194,6 @@ set encoding=utf8
 set background=dark numberwidth=5
 colorscheme darcula
 let g:airline_theme='zenburn'
-let &t_8f="\<Esc>[38;2;%lu;%lu;%lum"
-let &t_8b="\<Esc>[48;2;%lu;%lu;%lum"
-set termguicolors
-
 
 set lazyredraw ttyfast synmaxcol=200 ttimeoutlen=20 noshowcmd
 set mouse=a                           " it's always useful to use the mouse then needed
@@ -221,3 +208,4 @@ set hlsearch incsearch ignorecase smartcase             " Highlight search resul
 set nowrap                            " play nicely with long lines
 set number                            " Enable line numbers
 let &colorcolumn="80"
+syntax on
