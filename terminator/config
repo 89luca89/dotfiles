@@ -1,6 +1,9 @@
 [global_config]
+  borderless = True
   enabled_plugins = InactivityWatch, ActivityWatch
-  inactive_color_offset = 1.0
+  geometry_hinting = True
+  handle_size = 1
+  inactive_color_offset = 0.9
   title_hide_sizetext = True
   title_inactive_bg_color = "#555753"
   title_transmit_bg_color = "#252525"
@@ -83,10 +86,12 @@
     cursor_color = "#aaaaaa"
     palette = "#000000:#cc0000:#4e9a06:#c4a000:#3465a4:#75507b:#06989a:#d3d7cf:#555753:#ef2929:#3465a4:#fce94f:#729fcf:#ad7fa8:#34e2e2:#eeeeec"
     scrollbar_position = hidden
+    show_titlebar = False
   [[Light]]
-    background_color = "#f8f8ff"
+    background_color = "#efefef"
     cursor_blink = False
     cursor_color = "#aaaaaa"
     foreground_color = "#2e3436"
     palette = "#000000:#cc0000:#4e9a06:#c4a000:#3465a4:#75507b:#06989a:#d3d7cf:#555753:#ef2929:#3465a4:#fce94f:#729fcf:#ad7fa8:#34e2e2:#eeeeec"
     scrollbar_position = hidden
+    show_titlebar = False
