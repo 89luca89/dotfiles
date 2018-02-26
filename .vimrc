@@ -21,9 +21,7 @@ Plugin 'ludovicchabant/vim-gutentags'   " tags navigation Ctrl+] or Ctrl+click t
 " color schemes
 Plugin 'blueshirts/darcula'
 Plugin 'endel/vim-github-colorscheme'
-
 call vundle#end()             " required
-
 filetype plugin indent on     " required
 
 " Autocomplete c/c++ already use omnicomplete
@@ -45,8 +43,6 @@ augroup end
 " This performs a write, and then pipes the file to the formatter
 " :w save file, :mkview remember line, :%!formatter % to format and output,
 " :loadview to return to previous line
-" autocmd BufWritePre calls Ctrl-L before saving, this will then auto-fmt when
-" saving
 augroup autoformat_settings
   autocmd FileType go noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!gofmt %<CR>:loadview<CR>
   autocmd FileType go inoremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!gofmt %<CR>:loadview<CR>a
@@ -61,7 +57,6 @@ augroup autoformat_settings
   autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!shfmt %<CR>:loadview<CR>
   autocmd FileType sh inoremap <buffer> <C-L> <Esc>:w<CR><Esc>:mkview<CR>:%!shfmt %<CR>:loadview<CR>a
 augroup END
-autocmd BufWritePre * execute "normal \<C-L>"
 
 """ CtrlP
 " set ctrlp to same working directory
@@ -72,9 +67,8 @@ let g:ctrlp_custom_ignore = {
   \ 'file': '\v\.(exe|so|dll|class|bin|out)$',
   \ }
 " Use Ripgrep = superfast
-set grepprg=rg\ --color=never
+set grepprg=rg
 let g:ctrlp_user_command = 'rg %s --files --color=never --glob ""'
-let g:ctrlp_lazy_update = 1
 let g:ctrlp_clear_cache_on_exit = 0
 
 """ Airline -> bufferline
@@ -98,7 +92,7 @@ let g:syntastic_java_checkers=['javac']
 let g:syntastic_go_checkers=['golint', 'go']                        " Go
 let g:syntastic_rust_checkers = ['rustc', 'cargo']                  " Rust
 let g:syntastic_python_checkers = ['python', 'pylint', 'flake8']    " Python
-let g:syntastic_python_flake8_args='--max-line-length=80'
+let g:syntastic_python_pylint_args='--jobs=8'
 " Generic Options
 let g:syntastic_check_on_open = 0
 let g:syntastic_always_populate_loc_list = 1
@@ -109,8 +103,8 @@ let g:syntastic_enable_signs = 1
 "
 " Ctrl+] will perform GoTo. Available for c, c++, objc, objcpp, cs, go, javascript, python, rust
 " will use CtrlPTags if not compatible
-" On compatible langs, ú will open the GetDoc for the function.
-" Ctrl+? will get the Docsets on Zeal/Dash
+" On compatible langs, leader+] will open the GetDoc for the function.
+" leader+[ will get the Docsets on Zeal/Dash
 let g:subtype = ""
 map <silent> <leader>[ :<C-u>execute '!zeal ' . &filetype . "," . subtype . ":" . expand("<cword>") . " &>> /dev/null &"<CR><CR>
 map <silent> <C-]> :CtrlPTag<cr><C-\>w
@@ -131,8 +125,8 @@ noremap <C-B> :NERDTreeToggle<CR>
 noremap <C-N> :NERDTreeFind<CR>
 
 " Ctrl-E show/hide errors window
-map <silent> <C-E> :<C-u>call ToggleErrors()<CR>
 map <silent> <C-M> :<C-u>SyntasticCheck<CR>
+map <silent> <C-E> :<C-u>call ToggleErrors()<CR>
 function! ToggleErrors()
     if empty(filter(tabpagebuflist(), 'getbufvar(v:val, "&buftype") is# "quickfix"'))
          " No location/quickfix list shown, open syntastic error location panel
@@ -175,11 +169,6 @@ noremap <S-M-Left> :2winc><cr>
 noremap <S-M-Right> :2winc<<cr>
 
 " ==========================================================================="
-" set cursor shapes by mode
-let &t_SI = "\<Esc>[6 q"
-let &t_SR = "\<Esc>[4 q"
-let &t_EI = "\<Esc>[2 q"
-
 " Resize Split When the window is resized"
 autocmd VimResized * :wincmd =
 
@@ -191,11 +180,11 @@ set noswapfile
 
 " play nicely with modern graphics
 set encoding=utf8
-set background=dark numberwidth=5
+set background=dark
 colorscheme darcula
 let g:airline_theme='zenburn'
 
-set lazyredraw ttyfast synmaxcol=200 ttimeoutlen=20 noshowcmd
+set lazyredraw ttyfast synmaxcol=200 ttimeoutlen=20
 set mouse=a                           " it's always useful to use the mouse then needed
 set hidden                            " change buffer without saving
 set wildmenu                          " Tab autocomplete in command mode
