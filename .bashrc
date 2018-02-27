@@ -77,5 +77,10 @@ alias ssh='assh wrapper ssh'
 # BASH COMPLETION
 source /usr/share/bash-completion/bash_completion
 
+# include custom files
+if [ -f $HOME/.localrc ]; then
+    source $HOME/.localrc
+fi
+
 # Launch only if not running
 #if [ ! $(ps -ef | grep "syndaemon" | grep -v grep | awk '{ print $2}') ]; then syndaemon -i 0.5 -K -R -d 2> /dev/null ; fi

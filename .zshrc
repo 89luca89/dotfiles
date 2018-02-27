@@ -68,5 +68,9 @@ alias ssh='assh wrapper ssh'
 
 [ -f $HOME/.zsh-history-substring-search.zsh ] && source $HOME/.zsh-history-substring-search.zsh
 
+# include custom files
+if [ -f $HOME/.localrc ]; then
+    source $HOME/.localrc
+fi
 # Launch only if not running
 #if [ ! $(ps -ef | grep "syndaemon" | grep -v grep | awk '{ print $2}') ]; then syndaemon -i 0.5 -K -R -d 2> /dev/null ; fi
