@@ -181,6 +181,9 @@ set encoding=utf8
 set background=dark
 colorscheme darcula
 let g:airline_theme='zenburn'
+let &t_8f="\<Esc>[38;2;%lu;%lu;%lum"
+let &t_8b="\<Esc>[48;2;%lu;%lu;%lum"
+set termguicolors
 
 set lazyredraw ttyfast synmaxcol=200 ttimeoutlen=20
 set mouse=a                           " it's always useful to use the mouse then needed
