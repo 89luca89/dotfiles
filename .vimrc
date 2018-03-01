@@ -174,7 +174,7 @@ set noswapfile
 set encoding=utf8
 set background=dark
 colorscheme space-vim-dark
-let g:airline_theme='violet'
+let g:airline_theme='zenburn'
 set termguicolors
 
 set lazyredraw ttyfast synmaxcol=200 ttimeoutlen=20
