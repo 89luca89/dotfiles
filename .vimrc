@@ -21,6 +21,7 @@ Plugin 'ludovicchabant/vim-gutentags'   " tags navigation Ctrl+] or Ctrl+click t
 " color schemes
 Plugin 'colepeters/spacemacs-theme.vim'
 Plugin 'endel/vim-github-colorscheme'
+Plugin 'joshdick/onedark.vim'
 call vundle#end()             " required
 filetype plugin indent on     " required
 
@@ -173,8 +174,7 @@ set noswapfile
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
-colorscheme spacemacs-theme
-let g:airline_theme='zenburn'
+colorscheme onedark
 set termguicolors
 
 set lazyredraw ttyfast synmaxcol=200 ttimeoutlen=20
