@@ -137,19 +137,6 @@ function! ToggleErrors()
     endif
 endfunction
 
-" Ctrl+d Switch dark/light theme according to system theme
-map <silent> <C-D> :<C-u>call ToggleTheme()<CR>
-function! ToggleTheme()
-  if &background == 'light'
-        colorscheme darcula
-        set background=dark
-    else
-        colorscheme github
-        set background=light
-  endif
-  AirlineTheme zenburn
-endfunction
-
 """ Visual Mode
     """ Ctrl-C copy visual selection to clipboard
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
@@ -172,6 +159,17 @@ noremap <S-M-Right> :2winc<<cr>
 " Resize Split When the window is resized"
 autocmd VimResized * :wincmd =
 
+" different cursor shape for each mode
+let &t_SI = "\<Esc>[6 q"
+let &t_SR = "\<Esc>[4 q"
+let &t_EI = "\<Esc>[2 q"
+if &term =~ '^screen'
+    " tmux will send xterm-style keys when its xterm-keys option is on
+    execute "set <xUp>=\e[1;*A"
+    execute "set <xDown>=\e[1;*B"
+    execute "set <xRight>=\e[1;*C"
+    execute "set <xLeft>=\e[1;*D"
+endif
 " Persistent undo
 set undofile
 set undodir=$HOME/.vim/undo
