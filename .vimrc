@@ -19,7 +19,7 @@ Plugin 'artur-shaik/vim-javacomplete2'  " java
 Plugin 'Valloric/YouCompleteMe'         " code completion engine (all language depend from this)
 Plugin 'ludovicchabant/vim-gutentags'   " tags navigation Ctrl+] or Ctrl+click to jump, to use together with YCM GoTo on supported langs.
 " color schemes
-Plugin 'colepeters/spacemacs-theme.vim'
+Plugin 'liuchengxu/space-vim-dark'
 Plugin 'endel/vim-github-colorscheme'
 call vundle#end()             " required
 filetype plugin indent on     " required
@@ -173,8 +173,8 @@ set noswapfile
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
-colorscheme spacemacs-theme
-let g:airline_theme='zenburn'
+colorscheme space-vim-dark
+let g:airline_theme='violet'
 set termguicolors
 
 set lazyredraw ttyfast synmaxcol=200 ttimeoutlen=20
