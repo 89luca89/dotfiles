@@ -163,13 +163,7 @@ autocmd VimResized * :wincmd =
 let &t_SI = "\<Esc>[6 q"
 let &t_SR = "\<Esc>[4 q"
 let &t_EI = "\<Esc>[2 q"
-if &term =~ '^screen'
-    " tmux will send xterm-style keys when its xterm-keys option is on
-    execute "set <xUp>=\e[1;*A"
-    execute "set <xDown>=\e[1;*B"
-    execute "set <xRight>=\e[1;*C"
-    execute "set <xLeft>=\e[1;*D"
-endif
+
 " Persistent undo
 set undofile
 set undodir=$HOME/.vim/undo
@@ -181,8 +175,6 @@ set encoding=utf8
 set background=dark
 colorscheme spacemacs-theme
 let g:airline_theme='zenburn'
-let &t_8f="\<Esc>[38;2;%lu;%lu;%lum"
-let &t_8b="\<Esc>[48;2;%lu;%lu;%lum"
 set termguicolors
 
 set lazyredraw ttyfast synmaxcol=200 ttimeoutlen=20
