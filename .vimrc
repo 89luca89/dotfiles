@@ -3,19 +3,19 @@ filetype off                  " required
 
 call plug#begin('~/.vim/plugged')
 " utilities
-Plug 'scrooloose/nerdtree'            " split file manager
-Plug 'ctrlpvim/ctrlp.vim'             " fuzzy finder
-Plug 'vim-airline/vim-airline'        " tabs and statusline
+Plug 'scrooloose/nerdtree'                              " split file manager
+Plug 'ctrlpvim/ctrlp.vim'                               " fuzzy finder
+Plug 'vim-airline/vim-airline'                          " tabs and statusline
 " languages
 Plug 'sheerun/vim-polyglot'                             " lang packs!
 Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java' } " java
 Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
 Plug 'zchee/deoplete-go', { 'do': 'make', 'for': 'go' } " go
-Plug 'zchee/deoplete-clang', { 'for': ['c', 'cpp'] }     " c/c++
+Plug 'zchee/deoplete-clang', { 'for': ['c', 'cpp'] }    " c/c++
 Plug 'zchee/deoplete-jedi', { 'for': 'python' }         " python
 Plug 'sebastianmarkow/deoplete-rust', { 'for': 'rust' } " rust
-Plug 'scrooloose/syntastic'           " linting
-Plug 'ludovicchabant/vim-gutentags'   " tags navigation Ctrl+] or Ctrl+click to jump
+Plug 'scrooloose/syntastic'                             " linting
+Plug 'ludovicchabant/vim-gutentags'                     " tags navigation Ctrl+] or Ctrl+click to jump
 " snippets
 Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
@@ -26,7 +26,7 @@ Plug 'roxma/vim-hug-neovim-rpc'
 " color schemes
 Plug 'endel/vim-github-colorscheme'
 Plug 'joshdick/onedark.vim'
-call plug#end()             " required
+call plug#end()               " required
 filetype plugin indent on     " required
 
 " Formatting
@@ -83,7 +83,7 @@ let g:syntastic_cpp_compiler_options = ' -std=c++14 -stdlib=libc++' " C++
 let g:syntastic_yaml_checkers = ['js-yaml']                         " Yaml
 let g:syntastic_json_checkers = ['jsonlint']                        " Json
 " Java
-let g:syntastic_java_javac_config_file_enabled = 1  " enables definition of .syntastic_java_config file for custom classpaths
+let g:syntastic_java_javac_config_file_enabled = 1                  " enables definition of .syntastic_java_config file for custom classpaths
 let g:syntastic_java_checkers=['javac']
 let g:syntastic_go_checkers=['golint', 'go']                        " Go
 let g:syntastic_rust_checkers = ['rustc', 'cargo']                  " Rust
@@ -172,16 +172,16 @@ colorscheme onedark
 set termguicolors
 
 set lazyredraw ttyfast synmaxcol=200 ttimeoutlen=20
-set mouse=a                           " it's always useful to use the mouse then needed
-set hidden                            " change buffer without saving
-set wildmenu                          " Tab autocomplete in command mode
-set backspace=indent,eol,start        " http://vi.stackexchange.com/a/2163
-set laststatus=2                      " Show status line on startup
-set splitright splitbelow             " Open new splits to the right and bottom
+set mouse=a                                             " it's always useful to use the mouse then needed
+set hidden                                              " change buffer without saving
+set wildmenu                                            " Tab autocomplete in command mode
+set backspace=indent,eol,start                          " http://vi.stackexchange.com/a/2163
+set laststatus=2                                        " Show status line on startup
+set splitright splitbelow                               " Open new splits to the right and bottom
 set autoindent smartindent                              " always set autoindenting on
 set expandtab shiftwidth=4 tabstop=4 softtabstop=4      " Four spaces for tabs everywhere
 set hlsearch incsearch ignorecase smartcase             " Highlight search results, ignore case if search is all lowercase
-set nowrap                            " play nicely with long lines
-set number                            " Enable line numbers
+set nowrap                                              " play nicely with long lines
+set number                                              " Enable line numbers
 let &colorcolumn="80"
 syntax on
