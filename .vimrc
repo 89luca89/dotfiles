@@ -1,43 +1,33 @@
 set nocompatible              " required
 filetype off                  " required
 
-set rtp+=~/.vim/bundle/Vundle.vim
-
-call vundle#begin()
-Plugin 'VundleVim/Vundle.vim'
+call plug#begin('~/.vim/plugged')
 " utilities
-Plugin 'scrooloose/nerdtree'            " split file manager
-Plugin 'ctrlpvim/ctrlp.vim'             " fuzzy finder
-Plugin 'vim-airline/vim-airline'        " tabs and statusline
-" languages: syntastic+ycm covers already: bash, c, c++, js, html, JavaScript, Python
-Plugin 'sheerun/vim-polyglot'           " lang packs!
-Plugin 'rust-lang/rust.vim'             " rust
-Plugin 'fatih/vim-go'                   " go
-" autocompletion
-Plugin 'scrooloose/syntastic'           " linting
-Plugin 'artur-shaik/vim-javacomplete2'  " java
-Plugin 'Valloric/YouCompleteMe'         " code completion engine (all language depend from this)
-Plugin 'ludovicchabant/vim-gutentags'   " tags navigation Ctrl+] or Ctrl+click to jump, to use together with YCM GoTo on supported langs.
+Plug 'scrooloose/nerdtree'            " split file manager
+Plug 'ctrlpvim/ctrlp.vim'             " fuzzy finder
+Plug 'vim-airline/vim-airline'        " tabs and statusline
+" languages
+Plug 'sheerun/vim-polyglot'                             " lang packs!
+Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java' } " java
+Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
+Plug 'zchee/deoplete-go', { 'do': 'make', 'for': 'go' } " go
+Plug 'zchee/deoplete-clang', { 'for': ['c', 'cpp'] }     " c/c++
+Plug 'zchee/deoplete-jedi', { 'for': 'python' }         " python
+Plug 'sebastianmarkow/deoplete-rust', { 'for': 'rust' } " rust
+Plug 'scrooloose/syntastic'           " linting
+Plug 'ludovicchabant/vim-gutentags'   " tags navigation Ctrl+] or Ctrl+click to jump
+" snippets
+Plug 'sirver/ultisnips'
+Plug 'honza/vim-snippets'
+" autocopmlete
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'roxma/nvim-yarp'
+Plug 'roxma/vim-hug-neovim-rpc'
 " color schemes
-Plugin 'colepeters/spacemacs-theme.vim'
-Plugin 'endel/vim-github-colorscheme'
-Plugin 'joshdick/onedark.vim'
-call vundle#end()             " required
+Plug 'endel/vim-github-colorscheme'
+Plug 'joshdick/onedark.vim'
+call plug#end()             " required
 filetype plugin indent on     " required
-
-" Autocomplete c/c++ already use omnicomplete
-augroup omnifuncs
-  autocmd!
-  autocmd FileType c set omnifunc=ccomplete#Complete
-  autocmd FileType cpp set omnifunc=cppcomplete#CompleteCPP
-  autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-  autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-  autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-  autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-  autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
-  autocmd FileType java setlocal omnifunc=javacomplete#Complete
-  autocmd FileType java JCEnable
-augroup end
 
 " Formatting
     " Ctrl+L Format Code
@@ -46,18 +36,24 @@ augroup end
 " :loadview to return to previous line
 augroup autoformat_settings
   autocmd FileType go noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!gofmt %<CR>:loadview<CR>
-  autocmd FileType go inoremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!gofmt %<CR>:loadview<CR>a
   autocmd FileType html,css,json noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!js-beautify %<CR>:loadview<CR>
-  autocmd FileType html,css,json inoremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!js-beautify %<CR>:loadview<CR>a
   autocmd FileType rust noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!rustfmt %<CR>:loadview<CR>
-  autocmd FileType rust inoremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!rustfmt %<CR>:loadview<CR>a
   autocmd FileType python noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!autopep8 %<CR>:loadview<CR>
-  autocmd FileType python inoremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!autopep8 %<CR>:loadview<CR>a
-  autocmd FileType c,cpp,proto,javascript,java noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!clang-format -style=Chromium %<CR>:loadview<CR>
-  autocmd FileType c,cpp,proto,javascript,java inoremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!clang-format -style=Chromium %<CR>:loadview<CR>a
+  autocmd FileType c,cpp,javascript,java noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!clang-format -style=Chromium %<CR>:loadview<CR>
   autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!shfmt %<CR>:loadview<CR>
-  autocmd FileType sh inoremap <buffer> <C-L> <Esc>:w<CR><Esc>:mkview<CR>:%!shfmt %<CR>:loadview<CR>a
 augroup END
+
+" Use deoplete.
+set completeopt=longest,menuone " auto complete setting
+let g:deoplete#enable_at_startup = 1
+let g:deoplete#enable_smart_case = 1
+let g:deoplete#auto_complete_start_length = 1
+let g:deoplete#sources#jedi#show_docstring = 1
+let g:deoplete#sources#rust#racer_binary='/home/luca-linux/.cargo/bin/racer'
+let g:deoplete#sources#rust#rust_source_path='/home/luca-linux/.cargo/rust/src'
+let g:deoplete#sources#clang#libclang_path = '/usr/lib64/libclang.so'
+let g:deoplete#sources#clang#clang_header = '/usr/lib64/clang'
+let g:deoplete#sources#clang#std = {'c': 'c11', 'cpp': 'c++14', 'objc': 'c11', 'objcpp': 'c++1z'}
 
 """ CtrlP
 " set ctrlp to same working directory
@@ -81,10 +77,9 @@ let g:gutentags_generate_on_empty_buffer = 1
 let g:gutentags_cache_dir = "~/.vim/tags"
 let g:gutentags_resolve_symlinks = 1
 let g:gutentags_ctags_extra_args = ['--recurse=yes', '--extra=+f', '--fields=afmikKlnsStz']
-
 """  Syntastic
 let g:syntastic_c_compiler_options = '--std=gnu11'                  " C
-let g:syntastic_cpp_compiler_options = ' -std=c++11 -stdlib=libc++' " C++
+let g:syntastic_cpp_compiler_options = ' -std=c++14 -stdlib=libc++' " C++
 let g:syntastic_yaml_checkers = ['js-yaml']                         " Yaml
 let g:syntastic_json_checkers = ['jsonlint']                        " Json
 " Java
@@ -99,6 +94,12 @@ let g:syntastic_check_on_open = 0
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_aggregate_errors = 1
 let g:syntastic_enable_signs = 1
+"let g:EclimCompletionMethod = 'omnifunc'
+" I Like snippets!
+let g:UltiSnipsListSnippets="<c-h>"
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 
 """ GENERIC PROGRAMMING
 "
@@ -109,8 +110,6 @@ let g:syntastic_enable_signs = 1
 let g:subtype = ""
 map <silent> <leader>[ :<C-u>execute '!zeal ' . &filetype . "," . subtype . ":" . expand("<cword>") . " &>> /dev/null &"<CR><CR>
 map <silent> <C-]> :CtrlPTag<cr><C-\>w
-autocmd FileType c,cpp,objc,objcpp,cs,go,javascript,python,rust map <buffer> <C-]> :<C-u>YcmCompleter GoTo<CR>
-autocmd FileType c,cpp,objc,objcpp,cs,go,javascript,python,rust map <buffer> <leader>] :<C-u>YcmCompleter GetDoc<CR>
 " Ctrl+T fuzzy find ctags
 noremap <C-T> :CtrlPTag<CR>
 " Ctrl+P fuzzy find files
@@ -159,11 +158,6 @@ noremap <S-M-Right> :2winc<<cr>
 " ==========================================================================="
 " Resize Split When the window is resized"
 autocmd VimResized * :wincmd =
-
-" different cursor shape for each mode
-let &t_SI = "\<Esc>[6 q"
-let &t_SR = "\<Esc>[4 q"
-let &t_EI = "\<Esc>[2 q"
 
 " Persistent undo
 set undofile
