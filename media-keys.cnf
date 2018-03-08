@@ -16,7 +16,7 @@ name='MINITUBE'
 
 [custom-keybindings/custom0]
 binding='<Primary><Alt>t'
-command='env GTK_THEME=Adwaita:dark terminator'
+command='gnome-terminal'
 name='Terminal'
 
 [custom-keybindings/custom3]
