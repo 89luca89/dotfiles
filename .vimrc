@@ -20,20 +20,22 @@ Plug 'ludovicchabant/vim-gutentags'                     " tags navigation Ctrl+]
 Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
 " autocopmlete
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'Shougo/deoplete.nvim'
 Plug 'roxma/nvim-yarp'
 Plug 'roxma/vim-hug-neovim-rpc'
 " color schemes
-Plug 'endel/vim-github-colorscheme'
-Plug 'joshdick/onedark.vim'
+Plug 'w0ng/vim-hybrid'
+
 call plug#end()               " required
 filetype plugin indent on     " required
 
 " Formatting
-    " Ctrl+L Format Code
-" This performs a write, and then pipes the file to the formatter
+" Ctrl+L Format Code
+" This performs a write, and then pipes the file to the formatter (by default
+" uses the default vim formatter)
 " :w save file, :mkview remember line, :%!formatter % to format and output,
 " :loadview to return to previous line
+noremap <C-L> <Esc>:w<CR>:mkview<CR>ggVG=<CR>:loadview<CR>
 augroup autoformat_settings
     autocmd FileType go noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!gofmt %<CR>:loadview<CR>
     autocmd FileType html,css,json noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!js-beautify %<CR>:loadview<CR>
@@ -43,26 +45,14 @@ augroup autoformat_settings
     autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!shfmt %<CR>:loadview<CR>
 augroup END
 
-" Use deoplete.
-set completeopt=longest,menuone " auto complete setting
-let g:deoplete#enable_at_startup = 1
-let g:deoplete#enable_smart_case = 1
-let g:deoplete#auto_complete_start_length = 1
-let g:deoplete#sources#jedi#show_docstring = 1
-let g:deoplete#sources#rust#racer_binary='/home/luca-linux/.cargo/bin/racer'
-let g:deoplete#sources#rust#rust_source_path='/home/luca-linux/.cargo/rust/src'
-let g:deoplete#sources#clang#libclang_path = '/usr/lib64/libclang.so'
-let g:deoplete#sources#clang#clang_header = '/usr/lib64/clang'
-let g:deoplete#sources#clang#std = {'c': 'c11', 'cpp': 'c++14', 'objc': 'c11', 'objcpp': 'c++1z'}
-
 """ CtrlP
 " set ctrlp to same working directory
 let g:ctrlp_working_path_mode = 'ra'
 " exclude compiled files class and svns
 let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\v[\/]\.(git|hg|svn|bin|out)$',
-  \ 'file': '\v\.(exe|so|dll|class|bin|out)$',
-  \ }
+            \ 'dir':  '\v[\/]\.(git|hg|svn|bin|out)$',
+            \ 'file': '\v\.(exe|so|dll|class|bin|out)$',
+            \ }
 " Use Ripgrep = superfast
 set grepprg=rg
 let g:ctrlp_user_command = 'rg %s --files --color=never --glob ""'
@@ -70,6 +60,7 @@ let g:ctrlp_clear_cache_on_exit = 0
 
 """ Airline -> bufferline
 let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#formatter = 'unique_tail'
 
 """ GutenTags
 let g:gutentags_enabled = 1
@@ -77,6 +68,16 @@ let g:gutentags_generate_on_empty_buffer = 1
 let g:gutentags_cache_dir = "~/.vim/tags"
 let g:gutentags_resolve_symlinks = 1
 let g:gutentags_ctags_extra_args = ['--recurse=yes', '--extra=+f', '--fields=afmikKlnsStz']
+""" Deoplete.
+let g:deoplete#enable_at_startup = 1
+let g:deoplete#enable_smart_case = 1
+let g:deoplete#enable_refresh_always = 1
+let g:deoplete#auto_complete_start_length = 1
+let g:deoplete#sources#rust#racer_binary='/home/luca-linux/.cargo/bin/racer'
+let g:deoplete#sources#rust#rust_source_path='/home/luca-linux/.cargo/rust/src'
+let g:deoplete#sources#clang#libclang_path = '/usr/lib64/libclang.so'
+let g:deoplete#sources#clang#clang_header = '/usr/lib64/clang'
+let g:deoplete#sources#clang#std = {'c': 'c11', 'cpp': 'c++14'}
 """  Syntastic
 let g:syntastic_c_compiler_options = '--std=gnu11'                  " C
 let g:syntastic_cpp_compiler_options = ' -std=c++14 -stdlib=libc++' " C++
@@ -88,13 +89,11 @@ let g:syntastic_java_checkers=['javac']
 let g:syntastic_go_checkers=['golint', 'go']                        " Go
 let g:syntastic_rust_checkers = ['rustc', 'cargo']                  " Rust
 let g:syntastic_python_checkers = ['python', 'pylint', 'flake8']    " Python
-let g:syntastic_python_pylint_args='--jobs=8'
 " Generic Options
 let g:syntastic_check_on_open = 0
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_aggregate_errors = 1
 let g:syntastic_enable_signs = 1
-"let g:EclimCompletionMethod = 'omnifunc'
 " I Like snippets!
 let g:UltiSnipsListSnippets="<c-h>"
 let g:UltiSnipsExpandTrigger="<tab>"
@@ -103,9 +102,7 @@ let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 
 """ GENERIC PROGRAMMING
 "
-" Ctrl+] will perform GoTo. Available for c, c++, objc, objcpp, cs, go, javascript, python, rust
-" will use CtrlPTags if not compatible
-" On compatible langs, leader+] will open the GetDoc for the function.
+" Ctrl+] CtrlPTags
 " leader+[ will get the Docsets on Zeal/Dash
 let g:subtype = ""
 map <silent> <leader>[ :<C-u>execute '!zeal ' . &filetype . "," . subtype . ":" . expand("<cword>") . " &>> /dev/null &"<CR><CR>
@@ -129,23 +126,23 @@ map <silent> <C-M> :<C-u>SyntasticCheck<CR>
 map <silent> <C-E> :<C-u>call ToggleErrors()<CR>
 function! ToggleErrors()
     if empty(filter(tabpagebuflist(), 'getbufvar(v:val, "&buftype") is# "quickfix"'))
-         " No location/quickfix list shown, open syntastic error location panel
-         SyntasticCheck
-         Errors
+        " No location/quickfix list shown, open syntastic error location panel
+        SyntasticCheck
+        Errors
     else
         lclose
     endif
 endfunction
 
 """ Visual Mode
-    """ Ctrl-C copy visual selection to clipboard
+""" Ctrl-C copy visual selection to clipboard
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 
 """ Tabs Navigation
-    " navigate tabs Tab (fw) S-Tab (prev)
+" navigate tabs Tab (fw) S-Tab (prev)
 map <Tab> :bn<CR>
 map <S-Tab> :bp<CR>
-    " Ctrl+C close buffer ( pipe commands to fix behaviour with splits and netrw/nerdtree)
+" Ctrl+C close buffer ( pipe commands to fix behaviour with splits and netrw/nerdtree)
 nnoremap <C-c> :bp<bar>sp<bar>bn<bar>bd!<CR>
 
 " " Resize split window horizontally and vertically
@@ -154,6 +151,15 @@ noremap <S-M-Up> :2winc+<cr>
 noremap <S-M-Down> :2winc-<cr>
 noremap <S-M-Left> :2winc><cr>
 noremap <S-M-Right> :2winc<<cr>
+
+map <silent> <C-D> :<C-u>call ToggleTheme()<CR>
+function! ToggleTheme()
+    if &background == 'light'
+        set background=dark
+    else
+        set background=light
+    endif
+endfunction
 
 " ==========================================================================="
 " Resize Split When the window is resized"
@@ -168,7 +174,7 @@ set noswapfile
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
-colorscheme onedark
+colorscheme hybrid
 set termguicolors
 
 set lazyredraw ttyfast synmaxcol=200 ttimeoutlen=20
