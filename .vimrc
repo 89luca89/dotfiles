@@ -7,13 +7,12 @@ Plug 'scrooloose/nerdtree'                              " split file manager
 Plug 'ctrlpvim/ctrlp.vim'                               " fuzzy finder
 Plug 'vim-airline/vim-airline'                          " tabs and statusline
 " languages
-Plug 'sheerun/vim-polyglot'                             " lang packs!
+Plug 'sheerun/vim-polyglot', { 'do': './build' }        " lang packs!
 Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java' } " java
-Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
+Plug 'sebastianmarkow/deoplete-rust', { 'for': 'rust' } " rust
 Plug 'zchee/deoplete-go', { 'do': 'make', 'for': 'go' } " go
 Plug 'zchee/deoplete-clang', { 'for': ['c', 'cpp'] }    " c/c++
 Plug 'zchee/deoplete-jedi', { 'for': 'python' }         " python
-Plug 'sebastianmarkow/deoplete-rust', { 'for': 'rust' } " rust
 Plug 'scrooloose/syntastic'                             " linting
 Plug 'ludovicchabant/vim-gutentags'                     " tags navigation Ctrl+] or Ctrl+click to jump
 " snippets
@@ -43,6 +42,7 @@ augroup autoformat_settings
     autocmd FileType python noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!autopep8 %<CR>:loadview<CR>
     autocmd FileType c,cpp,javascript,java noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!clang-format -style=Chromium %<CR>:loadview<CR>
     autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!shfmt %<CR>:loadview<CR>
+    autocmd FileType ansible,yaml noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!yamlfmt<CR>:loadview<CR>
 augroup END
 
 """ CtrlP
@@ -81,9 +81,8 @@ let g:deoplete#sources#clang#std = {'c': 'c11', 'cpp': 'c++14'}
 """  Syntastic
 let g:syntastic_c_compiler_options = '--std=gnu11'                  " C
 let g:syntastic_cpp_compiler_options = ' -std=c++14 -stdlib=libc++' " C++
-let g:syntastic_yaml_checkers = ['js-yaml']                         " Yaml
+let g:syntastic_yaml_checkers = ['yamllint']                        " Yaml
 let g:syntastic_json_checkers = ['jsonlint']                        " Json
-" Java
 let g:syntastic_java_javac_config_file_enabled = 1                  " enables definition of .syntastic_java_config file for custom classpaths
 let g:syntastic_java_checkers=['javac']
 let g:syntastic_go_checkers=['golint', 'go']                        " Go
