@@ -3,25 +3,17 @@ filetype off                  " required
 
 call plug#begin('~/.vim/plugged')
 " utilities
-Plug 'scrooloose/nerdtree'                              " split file manager
-Plug 'ctrlpvim/ctrlp.vim'                               " fuzzy finder
-Plug 'vim-airline/vim-airline'                          " tabs and statusline
+Plug 'scrooloose/nerdtree'                                      " split file manager
+Plug 'ctrlpvim/ctrlp.vim'                                       " fuzzy finder
+Plug 'vim-airline/vim-airline'                                  " tabs and statusline
 " languages
-Plug 'sheerun/vim-polyglot', { 'do': './build' }        " lang packs!
-Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java' } " java
-Plug 'sebastianmarkow/deoplete-rust', { 'for': 'rust' } " rust
-Plug 'zchee/deoplete-go', { 'do': 'make', 'for': 'go' } " go
-Plug 'zchee/deoplete-clang', { 'for': ['c', 'cpp'] }    " c/c++
-Plug 'zchee/deoplete-jedi', { 'for': 'python' }         " python
-Plug 'scrooloose/syntastic'                             " linting
-Plug 'ludovicchabant/vim-gutentags'                     " tags navigation Ctrl+] or Ctrl+click to jump
+Plug 'sheerun/vim-polyglot', { 'do': './build' }                " lang packs!
+Plug 'scrooloose/syntastic'                                     " linting
+Plug 'ludovicchabant/vim-gutentags'                             " tags navigation Ctrl+] or Ctrl+click to jump
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py --all --system-boost --system-libclang'  }  " code completion engine (all language depend from this)
 " snippets
 Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
-" autocopmlete
-Plug 'Shougo/deoplete.nvim'
-Plug 'roxma/nvim-yarp'
-Plug 'roxma/vim-hug-neovim-rpc'
 " color schemes
 Plug 'w0ng/vim-hybrid'
 
@@ -44,6 +36,18 @@ augroup autoformat_settings
     autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!shfmt %<CR>:loadview<CR>
     autocmd FileType ansible,yaml noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!yamlfmt<CR>:loadview<CR>
 augroup END
+
+" Autocomplete c/c++ already use omnicomplete
+augroup omnifuncs
+  autocmd!
+  autocmd FileType c set omnifunc=ccomplete#Complete
+  autocmd FileType cpp set omnifunc=cppcomplete#CompleteCPP
+  autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+  autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+  autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+  autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+  autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+augroup end
 
 """ CtrlP
 " set ctrlp to same working directory
@@ -68,16 +72,6 @@ let g:gutentags_generate_on_empty_buffer = 1
 let g:gutentags_cache_dir = "~/.vim/tags"
 let g:gutentags_resolve_symlinks = 1
 let g:gutentags_ctags_extra_args = ['--recurse=yes', '--extra=+f', '--fields=afmikKlnsStz']
-""" Deoplete.
-let g:deoplete#enable_at_startup = 1
-let g:deoplete#enable_smart_case = 1
-let g:deoplete#enable_refresh_always = 1
-let g:deoplete#auto_complete_start_length = 1
-let g:deoplete#sources#rust#racer_binary='/home/luca-linux/.cargo/bin/racer'
-let g:deoplete#sources#rust#rust_source_path='/home/luca-linux/.cargo/rust/src'
-let g:deoplete#sources#clang#libclang_path = '/usr/lib64/libclang.so'
-let g:deoplete#sources#clang#clang_header = '/usr/lib64/clang'
-let g:deoplete#sources#clang#std = {'c': 'c11', 'cpp': 'c++14'}
 """  Syntastic
 let g:syntastic_c_compiler_options = '--std=gnu11'                  " C
 let g:syntastic_cpp_compiler_options = ' -std=c++14 -stdlib=libc++' " C++
@@ -108,6 +102,8 @@ map <silent> <leader>[ :<C-u>execute '!zeal ' . &filetype . "," . subtype . ":" 
 map <silent> <C-]> :CtrlPTag<cr><C-\>w
 " Ctrl+T fuzzy find ctags
 noremap <C-T> :CtrlPTag<CR>
+autocmd FileType c,cpp,objc,objcpp,cs,go,javascript,python,rust map <buffer> <C-]> :<C-u>YcmCompleter GoTo<CR>
+autocmd FileType c,cpp,objc,objcpp,cs,go,javascript,python,rust map <buffer> <leader>] :<C-u>YcmCompleter GetDoc<CR>
 " Ctrl+P fuzzy find files
 noremap <C-P> :CtrlP<CR>
 
