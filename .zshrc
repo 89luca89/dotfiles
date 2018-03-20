@@ -68,6 +68,8 @@ alias ssh='assh wrapper ssh'
 
 [ -f $HOME/.zsh-history-substring-search.zsh ] && source $HOME/.zsh-history-substring-search.zsh
 
+SAVEHIST=100000
+
 # include custom files
 if [ -f $HOME/.localrc ]; then
     source $HOME/.localrc
