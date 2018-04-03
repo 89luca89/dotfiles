@@ -60,7 +60,9 @@ export PATH=$HOME/bin:$PATH
 export VAGRANT_DEFAULT_PROVIDER=virtualbox
 export ANDROID_HOME=/home/luca-linux/Desktop/android-sdk-linux/
 export LC_ALL=en_US.UTF-8
-export GOPATH=/usr/local/go
+#export GOPATH=/usr/local/go
+export GOPATH=$HOME/go
+export GOROOT=/usr/local/go
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 export PATH=$PATH:$HOME/.cargo/bin
 
