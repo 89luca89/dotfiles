@@ -3,44 +3,50 @@ foreground-color='#555557575353'
 visible-name='Light'
 palette=['#063541', '#DB312E', '#849900', '#B48800', '#258AD1', '#D23581', '#29A097', '#EDE7D4', '#002A35', '#CA4A15', '#576D74', '#647A82', '#829395', '#6B70C3', '#92A0A0', '#FCF5E2']
 badge-color-set=false
-show-scrollbar=false
+show-scrollbar=true
 cursor-colors-set=false
 highlight-colors-set=false
 use-theme-colors=false
 bold-color-set=false
+scrollback-unlimited=true
 scroll-on-keystroke=false
 background-color='#EEEEEEEEECEC'
-dim-transparency-percent=39
+dim-transparency-percent=9
 
 [profiles]
 list=['2b7c4080-0ddd-46c5-8f23-563fd3ba789d', '7f49549a-a6d5-4ccb-bc04-bcbb2c4c611b']
 
 [profiles/2b7c4080-0ddd-46c5-8f23-563fd3ba789d]
-foreground-color='#D3D3D7D7CFCF'
+foreground-color='#FFFFFFFFFFFF'
 visible-name='Dark'
 palette=['#000000', '#CC0000', '#4D9A05', '#C3A000', '#3464A3', '#754F7B', '#05979A', '#D3D6CF', '#545652', '#EF2828', '#89E234', '#FBE84F', '#729ECF', '#AC7EA8', '#34E2E2', '#EDEDEB']
 badge-color-set=false
-show-scrollbar=false
+show-scrollbar=true
+cursor-shape='ibeam'
 cursor-colors-set=false
 highlight-colors-set=false
 use-theme-colors=false
 bold-color-set=false
-scrollback-unlimited=false
+terminal-bell='icon-sound'
+scrollback-unlimited=true
 scroll-on-keystroke=true
+cursor-blink-mode='off'
 background-color='#000000000000'
-dim-transparency-percent=28
+dim-transparency-percent=7
 
 [/]
 middle-click-close=true
-copy-on-select=true
+copy-on-select=false
 sidebar-on-right=false
 auto-hide-mouse=true
 terminal-title-style='small'
 theme-variant='dark'
+session-name='${title}${username}${id}'
+paste-advanced-default=false
 use-tabs=true
-paste-advanced-default=true
 enable-wide-handle=false
-terminal-title-show-when-single=false
+warn-vte-config-issue=false
+terminal-title-show-when-single=true
 
 [keybindings]
 session-add-right='<Primary><Shift>e'
