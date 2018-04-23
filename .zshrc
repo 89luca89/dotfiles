@@ -57,6 +57,7 @@ alias ssh-forward='ssh -f -N -T -R 8002:localhost:8001 luca-linux@52.178.38.238'
 # PATH
 export PATH=$HOME/Desktop/android-sdk-linux/platform-tools:$PATH
 export PATH=$HOME/bin:$PATH
+export PATH=$HOME/.local/bin:$PATH
 export VAGRANT_DEFAULT_PROVIDER=virtualbox
 export ANDROID_HOME=/home/luca-linux/Desktop/android-sdk-linux/
 export LC_ALL=en_US.UTF-8
@@ -77,4 +78,4 @@ if [ -f $HOME/.localrc ]; then
     source $HOME/.localrc
 fi
 # Launch only if not running
-#if [ ! $(ps -ef | grep "syndaemon" | grep -v grep | awk '{ print $2}') ]; then syndaemon -i 0.5 -K -R -d 2> /dev/null ; fi
+if [ ! $(ps -ef | grep "syndaemon" | grep -v grep | awk '{ print $2}') ]; then syndaemon -i 0.5 -K -R -d 2> /dev/null ; fi

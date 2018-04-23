@@ -6,14 +6,16 @@ call plug#begin('~/.vim/plugged')
 Plug 'scrooloose/nerdtree'                                      " split file manager
 Plug 'ctrlpvim/ctrlp.vim'                                       " fuzzy finder
 Plug 'vim-airline/vim-airline'                                  " tabs and statusline
+Plug 'airblade/vim-gitgutter'                                   " +,-,~ on modified lines in git repo
 " languages
 Plug 'sheerun/vim-polyglot', { 'do': './build' }                " lang packs!
 Plug 'scrooloose/syntastic'                                     " linting
 Plug 'ludovicchabant/vim-gutentags'                             " tags navigation Ctrl+] or Ctrl+click to jump
-Plug 'Valloric/YouCompleteMe', { 'do': './install.py --all --system-boost --system-libclang'  }  " code completion engine (all language depend from this)
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py --all --system-libclang'  }  " code completion engine (all language depend from this)
 " snippets
 Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
+
 " color schemes
 Plug 'w0ng/vim-hybrid'
 
@@ -48,6 +50,9 @@ augroup omnifuncs
   autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
   autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 augroup end
+
+""" Git signs in gutter
+let g:gitgutter_grep = 'rg'
 
 """ CtrlP
 " set ctrlp to same working directory
@@ -109,7 +114,7 @@ noremap <C-P> :CtrlP<CR>
 
 " F-8 willl perform advanced code analyzing for JAVA
 " depends on PMD and this file https://gist.github.com/89luca89/37930d89082d48441cd6fa42d1bd9bea
-autocmd FileType java noremap <buffer> <F8> :<C-u>:new<CR>:0read !analyze-pmd.sh<CR>gg
+autocmd FileType java noremap <buffer> <F8> :<C-u>:new<CR>:0read !analyze-pmd<CR>gg
 
 " Ctrl+B open/close file explorer
 noremap <C-B> :NERDTreeToggle<CR>
@@ -177,12 +182,12 @@ set mouse=a                                             " it's always useful to 
 set hidden                                              " change buffer without saving
 set wildmenu                                            " Tab autocomplete in command mode
 set backspace=indent,eol,start                          " http://vi.stackexchange.com/a/2163
-set laststatus=2                                        " Show status line on startup
 set splitright splitbelow                               " Open new splits to the right and bottom
 set autoindent smartindent                              " always set autoindenting on
 set expandtab shiftwidth=4 tabstop=4 softtabstop=4      " Four spaces for tabs everywhere
 set hlsearch incsearch ignorecase smartcase             " Highlight search results, ignore case if search is all lowercase
 set nowrap                                              " play nicely with long lines
 set number                                              " Enable line numbers
+set updatetime=1000                                     " reduce update time from 4s to 1s
 let &colorcolumn="80"
 syntax on
