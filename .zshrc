@@ -44,6 +44,9 @@ alias tree='tree -C'
 alias top='top -o %CPU'
 alias open='xdg-open'
 
+# add openvpn
+alias start-vpn="sudo openvpn /home/luca-linux/.cert/nm-openvpn/77.109.150.195-combined.ovpn"
+
 # TMUX SHORTCUTS
 alias newsock='tmux -S /tmp/tmux-1000/tmux-session-$(date "+%d-%m-%y-%H-%M")'
 alias sock1-create='tmux -S /tmp/tmux-1000/session-1'
@@ -62,7 +65,7 @@ export VAGRANT_DEFAULT_PROVIDER=virtualbox
 export ANDROID_HOME=/home/luca-linux/Desktop/android-sdk-linux/
 export LC_ALL=en_US.UTF-8
 #export GOPATH=/usr/local/go
-export GOPATH=$HOME/go
+export GOPATH=$HOME/.local/go
 #export GOROOT=/usr/bin/go
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 export PATH=$PATH:$HOME/.cargo/bin
@@ -79,3 +82,4 @@ if [ -f $HOME/.localrc ]; then
 fi
 # Launch only if not running
 if [ ! $(ps -ef | grep "syndaemon" | grep -v grep | awk '{ print $2}') ]; then syndaemon -i 0.5 -K -R -d 2> /dev/null ; fi
+#source <(kubectl completion zsh)
