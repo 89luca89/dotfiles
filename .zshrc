@@ -44,6 +44,8 @@ alias tree='tree -C'
 alias top='top -o %CPU'
 alias open='xdg-open'
 
+alias rambox='ssh -N -X -C -c aes128-ctr yoga "rambox"'
+
 # add openvpn
 alias start-vpn="sudo openvpn /home/luca-linux/.cert/nm-openvpn/77.109.150.195-combined.ovpn"
 
@@ -56,7 +58,6 @@ alias sock1-attach='tmux -S /tmp/tmux-1000/session-1 attach'
 alias sock2-attach='tmux -S /tmp/tmux-1000/session-2 attach'
 alias sock3-attach='tmux -S /tmp/tmux-1000/session-3 attach'
 
-alias ssh-forward='ssh -f -N -T -R 8002:localhost:8001 luca-linux@52.178.38.238'
 # PATH
 export PATH=$HOME/Desktop/android-sdk-linux/platform-tools:$PATH
 export PATH=$HOME/bin:$PATH
