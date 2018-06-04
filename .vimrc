@@ -11,7 +11,8 @@ Plug 'airblade/vim-gitgutter'                                   " +,-,~ on modif
 Plug 'sheerun/vim-polyglot', { 'do': './build' }                " lang packs!
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }              " GoLang
 Plug 'python-rope/ropevim'                                      " Python Refactor
-Plug 'scrooloose/syntastic'                                     " linting
+Plug 'w0rp/ale'                                                 " linting!
+Plug 'scrooloose/syntastic', { 'for': 'java' }                  " linting!
 Plug 'ludovicchabant/vim-gutentags'                             " tags navigation Ctrl+] or Ctrl+click to jump
 " code completion engine (all language depend from this: C,C++,Java,
 " Python2/3, Rust, Go, Js/Ts)
@@ -45,14 +46,14 @@ augroup END
 
 " Autocomplete c/c++ already use omnicomplete
 augroup omnifuncs
-  autocmd!
-  autocmd FileType c set omnifunc=ccomplete#Complete
-  autocmd FileType cpp set omnifunc=cppcomplete#CompleteCPP
-  autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-  autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-  autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-  autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-  autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+    autocmd!
+    autocmd FileType c set omnifunc=ccomplete#Complete
+    autocmd FileType cpp set omnifunc=cppcomplete#CompleteCPP
+    autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+    autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+    autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+    autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+    autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 augroup end
 
 """ Git signs in gutter
@@ -74,28 +75,12 @@ let g:ctrlp_clear_cache_on_exit = 0
 """ Airline -> bufferline
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
-
 """ GutenTags
 let g:gutentags_enabled = 1
 let g:gutentags_generate_on_empty_buffer = 1
 let g:gutentags_cache_dir = "~/.vim/tags"
 let g:gutentags_resolve_symlinks = 1
 let g:gutentags_ctags_extra_args = ['--recurse=yes', '--extra=+f', '--fields=afmikKlnsStz']
-"""  Syntastic
-let g:syntastic_c_compiler_options = '--std=gnu11'                  " C
-let g:syntastic_cpp_compiler_options = ' -std=c++14 -stdlib=libc++' " C++
-let g:syntastic_yaml_checkers = ['yamllint']                        " Yaml
-let g:syntastic_json_checkers = ['jsonlint']                        " Json
-let g:syntastic_java_javac_config_file_enabled = 1                  " enables definition of .syntastic_java_config file for custom classpaths
-let g:syntastic_java_checkers=['javac']
-let g:syntastic_go_checkers=['golint', 'go']                        " Go
-let g:syntastic_rust_checkers = ['rustc', 'cargo']                  " Rust
-let g:syntastic_python_checkers = ['python', 'pylint', 'flake8']    " Python
-" Generic Options
-let g:syntastic_check_on_open = 0
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_aggregate_errors = 1
-let g:syntastic_enable_signs = 1
 " I Like snippets!
 let g:UltiSnipsListSnippets="<c-h>"
 let g:UltiSnipsExpandTrigger="<tab>"
@@ -105,6 +90,36 @@ let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 let g:ycm_python_binary_path = '/usr/bin/python3'
 let g:ycm_rust_src_path = '/usr/lib/rustlib/src/rust/src'
 let g:ycm_echo_current_diagnostic=1
+" ALE
+let g:ale_enabled = 1
+let g:ale_completion_enabled = 1
+let g:ale_open_list = 1
+let g:ale_set_highlights = 1
+let g:ale_warn_about_trailing_whitespace = 0
+let g:ale_sign_error = '⤫'
+let g:ale_sign_warning = '⚠'
+let g:airline#extensions#ale#enabled = 1
+let g:ale_linters = {
+        \   'go': ['go build', 'golint'],
+        \   'rust': ['rustc'],
+        \   'c': ['clang'],
+        \   'yaml': ['yamllint'],
+        \   'json': ['jsonlint'],
+        \   'cpp': ['clang++'],
+        \   'python': ['python', 'mypy', 'autopep8', 'pylint', 'flake8'],
+        \   'shell': ['sh', 'shellcheck'],
+        \   'java': [],
+        \}
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_save = 1
+let g:ale_lint_on_enter = 1
+" We use syntastic for java only for this option
+" we need custom classpaths and ALE does not support it.
+let g:syntastic_java_javac_config_file_enabled = 1                  " enables definition of .syntastic_java_config file for custom classpaths
+let g:syntastic_java_checkers=['javac']
+let g:syntastic_aggregate_errors = 1
+
+let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': ["java"],'passive_filetypes': [] }
 
 """ GENERIC PROGRAMMING
 "
@@ -130,13 +145,16 @@ noremap <C-B> :NERDTreeToggle<CR>
 noremap <C-N> :NERDTreeFind<CR>
 
 " Ctrl-E show/hide errors window
-map <silent> <C-M> :<C-u>SyntasticCheck<CR>
+map <silent> <C-M> :<C-u>ALELint<CR>
+autocmd FileType java map <silent> <C-M> :<C-u>SyntasticCheck<CR>
+
 map <silent> <C-E> :<C-u>call ToggleErrors()<CR>
 function! ToggleErrors()
     if empty(filter(tabpagebuflist(), 'getbufvar(v:val, "&buftype") is# "quickfix"'))
         " No location/quickfix list shown, open syntastic error location panel
+        ALELint
         SyntasticCheck
-        Errors
+        lopen
     else
         lclose
     endif
