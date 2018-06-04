@@ -14,7 +14,8 @@
   insert_padded = None
   new_terminator = None
   new_window = None
-  next_profile = <Primary><Shift>d
+  next_profile = <Primary>g
+  previous_profile = <Primary>g
   switch_to_tab_1 = <Alt>1
   switch_to_tab_2 = <Alt>2
   switch_to_tab_3 = <Alt>3

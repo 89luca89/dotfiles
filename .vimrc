@@ -9,9 +9,11 @@ Plug 'vim-airline/vim-airline'                                  " tabs and statu
 Plug 'airblade/vim-gitgutter'                                   " +,-,~ on modified lines in git repo
 " languages
 Plug 'sheerun/vim-polyglot', { 'do': './build' }                " lang packs!
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }              " GoLang
+Plug 'python-rope/ropevim'                                      " Python Refactor
 Plug 'scrooloose/syntastic'                                     " linting
 Plug 'ludovicchabant/vim-gutentags'                             " tags navigation Ctrl+] or Ctrl+click to jump
-Plug 'Valloric/YouCompleteMe', { 'do': './install.py --all --system-libclang'  }  " code completion engine (all language depend from this)
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py --system-libclang --go-completer --js-completer --rust-completer --java-completer --clang-completer'  }  " code completion engine (all language depend from this)
 " snippets
 Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
@@ -34,7 +36,7 @@ augroup autoformat_settings
     autocmd FileType html,css,json noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!js-beautify %<CR>:loadview<CR>
     autocmd FileType rust noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!rustfmt %<CR>:loadview<CR>
     autocmd FileType python noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!autopep8 %<CR>:loadview<CR>
-    autocmd FileType c,cpp,javascript,java noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!clang-format -style=Chromium %<CR>:loadview<CR>
+    autocmd FileType c,cpp,proto,typescript,javascript,java noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!clang-format -style=Chromium %<CR>:loadview<CR>
     autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!shfmt %<CR>:loadview<CR>
     autocmd FileType ansible,yaml noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!yamlfmt<CR>:loadview<CR>
 augroup END
@@ -97,6 +99,10 @@ let g:UltiSnipsListSnippets="<c-h>"
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+" YCM settings
+let g:ycm_python_binary_path = '/usr/bin/python3'
+let g:ycm_rust_src_path = '/usr/lib/rustlib/src/rust/src'
+let g:ycm_echo_current_diagnostic=1
 
 """ GENERIC PROGRAMMING
 "
@@ -152,7 +158,7 @@ noremap <S-M-Down> :2winc-<cr>
 noremap <S-M-Left> :2winc><cr>
 noremap <S-M-Right> :2winc<<cr>
 
-map <silent> <C-D> :<C-u>call ToggleTheme()<CR>
+map <silent> <C-G> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
