@@ -13,7 +13,9 @@ Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }              " GoLang
 Plug 'python-rope/ropevim'                                      " Python Refactor
 Plug 'scrooloose/syntastic'                                     " linting
 Plug 'ludovicchabant/vim-gutentags'                             " tags navigation Ctrl+] or Ctrl+click to jump
-Plug 'Valloric/YouCompleteMe', { 'do': './install.py --system-libclang --go-completer --js-completer --rust-completer --java-completer --clang-completer'  }  " code completion engine (all language depend from this)
+" code completion engine (all language depend from this: C,C++,Java,
+" Python2/3, Rust, Go, Js/Ts)
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py --system-libclang --go-completer --js-completer --rust-completer --java-completer --clang-completer'  }  
 " snippets
 Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
@@ -36,7 +38,7 @@ augroup autoformat_settings
     autocmd FileType html,css,json noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!js-beautify %<CR>:loadview<CR>
     autocmd FileType rust noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!rustfmt %<CR>:loadview<CR>
     autocmd FileType python noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!autopep8 %<CR>:loadview<CR>
-    autocmd FileType c,cpp,proto,typescript,javascript,java noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!clang-format -style=Chromium %<CR>:loadview<CR>
+    autocmd FileType c,cpp,objc,proto,typescript,javascript,java noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!clang-format -style=Chromium %<CR>:loadview<CR>
     autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!shfmt %<CR>:loadview<CR>
     autocmd FileType ansible,yaml noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!yamlfmt<CR>:loadview<CR>
 augroup END
