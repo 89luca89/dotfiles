@@ -99,6 +99,7 @@ let g:ale_warn_about_trailing_whitespace = 0
 let g:ale_sign_error = '⤫'
 let g:ale_sign_warning = '⚠'
 let g:airline#extensions#ale#enabled = 1
+let g:ale_python_mypy_options = '--ignore-missing-imports'
 let g:ale_linters = {
         \   'go': ['go build', 'golint'],
         \   'rust': ['rustc'],
@@ -106,7 +107,7 @@ let g:ale_linters = {
         \   'yaml': ['yamllint'],
         \   'json': ['jsonlint'],
         \   'cpp': ['clang++'],
-        \   'python': ['python', 'mypy', 'autopep8', 'pylint', 'flake8'],
+        \   'python': ['python', 'pylint', 'mypy'],
         \   'shell': ['sh', 'shellcheck'],
         \   'java': [],
         \}
