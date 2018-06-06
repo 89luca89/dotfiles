@@ -21,6 +21,9 @@ Plug 'Valloric/YouCompleteMe', { 'do': './install.py --system-libclang --go-comp
 Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
 
+" Icons
+Plug 'ryanoasis/vim-devicons'
+
 " color schemes
 Plug 'w0ng/vim-hybrid'
 
@@ -59,6 +62,11 @@ augroup end
 """ Git signs in gutter
 let g:gitgutter_grep = 'rg'
 
+" Icons
+let g:WebDevIconsUnicodeDecorateFolderNodes = 1
+let g:DevIconsEnableFoldersOpenClose = 1
+let NERDTreeShowHidden=1
+
 """ CtrlP
 " set ctrlp to same working directory
 let g:ctrlp_working_path_mode = 'ra'
@@ -87,13 +95,15 @@ let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 " YCM settings
+let g:ycm_key_list_select_completion=[]     " disable tab and s-tab. Ultisnip use them
+let g:ycm_key_list_previous_completion=[]
 let g:ycm_python_binary_path = '/usr/bin/python3'
 let g:ycm_rust_src_path = '/usr/lib/rustlib/src/rust/src'
+let g:ycm_autoclose_preview_window_after_completion=1
 let g:ycm_echo_current_diagnostic=1
 " ALE
 let g:ale_enabled = 1
 let g:ale_completion_enabled = 1
-let g:ale_open_list = 1
 let g:ale_set_highlights = 1
 let g:ale_warn_about_trailing_whitespace = 0
 let g:ale_sign_error = '⤫'
@@ -119,7 +129,6 @@ let g:ale_lint_on_enter = 1
 let g:syntastic_java_javac_config_file_enabled = 1                  " enables definition of .syntastic_java_config file for custom classpaths
 let g:syntastic_java_checkers=['javac']
 let g:syntastic_aggregate_errors = 1
-
 let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': ["java"],'passive_filetypes': [] }
 
 """ GENERIC PROGRAMMING
@@ -150,15 +159,18 @@ map <silent> <C-M> :<C-u>ALELint<CR>
 autocmd FileType java map <silent> <C-M> :<C-u>SyntasticCheck<CR>
 
 map <silent> <C-E> :<C-u>call ToggleErrors()<CR>
-function! ToggleErrors()
-    if empty(filter(tabpagebuflist(), 'getbufvar(v:val, "&buftype") is# "quickfix"'))
-        " No location/quickfix list shown, open syntastic error location panel
-        ALELint
-        SyntasticCheck
-        lopen
-    else
-        lclose
-    endif
+function! ToggleQuickFix()
+  if exists("g:qwindow")
+    lclose
+    unlet g:qwindow
+  else
+    try
+      lopen 10
+      let g:qwindow = 1
+    catch
+      echo "No Errors found!"
+    endtry
+  endif
 endfunction
 
 """ Visual Mode
