@@ -159,7 +159,7 @@ map <silent> <C-M> :<C-u>ALELint<CR>
 autocmd FileType java map <silent> <C-M> :<C-u>SyntasticCheck<CR>
 
 map <silent> <C-E> :<C-u>call ToggleErrors()<CR>
-function! ToggleQuickFix()
+function! ToggleErrors()
   if exists("g:qwindow")
     lclose
     unlet g:qwindow
