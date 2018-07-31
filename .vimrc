@@ -6,17 +6,38 @@ call plug#begin('~/.vim/plugged')
 Plug 'scrooloose/nerdtree'                                      " split file manager
 Plug 'ctrlpvim/ctrlp.vim'                                       " fuzzy finder
 Plug 'vim-airline/vim-airline'                                  " tabs and statusline
+Plug 'vim-airline/vim-airline-themes'
 Plug 'airblade/vim-gitgutter'                                   " +,-,~ on modified lines in git repo
+
+" Deoplete
+if has('nvim')
+    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+else
+    Plug 'Shougo/deoplete.nvim'
+    Plug 'roxma/nvim-yarp'
+    Plug 'roxma/vim-hug-neovim-rpc'
+endif
+
+" Vim LanguageClient setup
+Plug 'junegunn/fzf'
+Plug 'autozimu/LanguageClient-neovim', {
+            \ 'branch': 'next',
+            \ 'do': 'bash install.sh',
+            \ }
+
 " languages
 Plug 'sheerun/vim-polyglot', { 'do': './build' }                " lang packs!
-Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }              " GoLang
-Plug 'python-rope/ropevim'                                      " Python Refactor
 Plug 'w0rp/ale'                                                 " linting!
 Plug 'scrooloose/syntastic', { 'for': 'java' }                  " linting!
+Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java' }         " java
+Plug 'zchee/deoplete-jedi', {'for': 'python'}                   " python
+Plug 'zchee/deoplete-clang', {'for': ['c', 'cpp', 'objc'] }
+Plug 'sebastianmarkow/deoplete-rust', { 'for': 'rust' }         " rust
+Plug 'zchee/deoplete-go', {'for': 'go', 'do': 'make'}           " GoLang
+Plug 'fatih/vim-go', { 'for': 'go', 'do': ':GoUpdateBinaries' } " GoLang
 Plug 'ludovicchabant/vim-gutentags'                             " tags navigation Ctrl+] or Ctrl+click to jump
 " code completion engine (all language depend from this: C,C++,Java,
 " Python2/3, Rust, Go, Js/Ts)
-Plug 'Valloric/YouCompleteMe', { 'do': './install.py --system-libclang --go-completer --js-completer --rust-completer --java-completer --clang-completer'  }  
 " snippets
 Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
@@ -47,18 +68,6 @@ augroup autoformat_settings
     autocmd FileType ansible,yaml noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!yamlfmt<CR>:loadview<CR>
 augroup END
 
-" Autocomplete c/c++ already use omnicomplete
-augroup omnifuncs
-    autocmd!
-    autocmd FileType c set omnifunc=ccomplete#Complete
-    autocmd FileType cpp set omnifunc=cppcomplete#CompleteCPP
-    autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-    autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-    autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-    autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-    autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
-augroup end
-
 """ Git signs in gutter
 let g:gitgutter_grep = 'rg'
 
@@ -66,6 +75,9 @@ let g:gitgutter_grep = 'rg'
 let g:WebDevIconsUnicodeDecorateFolderNodes = 1
 let g:DevIconsEnableFoldersOpenClose = 1
 let NERDTreeShowHidden=1
+let NERDTreeHijackNetrw=1
+let g:NERDTreeDirArrowExpandable = '▸'
+let g:NERDTreeDirArrowCollapsible = '▾'
 
 """ CtrlP
 " set ctrlp to same working directory
@@ -80,9 +92,37 @@ set grepprg=rg
 let g:ctrlp_user_command = 'rg %s --files --color=never --glob ""'
 let g:ctrlp_clear_cache_on_exit = 0
 
+" Path to python interpreter for neovim
+let g:python3_host_prog  = '/usr/bin/python3'
+" Skip the check of neovim module
+let g:python3_host_skip_check = 1
+" Deoplete
+let g:deoplete#enable_at_startup = 1
+let g:deoplete#enable_smart_case = 1
+let g:deoplete#auto_completion_start_length = 2
+let g:deoplete#manual_completion_start_length = 0
+let g:deoplete#sources#clang#libclang_path="/usr/lib64/libclang.so"
+let g:deoplete#sources#clang#clang_header="/usr/lib64/clang"
+let g:deoplete#sources#go#gocode_binary="/home/luca-linux/.local/go/bin/gocode"
+let g:deoplete#sources#go#cgo#libclang_path="/usr/lib64/libclang.so"
+let g:jedi#auto_vim_configuration = 0
+let g:jedi#completions_enabled = 0
+let g:jedi#popup_on_dot = 0
+let g:jedi#popup_select_first = 0
+let g:jedi#show_call_signatures = 0
+let g:jedi#smart_auto_mappings = 0
+
+let g:LanguageClient_serverCommands = {
+            \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
+            \ 'python': ['/usr/local/bin/pyls'],
+            \ 'go' : ['~/.local/go/bin/go-langserver'],
+            \ 'sh' : ['bash-language-server', 'start'],
+            \ }
+
 """ Airline -> bufferline
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
+let g:airline#extensions#ale#enabled = 1
 """ GutenTags
 let g:gutentags_enabled = 1
 let g:gutentags_generate_on_empty_buffer = 1
@@ -94,13 +134,6 @@ let g:UltiSnipsListSnippets="<c-h>"
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
-" YCM settings
-let g:ycm_key_list_select_completion=[]     " disable tab and s-tab. Ultisnip use them
-let g:ycm_key_list_previous_completion=[]
-let g:ycm_python_binary_path = '/usr/bin/python3'
-let g:ycm_rust_src_path = '/usr/lib/rustlib/src/rust/src'
-let g:ycm_autoclose_preview_window_after_completion=1
-let g:ycm_echo_current_diagnostic=1
 " ALE
 let g:ale_enabled = 1
 let g:ale_completion_enabled = 1
@@ -108,19 +141,18 @@ let g:ale_set_highlights = 1
 let g:ale_warn_about_trailing_whitespace = 0
 let g:ale_sign_error = '⤫'
 let g:ale_sign_warning = '⚠'
-let g:airline#extensions#ale#enabled = 1
 let g:ale_python_mypy_options = '--ignore-missing-imports'
 let g:ale_linters = {
-        \   'go': ['go build', 'golint'],
-        \   'rust': ['rustc'],
-        \   'c': ['clang'],
-        \   'yaml': ['yamllint'],
-        \   'json': ['jsonlint'],
-        \   'cpp': ['clang++'],
-        \   'python': ['python', 'pylint', 'mypy'],
-        \   'shell': ['sh', 'shellcheck'],
-        \   'java': [],
-        \}
+            \   'go': ['go build', 'golint'],
+            \   'rust': ['rustc'],
+            \   'c': ['clang'],
+            \   'yaml': ['yamllint'],
+            \   'json': ['jsonlint'],
+            \   'cpp': ['clang++'],
+            \   'python': ['python', 'pylint', 'mypy'],
+            \   'shell': ['sh', 'shellcheck'],
+            \   'java': [],
+            \}
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_save = 1
 let g:ale_lint_on_enter = 1
@@ -140,8 +172,7 @@ map <silent> <leader>[ :<C-u>execute '!zeal ' . &filetype . "," . subtype . ":" 
 map <silent> <C-]> :CtrlPTag<cr><C-\>w
 " Ctrl+T fuzzy find ctags
 noremap <C-T> :CtrlPTag<CR>
-autocmd FileType c,cpp,objc,objcpp,cs,go,javascript,python,rust map <buffer> <C-]> :<C-u>YcmCompleter GoTo<CR>
-autocmd FileType c,cpp,objc,objcpp,cs,go,javascript,python,rust map <buffer> <leader>] :<C-u>YcmCompleter GetDoc<CR>
+nnoremap <C-K> :call LanguageClient_contextMenu()<CR>
 " Ctrl+P fuzzy find files
 noremap <C-P> :CtrlP<CR>
 
@@ -160,17 +191,17 @@ autocmd FileType java map <silent> <C-M> :<C-u>SyntasticCheck<CR>
 
 map <silent> <C-E> :<C-u>call ToggleErrors()<CR>
 function! ToggleErrors()
-  if exists("g:qwindow")
-    lclose
-    unlet g:qwindow
-  else
-    try
-      lopen 10
-      let g:qwindow = 1
-    catch
-      echo "No Errors found!"
-    endtry
-  endif
+    if exists("g:qwindow")
+        lclose
+        unlet g:qwindow
+    else
+        try
+            lopen 10
+            let g:qwindow = 1
+        catch
+            echo "No Errors found!"
+        endtry
+    endif
 endfunction
 
 """ Visual Mode
@@ -214,6 +245,7 @@ set noswapfile
 set encoding=utf8
 set background=dark
 colorscheme hybrid
+let g:airline_theme = "jellybeans"
 set termguicolors
 
 set lazyredraw ttyfast synmaxcol=200 ttimeoutlen=20

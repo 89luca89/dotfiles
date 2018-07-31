@@ -71,6 +71,14 @@ export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 export PATH=$PATH:$HOME/.cargo/bin
 export PATH=$HOME/.local/bin:$PATH
 
+NPM_PACKAGES="${HOME}/.npm-packages"
+
+PATH="$PATH:$NPM_PACKAGES/bin"
+
+# Unset manpath so we can inherit from /etc/manpath via the `manpath` command
+unset MANPATH # delete if you already modified MANPATH elsewhere in your config
+export MANPATH="$NPM_PACKAGES/share/man:$(manpath)"
+
 alias ssh='assh wrapper ssh'
 
 [ -f $HOME/.zsh-history-substring-search.zsh ] && source $HOME/.zsh-history-substring-search.zsh
