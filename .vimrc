@@ -46,7 +46,8 @@ Plug 'honza/vim-snippets'
 Plug 'ryanoasis/vim-devicons'
 
 " color schemes
-Plug 'w0ng/vim-hybrid'
+" Plug 'w0ng/vim-hybrid'
+Plug 'flazz/vim-colorschemes'
 
 call plug#end()               " required
 filetype plugin indent on     " required
@@ -222,12 +223,16 @@ noremap <S-M-Down> :2winc-<cr>
 noremap <S-M-Left> :2winc><cr>
 noremap <S-M-Right> :2winc<<cr>
 
-map <silent> <C-G> :<C-u>call ToggleTheme()<CR>
+map <silent> <C-D> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
+        colorscheme hybrid
     else
         set background=light
+        colorscheme eclipse
+        highlight LineNr guibg=NONE
+        highlight nonText guibg=NONE
     endif
 endfunction
 
@@ -245,7 +250,7 @@ set noswapfile
 set encoding=utf8
 set background=dark
 colorscheme hybrid
-let g:airline_theme = "jellybeans"
+let g:airline_theme = "zenburn"
 set termguicolors
 
 set lazyredraw ttyfast synmaxcol=200 ttimeoutlen=20
