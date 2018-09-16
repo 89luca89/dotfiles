@@ -18,6 +18,7 @@ else
 endif
 
 " Vim LanguageClient setup
+" download for java http://download.eclipse.org/jdtls/milestones/?d
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf'
 Plug 'autozimu/languageclient-neovim', {
@@ -26,15 +27,10 @@ Plug 'autozimu/languageclient-neovim', {
             \ }
 " languages
 Plug 'w0rp/ale'                                                 " linting!
-Plug 'scrooloose/syntastic', { 'for': 'java' }                  " linting!
 Plug 'ludovicchabant/vim-gutentags'                             " tags navigation Ctrl+] or Ctrl+click to jump
-Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java' }
 " snippets
 Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
-
-" Icons
-Plug 'ryanoasis/vim-devicons'
 
 " color schemes
 Plug 'flazz/vim-colorschemes'
@@ -57,6 +53,7 @@ augroup autoformat_settings
     autocmd FileType c,cpp,objc,proto,typescript,javascript,java noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!clang-format -style=file %<CR>:loadview<CR>
     autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!shfmt %<CR>:loadview<CR>
     autocmd FileType ansible,yaml noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!yamlfmt<CR>:loadview<CR>
+    " :call LanguageClient#textDocument_formatting()
 augroup END
 
 """ Git signs in gutter
@@ -100,6 +97,7 @@ let g:LanguageClient_serverCommands = {
             \ 'sh' : ['bash-language-server', 'start'],
             \ 'go' : ['~/.local/go/bin/go-langserver'],
             \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
+            \ 'java': ['~/bin/jdtls'],
             \ }
 " ALE
 let g:ale_enabled = 1
@@ -107,6 +105,7 @@ let g:ale_set_highlights = 1
 let g:ale_lint_on_save = 1
 let g:ale_sign_error = '⤫'
 let g:ale_sign_warning = '⚠'
+" Disable for java, not working well with android
 let g:ale_linters = {
             \ 'c': ['clang'],
             \ 'cpp': ['clang++'],
@@ -114,15 +113,8 @@ let g:ale_linters = {
             \ 'sh': ['bash', 'shellcheck'],
             \ 'go': ['go build', 'golint'],
             \ 'rust': ['rustc'],
-            \ 'java': [],
+            \ 'java': ['javac'],
             \ }
-" We use syntastic for java only for this option
-" we need custom classpaths and ALE does not support it.
-" -> enables definition of .syntastic_java_config file for custom classpaths
-let g:syntastic_java_javac_config_file_enabled = 1
-let g:syntastic_java_checkers=['javac']
-let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': ["java"],'passive_filetypes': [] }
-let g:syntastic_aggregate_errors = 1
 """ Airline -> bufferline
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
@@ -141,16 +133,19 @@ let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 
 """ GENERIC PROGRAMMING
 "
-" Ctrl+] CtrlPTags
 " leader+[ will get the Docsets on Zeal/Dash
 let g:subtype = ""
 map <silent> <leader>[ :<C-u>execute '!zeal ' . &filetype . "," . subtype . ":" . expand("<cword>") . " &>> /dev/null &"<CR><CR>
+
+" Ctrl+] goTo Definition, default CtrlPTags, if present use Lang Server
 map <silent> <C-]> :CtrlPTag<cr><C-\>w
+autocmd FileType c,cpp,python,sh,go,rust map <silent> <C-]> :call LanguageClient#textDocument_definition()<cr>
 " Ctrl+T fuzzy find ctags
 noremap <C-T> :CtrlPTag<CR>
-nnoremap <C-K> :call LanguageClient_contextMenu()<CR>
 " Ctrl+P fuzzy find files
 noremap <C-P> :CtrlP<CR>
+" Ctrl+\ call Lang Server context menu
+nnoremap <C-\> :call LanguageClient_contextMenu()<CR>
 
 " Ctrl+B open/close file explorer
 noremap <C-B> :NERDTreeToggle<CR>
@@ -159,8 +154,6 @@ noremap <C-N> :NERDTreeFind<CR>
 
 " Ctrl-E show/hide errors window
 map <silent> <C-M> :<C-u>ALELint<CR>
-autocmd FileType java map <silent> <C-M> :<C-u>SyntasticCheck<CR>
-
 map <silent> <C-E> :<C-u>call ToggleErrors()<CR>
 function! ToggleErrors()
     if exists("g:qwindow")
