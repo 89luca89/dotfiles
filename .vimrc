@@ -4,10 +4,9 @@ filetype off                  " required
 call plug#begin('~/.vim/plugged')
 " utilities
 Plug 'scrooloose/nerdtree'                                      " split file manager
-Plug 'ctrlpvim/ctrlp.vim'                                       " fuzzy finder
 Plug 'vim-airline/vim-airline'                                  " tabs and statusline
-Plug 'vim-airline/vim-airline-themes'
 Plug 'airblade/vim-gitgutter'                                   " +,-,~ on modified lines in git repo
+Plug 'ctrlpvim/ctrlp.vim'                                       " fuzzy finder
 
 " Deoplete
 if has('nvim')
@@ -19,25 +18,17 @@ else
 endif
 
 " Vim LanguageClient setup
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf'
-Plug 'autozimu/LanguageClient-neovim', {
+Plug 'autozimu/languageclient-neovim', {
             \ 'branch': 'next',
             \ 'do': 'bash install.sh',
             \ }
-
 " languages
-Plug 'sheerun/vim-polyglot', { 'do': './build' }                " lang packs!
 Plug 'w0rp/ale'                                                 " linting!
 Plug 'scrooloose/syntastic', { 'for': 'java' }                  " linting!
-Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java' }         " java
-Plug 'zchee/deoplete-jedi', {'for': 'python'}                   " python
-Plug 'zchee/deoplete-clang', {'for': ['c', 'cpp', 'objc'] }
-Plug 'sebastianmarkow/deoplete-rust', { 'for': 'rust' }         " rust
-Plug 'zchee/deoplete-go', {'for': 'go', 'do': 'make'}           " GoLang
-Plug 'fatih/vim-go', { 'for': 'go', 'do': ':GoUpdateBinaries' } " GoLang
 Plug 'ludovicchabant/vim-gutentags'                             " tags navigation Ctrl+] or Ctrl+click to jump
-" code completion engine (all language depend from this: C,C++,Java,
-" Python2/3, Rust, Go, Js/Ts)
+Plug 'artur-shaik/vim-javacomplete2', { 'for': 'java' }
 " snippets
 Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
@@ -46,7 +37,6 @@ Plug 'honza/vim-snippets'
 Plug 'ryanoasis/vim-devicons'
 
 " color schemes
-" Plug 'w0ng/vim-hybrid'
 Plug 'flazz/vim-colorschemes'
 
 call plug#end()               " required
@@ -64,7 +54,7 @@ augroup autoformat_settings
     autocmd FileType html,css,json noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!js-beautify %<CR>:loadview<CR>
     autocmd FileType rust noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!rustfmt %<CR>:loadview<CR>
     autocmd FileType python noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!autopep8 %<CR>:loadview<CR>
-    autocmd FileType c,cpp,objc,proto,typescript,javascript,java noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!clang-format -style=Chromium %<CR>:loadview<CR>
+    autocmd FileType c,cpp,objc,proto,typescript,javascript,java noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!clang-format -style=file %<CR>:loadview<CR>
     autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!shfmt %<CR>:loadview<CR>
     autocmd FileType ansible,yaml noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!yamlfmt<CR>:loadview<CR>
 augroup END
@@ -81,6 +71,10 @@ let g:NERDTreeDirArrowExpandable = '▸'
 let g:NERDTreeDirArrowCollapsible = '▾'
 
 """ CtrlP
+" Use Ripgrep = superfast
+set grepprg=rg
+let g:ctrlp_user_command = 'rg %s --files --color=never --glob ""'
+let g:ctrlp_clear_cache_on_exit = 0
 " set ctrlp to same working directory
 let g:ctrlp_working_path_mode = 'ra'
 " exclude compiled files class and svns
@@ -88,10 +82,6 @@ let g:ctrlp_custom_ignore = {
             \ 'dir':  '\v[\/]\.(git|hg|svn|bin|out)$',
             \ 'file': '\v\.(exe|so|dll|class|bin|out)$',
             \ }
-" Use Ripgrep = superfast
-set grepprg=rg
-let g:ctrlp_user_command = 'rg %s --files --color=never --glob ""'
-let g:ctrlp_clear_cache_on_exit = 0
 
 " Path to python interpreter for neovim
 let g:python3_host_prog  = '/usr/bin/python3'
@@ -102,24 +92,37 @@ let g:deoplete#enable_at_startup = 1
 let g:deoplete#enable_smart_case = 1
 let g:deoplete#auto_completion_start_length = 2
 let g:deoplete#manual_completion_start_length = 0
-let g:deoplete#sources#clang#libclang_path="/usr/lib64/libclang.so"
-let g:deoplete#sources#clang#clang_header="/usr/lib64/clang"
-let g:deoplete#sources#go#gocode_binary="/home/luca-linux/.local/go/bin/gocode"
-let g:deoplete#sources#go#cgo#libclang_path="/usr/lib64/libclang.so"
-let g:jedi#auto_vim_configuration = 0
-let g:jedi#completions_enabled = 0
-let g:jedi#popup_on_dot = 0
-let g:jedi#popup_select_first = 0
-let g:jedi#show_call_signatures = 0
-let g:jedi#smart_auto_mappings = 0
 
 let g:LanguageClient_serverCommands = {
-            \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
+            \ 'c': ['clangd'],
+            \ 'cpp': ['clangd'],
             \ 'python': ['/usr/local/bin/pyls'],
-            \ 'go' : ['~/.local/go/bin/go-langserver'],
             \ 'sh' : ['bash-language-server', 'start'],
+            \ 'go' : ['~/.local/go/bin/go-langserver'],
+            \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
             \ }
-
+" ALE
+let g:ale_enabled = 1
+let g:ale_set_highlights = 1
+let g:ale_lint_on_save = 1
+let g:ale_sign_error = '⤫'
+let g:ale_sign_warning = '⚠'
+let g:ale_linters = {
+            \ 'c': ['clang'],
+            \ 'cpp': ['clang++'],
+            \ 'python': ['python', 'pylint'],
+            \ 'sh': ['bash', 'shellcheck'],
+            \ 'go': ['go build', 'golint'],
+            \ 'rust': ['rustc'],
+            \ 'java': [],
+            \ }
+" We use syntastic for java only for this option
+" we need custom classpaths and ALE does not support it.
+" -> enables definition of .syntastic_java_config file for custom classpaths
+let g:syntastic_java_javac_config_file_enabled = 1
+let g:syntastic_java_checkers=['javac']
+let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': ["java"],'passive_filetypes': [] }
+let g:syntastic_aggregate_errors = 1
 """ Airline -> bufferline
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
@@ -135,34 +138,6 @@ let g:UltiSnipsListSnippets="<c-h>"
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
-" ALE
-let g:ale_enabled = 1
-let g:ale_completion_enabled = 1
-let g:ale_set_highlights = 1
-let g:ale_warn_about_trailing_whitespace = 0
-let g:ale_sign_error = '⤫'
-let g:ale_sign_warning = '⚠'
-let g:ale_python_mypy_options = '--ignore-missing-imports'
-let g:ale_linters = {
-            \   'go': ['go build', 'golint'],
-            \   'rust': ['rustc'],
-            \   'c': ['clang'],
-            \   'yaml': ['yamllint'],
-            \   'json': ['jsonlint'],
-            \   'cpp': ['clang++'],
-            \   'python': ['python', 'pylint', 'mypy'],
-            \   'shell': ['sh', 'shellcheck'],
-            \   'java': [],
-            \}
-let g:ale_lint_on_text_changed = 'never'
-let g:ale_lint_on_save = 1
-let g:ale_lint_on_enter = 1
-" We use syntastic for java only for this option
-" we need custom classpaths and ALE does not support it.
-let g:syntastic_java_javac_config_file_enabled = 1                  " enables definition of .syntastic_java_config file for custom classpaths
-let g:syntastic_java_checkers=['javac']
-let g:syntastic_aggregate_errors = 1
-let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': ["java"],'passive_filetypes': [] }
 
 """ GENERIC PROGRAMMING
 "
@@ -176,10 +151,6 @@ noremap <C-T> :CtrlPTag<CR>
 nnoremap <C-K> :call LanguageClient_contextMenu()<CR>
 " Ctrl+P fuzzy find files
 noremap <C-P> :CtrlP<CR>
-
-" F-8 willl perform advanced code analyzing for JAVA
-" depends on PMD and this file https://gist.github.com/89luca89/37930d89082d48441cd6fa42d1bd9bea
-autocmd FileType java noremap <buffer> <F8> :<C-u>:new<CR>:0read !analyze-pmd<CR>gg
 
 " Ctrl+B open/close file explorer
 noremap <C-B> :NERDTreeToggle<CR>
@@ -250,9 +221,9 @@ set noswapfile
 set encoding=utf8
 set background=dark
 colorscheme hybrid
-let g:airline_theme = "zenburn"
 set termguicolors
 
+set signcolumn=yes
 set lazyredraw ttyfast synmaxcol=200 ttimeoutlen=20
 set mouse=a                                             " it's always useful to use the mouse then needed
 set hidden                                              " change buffer without saving
