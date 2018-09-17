@@ -139,13 +139,27 @@ map <silent> <leader>[ :<C-u>execute '!zeal ' . &filetype . "," . subtype . ":" 
 
 " Ctrl+] goTo Definition, default CtrlPTags, if present use Lang Server
 map <silent> <C-]> :CtrlPTag<cr><C-\>w
-autocmd FileType c,cpp,python,sh,go,rust map <silent> <C-]> :call LanguageClient#textDocument_definition()<cr>
+
+" Language client shortcuts with leader:
+" h -> hover
+" m -> context menu
+" r -> rename/refactor
+" t -> tags/symbols
+" g -> goto definition
+" ] -> references
+" l -> format
+map <silent> <leader>h :call LanguageClient_textDocument_hover()<cr>
+map <silent> <leader>m :call LanguageClient_contextMenu()<cr>
+map <silent> <leader>r :call LanguageClient_textDocument_rename()<cr>
+map <silent> <leader>t :call LanguageClient_textDocument_documentSymbol()<cr>
+map <silent> <leader>g :call LanguageClient#textDocument_definition()<cr>
+map <silent> <leader>] :call LanguageClient#textDocument_references()<cr>
+map <silent> <leader>l :call LanguageClient#textDocument_formatting()<cr>
+
 " Ctrl+T fuzzy find ctags
 noremap <C-T> :CtrlPTag<CR>
 " Ctrl+P fuzzy find files
 noremap <C-P> :CtrlP<CR>
-" Ctrl+\ call Lang Server context menu
-nnoremap <C-\> :call LanguageClient_contextMenu()<CR>
 
 " Ctrl+B open/close file explorer
 noremap <C-B> :NERDTreeToggle<CR>
