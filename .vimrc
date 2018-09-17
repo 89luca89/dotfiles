@@ -149,7 +149,6 @@ map <silent> <C-]> :CtrlPTag<cr><C-\>w
 " l -> format
 " i -> implementation
 " td -> type definition
-" tt -> total tags
 map <silent> <leader>h :call LanguageClient_textDocument_hover()<cr>
 map <silent> <leader>m :call LanguageClient_contextMenu()<cr>
 map <silent> <leader>r :call LanguageClient_textDocument_rename()<cr>
@@ -159,7 +158,6 @@ map <silent> <leader>rf :call LanguageClient#textDocument_references()<cr>
 map <silent> <leader>l :call LanguageClient#textDocument_formatting()<cr>
 map <silent> <leader>i :call LanguageClient_textDocument_implementation()<cr>
 map <silent> <leader>td :call LanguageClient_textDocument_typeDefinition()<cr>
-map <silent> <leader>tt :call LanguageClient_textDocument_workspace_symbol()<cr>
 
 
 " Ctrl+T fuzzy find ctags
