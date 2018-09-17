@@ -53,7 +53,6 @@ augroup autoformat_settings
     autocmd FileType c,cpp,objc,proto,typescript,javascript,java noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!clang-format -style=file %<CR>:loadview<CR>
     autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!shfmt %<CR>:loadview<CR>
     autocmd FileType ansible,yaml noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!yamlfmt<CR>:loadview<CR>
-    " :call LanguageClient#textDocument_formatting()
 augroup END
 
 """ Git signs in gutter
@@ -148,13 +147,20 @@ map <silent> <C-]> :CtrlPTag<cr><C-\>w
 " g -> goto definition
 " ] -> references
 " l -> format
+" i -> implementation
+" td -> type definition
+" tt -> total tags
 map <silent> <leader>h :call LanguageClient_textDocument_hover()<cr>
 map <silent> <leader>m :call LanguageClient_contextMenu()<cr>
 map <silent> <leader>r :call LanguageClient_textDocument_rename()<cr>
 map <silent> <leader>t :call LanguageClient_textDocument_documentSymbol()<cr>
 map <silent> <leader>g :call LanguageClient#textDocument_definition()<cr>
-map <silent> <leader>] :call LanguageClient#textDocument_references()<cr>
+map <silent> <leader>rf :call LanguageClient#textDocument_references()<cr>
 map <silent> <leader>l :call LanguageClient#textDocument_formatting()<cr>
+map <silent> <leader>i :call LanguageClient_textDocument_implementation()<cr>
+map <silent> <leader>td :call LanguageClient_textDocument_typeDefinition()<cr>
+map <silent> <leader>tt :call LanguageClient_textDocument_workspace_symbol()<cr>
+
 
 " Ctrl+T fuzzy find ctags
 noremap <C-T> :CtrlPTag<CR>
@@ -187,20 +193,6 @@ endfunction
 """ Ctrl-C copy visual selection to clipboard
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 
-""" Tabs Navigation
-" navigate tabs Tab (fw) S-Tab (prev)
-map <Tab> :bn<CR>
-map <S-Tab> :bp<CR>
-" Ctrl+C close buffer ( pipe commands to fix behaviour with splits and netrw/nerdtree)
-nnoremap <C-c> :bp<bar>sp<bar>bn<bar>bd!<CR>
-
-" " Resize split window horizontally and vertically
-" Shortcuts to Shift-Alt-Arrows - Alt is mapped as M in vim
-noremap <S-M-Up> :2winc+<cr>
-noremap <S-M-Down> :2winc-<cr>
-noremap <S-M-Left> :2winc><cr>
-noremap <S-M-Right> :2winc<<cr>
-
 map <silent> <C-D> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
@@ -217,6 +209,20 @@ endfunction
 " ==========================================================================="
 " Resize Split When the window is resized"
 autocmd VimResized * :wincmd =
+
+""" Tabs Navigation
+" navigate tabs Tab (fw) S-Tab (prev)
+map <Tab> :bn<CR>
+map <S-Tab> :bp<CR>
+" Ctrl+C close buffer ( pipe commands to fix behaviour with splits and netrw/nerdtree)
+nnoremap <C-c> :bp<bar>sp<bar>bn<bar>bd!<CR>
+
+" " Resize split window horizontally and vertically
+" Shortcuts to Shift-Alt-Arrows - Alt is mapped as M in vim
+noremap <S-M-Up> :2winc+<cr>
+noremap <S-M-Down> :2winc-<cr>
+noremap <S-M-Left> :2winc><cr>
+noremap <S-M-Right> :2winc<<cr>
 
 " Persistent undo
 set undofile
