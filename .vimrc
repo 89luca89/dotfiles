@@ -52,7 +52,7 @@ augroup autoformat_settings
     autocmd FileType python noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!autopep8 %<CR>:loadview<CR>
     autocmd FileType c,cpp,objc,proto,typescript,javascript,java noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!clang-format -style=file %<CR>:loadview<CR>
     autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!shfmt %<CR>:loadview<CR>
-    autocmd FileType ansible,yaml noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!yamlfmt<CR>:loadview<CR>
+    autocmd FileType yaml noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!yamlfmt<CR>:loadview<CR>
 augroup END
 
 """ Git signs in gutter
@@ -97,6 +97,7 @@ let g:LanguageClient_serverCommands = {
             \ 'go' : ['~/.local/go/bin/go-langserver'],
             \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
             \ 'java': ['~/bin/jdtls'],
+            \ 'dockerfile': ['docker-langserver', '--stdio'],
             \ }
 " ALE
 let g:ale_enabled = 1
@@ -113,6 +114,7 @@ let g:ale_linters = {
             \ 'go': ['go build', 'golint'],
             \ 'rust': ['rustc'],
             \ 'java': ['javac'],
+            \ 'yaml': ['yamllint'],
             \ }
 """ Airline -> bufferline
 let g:airline#extensions#tabline#enabled = 1
