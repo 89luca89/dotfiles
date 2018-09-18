@@ -198,6 +198,7 @@ function! ToggleTheme()
     if &background == 'light'
         set background=dark
         colorscheme hybrid
+        highlight Normal guibg=#111111
     else
         set background=light
         colorscheme eclipse
@@ -230,12 +231,6 @@ set undodir=$HOME/.vim/undo
 set undolevels=1000
 set noswapfile
 
-" play nicely with modern graphics
-set encoding=utf8
-set background=dark
-colorscheme hybrid
-set termguicolors
-
 set signcolumn=yes
 set lazyredraw ttyfast synmaxcol=200 ttimeoutlen=20
 set mouse=a                                             " it's always useful to use the mouse then needed
@@ -251,3 +246,10 @@ set number                                              " Enable line numbers
 set updatetime=1000                                     " reduce update time from 4s to 1s
 let &colorcolumn="80"
 syntax on
+
+" play nicely with modern graphics
+set encoding=utf8
+set background=dark
+colorscheme hybrid
+set termguicolors
+highlight Normal guibg=#111111
