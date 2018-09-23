@@ -43,7 +43,7 @@ alias ll='ls -Ahl --group-directories-first --color'
 alias tree='tree -C'
 alias top='top -o %CPU'
 alias open='xdg-open'
-alias gcc='gcc -Wall -Wextra'
+alias gcc='gcc -Wall -Wextra -lm'
 
 alias rambox='ssh -N -X -C -c aes128-ctr yoga "rambox"'
 

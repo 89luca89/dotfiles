@@ -97,7 +97,6 @@ let g:LanguageClient_serverCommands = {
             \ 'go' : ['~/.local/go/bin/go-langserver'],
             \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
             \ 'java': ['~/bin/jdtls'],
-            \ 'dockerfile': ['docker-langserver', '--stdio'],
             \ }
 " ALE
 let g:ale_enabled = 1
