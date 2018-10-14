@@ -34,6 +34,7 @@ Plug 'honza/vim-snippets'
 
 " color schemes
 Plug 'flazz/vim-colorschemes'
+Plug 'vim-airline/vim-airline-themes'
 
 call plug#end()               " required
 filetype plugin indent on     " required
@@ -118,7 +119,6 @@ let g:ale_linters = {
 """ Airline -> bufferline
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
-let g:airline#extensions#ale#enabled = 1
 """ GutenTags
 let g:gutentags_enabled = 1
 let g:gutentags_generate_on_empty_buffer = 1
@@ -197,10 +197,9 @@ function! ToggleTheme()
     if &background == 'light'
         set background=dark
         colorscheme hybrid
-        highlight Normal guibg=#111111
     else
         set background=light
-        colorscheme eclipse
+        colorscheme visualstudio
         highlight LineNr guibg=NONE
         highlight nonText guibg=NONE
     endif
@@ -251,4 +250,3 @@ set encoding=utf8
 set background=dark
 colorscheme hybrid
 set termguicolors
-highlight Normal guibg=#111111
