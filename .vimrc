@@ -8,25 +8,13 @@ Plug 'vim-airline/vim-airline'                                  " tabs and statu
 Plug 'airblade/vim-gitgutter'                                   " +,-,~ on modified lines in git repo
 Plug 'ctrlpvim/ctrlp.vim'                                       " fuzzy finder
 
-" Deoplete
-if has('nvim')
-    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-else
-    Plug 'Shougo/deoplete.nvim'
-    Plug 'roxma/nvim-yarp'
-    Plug 'roxma/vim-hug-neovim-rpc'
-endif
-
 " Vim LanguageClient setup
 " download for java http://download.eclipse.org/jdtls/milestones/?d
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'junegunn/fzf'
-Plug 'autozimu/languageclient-neovim', {
-            \ 'branch': 'next',
-            \ 'do': 'bash install.sh',
-            \ }
-" languages
-Plug 'w0rp/ale'                                                 " linting!
+Plug 'prabirshrestha/async.vim'
+Plug 'prabirshrestha/vim-lsp'
+Plug 'prabirshrestha/asyncomplete-lsp.vim'
+Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'prabirshrestha/asyncomplete-ultisnips.vim'
 Plug 'ludovicchabant/vim-gutentags'                             " tags navigation Ctrl+] or Ctrl+click to jump
 " snippets
 Plug 'sirver/ultisnips'
@@ -60,8 +48,6 @@ augroup END
 let g:gitgutter_grep = 'rg'
 
 " Icons
-let g:WebDevIconsUnicodeDecorateFolderNodes = 1
-let g:DevIconsEnableFoldersOpenClose = 1
 let NERDTreeShowHidden=1
 let NERDTreeHijackNetrw=1
 let g:NERDTreeDirArrowExpandable = '▸'
@@ -84,38 +70,64 @@ let g:ctrlp_custom_ignore = {
 let g:python3_host_prog  = '/usr/bin/python3'
 " Skip the check of neovim module
 let g:python3_host_skip_check = 1
-" Deoplete
-let g:deoplete#enable_at_startup = 1
-let g:deoplete#enable_smart_case = 1
-let g:deoplete#auto_completion_start_length = 2
-let g:deoplete#manual_completion_start_length = 0
+" Async Complete + LSP
+let g:asyncomplete_auto_popup = 1
+let g:asyncomplete_remove_duplicates = 1
+let g:lsp_signs_enabled = 1           " enable signs
+let g:lsp_diagnostics_echo_cursor = 1 " enable echo under cursor when in normal mode
+set completeopt+=preview
+if executable('clangd')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'clangd',
+        \ 'cmd': {server_info->['clangd']},
+        \ 'whitelist': ['c', 'cpp', 'objc', 'objcpp'],
+        \ })
+endif
+if executable('pyls')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'pyls',
+        \ 'cmd': {server_info->['pyls']},
+        \ 'whitelist': ['python'],
+        \ })
+endif
+if executable('go-langserver')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'go-langserver',
+        \ 'cmd': {server_info->['go-langserver', '-mode', 'stdio']},
+        \ 'whitelist': ['go'],
+        \ })
+endif
+if executable('rls')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'rls',
+        \ 'cmd': {server_info->['rustup', 'run', 'nightly', 'rls']},
+        \ 'whitelist': ['rust'],
+        \ })
+endif
+if executable('jdtls')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'jtdls',
+        \ 'cmd': {server_info->['~/bin/jdtls']},
+        \ 'whitelist': ['java'],
+        \ })
+endif
 
-let g:LanguageClient_serverCommands = {
-            \ 'c': ['clangd'],
-            \ 'cpp': ['clangd'],
-            \ 'python': ['/usr/local/bin/pyls'],
-            \ 'sh' : ['bash-language-server', 'start'],
-            \ 'go' : ['~/.local/go/bin/go-langserver'],
-            \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
-            \ 'java': ['~/bin/jdtls'],
-            \ }
-" ALE
-let g:ale_enabled = 1
-let g:ale_set_highlights = 1
-let g:ale_lint_on_save = 1
-let g:ale_sign_error = '⤫'
-let g:ale_sign_warning = '⚠'
-" Disable for java, not working well with android
-let g:ale_linters = {
-            \ 'c': ['clang'],
-            \ 'cpp': ['clang++'],
-            \ 'python': ['python', 'pylint'],
-            \ 'sh': ['bash', 'shellcheck'],
-            \ 'go': ['go build', 'golint'],
-            \ 'rust': ['rustc'],
-            \ 'java': ['javac'],
-            \ 'yaml': ['yamllint'],
-            \ }
+if executable('bash-language-server')
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'bash-language-server',
+        \ 'cmd': {server_info->['bash-language-server', 'start']},
+        \ 'whitelist': ['sh'],
+        \ })
+endif
+if has('python3')
+    let g:UltiSnipsExpandTrigger="<c-e>"
+    call asyncomplete#register_source(asyncomplete#sources#ultisnips#get_source_options({
+        \ 'name': 'ultisnips',
+        \ 'whitelist': ['*'],
+        \ 'completor': function('asyncomplete#sources#ultisnips#completor'),
+        \ }))
+endif
+
 """ Airline -> bufferline
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
@@ -141,24 +153,18 @@ map <silent> <leader>[ :<C-u>execute '!zeal ' . &filetype . "," . subtype . ":" 
 map <silent> <C-]> :CtrlPTag<cr><C-\>w
 
 " Language client shortcuts with leader:
-" h -> hover
-" m -> context menu
-" r -> rename/refactor
-" t -> tags/symbols
-" g -> goto definition
-" ] -> references
-" l -> format
-" i -> implementation
-" td -> type definition
-map <silent> <leader>h :call LanguageClient_textDocument_hover()<cr>
-map <silent> <leader>m :call LanguageClient_contextMenu()<cr>
-map <silent> <leader>r :call LanguageClient_textDocument_rename()<cr>
-map <silent> <leader>t :call LanguageClient_textDocument_documentSymbol()<cr>
-map <silent> <leader>g :call LanguageClient#textDocument_definition()<cr>
-map <silent> <leader>rf :call LanguageClient#textDocument_references()<cr>
-map <silent> <leader>l :call LanguageClient#textDocument_formatting()<cr>
-map <silent> <leader>i :call LanguageClient_textDocument_implementation()<cr>
-map <silent> <leader>td :call LanguageClient_textDocument_typeDefinition()<cr>
+map <silent> <leader>h :LspHover<cr>
+map <silent> <leader>e :LspDocumentDiagnostics<cr>
+map <silent> <leader>m :LspCodeAction<cr>
+map <silent> <leader>r :LspRename<cr>
+map <silent> <leader>t :LspWorkspaceSymbol<cr>
+map <silent> <leader>g :LspDefinition<cr>
+map <silent> <leader>rf :LspReferences<cr>
+map <silent> <leader>l :LspDocumentFormat<cr>
+map <silent> <leader>i :LspImplementation<cr>
+map <silent> <leader>td :LspTypeDefinition<cr>
+map <silent> <leader>ne :LspNextError<cr>
+map <silent> <leader>pe :LspPreviousError<cr>
 
 
 " Ctrl+T fuzzy find ctags
@@ -171,23 +177,6 @@ noremap <C-B> :NERDTreeToggle<CR>
 " Ctrl+N relocate file explorer to opened file
 noremap <C-N> :NERDTreeFind<CR>
 
-" Ctrl-E show/hide errors window
-map <silent> <C-M> :<C-u>ALELint<CR>
-map <silent> <C-E> :<C-u>call ToggleErrors()<CR>
-function! ToggleErrors()
-    if exists("g:qwindow")
-        lclose
-        unlet g:qwindow
-    else
-        try
-            lopen 10
-            let g:qwindow = 1
-        catch
-            echo "No Errors found!"
-        endtry
-    endif
-endfunction
-
 """ Visual Mode
 """ Ctrl-C copy visual selection to clipboard
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
@@ -197,6 +186,7 @@ function! ToggleTheme()
     if &background == 'light'
         set background=dark
         colorscheme hybrid
+        highlight Normal guibg=#111111
     else
         set background=light
         colorscheme visualstudio
@@ -250,3 +240,4 @@ set encoding=utf8
 set background=dark
 colorscheme hybrid
 set termguicolors
+highlight Normal guibg=#111111
