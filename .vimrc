@@ -105,9 +105,11 @@ if executable('rls')
         \ })
 endif
 if executable('jdtls')
+    au FileType java let g:asyncomplete_remove_duplicates = 0
+    au FileType java let g:lsp_signs_enabled = 0
     au User lsp_setup call lsp#register_server({
         \ 'name': 'jtdls',
-        \ 'cmd': {server_info->['~/bin/jdtls']},
+        \ 'cmd': {server_info->[&shell, &shellcmdflag,'~/bin/jdtls']},
         \ 'whitelist': ['java'],
         \ })
 endif
