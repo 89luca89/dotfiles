@@ -129,7 +129,8 @@ map <silent> <leader>h :call LanguageClient_textDocument_hover()<cr>
 map <silent> <leader>m :call LanguageClient_contextMenu()<cr>
 map <silent> <leader>r :call LanguageClient_textDocument_rename()<cr>
 map <silent> <leader>t :call LanguageClient_textDocument_documentSymbol()<cr>
-map <silent> <leader>g :call LanguageClient#textDocument_definition()<cr>
+"map <silent> <leader>g :call LanguageClient#textDocument_definition()<cr>
+map <silent> <leader>g :call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<cr>
 map <silent> <leader>rf :call LanguageClient#textDocument_references()<cr>
 map <silent> <leader>l :call LanguageClient#textDocument_formatting()<cr>
 map <silent> <leader>i :call LanguageClient_textDocument_implementation()<cr>
