@@ -24,6 +24,7 @@ Plug 'autozimu/languageclient-neovim', {
             \ 'branch': 'next',
             \ 'do': 'bash install.sh',
             \ }
+Plug 'junegunn/fzf'
 
 Plug 'ludovicchabant/vim-gutentags'                             " tags navigation Ctrl+] or Ctrl+click to jump
 " snippets
