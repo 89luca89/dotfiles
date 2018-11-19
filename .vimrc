@@ -8,13 +8,23 @@ Plug 'vim-airline/vim-airline'                                  " tabs and statu
 Plug 'airblade/vim-gitgutter'                                   " +,-,~ on modified lines in git repo
 Plug 'ctrlpvim/ctrlp.vim'                                       " fuzzy finder
 
+
+" Deoplete
+if has('nvim')
+    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+else
+    Plug 'Shougo/deoplete.nvim'
+    Plug 'roxma/nvim-yarp'
+    Plug 'roxma/vim-hug-neovim-rpc'
+endif
+
 " Vim LanguageClient setup
 " download for java http://download.eclipse.org/jdtls/milestones/?d
-Plug 'prabirshrestha/async.vim'
-Plug 'prabirshrestha/vim-lsp'
-Plug 'prabirshrestha/asyncomplete-lsp.vim'
-Plug 'prabirshrestha/asyncomplete.vim'
-Plug 'prabirshrestha/asyncomplete-ultisnips.vim'
+Plug 'autozimu/languageclient-neovim', {
+            \ 'branch': 'next',
+            \ 'do': 'bash install.sh',
+            \ }
+
 Plug 'ludovicchabant/vim-gutentags'                             " tags navigation Ctrl+] or Ctrl+click to jump
 " snippets
 Plug 'sirver/ultisnips'
@@ -70,65 +80,24 @@ let g:ctrlp_custom_ignore = {
 let g:python3_host_prog  = '/usr/bin/python3'
 " Skip the check of neovim module
 let g:python3_host_skip_check = 1
-" Async Complete + LSP
-let g:asyncomplete_auto_popup = 1
-let g:asyncomplete_remove_duplicates = 1
-let g:lsp_signs_enabled = 1           " enable signs
-let g:lsp_diagnostics_echo_cursor = 1 " enable echo under cursor when in normal mode
-set completeopt+=preview
-if executable('clangd')
-    au User lsp_setup call lsp#register_server({
-        \ 'name': 'clangd',
-        \ 'cmd': {server_info->['clangd']},
-        \ 'whitelist': ['c', 'cpp', 'objc', 'objcpp'],
-        \ })
-endif
-if executable('pyls')
-    au User lsp_setup call lsp#register_server({
-        \ 'name': 'pyls',
-        \ 'cmd': {server_info->['pyls']},
-        \ 'whitelist': ['python'],
-        \ })
-endif
-if executable('go-langserver')
-    au User lsp_setup call lsp#register_server({
-        \ 'name': 'go-langserver',
-        \ 'cmd': {server_info->['go-langserver', '-mode', 'stdio']},
-        \ 'whitelist': ['go'],
-        \ })
-endif
-if executable('rls')
-    au User lsp_setup call lsp#register_server({
-        \ 'name': 'rls',
-        \ 'cmd': {server_info->['rustup', 'run', 'nightly', 'rls']},
-        \ 'whitelist': ['rust'],
-        \ })
-endif
-if executable('jdtls')
-    au FileType java let g:asyncomplete_remove_duplicates = 0
-    au FileType java let g:lsp_signs_enabled = 0
-    au User lsp_setup call lsp#register_server({
-        \ 'name': 'jtdls',
-        \ 'cmd': {server_info->[&shell, &shellcmdflag,'~/bin/jdtls']},
-        \ 'whitelist': ['java'],
-        \ })
-endif
+" Deoplete
+let g:deoplete#enable_at_startup = 1
+let g:deoplete#enable_smart_case = 1
+let g:deoplete#auto_completion_start_length = 2
+let g:deoplete#manual_completion_start_length = 0
 
-if executable('bash-language-server')
-    au User lsp_setup call lsp#register_server({
-        \ 'name': 'bash-language-server',
-        \ 'cmd': {server_info->['bash-language-server', 'start']},
-        \ 'whitelist': ['sh'],
-        \ })
-endif
-if has('python3')
-    let g:UltiSnipsExpandTrigger="<c-e>"
-    call asyncomplete#register_source(asyncomplete#sources#ultisnips#get_source_options({
-        \ 'name': 'ultisnips',
-        \ 'whitelist': ['*'],
-        \ 'completor': function('asyncomplete#sources#ultisnips#completor'),
-        \ }))
-endif
+" Async Complete + LSP
+set completeopt+=preview
+set signcolumn=yes
+let g:LanguageClient_serverCommands = {
+            \ 'c': ['clangd'],
+            \ 'cpp': ['clangd'],
+            \ 'python': ['/usr/local/bin/pyls'],
+            \ 'sh' : ['bash-language-server', 'start'],
+            \ 'go' : ['~/.local/go/bin/go-langserver'],
+            \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
+            \ 'java': ['~/bin/jdtls'],
+            \ }
 
 """ Airline -> bufferline
 let g:airline#extensions#tabline#enabled = 1
@@ -155,18 +124,15 @@ map <silent> <leader>[ :<C-u>execute '!zeal ' . &filetype . "," . subtype . ":" 
 map <silent> <C-]> :CtrlPTag<cr><C-\>w
 
 " Language client shortcuts with leader:
-map <silent> <leader>h :LspHover<cr>
-map <silent> <leader>e :LspDocumentDiagnostics<cr>
-map <silent> <leader>m :LspCodeAction<cr>
-map <silent> <leader>r :LspRename<cr>
-map <silent> <leader>t :LspWorkspaceSymbol<cr>
-map <silent> <leader>g :LspDefinition<cr>
-map <silent> <leader>rf :LspReferences<cr>
-map <silent> <leader>l :LspDocumentFormat<cr>
-map <silent> <leader>i :LspImplementation<cr>
-map <silent> <leader>td :LspTypeDefinition<cr>
-map <silent> <leader>ne :LspNextError<cr>
-map <silent> <leader>pe :LspPreviousError<cr>
+map <silent> <leader>h :call LanguageClient_textDocument_hover()<cr>
+map <silent> <leader>m :call LanguageClient_contextMenu()<cr>
+map <silent> <leader>r :call LanguageClient_textDocument_rename()<cr>
+map <silent> <leader>t :call LanguageClient_textDocument_documentSymbol()<cr>
+map <silent> <leader>g :call LanguageClient#textDocument_definition()<cr>
+map <silent> <leader>rf :call LanguageClient#textDocument_references()<cr>
+map <silent> <leader>l :call LanguageClient#textDocument_formatting()<cr>
+map <silent> <leader>i :call LanguageClient_textDocument_implementation()<cr>
+map <silent> <leader>td :call LanguageClient_textDocument_typeDefinition()<cr>
 
 
 " Ctrl+T fuzzy find ctags
