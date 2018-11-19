@@ -90,6 +90,7 @@ let g:deoplete#manual_completion_start_length = 0
 " Async Complete + LSP
 set completeopt+=preview
 set signcolumn=yes
+let g:LanguageClient_diagnosticsEnable = 1
 let g:LanguageClient_serverCommands = {
             \ 'c': ['clangd'],
             \ 'cpp': ['clangd'],
@@ -136,6 +137,7 @@ map <silent> <leader>rf :call LanguageClient#textDocument_references()<cr>
 map <silent> <leader>l :call LanguageClient#textDocument_formatting()<cr>
 map <silent> <leader>i :call LanguageClient_textDocument_implementation()<cr>
 map <silent> <leader>td :call LanguageClient_textDocument_typeDefinition()<cr>
+map <silent> <leader>e :call LanguageClient#explainErrorAtPoint()<cr>
 
 " Ctrl+T fuzzy find ctags
 noremap <C-T> :CtrlPTag<CR>
