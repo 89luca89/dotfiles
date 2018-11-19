@@ -67,6 +67,7 @@ export LC_ALL=en_US.UTF-8
 #export GOPATH=/usr/local/go
 export GOPATH=$HOME/.local/go
 #export GOROOT=/usr/bin/go
+export PATH=$PATH:$ANDROID_HOME/platform-tools
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 export PATH=$PATH:$HOME/.cargo/bin
 export PATH=$HOME/.local/bin:$PATH
