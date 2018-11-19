@@ -131,11 +131,11 @@ map <silent> <leader>r :call LanguageClient_textDocument_rename()<cr>
 map <silent> <leader>t :call LanguageClient_textDocument_documentSymbol()<cr>
 "map <silent> <leader>g :call LanguageClient#textDocument_definition()<cr>
 map <silent> <leader>g :call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<cr>
+map <silent> <leader>a :call LanguageClient#textDocument_codeAction()<cr>
 map <silent> <leader>rf :call LanguageClient#textDocument_references()<cr>
 map <silent> <leader>l :call LanguageClient#textDocument_formatting()<cr>
 map <silent> <leader>i :call LanguageClient_textDocument_implementation()<cr>
 map <silent> <leader>td :call LanguageClient_textDocument_typeDefinition()<cr>
-
 
 " Ctrl+T fuzzy find ctags
 noremap <C-T> :CtrlPTag<CR>
