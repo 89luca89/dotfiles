@@ -20,12 +20,11 @@ endif
 
 " Vim LanguageClient setup
 " download for java http://download.eclipse.org/jdtls/milestones/?d
+Plug 'junegunn/fzf'
 Plug 'autozimu/languageclient-neovim', {
             \ 'branch': 'next',
             \ 'do': 'bash install.sh',
             \ }
-Plug 'w0rp/ale'
-Plug 'junegunn/fzf'
 
 " Plug 'ludovicchabant/vim-gutentags'                             " tags navigation Ctrl+] or Ctrl+click to jump
 " snippets
@@ -86,11 +85,12 @@ let g:python3_host_skip_check = 1
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#enable_smart_case = 1
 let g:deoplete#auto_completion_start_length = 2
-let g:deoplete#manual_completion_start_length = 0
+let g:deoplete#manual_completion_start_length = 1
 
 " Async Complete + LSP
 set completeopt+=preview
 set signcolumn=yes
+let g:LanguageClient_autoStart = 1
 let g:LanguageClient_diagnosticsEnable = 1
 let g:LanguageClient_serverCommands = {
             \ 'c': ['clangd'],
@@ -101,32 +101,11 @@ let g:LanguageClient_serverCommands = {
             \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
             \ 'java': ['~/bin/jdtls'],
             \ }
-" ALE
-let g:ale_enabled = 1
-let g:ale_set_highlights = 1
-let g:ale_lint_on_save = 1
-let g:ale_sign_error = '⤫'
-let g:ale_sign_warning = '⚠'
-" Disable for java, not working well with android
-let g:ale_linters = {
-            \ 'c': ['clang'],
-            \ 'cpp': ['clang++'],
-            \ 'python': ['python', 'pylint'],
-            \ 'sh': ['bash', 'shellcheck'],
-            \ 'go': ['go build', 'golint'],
-            \ 'rust': ['rustc'],
-            \ 'java': ['javac'],
-            \ }
-
+            "\ 'xml': ['~/bin/xmlls'],
+            "\ 'yaml': ['node', '~/Programs/yaml-language-server/out/server/src/server.js'],
 """ Airline -> bufferline
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
-""" GutenTags
-"et g:gutentags_enabled = 1
-"et g:gutentags_generate_on_empty_buffer = 1
-"et g:gutentags_cache_dir = "~/.vim/tags"
-"et g:gutentags_resolve_symlinks = 1
-"et g:gutentags_ctags_extra_args = ['--recurse=yes', '--extra=+f', '--fields=afmikKlnsStz']
 " I Like snippets!
 let g:UltiSnipsListSnippets="<c-h>"
 let g:UltiSnipsExpandTrigger="<tab>"
@@ -141,7 +120,8 @@ map <silent> <leader>[ :<C-u>execute '!zeal ' . &filetype . "," . subtype . ":" 
 
 " Ctrl+] goTo Definition, default CtrlPTags, if present use Lang Server
 map <silent> <C-]> :CtrlPTag<cr><C-\>w
-
+map <silent> <C-e> :copen<cr>
+set formatexpr=LanguageClient#textDocument_rangeFormatting_sync()
 " Language client shortcuts with leader:
 map <silent> <leader>h :call LanguageClient_textDocument_hover()<cr>
 map <silent> <leader>m :call LanguageClient_contextMenu()<cr>
