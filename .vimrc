@@ -24,9 +24,10 @@ Plug 'autozimu/languageclient-neovim', {
             \ 'branch': 'next',
             \ 'do': 'bash install.sh',
             \ }
+Plug 'w0rp/ale'
 Plug 'junegunn/fzf'
 
-Plug 'ludovicchabant/vim-gutentags'                             " tags navigation Ctrl+] or Ctrl+click to jump
+" Plug 'ludovicchabant/vim-gutentags'                             " tags navigation Ctrl+] or Ctrl+click to jump
 " snippets
 Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
@@ -100,16 +101,32 @@ let g:LanguageClient_serverCommands = {
             \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
             \ 'java': ['~/bin/jdtls'],
             \ }
+" ALE
+let g:ale_enabled = 1
+let g:ale_set_highlights = 1
+let g:ale_lint_on_save = 1
+let g:ale_sign_error = '⤫'
+let g:ale_sign_warning = '⚠'
+" Disable for java, not working well with android
+let g:ale_linters = {
+            \ 'c': ['clang'],
+            \ 'cpp': ['clang++'],
+            \ 'python': ['python', 'pylint'],
+            \ 'sh': ['bash', 'shellcheck'],
+            \ 'go': ['go build', 'golint'],
+            \ 'rust': ['rustc'],
+            \ 'java': ['javac'],
+            \ }
 
 """ Airline -> bufferline
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 """ GutenTags
-let g:gutentags_enabled = 1
-let g:gutentags_generate_on_empty_buffer = 1
-let g:gutentags_cache_dir = "~/.vim/tags"
-let g:gutentags_resolve_symlinks = 1
-let g:gutentags_ctags_extra_args = ['--recurse=yes', '--extra=+f', '--fields=afmikKlnsStz']
+"et g:gutentags_enabled = 1
+"et g:gutentags_generate_on_empty_buffer = 1
+"et g:gutentags_cache_dir = "~/.vim/tags"
+"et g:gutentags_resolve_symlinks = 1
+"et g:gutentags_ctags_extra_args = ['--recurse=yes', '--extra=+f', '--fields=afmikKlnsStz']
 " I Like snippets!
 let g:UltiSnipsListSnippets="<c-h>"
 let g:UltiSnipsExpandTrigger="<tab>"
