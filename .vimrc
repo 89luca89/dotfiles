@@ -86,7 +86,9 @@ let g:deoplete#enable_at_startup = 1
 let g:deoplete#enable_smart_case = 1
 let g:deoplete#auto_completion_start_length = 2
 let g:deoplete#manual_completion_start_length = 1
-
+call deoplete#custom#source('LanguageClient',
+            \ 'min_pattern_length',
+            \ 2)
 " Async Complete + LSP
 set completeopt+=preview
 set signcolumn=yes
