@@ -1,3 +1,4 @@
+ZSH_DISABLE_COMPFIX=true
 # If we do not have ohmyzsh, install it.
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
 	git clone https://github.com/robbyrussell/oh-my-zsh $HOME/.oh-my-zsh
