@@ -20,19 +20,20 @@ endif
 
 " Vim LanguageClient setup
 " download for java http://download.eclipse.org/jdtls/milestones/?d
+Plug 'ludovicchabant/vim-gutentags'                             " tags navigation Ctrl+] or Ctrl+click to jump
 Plug 'junegunn/fzf'
 Plug 'autozimu/languageclient-neovim', {
             \ 'branch': 'next',
             \ 'do': 'bash install.sh',
             \ }
 
-" Plug 'ludovicchabant/vim-gutentags'                             " tags navigation Ctrl+] or Ctrl+click to jump
 " snippets
 Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
 
 " color schemes
 Plug 'flazz/vim-colorschemes'
+Plug 'tomasiser/vim-code-dark'
 Plug 'vim-airline/vim-airline-themes'
 
 call plug#end()               " required
@@ -98,11 +99,11 @@ let g:LanguageClient_serverCommands = {
             \ 'c': ['clangd'],
             \ 'cpp': ['clangd'],
             \ 'python': ['/usr/local/bin/pyls'],
-            \ 'sh' : ['bash-language-server', 'start'],
             \ 'go' : ['~/.local/go/bin/go-langserver'],
             \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
             \ 'java': ['~/bin/jdtls'],
             \ }
+            "\ 'sh' : ['bash-language-server', 'start'],
             "\ 'xml': ['~/bin/xmlls'],
             "\ 'yaml': ['node', '~/Programs/yaml-language-server/out/server/src/server.js'],
 """ Airline -> bufferline
@@ -156,8 +157,8 @@ map <silent> <C-D> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        colorscheme hybrid
-        highlight Normal guibg=#111111
+        colorscheme codedark
+        "highlight Normal guibg=#111111
     else
         set background=light
         colorscheme visualstudio
@@ -209,6 +210,6 @@ syntax on
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
-colorscheme hybrid
-set termguicolors
-highlight Normal guibg=#111111
+colorscheme codedark
+" set termguicolors
+"highlight Normal guibg=#111111
