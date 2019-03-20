@@ -76,12 +76,15 @@ function! ToggleTheme()
     if &background == 'light'
         set background=dark
         colorscheme hybrid
-        highlight Normal guibg=#111111
+        "highlight Normal guibg=#111111
     else
         set background=light
-        colorscheme visualstudio
-        highlight LineNr guibg=NONE
-        highlight nonText guibg=NONE
+        colorscheme github
+        highlight LineNr guibg=#FFFFFF
+        highlight nonText guibg=#FFFFFF
+        " highlight LineNr guibg=NONE
+        " highlight nonText guibg=NONE
+        "highlight Normal guibg=#FFFFFF
     endif
 endfunction
 
@@ -129,5 +132,4 @@ syntax on
 set encoding=utf8
 set background=dark
 colorscheme hybrid
-set termguicolors
-highlight Normal guibg=#111111
+" set termguicolors

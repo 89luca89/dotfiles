@@ -109,6 +109,7 @@ let g:LanguageClient_serverCommands = {
 """ Airline -> bufferline
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
+
 " I Like snippets!
 let g:UltiSnipsListSnippets="<c-h>"
 let g:UltiSnipsExpandTrigger="<tab>"
@@ -150,20 +151,23 @@ noremap <C-B> :NERDTreeToggle<CR>
 noremap <C-N> :NERDTreeFind<CR>
 
 """ Visual Mode
-""" Ctrl-C copy visual selection to clipboard
+""" Ctrl-C copy isual selection to clipboard
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 
 map <silent> <C-D> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        colorscheme codedark
+        colorscheme hybrid
         "highlight Normal guibg=#111111
     else
         set background=light
-        colorscheme visualstudio
-        highlight LineNr guibg=NONE
-        highlight nonText guibg=NONE
+        colorscheme github
+        "highlight LineNr guibg=NONE
+        "highlight nonText guibg=NONE
+        highlight LineNr guibg=#FFFFFF
+        highlight nonText guibg=#FFFFFF
+        highlight Normal guibg=#FFFFFF
     endif
 endfunction
 
@@ -210,6 +214,6 @@ syntax on
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
-colorscheme codedark
-" set termguicolors
+colorscheme hybrid 
+set termguicolors
 "highlight Normal guibg=#111111
