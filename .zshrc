@@ -16,9 +16,9 @@ fpath=(/usr/local/share/zsh-completions $fpath)
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it ll load a random theme each
 # time that oh-my-zsh is loaded.
-#ZSH_THEME="philips"
+ZSH_THEME="philips"
 #ZSH_THEME="risto"
-ZSH_THEME="lukerandall"
+# ZSH_THEME="lukerandall"
 
 # Uncomment the following line to use case-sensitive completion.
 CASE_SENSITIVE="true"
@@ -91,6 +91,9 @@ SAVEHIST=100000
 if [ -f $HOME/.localrc ]; then
     source $HOME/.localrc
 fi
-# Launch only if not running
-#if [ ! $(ps -ef | grep "syndaemon" | grep -v grep | awk '{ print $2}') ]; then syndaemon -i 0.5 -K -R -d 2> /dev/null ; fi
-#source <(kubectl completion zsh)
+if [ "${TMUX}" ]; then
+    export FZF_TMUX=1
+fi
+# add support for ctrl+o to open selected file in vim
+export FZF_DEFAULT_OPTS="--bind='ctrl-o:execute(gedit {1} > /dev/null 2>&1 &)' --preview 'if [ -d {1} ]; then ls -laH {1}; elif file {1} | grep text; then cat {1} | ccze -A; fi'"
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

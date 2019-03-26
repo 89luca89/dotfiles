@@ -84,3 +84,5 @@ fi
 
 # Launch only if not running
 #if [ ! $(ps -ef | grep "syndaemon" | grep -v grep | awk '{ print $2}') ]; then syndaemon -i 0.5 -K -R -d 2> /dev/null ; fi
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash

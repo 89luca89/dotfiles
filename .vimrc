@@ -21,7 +21,7 @@ endif
 " Vim LanguageClient setup
 " download for java http://download.eclipse.org/jdtls/milestones/?d
 Plug 'ludovicchabant/vim-gutentags'                             " tags navigation Ctrl+] or Ctrl+click to jump
-Plug 'junegunn/fzf'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'autozimu/languageclient-neovim', {
             \ 'branch': 'next',
             \ 'do': 'bash install.sh',
@@ -33,7 +33,6 @@ Plug 'honza/vim-snippets'
 
 " color schemes
 Plug 'flazz/vim-colorschemes'
-Plug 'tomasiser/vim-code-dark'
 Plug 'vim-airline/vim-airline-themes'
 
 call plug#end()               " required
@@ -124,7 +123,6 @@ map <silent> <leader>[ :<C-u>execute '!zeal ' . &filetype . "," . subtype . ":" 
 
 " Ctrl+] goTo Definition, default CtrlPTags, if present use Lang Server
 map <silent> <C-]> :CtrlPTag<cr><C-\>w
-map <silent> <C-e> :copen<cr>
 set formatexpr=LanguageClient#textDocument_rangeFormatting_sync()
 " Language client shortcuts with leader:
 map <silent> <leader>h :call LanguageClient_textDocument_hover()<cr>
@@ -154,7 +152,7 @@ noremap <C-N> :NERDTreeFind<CR>
 """ Ctrl-C copy isual selection to clipboard
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 
-map <silent> <C-D> :<C-u>call ToggleTheme()<CR>
+map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
@@ -165,6 +163,8 @@ function! ToggleTheme()
         colorscheme github
         "highlight LineNr guibg=NONE
         "highlight nonText guibg=NONE
+        highlight ColorColumn guibg=#FAFAFA
+        highlight VertSplit guibg=NONE
         highlight LineNr guibg=#FFFFFF
         highlight nonText guibg=#FFFFFF
         highlight Normal guibg=#FFFFFF
@@ -208,12 +208,13 @@ set hlsearch incsearch ignorecase smartcase             " Highlight search resul
 set nowrap                                              " play nicely with long lines
 set number                                              " Enable line numbers
 set updatetime=1000                                     " reduce update time from 4s to 1s
-let &colorcolumn="80"
+"let &colorcolumn="80"
+let &colorcolumn=join(range(81,999),",")
 syntax on
 
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
-colorscheme hybrid 
+colorscheme hybrid
 set termguicolors
-"highlight Normal guibg=#111111
+let g:airline_theme='base16'
