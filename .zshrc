@@ -95,5 +95,10 @@ if [ "${TMUX}" ]; then
     export FZF_TMUX=1
 fi
 # add support for ctrl+o to open selected file in vim
-export FZF_DEFAULT_OPTS="--bind='ctrl-o:execute(gedit {1} > /dev/null 2>&1 &)' --preview 'if [ -d {1} ]; then ls -laH {1}; elif file {1} | grep text; then cat {1} | ccze -A; fi'"
+#export FZF_DEFAULT_COMMAND="find -L . -mindepth 1 \\( -path '*/\\.*' -o -fstype 'sysfs' -o -fstype 'devfs' -o -fstype 'devtmpfs' -o -fstype 'proc' \\) -prune \
+#    -o -type f -print \
+#    -o -type d -print \
+#    -o -type l -print 2> /dev/null | cut -b3-"
+#export FZF_DEFAULT_OPTS="--bind='enter:execute(xdg-open {1}; sleep 1s)+abort' --preview 'if [ -d {1} ]; then ls -laH {1}; elif file {1} | grep text; then pygmentize -g {1} ; fi'"
+#export FZF_DEFAULT_OPTS="--bind='ctrl-o:execute(myGvim {1} > /dev/null 2>&1 &)' --preview 'if [ -d {1} ]; then ls -laH {1}; elif file {1} | grep text; then pygmentize -g {1} ; fi'"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
