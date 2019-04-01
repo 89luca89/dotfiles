@@ -157,7 +157,8 @@ function! ToggleTheme()
     if &background == 'light'
         set background=dark
         colorscheme hybrid
-        "highlight Normal guibg=#111111
+        highlight Normal guibg=#111111
+        highlight ColorColumn guibg=#222222
     else
         set background=light
         colorscheme github
@@ -216,5 +217,7 @@ syntax on
 set encoding=utf8
 set background=dark
 colorscheme hybrid
+highlight Normal guibg=#111111
+highlight ColorColumn guibg=#222222
 set termguicolors
 let g:airline_theme='base16'
