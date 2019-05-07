@@ -32,8 +32,9 @@ Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
 
 " color schemes
+Plug 'connorholyday/vim-snazzy'
+"Plug 'vim-airline/vim-airline-themes'
 Plug 'flazz/vim-colorschemes'
-Plug 'vim-airline/vim-airline-themes'
 
 call plug#end()               " required
 filetype plugin indent on     " required
@@ -157,18 +158,20 @@ function! ToggleTheme()
     if &background == 'light'
         set background=dark
         colorscheme hybrid
-        highlight Normal guibg=#111111
-        highlight ColorColumn guibg=#222222
+        "highlight Normal guibg=#222222
+        highlight ColorColumn ctermbg=235
     else
         set background=light
-        colorscheme github
+        colorscheme macvim-light
         "highlight LineNr guibg=NONE
         "highlight nonText guibg=NONE
-        highlight ColorColumn guibg=#FAFAFA
-        highlight VertSplit guibg=NONE
-        highlight LineNr guibg=#FFFFFF
-        highlight nonText guibg=#FFFFFF
-        highlight Normal guibg=#FFFFFF
+        highlight ColorColumn ctermbg=254
+        highlight VertSplit ctermbg=254 ctermfg=254
+        "highlight ColorColumn guibg=#FAFAFA
+        "highlight VertSplit guibg=#eeeeee guifg=white
+        "highlight LineNr guibg=#FFFFFF
+        "highlight nonText guibg=#FFFFFF
+        "highlight Normal guibg=#FFFFFF
     endif
 endfunction
 
@@ -217,7 +220,8 @@ syntax on
 set encoding=utf8
 set background=dark
 colorscheme hybrid
-highlight Normal guibg=#111111
-highlight ColorColumn guibg=#222222
-set termguicolors
-let g:airline_theme='base16'
+highlight ColorColumn ctermbg=235
+"highlight Normal guibg=#222222
+"highlight ColorColumn guibg=#282828
+"set termguicolors
+"let g:airline_theme='base16'
