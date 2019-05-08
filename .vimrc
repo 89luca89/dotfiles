@@ -6,6 +6,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'scrooloose/nerdtree'                                      " split file manager
 Plug 'vim-airline/vim-airline'                                  " tabs and statusline
 Plug 'airblade/vim-gitgutter'                                   " +,-,~ on modified lines in git repo
+Plug 'yggdroot/indentline'
 Plug 'ctrlpvim/ctrlp.vim'                                       " fuzzy finder
 
 
