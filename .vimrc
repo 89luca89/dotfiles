@@ -22,6 +22,7 @@ endif
 " download for java http://download.eclipse.org/jdtls/milestones/?d
 Plug 'ludovicchabant/vim-gutentags'                             " tags navigation Ctrl+] or Ctrl+click to jump
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'pearofducks/ansible-vim'
 Plug 'autozimu/languageclient-neovim', {
             \ 'branch': 'next',
             \ 'do': 'bash install.sh',
@@ -33,7 +34,7 @@ Plug 'honza/vim-snippets'
 
 " color schemes
 Plug 'connorholyday/vim-snazzy'
-"Plug 'vim-airline/vim-airline-themes'
+"Plug 'vim-airline/vim-airline-themesn'
 Plug 'flazz/vim-colorschemes'
 
 call plug#end()               " required
@@ -56,6 +57,23 @@ augroup autoformat_settings
     autocmd FileType yaml noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!yamlfmt<CR>:loadview<CR>
 augroup END
 
+function! s:setYamlSchema()
+    echom &ft
+    if &ft == "yaml.ansible"
+        echom "Yaml-Language-Server using ansible schema."
+        let config = json_decode(system("cat ~/.vim/yaml/ansible.json"))
+        call LanguageClient#Notify('workspace/didChangeConfiguration', { 'settings': config })
+    elseif &ft=="yaml"
+        echom "Yaml-Language-Server using default schema."
+        let config = json_decode(system("cat ~/.vim/yaml/default.json"))
+        call LanguageClient#Notify('workspace/didChangeConfiguration', { 'settings': config })
+    endif
+endfunction
+
+augroup LanguageClient_config
+    autocmd!
+    autocmd User LanguageClientStarted call s:setYamlSchema()
+augroup END
 """ Git signs in gutter
 let g:gitgutter_grep = 'rg'
 
@@ -95,17 +113,19 @@ set completeopt+=preview
 set signcolumn=yes
 let g:LanguageClient_autoStart = 1
 let g:LanguageClient_diagnosticsEnable = 1
+let g:LanguageClient_loadSettings = 1
 let g:LanguageClient_serverCommands = {
             \ 'c': ['clangd'],
             \ 'cpp': ['clangd'],
             \ 'python': ['/usr/local/bin/pyls'],
             \ 'go' : ['~/.local/go/bin/go-langserver'],
             \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
+            \ 'sh' : ['~/.npm-packages/bin/bash-language-server', 'start'],
+            \ 'yaml': ['~/.npm-packages/bin/yaml-language-server', '--stdio'],
+            \ 'yaml.ansible': ['~/.npm-packages/bin/yaml-language-server', '--stdio'],
+            \ 'xml': ['~/bin/xmlls'],
             \ 'java': ['~/bin/jdtls'],
             \ }
-            "\ 'sh' : ['bash-language-server', 'start'],
-            "\ 'xml': ['~/bin/xmlls'],
-            "\ 'yaml': ['node', '~/Programs/yaml-language-server/out/server/src/server.js'],
 """ Airline -> bufferline
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'

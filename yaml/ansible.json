@@ -1,0 +1,14 @@
+{
+    "yaml": {
+            "format": {
+                "enable": false
+            },
+            "schemas": {
+                 "file:///home/hurricanehrndz/.config/nvim/schemas/ansible.json": "/*ansible*.yml"
+            },
+            "validate": true
+        },
+    "http": {
+        "proxyStrictSSL": true
+    }
+}
