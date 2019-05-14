@@ -186,8 +186,11 @@ function! ToggleTheme()
         colorscheme macvim-light
         "highlight LineNr guibg=NONE
         "highlight nonText guibg=NONE
-        highlight ColorColumn ctermbg=254
-        highlight VertSplit ctermbg=254 ctermfg=254
+        highlight ColorColumn ctermbg=255
+        highlight VertSplit ctermbg=255 ctermfg=255
+        highlight LineNr ctermbg=NONE ctermfg=black
+        highlight nonText ctermbg=NONE ctermfg=black
+        highlight Normal ctermbg=NONE ctermfg=black
         "highlight ColorColumn guibg=#FAFAFA
         "highlight VertSplit guibg=#eeeeee guifg=white
         "highlight LineNr guibg=#FFFFFF
