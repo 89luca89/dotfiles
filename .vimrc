@@ -34,7 +34,6 @@ Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
 
 " color schemes
-Plug 'connorholyday/vim-snazzy'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'flazz/vim-colorschemes'
 
@@ -58,23 +57,6 @@ augroup autoformat_settings
     autocmd FileType yaml noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!yamlfmt<CR>:loadview<CR>
 augroup END
 
-function! s:setYamlSchema()
-    echom &ft
-    if &ft == "yaml.ansible"
-        echom "Yaml-Language-Server using ansible schema."
-        let config = json_decode(system("cat ~/.vim/yaml/ansible.json"))
-        call LanguageClient#Notify('workspace/didChangeConfiguration', { 'settings': config })
-    elseif &ft=="yaml"
-        echom "Yaml-Language-Server using default schema."
-        let config = json_decode(system("cat ~/.vim/yaml/default.json"))
-        call LanguageClient#Notify('workspace/didChangeConfiguration', { 'settings': config })
-    endif
-endfunction
-
-augroup LanguageClient_config
-    autocmd!
-    autocmd User LanguageClientStarted call s:setYamlSchema()
-augroup END
 """ Git signs in gutter
 let g:gitgutter_grep = 'rg'
 
@@ -127,6 +109,25 @@ let g:LanguageClient_serverCommands = {
             \ 'xml': ['~/bin/xmlls'],
             \ 'java': ['~/bin/jdtls'],
             \ }
+
+function! s:setYamlSchema()
+    echom &ft
+    if &ft == "yaml.ansible"
+        echom "Yaml-Language-Server using ansible schema."
+        let config = json_decode(system("cat ~/.vim/yaml/ansible.json"))
+        call LanguageClient#Notify('workspace/didChangeConfiguration', { 'settings': config })
+    elseif &ft=="yaml"
+        echom "Yaml-Language-Server using default schema."
+        let config = json_decode(system("cat ~/.vim/yaml/default.json"))
+        call LanguageClient#Notify('workspace/didChangeConfiguration', { 'settings': config })
+    endif
+endfunction
+
+augroup LanguageClient_config
+    autocmd!
+    autocmd User LanguageClientStarted call s:setYamlSchema()
+augroup END
+
 """ Airline -> bufferline
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
@@ -140,8 +141,7 @@ let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 """ GENERIC PROGRAMMING
 "
 " leader+[ will get the Docsets on Zeal/Dash
-let g:subtype = ""
-map <silent> <leader>[ :<C-u>execute '!zeal ' . &filetype . "," . subtype . ":" . expand("<cword>") . " &>> /dev/null &"<CR><CR>
+" map <silent> <leader>[ :<C-u>execute '!zeal ' . &filetype . "," . subtype . ":" . expand("<cword>") . " &>> /dev/null &"<CR><CR>
 
 " Ctrl+] goTo Definition, default CtrlPTags, if present use Lang Server
 map <silent> <C-]> :CtrlPTag<cr><C-\>w
@@ -151,7 +151,6 @@ map <silent> <leader>h :call LanguageClient_textDocument_hover()<cr>
 map <silent> <leader>m :call LanguageClient_contextMenu()<cr>
 map <silent> <leader>r :call LanguageClient_textDocument_rename()<cr>
 map <silent> <leader>t :call LanguageClient_textDocument_documentSymbol()<cr>
-"map <silent> <leader>g :call LanguageClient#textDocument_definition()<cr>
 map <silent> <leader>g :call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<cr>
 map <silent> <leader>a :call LanguageClient#textDocument_codeAction()<cr>
 map <silent> <leader>rf :call LanguageClient#textDocument_references()<cr>
@@ -180,24 +179,16 @@ function! ToggleTheme()
         set background=dark
         colorscheme hybrid
         AirlineTheme hybrid
-        "highlight Normal guibg=#222222
         highlight ColorColumn ctermbg=235
     else
         set background=light
         colorscheme macvim-light
         AirlineTheme papercolor
-        "highlight LineNr guibg=NONE
-        "highlight nonText guibg=NONE
         highlight ColorColumn ctermbg=255
         highlight VertSplit ctermbg=255 ctermfg=255
-        highlight LineNr ctermbg=NONE ctermfg=black
-        highlight nonText ctermbg=NONE ctermfg=black
-        highlight Normal ctermbg=NONE ctermfg=black
-        "highlight ColorColumn guibg=#FAFAFA
-        "highlight VertSplit guibg=#eeeeee guifg=white
-        "highlight LineNr guibg=#FFFFFF
-        "highlight nonText guibg=#FFFFFF
-        "highlight Normal guibg=#FFFFFF
+        highlight LineNr ctermbg=white ctermfg=black
+        highlight nonText ctermbg=white ctermfg=black
+        highlight Normal ctermbg=white ctermfg=black
     endif
 endfunction
 
@@ -226,7 +217,7 @@ set undolevels=1000
 set noswapfile
 
 set signcolumn=yes
-set lazyredraw ttyfast synmaxcol=200 ttimeoutlen=20
+set lazyredraw ttyfast ttimeoutlen=20
 set mouse=a                                             " it's always useful to use the mouse then needed
 set hidden                                              " change buffer without saving
 set wildmenu                                            " Tab autocomplete in command mode
@@ -238,7 +229,6 @@ set hlsearch incsearch ignorecase smartcase             " Highlight search resul
 set nowrap                                              " play nicely with long lines
 set number                                              " Enable line numbers
 set updatetime=1000                                     " reduce update time from 4s to 1s
-"let &colorcolumn="80"
 let &colorcolumn=join(range(81,999),",")
 syntax on
 
@@ -247,7 +237,3 @@ set encoding=utf8
 set background=dark
 colorscheme hybrid
 highlight ColorColumn ctermbg=235
-"highlight Normal guibg=#222222
-"highlight ColorColumn guibg=#282828
-"set termguicolors
-"let g:airline_theme='base16'
