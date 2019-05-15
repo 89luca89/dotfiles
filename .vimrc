@@ -35,7 +35,7 @@ Plug 'honza/vim-snippets'
 
 " color schemes
 Plug 'connorholyday/vim-snazzy'
-"Plug 'vim-airline/vim-airline-themesn'
+Plug 'vim-airline/vim-airline-themes'
 Plug 'flazz/vim-colorschemes'
 
 call plug#end()               " required
@@ -179,11 +179,13 @@ function! ToggleTheme()
     if &background == 'light'
         set background=dark
         colorscheme hybrid
+        AirlineTheme hybrid
         "highlight Normal guibg=#222222
         highlight ColorColumn ctermbg=235
     else
         set background=light
         colorscheme macvim-light
+        AirlineTheme papercolor
         "highlight LineNr guibg=NONE
         "highlight nonText guibg=NONE
         highlight ColorColumn ctermbg=255
