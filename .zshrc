@@ -21,7 +21,7 @@ fpath=(/usr/local/share/zsh-completions $fpath)
 #ZSH_THEME="pygmalion"
 #ZSH_THEME="lukerandall"
 #ZSH_THEME="gnzh"
-ZSH_THEME="luca-linux"
+ZSH_THEME="avit"
 # Uncomment the following line to use case-sensitive completion.
 CASE_SENSITIVE="true"
 
