@@ -27,7 +27,7 @@ Plug 'honza/vim-snippets'
 " download for java http://download.eclipse.org/jdtls/milestones/?d
 Plug 'ludovicchabant/vim-gutentags'                             " tags navigation Ctrl+] or Ctrl+click to jump
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'pearofducks/ansible-vim', { 'do': 'cd ./UltiSnips; ./generate.py' }
+Plug 'pearofducks/ansible-vim'
 Plug 'autozimu/languageclient-neovim', {
             \ 'branch': 'next',
             \ 'do': 'bash install.sh',
@@ -146,9 +146,6 @@ let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 
 """ GENERIC PROGRAMMING
 "
-" leader+[ will get the Docsets on Zeal/Dash
-" map <silent> <leader>[ :<C-u>execute '!zeal ' . &filetype . "," . subtype . ":" . expand("<cword>") . " &>> /dev/null &"<CR><CR>
-
 " Ctrl+] goTo Definition, default CtrlPTags, if present use Lang Server
 map <silent> <C-]> :CtrlPTag<cr><C-\>w
 set formatexpr=LanguageClient#textDocument_rangeFormatting_sync()
@@ -198,8 +195,8 @@ function! ToggleTheme()
         highlight ColorColumn ctermbg=235
     else
         set background=light
-        colorscheme macvim-light
-        AirlineTheme papercolor
+        colorscheme github
+        AirlineTheme zenburn
         highlight ColorColumn ctermbg=255
         highlight VertSplit ctermbg=255 ctermfg=255
         highlight LineNr ctermbg=white ctermfg=black
