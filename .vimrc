@@ -230,6 +230,7 @@ set nowrap                                              " play nicely with long 
 set number                                              " Enable line numbers
 set updatetime=1000                                     " reduce update time from 4s to 1s
 let &colorcolumn=join(range(81,999),",")
+set guioptions=
 syntax on
 
 " play nicely with modern graphics
