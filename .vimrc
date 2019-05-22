@@ -175,6 +175,12 @@ noremap <C-B> :NERDTreeToggle<CR>
 " Ctrl+N relocate file explorer to opened file
 noremap <C-N> :NERDTreeFind<CR>
 
+tnoremap <Esc> <C-\><C-n>
+nnoremap <C-a>s :terminal<CR>
+tnoremap <C-a>s <C-\><C-n>:terminal<CR>
+nnoremap <C-a>v :vert term<CR>
+tnoremap <C-a>v <C-\><C-n>:vert term<cr>
+
 """ Visual Mode
 """ Ctrl-C copy isual selection to clipboard
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
