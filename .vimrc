@@ -175,7 +175,11 @@ noremap <C-B> :NERDTreeToggle<CR>
 " Ctrl+N relocate file explorer to opened file
 noremap <C-N> :NERDTreeFind<CR>
 
-tnoremap <Esc> <C-\><C-n>
+" Double tap ESC or ESC+Timeout to exit tmode
+tnoremap <Esc> <C-W>N
+tnoremap <Esc><Esc> <C-W>N
+set timeout timeoutlen=1000  " Default
+set ttimeout ttimeoutlen=100  " Set by defaults.vim
 nnoremap <C-a>s :terminal<CR>
 tnoremap <C-a>s <C-\><C-n>:terminal<CR>
 nnoremap <C-a>v :vert term<CR>
