@@ -19,19 +19,19 @@ else
     Plug 'roxma/vim-hug-neovim-rpc'
 endif
 
+" snippets
+Plug 'sirver/ultisnips'
+Plug 'honza/vim-snippets'
+
 " Vim LanguageClient setup
 " download for java http://download.eclipse.org/jdtls/milestones/?d
 Plug 'ludovicchabant/vim-gutentags'                             " tags navigation Ctrl+] or Ctrl+click to jump
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'pearofducks/ansible-vim'
+Plug 'pearofducks/ansible-vim', { 'do': 'cd ./UltiSnips; ./generate.py' }
 Plug 'autozimu/languageclient-neovim', {
             \ 'branch': 'next',
             \ 'do': 'bash install.sh',
             \ }
-
-" snippets
-Plug 'sirver/ultisnips'
-Plug 'honza/vim-snippets'
 
 " color schemes
 Plug 'vim-airline/vim-airline-themes'
@@ -59,6 +59,12 @@ augroup END
 
 """ Git signs in gutter
 let g:gitgutter_grep = 'rg'
+
+let g:ansible_attribute_highlight = "ab"
+let g:ansible_name_highlight = 'd'
+let g:ansible_extra_keywords_highlight = 1
+let g:ansible_normal_keywords_highlight = 'Constant'
+let g:ansible_with_keywords_highlight = 'Constant'
 
 " Icons
 let NERDTreeShowHidden=1
