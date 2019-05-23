@@ -25,7 +25,6 @@ Plug 'honza/vim-snippets'
 
 " Vim LanguageClient setup
 " download for java http://download.eclipse.org/jdtls/milestones/?d
-Plug 'ludovicchabant/vim-gutentags'                             " tags navigation Ctrl+] or Ctrl+click to jump
 Plug 'pearofducks/ansible-vim'
 Plug 'autozimu/languageclient-neovim', {
             \ 'branch': 'next',
@@ -59,7 +58,6 @@ augroup END
 """ Git signs in gutter
 set grepprg=rg
 let g:gitgutter_grep = 'rg'
-
 let g:fzf_tags_command = 'ctags -R'
 
 let g:ansible_attribute_highlight = "ab"

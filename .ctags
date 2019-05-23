@@ -26,5 +26,6 @@
 --exclude=*.css
 --langmap=scheme:+.rkt
 --langdef=ansible
---langmap=ansible:.yml
---regex-ansible=/^\s*- name:(.*)/\1/t,task/
+--langmap=ansible:.yml.yaml
+--regex-ansible=/^[ \t]*-[ \t]*name:[ \t]*(.+)/\1/k,tasks/
+--languages=ansible,ruby,python
