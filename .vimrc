@@ -7,7 +7,8 @@ Plug 'scrooloose/nerdtree'                                      " split file man
 Plug 'vim-airline/vim-airline'                                  " tabs and statusline
 Plug 'airblade/vim-gitgutter'                                   " +,-,~ on modified lines in git repo
 Plug 'yggdroot/indentline'
-Plug 'ctrlpvim/ctrlp.vim'                                       " fuzzy finder
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
 
 " Deoplete
 if has('nvim')
@@ -25,7 +26,6 @@ Plug 'honza/vim-snippets'
 " Vim LanguageClient setup
 " download for java http://download.eclipse.org/jdtls/milestones/?d
 Plug 'ludovicchabant/vim-gutentags'                             " tags navigation Ctrl+] or Ctrl+click to jump
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'pearofducks/ansible-vim'
 Plug 'autozimu/languageclient-neovim', {
             \ 'branch': 'next',
@@ -57,7 +57,10 @@ augroup autoformat_settings
 augroup END
 
 """ Git signs in gutter
+set grepprg=rg
 let g:gitgutter_grep = 'rg'
+
+let g:fzf_tags_command = 'ctags -R'
 
 let g:ansible_attribute_highlight = "ab"
 let g:ansible_name_highlight = 'd'
@@ -70,19 +73,6 @@ let NERDTreeShowHidden=1
 let NERDTreeHijackNetrw=1
 let g:NERDTreeDirArrowExpandable = '▸'
 let g:NERDTreeDirArrowCollapsible = '▾'
-
-""" CtrlP
-" Use Ripgrep = superfast
-set grepprg=rg
-let g:ctrlp_user_command = 'rg %s --files --color=never --glob ""'
-let g:ctrlp_clear_cache_on_exit = 0
-" set ctrlp to same working directory
-let g:ctrlp_working_path_mode = 'ra'
-" exclude compiled files class and svns
-let g:ctrlp_custom_ignore = {
-            \ 'dir':  '\v[\/]\.(git|hg|svn|bin|out)$',
-            \ 'file': '\v\.(exe|so|dll|class|bin|out)$',
-            \ }
 
 " Path to python interpreter for neovim
 let g:python3_host_prog  = '/usr/bin/python3'
@@ -145,8 +135,7 @@ let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 
 """ GENERIC PROGRAMMING
 "
-" Ctrl+] goTo Definition, default CtrlPTags, if present use Lang Server
-map <silent> <C-]> :CtrlPTag<cr><C-\>w
+" Ctrl+] goTo Definition, default Tags, if present use Lang Server
 set formatexpr=LanguageClient#textDocument_rangeFormatting_sync()
 " Language client shortcuts with leader:
 map <silent> <leader>h :call LanguageClient_textDocument_hover()<cr>
@@ -162,9 +151,9 @@ map <silent> <leader>td :call LanguageClient_textDocument_typeDefinition()<cr>
 map <silent> <leader>e :call LanguageClient#explainErrorAtPoint()<cr>
 
 " Ctrl+T fuzzy find ctags
-noremap <C-T> :CtrlPTag<CR>
+noremap <C-T> :Tags<CR>
 " Ctrl+P fuzzy find files
-noremap <C-P> :CtrlP<CR>
+noremap <C-P> :FZF<CR>
 
 " Ctrl+B open/close file explorer
 noremap <C-B> :NERDTreeToggle<CR>
