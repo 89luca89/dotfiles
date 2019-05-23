@@ -9,7 +9,6 @@ Plug 'airblade/vim-gitgutter'                                   " +,-,~ on modif
 Plug 'yggdroot/indentline'
 Plug 'ctrlpvim/ctrlp.vim'                                       " fuzzy finder
 
-
 " Deoplete
 if has('nvim')
     Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -20,7 +19,7 @@ else
 endif
 
 " snippets
-Plug 'sirver/ultisnips'
+Plug 'sirver/ultisnips' 
 Plug 'honza/vim-snippets'
 
 " Vim LanguageClient setup
@@ -191,17 +190,19 @@ function! ToggleTheme()
     if &background == 'light'
         set background=dark
         colorscheme hybrid
-        AirlineTheme hybrid
+        AirlineTheme jellybeans
         highlight ColorColumn ctermbg=235
     else
         set background=light
         colorscheme github
-        AirlineTheme zenburn
         highlight ColorColumn ctermbg=255
         highlight VertSplit ctermbg=255 ctermfg=255
         highlight LineNr ctermbg=white ctermfg=black
         highlight nonText ctermbg=white ctermfg=black
         highlight Normal ctermbg=white ctermfg=black
+        AirlineTheme base16
+        sleep 100m
+        AirlineTheme zenburn
     endif
 endfunction
 
@@ -250,4 +251,5 @@ syntax on
 set encoding=utf8
 set background=dark
 colorscheme hybrid
+let g:airline_theme='jellybeans'
 highlight ColorColumn ctermbg=235

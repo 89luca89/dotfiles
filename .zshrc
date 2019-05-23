@@ -47,7 +47,7 @@ alias tree='tree -C'
 alias top='top -o %CPU'
 alias open='xdg-open'
 alias gcc='gcc -Wall -Wextra -lm'
-
+alias cl='clear'
 alias rambox='ssh -N -X -C -c aes128-ctr yoga "rambox"'
 
 # add openvpn
