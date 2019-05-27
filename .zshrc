@@ -1,13 +1,13 @@
 ZSH_DISABLE_COMPFIX=true
-# If we do not have ohmyzsh, install it.
-if [ ! -d "$HOME/.oh-my-zsh" ]; then
-	git clone https://github.com/robbyrussell/oh-my-zsh $HOME/.oh-my-zsh
-	git clone https://github.com/zsh-users/zsh-autosuggestions.git $HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions
-	git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
-fi
-
 # Path to your oh-my-zsh installation.
-export ZSH=$HOME/.oh-my-zsh
+export ZSH=$HOME/.local/bin/oh-my-zsh
+
+# If we do not have ohmyzsh, install it.
+if [ ! -d "$ZSH" ]; then
+	git clone https://github.com/robbyrussell/oh-my-zsh $ZSH
+	git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH/custom/plugins/zsh-autosuggestions
+	git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH/custom/plugins/zsh-syntax-highlighting
+fi
 
 # Zsh completion
 fpath=(/usr/local/share/zsh-completions $fpath)
@@ -35,7 +35,7 @@ COMPLETION_WAITING_DOTS="true"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git ssh-agent assh zsh-autosuggestions history history-substring-search zsh-syntax-highlighting dnf)
+plugins=(git ssh-agent zsh-autosuggestions history history-substring-search zsh-syntax-highlighting dnf)
 
 source $ZSH/oh-my-zsh.sh
 

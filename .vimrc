@@ -7,7 +7,7 @@ Plug 'scrooloose/nerdtree'                                      " split file man
 Plug 'vim-airline/vim-airline'                                  " tabs and statusline
 Plug 'airblade/vim-gitgutter'                                   " +,-,~ on modified lines in git repo
 Plug 'yggdroot/indentline'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
 " Deoplete

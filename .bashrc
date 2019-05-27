@@ -1,12 +1,12 @@
 #########################
 
-# If we do not have bash-it, install it.
-if [ ! -d "$HOME/.bash_it" ]; then
-	git clone --depth=1 https://github.com/Bash-it/bash-it.git $HOME/.bash_it
-fi
-
 # Path to the bash it configuration
-export BASH_IT="$HOME/.bash_it"
+export BASH_IT="$HOME/.local/bin/bash_it"
+
+# If we do not have bash-it, install it.
+if [ ! -d "$BASH_IT" ]; then
+	git clone --depth=1 https://github.com/Bash-it/bash-it.git $BASH_IT
+fi
 
 # Lock and Load a custom theme file
 # location /.bash_it/themes/
