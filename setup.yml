@@ -69,7 +69,7 @@
       become: yes
 
     - name: Remove Programs (Unused Programs)
-      dnf:
+      package:
           name: "{{ item }}"
           state: removed
       with_items:
@@ -95,8 +95,10 @@
         - gnome-shell-extension-launch-new-instance
         - gnome-shell-extension-places-menu
         - gnome-shell-extension-window-list
-        - 'setroubleshoot*'
-        - '*abrt*'
+        - setroubleshoot
+        - setroubleshoot-legacy
+        - setroubleshoot-plugins
+        - setroubleshoot-server
         - tracker-miners
         - cheese
         - gfbgraph
@@ -115,8 +117,8 @@
         name: "{{ item }}"
         state: present
       with_items:
-        - http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ fedora_current }}.noarch.rpm
-        - http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ fedora_current }}.noarch.rpm
+        - http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_facts.distribution_version }}.noarch.rpm
+        - http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_facts.distribution_version }}.noarch.rpm
         - https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
       become: yes
 
@@ -124,7 +126,7 @@
       shell: "flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo"
 
     - name: Install Programs (Generic Utilities)
-      dnf:
+      package:
           name: "{{ item }}"
           state: present
       with_items:
@@ -138,16 +140,25 @@
         - xdotool 
         - wmctrl
       become: yes
-    
+
+     # See: https://github.com/ansible/ansible/issues/54949
+    - name: Configure etckeeper.conf
+      lineinfile:
+        path: /etc/etckeeper/etckeeper.conf
+        regexp: '^GIT_COMMIT_OPTIONS=.*'
+        line: 'GIT_COMMIT_OPTIONS="-q"'
+
+
     - name: Initialize Etckeeper
       shell: "{{ item }}"
       with_items:
         - etckeeper init
         - etckeeper commit "Initial Commit"
+      ignore_errors: yes
       become: yes
 
     - name: Install Programs (Media Utilities)
-      dnf:
+      package:
           name: "{{ item }}"
           state: present
       with_items:
@@ -174,7 +185,7 @@
       become: yes
 
     - name: Install Programs (GUI Programs)
-      dnf:
+      package:
           name: "{{ item }}"
           state: present
       with_items:
@@ -193,7 +204,7 @@
       become: yes
 
     - name: Install Programs (Terminal Programs)
-      dnf:
+      package:
           name: "{{ item }}"
           state: present
       with_items:
@@ -213,17 +224,17 @@
       dnf:
         name: "{{ item }}"
         state: present
-        with_items:
-            - '@C Development Tools and Libraries'
-            - '@Development tools'
+      with_items:
+          - '@C Development Tools and Libraries'
+          - '@Development tools'
       become: yes
 
     - name: Install Programs (Programming Packages)
-      dnf:
+      package:
           name: "{{ item }}"
           state: present
       with_items:
-        - java 
+        - java
         - java-devel
         - clang
         - clang-analyzer
@@ -231,7 +242,8 @@
         - clang-devel
         - golang
         - golint
-        - npm nodejs
+        - npm
+        - nodejs
         - ShellCheck
         - ncurses-compat-libs
         - boost-devel
@@ -247,8 +259,9 @@
 
     - name: Install Programs (Programming Packages) - pip
       pip:
-          name: "{{ item }}"
-          state: present
+        name: "{{ item }}"
+        state: present
+        executable: pip-2
       with_items:
         - flake8
         - pep8
@@ -261,6 +274,8 @@
         - demjson
         - clang
         - yamlfmt
+        - libclang-py3
+      become: yes
 
     - name: "Ensure {{ ansible_env.HOME }}/Programs Exists"
       file:
@@ -280,14 +295,16 @@
         update: yes
         
     - name: Setup GOLANG environment
-      shell: "go get -u -v {{ item }}"
-      environment: 
-        GOPATH: "{{ ansible_env.HOME }}/.local/go"
-        PATH: "$PATH:$GOROOT/bin:$GOPATH/bin:$PATH:{{ ansible_env.HOME }}/.cargo/bin:{{ ansible_env.HOME }}/.local/bin:$PATH"
-      with_items:
-        - github.com/moul/advanced-ssh-config/cmd/assh
-        - mvdan.cc/sh/cmd/shfmt
-        - github.com/nsf/gocode
+      shell: |
+        export GOPATH=$HOME/.local/go
+        export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+        export PATH=$PATH:$HOME/.cargo/bin
+        export PATH=$HOME/.local/bin:$PATH
+        go get -u github.com/moul/advanced-ssh-config/cmd/assh
+        go get -u mvdan.cc/sh/cmd/shfmt
+        go get -u github.com/nsf/gocode
+      args:
+        executable: /bin/bash
 
      # LSP
      # c/cpp clangd -> clang-tools-extra
@@ -309,6 +326,8 @@
         - npm i -g yaml-language-server
         - go get -u -v github.com/sourcegraph/go-langserver
         - pip3 install python-language-server
+      args:
+        executable: /bin/bash
 
     - name: "Ensure {{ ansible_env.HOME }}/Programs/xml-language-server/ Exists"
       file:
@@ -334,16 +353,6 @@
         src: "{{ ansible_env.HOME }}/Programs/jtd-language-server/jdt-language-server-0.39.0-201905150127.tar.gz"
         dest: "{{ ansible_env.HOME }}/Programs/jtd-language-server/"
 
-    - name: "Ensure {{ ansible_env.HOME }}/Programs/jtd-language-server/ Exists"
-      file:
-        path: "{{ ansible_env.HOME }}/Programs/jtd-language-server/"
-        state: directory
-    - name: Install Java Lang Server
-      get_url:
-        url: http://download.eclipse.org/jdtls/milestones/0.39.0/jdt-language-server-0.39.0-201905150127.tar.gz
-        dest: "{{ ansible_env.HOME }}/Programs/jtd-language-server/"
-        mode: '0755'
-
     - name: Only Office (Key)
       rpm_key:
         state: present
@@ -352,19 +361,20 @@
 
     - name: Only Office (Repo)
       yum_repository:
-        name: onlyoffice repo
-        baseurl: http://download.onlyoffice.com/repo/centos/main/noarch/ 
+        name: onlyoffice
+        baseurl: http://download.onlyoffice.com/repo/centos/main/noarch/
+        description: onlyoffice repo
         gpgcheck: yes
         enabled: yes
-        file: onlyoffice_repo
+        file: onlyoffice
       become: yes
 
     - name: Only Office (Links)
-      shell: "ln -s /usr/lib64/libcurl.so.4.5.0 /usr/lib64/libcurl-gnutls.so.4"
+      shell: "ln -sf /usr/lib64/libcurl.so.4.5.0 /usr/lib64/libcurl-gnutls.so.4"
       become: yes
 
     - name: Only Office (Install)
-      dnf:
+      package:
         name: onlyoffice-desktopeditors
         state: present
       become: yes
@@ -379,7 +389,7 @@
       shell: "{{ item }}"
       with_items:
         - usermod -a -G input luca-linux
-        - dnf install systemd-devel libinput-devel
+        - dnf install -y systemd-devel libinput-devel
         - "cd {{ ansible_env.HOME }}/Programs/libinput-gestures; make install"
       become: yes
 
@@ -389,41 +399,44 @@
         - libinput-gestures-setup autostart   
         - libinput-gestures-setup start   
 
-    - name: Opensnitch Install (Dnf Dependency)
-      dnf:
-        name: "{{ item }}"
-        state: present
-      with_items:
-        - protobuf-compiler
-        - libpcap-devel
-        - libnetfilter_queue-devel
-      become: yes
-        
-    - name: Opensnitch Install (Userland Dependency)
-      shell: "{{ item }}"
-      with_items:
-        - go get github.com/golang/protobuf/protoc-gen-go
-        - go get -u github.com/golang/dep/cmd/dep
-        - pip3 install grpcio-tools
-        - go get github.com/evilsocket/opensnitch
-
-    - name: Opensnitch Install
-      shell: "cd $GOPATH/src/github.com/evilsocket/opensnitch; {{ item }} "
-      environment: 
-        GOPATH: "{{ ansible_env.HOME }}/.local/go"
-        PATH: "$PATH:$GOROOT/bin:$GOPATH/bin:$PATH:{{ ansible_env.HOME }}/.cargo/bin:{{ ansible_env.HOME }}/.local/bin:$PATH"
-      with_items:
-        - make
-        - make install
-      become: yes
-
-    - name: Opensnitch Start
-      systemd:
-        name: opensnitchd
-        state: started
-        enabled: yes
-      become: yes
-
+      #    - name: Opensnitch Install (Dnf Dependency)
+      #      package:
+      #        name: "{{ item }}"
+      #        state: present
+      #      with_items:
+      #        - protobuf-compiler
+      #        - libpcap-devel
+      #        - libnetfilter_queue-devel
+      #      become: yes
+      #        
+      #    - name: Opensnitch Install (Userland Dependency)
+      #      shell: "{{ item }}"
+      #      with_items:
+      #        - go get github.com/golang/protobuf/protoc-gen-go
+      #        - go get -u github.com/golang/dep/cmd/dep
+      #        - pip3 install grpcio-tools
+      #        - go get github.com/evilsocket/opensnitch
+      #      ignore_errors: yes
+      #
+      #    - name: Opensnitch Install
+      #      shell: |
+      #        export GOPATH={{ ansible_env.HOME }}/.local/go
+      #        export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+      #        export PATH={{ ansible_env.HOME }}/.local/bin:$PATH
+      #        cd $GOPATH/src/github.com/evilsocket/opensnitch;
+      #        make
+      #        make install
+      #      args:
+      #        executable: /bin/bash
+      #      become: yes
+      #
+      #    - name: Opensnitch Start
+      #      systemd:
+      #        name: opensnitchd
+      #        state: started
+      #        enabled: yes
+      #      become: yes
+      #
     - name: FSTrim Enable
       systemd:
         name: fstrim.timer
@@ -432,11 +445,12 @@
       become: yes
 
     - name: Install Power Management (Laptop)
-      dnf:
+      package:
         name: "{{ item }}"
         state: present
       with_items:
-        - powertop msr-tools 
+        - powertop
+        - msr-tools 
         - tlp 
         - tlp-rdw
       become: yes
@@ -466,7 +480,7 @@
         - { name: kernel.nmi_watchdog, value: 0 }
         - { name: vm.swappiness, value: 5 }
         - { name: vm.oom_kill_allocating_task, value: 1 }
-        - { name: vm.block_dump=1 }
+        - { name: vm.block_dump, value: 1 }
         - { name: vm.vfs_cache_pressure, value: 100 }
         - { name: vm.dirty_ratio, value: 90 }
         - { name: vm.dirty_background_ratio, value: 50 }
@@ -582,7 +596,7 @@
       stat:
         path: /etc/udev/rules.d/powersave.rules
       register: file_exists
-    - name: Load IO Schedulers at boot
+    - name: Set UDev Rules
       shell:  "echo {{ item }} >> /etc/udev/rules.d/powersave.rules"
       with_items:
         - ACTION=="add", SUBSYSTEM=="pci", ATTR{power/control}="auto"
