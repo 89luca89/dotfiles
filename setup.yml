@@ -1,5 +1,4 @@
 ---
-
 # To run
 # ansible-playbook setup.yml --ask-become-pass
 
@@ -8,12 +7,11 @@
   connection: local
   gather_facts: True
   tasks:
-    
     - name: Check if Dotfile folder is present
       stat:
         path: "{{ ansible_env.HOME }}/dotfiles"
       register: file_exists
-    - name: Download Dotfiles  
+    - name: Download Dotfiles
       git:
         repo: https://gitlab.com/89luca89/dotfiles
         dest: "{{ ansible_env.HOME }}/dotfiles"
@@ -25,22 +23,22 @@
         dest: "{{ item.dest }}"
         state: link
       with_items:
-        - { src: "~/dotfiles/.bashrc", dest: "~/.bashrc"}
-        - { src: "~/dotfiles/.tmux.conf", dest: "~/.tmux.conf"}
-        - { src: "~/dotfiles/.vimrc", dest: "~/.vimrc"}
-        - { src: "~/dotfiles/.zshrc", dest: "~/.zshrc"}
-        - { src: "~/dotfiles/.toprc", dest: "~/.toprc"}
-        - { src: "~/dotfiles/.npmrc", dest: "~/.npmrc"}
-        - { src: "~/dotfiles/.ctags", dest: "~/.ctags"}
-        - { src: "~/dotfiles/.clang-format", dest: "~/.clang-format"}
-        - { src: "~/dotfiles/libinput-gestures.conf", dest: "~/.config/libinput-gestures.conf"}
+        - { src: "~/dotfiles/.bashrc", dest: "~/.bashrc" }
+        - { src: "~/dotfiles/.tmux.conf", dest: "~/.tmux.conf" }
+        - { src: "~/dotfiles/.vimrc", dest: "~/.vimrc" }
+        - { src: "~/dotfiles/.zshrc", dest: "~/.zshrc" }
+        - { src: "~/dotfiles/.toprc", dest: "~/.toprc" }
+        - { src: "~/dotfiles/.npmrc", dest: "~/.npmrc" }
+        - { src: "~/dotfiles/.ctags", dest: "~/.ctags" }
+        - { src: "~/dotfiles/.clang-format", dest: "~/.clang-format" }
+        - { src: "~/dotfiles/libinput-gestures.conf", dest: "~/.config/libinput-gestures.conf" }
 
     - name: Load Gnome Keybindings
       shell: "dconf load /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/ < {{ ansible_env.HOME }}/dotfiles/gnome-keybindings.conf"
 
     - name: Load Gnome-Terminal Profiles
       shell: "dconf load /org/gnome/terminal/ < {{ ansible_env.HOME }}/dotfiles/gnome-terminal.conf"
-    
+
     - name: Configure Caps -> Ctrl
       dconf:
         key: "/org/gnome/desktop/input-sources/xkb-options"
@@ -70,8 +68,8 @@
 
     - name: Remove Programs (Unused Programs)
       package:
-          name: "{{ item }}"
-          state: removed
+        name: "{{ item }}"
+        state: removed
       with_items:
         - gnome-contacts
         - gnome-calendar
@@ -105,7 +103,7 @@
         - simple-scan
         - open-vm-tools
         - virtualbox-guest-additions
-        - totem 
+        - totem
       become: yes
 
     - name: Setup /usr/local directory
@@ -127,27 +125,26 @@
 
     - name: Install Programs (Generic Utilities)
       package:
-          name: "{{ item }}"
-          state: present
+        name: "{{ item }}"
+        state: present
       with_items:
         - etckeeper
         - flatpak
-        - cabextract 
+        - cabextract
         - lzip
-        - p7zip 
+        - p7zip
         - p7zip-plugins
         - unrar
-        - xdotool 
+        - xdotool
         - wmctrl
       become: yes
 
-     # See: https://github.com/ansible/ansible/issues/54949
+      # See: https://github.com/ansible/ansible/issues/54949
     - name: Configure etckeeper.conf
       lineinfile:
         path: /etc/etckeeper/etckeeper.conf
-        regexp: '^GIT_COMMIT_OPTIONS=.*'
+        regexp: "^GIT_COMMIT_OPTIONS=.*"
         line: 'GIT_COMMIT_OPTIONS="-q"'
-
 
     - name: Initialize Etckeeper
       shell: "{{ item }}"
@@ -159,8 +156,8 @@
 
     - name: Install Programs (Media Utilities)
       package:
-          name: "{{ item }}"
-          state: present
+        name: "{{ item }}"
+        state: present
       with_items:
         - gstreamer1-vaapi
         - gstreamer1-libav
@@ -186,8 +183,8 @@
 
     - name: Install Programs (GUI Programs)
       package:
-          name: "{{ item }}"
-          state: present
+        name: "{{ item }}"
+        state: present
       with_items:
         - gnome-tweak-tool
         - libnotify
@@ -198,15 +195,15 @@
         - gparted
         - gnome-mpv
         - syncthing
-        - syncthing-gtk 
-        - VirtualBox 
+        - syncthing-gtk
+        - VirtualBox
         - akmod-VirtualBox
       become: yes
 
     - name: Install Programs (Terminal Programs)
       package:
-          name: "{{ item }}"
-          state: present
+        name: "{{ item }}"
+        state: present
       with_items:
         - vim
         - vim-enhanced
@@ -225,14 +222,14 @@
         name: "{{ item }}"
         state: present
       with_items:
-          - '@C Development Tools and Libraries'
-          - '@Development tools'
+        - "@C Development Tools and Libraries"
+        - "@Development tools"
       become: yes
 
     - name: Install Programs (Programming Packages)
       package:
-          name: "{{ item }}"
-          state: present
+        name: "{{ item }}"
+        state: present
       with_items:
         - java
         - java-devel
@@ -247,9 +244,9 @@
         - ShellCheck
         - ncurses-compat-libs
         - boost-devel
-        - python2 
+        - python2
         - python2-devel
-        - python3 
+        - python3
         - python3-devel
         - cmake
         - ctags
@@ -286,14 +283,14 @@
       get_url:
         url: https://github.com/jgraph/drawio-desktop/releases/download/v9.3.1/draw.io-x86_64-9.3.1.AppImage
         dest: "{{ ansible_env.HOME }}/Programs/draw.io-x86_64-9.3.1.AppImage"
-        mode: '0755'
+        mode: "0755"
 
     - name: Install Rsync-Time-Backup
       git:
-        repo: https://github.com/laurent22/rsync-time-backup 
+        repo: https://github.com/laurent22/rsync-time-backup
         dest: "{{ ansible_env.HOME }}/Programs/rsync-time-backup"
         update: yes
-        
+
     - name: Setup GOLANG environment
       shell: |
         export GOPATH=$HOME/.local/go
@@ -306,19 +303,19 @@
       args:
         executable: /bin/bash
 
-     # LSP
-     # c/cpp clangd -> clang-tools-extra
-     # java -> https://download.eclipse.org/jdtls/milestones/?d
-     # xml -> https://github.com/angelozerr/lsp4xml/releases
-     # golang -> go-langserver
-     #
-     # Formatters:
-     # gofmt -> golang
-     # jsonlint -> demjson (pip install it)
-     # autopep8 -> pip install it
-     # clang-format -> clang
-     # shfmt -> go get it
-     # yamlftm -> pip install it
+      # LSP
+      # c/cpp clangd -> clang-tools-extra
+      # java -> https://download.eclipse.org/jdtls/milestones/?d
+      # xml -> https://github.com/angelozerr/lsp4xml/releases
+      # golang -> go-langserver
+      #
+      # Formatters:
+      # gofmt -> golang
+      # jsonlint -> demjson (pip install it)
+      # autopep8 -> pip install it
+      # clang-format -> clang
+      # shfmt -> go get it
+      # yamlftm -> pip install it
     - name: Install Bash,Yaml,GOlang,Python LSP
       shell: "{{ item }}"
       with_items:
@@ -337,7 +334,7 @@
       get_url:
         url: https://github.com/angelozerr/lsp4xml/releases/download/0.3.0/org.eclipse.lsp4xml-0.3.0-uber.jar
         dest: "{{ ansible_env.HOME }}/Programs/xml-language-server/"
-        mode: '0755'
+        mode: "0755"
 
     - name: "Ensure {{ ansible_env.HOME }}/Programs/jtd-language-server/ Exists"
       file:
@@ -347,9 +344,9 @@
       get_url:
         url: http://download.eclipse.org/jdtls/milestones/0.39.0/jdt-language-server-0.39.0-201905150127.tar.gz
         dest: "{{ ansible_env.HOME }}/Programs/jtd-language-server/"
-        mode: '0755'
+        mode: "0755"
     - name: Extract archive
-      unarchive: 
+      unarchive:
         src: "{{ ansible_env.HOME }}/Programs/jtd-language-server/jdt-language-server-0.39.0-201905150127.tar.gz"
         dest: "{{ ansible_env.HOME }}/Programs/jtd-language-server/"
 
@@ -378,7 +375,7 @@
         name: onlyoffice-desktopeditors
         state: present
       become: yes
-    
+
     - name: Libinput Gestures (Clone)
       git:
         repo: https://github.com/bulletmark/libinput-gestures
@@ -396,8 +393,8 @@
     - name: Libinput Gestures (Start and Autorun)
       shell: "{{ item }}"
       with_items:
-        - libinput-gestures-setup autostart   
-        - libinput-gestures-setup start   
+        - libinput-gestures-setup autostart
+        - libinput-gestures-setup start
 
       #    - name: Opensnitch Install (Dnf Dependency)
       #      package:
@@ -408,7 +405,7 @@
       #        - libpcap-devel
       #        - libnetfilter_queue-devel
       #      become: yes
-      #        
+      #
       #    - name: Opensnitch Install (Userland Dependency)
       #      shell: "{{ item }}"
       #      with_items:
@@ -450,8 +447,8 @@
         state: present
       with_items:
         - powertop
-        - msr-tools 
-        - tlp 
+        - msr-tools
+        - tlp
         - tlp-rdw
       become: yes
 
@@ -471,7 +468,7 @@
 
     - sysctl:
         name: "{{ item.name }}"
-        value: "{{ item.value }}" 
+        value: "{{ item.value }}"
         sysctl_set: yes
         state: present
         reload: yes
@@ -485,7 +482,7 @@
         - { name: vm.dirty_ratio, value: 90 }
         - { name: vm.dirty_background_ratio, value: 50 }
         - { name: vm.dirty_writeback_centisecs, value: 60000 }
-        - { name: vm.dirty_expire_centisecs, value: 60000 } 
+        - { name: vm.dirty_expire_centisecs, value: 60000 }
       become: yes
 
     - name: Check if Crypttab discard is enabled
@@ -531,7 +528,7 @@
         path: /etc/modprobe.d/i915.conf
       register: file_exists
     - name: Set i915 driver options
-      shell: echo "options i915 disable_power_well=0 enable_dc=2 enable_psr=3 enable_rc6=7 enable_fbc=1 powersave=1 semaphores=1" > /etc/modprobe.d/i915.conf 
+      shell: echo "options i915 disable_power_well=0 enable_dc=2 enable_psr=3 enable_rc6=7 enable_fbc=1 powersave=1 semaphores=1" > /etc/modprobe.d/i915.conf
       become: yes
       when: file_exists.stat.exists == False
 
@@ -558,10 +555,9 @@
         path: /etc/modprobe.d/iwlwifi.conf
       register: file_exists
     - name: Set Intel Wifi driver options
-      shell:  echo 'options iwlwifi power_save=Y power_level=5 iwlmvm power_scheme=3' > /etc/modprobe.d/iwlwifi.conf
+      shell: echo 'options iwlwifi power_save=Y power_level=5 iwlmvm power_scheme=3' > /etc/modprobe.d/iwlwifi.conf
       become: yes
       when: file_exists.stat.exists == False
-
 
     - name: Check Grub Flags are deployed
       shell: grep "nmi_watchdog=0 pcie_aspm.policy=powersupersave pcie_aspm=force drm.debug=0 drm.vblankoffdelay=1 scsi_mod.use_blk_mq=1 mmc_mod.use_blk_mq=1 pti=off spectre_v2=off l1tf=off nospec_store_bypass_disable no_stf_barrier" /etc/default/grub
@@ -584,7 +580,7 @@
         path: /etc/modules-load.d/iosched.conf
       register: file_exists
     - name: Load IO Schedulers at boot
-      shell:  "echo {{ item }} >> /etc/modules-load.d/iosched.conf"
+      shell: "echo {{ item }} >> /etc/modules-load.d/iosched.conf"
       with_items:
         - bfq
         - mq-deadline
@@ -597,7 +593,7 @@
         path: /etc/udev/rules.d/powersave.rules
       register: file_exists
     - name: Set UDev Rules
-      shell:  "echo {{ item }} >> /etc/udev/rules.d/powersave.rules"
+      shell: "echo {{ item }} >> /etc/udev/rules.d/powersave.rules"
       with_items:
         - ACTION=="add", SUBSYSTEM=="pci", ATTR{power/control}="auto"
         - ACTION=="add", SUBSYSTEM=="ahci", ATTR{power/control}="auto"
@@ -618,7 +614,6 @@
         - ACTION=="add|change", KERNEL=="sd[a-z]", RUN+="/usr/sbin/hdparm -B 1 /dev/%k"
       become: yes
       when: file_exists.stat.exists == False
-
 #     ######## BBSWITCH ################
 #     sudo dnf copr enable chenxiaolong/bumblebee
 #     echo "blacklist nouveau
