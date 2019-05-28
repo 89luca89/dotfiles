@@ -1,0 +1,617 @@
+---
+
+# To run
+# ansible-playbook setup.yml --ask-become-pass
+
+- name: Playbook to manage My Distro
+  hosts: localhost
+  connection: local
+  gather_facts: True
+  tasks:
+    
+    - name: Check if Dotfile folder is present
+      stat:
+        path: "{{ ansible_env.HOME }}/dotfiles"
+      register: file_exists
+    - name: Download Dotfiles  
+      git:
+        repo: https://gitlab.com/89luca89/dotfiles
+        dest: "{{ ansible_env.HOME }}/dotfiles"
+        update: yes
+      when: file_exists.stat.exists == False
+    - name: link dotfiles
+      file:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        state: link
+      with_items:
+        - { src: "~/dotfiles/.bashrc", dest: "~/.bashrc"}
+        - { src: "~/dotfiles/.tmux.conf", dest: "~/.tmux.conf"}
+        - { src: "~/dotfiles/.vimrc", dest: "~/.vimrc"}
+        - { src: "~/dotfiles/.zshrc", dest: "~/.zshrc"}
+        - { src: "~/dotfiles/.toprc", dest: "~/.toprc"}
+        - { src: "~/dotfiles/.npmrc", dest: "~/.npmrc"}
+        - { src: "~/dotfiles/.ctags", dest: "~/.ctags"}
+        - { src: "~/dotfiles/.clang-format", dest: "~/.clang-format"}
+        - { src: "~/dotfiles/libinput-gestures.conf", dest: "~/.config/libinput-gestures.conf"}
+
+    - name: Load Gnome Keybindings
+      shell: "dconf load /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/ < {{ ansible_env.HOME }}/dotfiles/gnome-keybindings.conf"
+
+    - name: Load Gnome-Terminal Profiles
+      shell: "dconf load /org/gnome/terminal/ < {{ ansible_env.HOME }}/dotfiles/gnome-terminal.conf"
+    
+    - name: Configure Caps -> Ctrl
+      dconf:
+        key: "/org/gnome/desktop/input-sources/xkb-options"
+        value: "['caps:ctrl_modifier']"
+        state: present
+
+    - name: Configure Keyboars IT+US
+      dconf:
+        key: "/org/gnome/desktop/input-sources/sources"
+        value: "[('xkb', 'it'), ('xkb', 'us+altgr-intl')]"
+        state: present
+
+    - name: Deactivate Cursor Blinking
+      dconf:
+        key: "/org/gnome/desktop/interface/cursor-blink"
+        value: "false"
+        state: present
+
+    - name: Update the /etc/hosts file with node name
+      lineinfile:
+        path: "/etc/hosts"
+        regexp: "127.0.0.1\t{{ ansible_hostname }}"
+        line: "127.0.0.1\t{{ ansible_hostname }}"
+        state: present
+        backup: yes
+      become: yes
+
+    - name: Remove Programs (Unused Programs)
+      dnf:
+          name: "{{ item }}"
+          state: removed
+      with_items:
+        - gnome-contacts
+        - gnome-calendar
+        - gnome-documents
+        - gnome-dictionary
+        - gnome-photos
+        - gnome-music
+        - gnome-boxes
+        - gnome-getting-started-docs
+        - gnome-initial-setup
+        - gnome-maps
+        - gnome-online-miners
+        - gnome-photos
+        - gnome-user-docs
+        - gnome-user-share
+        - gnome-video-effects
+        - gnome-weather
+        - gnome-shell-extension-alternate-tab
+        - gnome-shell-extension-apps-menu
+        - gnome-shell-extension-background-logo
+        - gnome-shell-extension-launch-new-instance
+        - gnome-shell-extension-places-menu
+        - gnome-shell-extension-window-list
+        - 'setroubleshoot*'
+        - '*abrt*'
+        - tracker-miners
+        - cheese
+        - gfbgraph
+        - simple-scan
+        - open-vm-tools
+        - virtualbox-guest-additions
+        - totem 
+      become: yes
+
+    - name: Setup /usr/local directory
+      shell: "chown -R luca-linux:luca-linux /usr/local"
+      become: yes
+
+    - name: Install the rpmfusion and fonts repo packages
+      dnf:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ fedora_current }}.noarch.rpm
+        - http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ fedora_current }}.noarch.rpm
+        - https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
+      become: yes
+
+    - name: Install Flathub
+      shell: "flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo"
+
+    - name: Install Programs (Generic Utilities)
+      dnf:
+          name: "{{ item }}"
+          state: present
+      with_items:
+        - etckeeper
+        - flatpak
+        - cabextract 
+        - lzip
+        - p7zip 
+        - p7zip-plugins
+        - unrar
+        - xdotool 
+        - wmctrl
+      become: yes
+    
+    - name: Initialize Etckeeper
+      shell: "{{ item }}"
+      with_items:
+        - etckeeper init
+        - etckeeper commit "Initial Commit"
+      become: yes
+
+    - name: Install Programs (Media Utilities)
+      dnf:
+          name: "{{ item }}"
+          state: present
+      with_items:
+        - gstreamer1-vaapi
+        - gstreamer1-libav
+        - gstreamer1-plugins-good
+        - gstreamer1-plugins-good-extras
+        - gstreamer1-plugins-ugly
+        - gstreamer1-plugins-ugly-free
+        - gstreamer1-plugins-bad-free
+        - gstreamer1-plugins-bad-nonfree
+        - gstreamer1-plugins-bad-freeworld
+        - gstreamer1-plugins-base-tools
+        - ffmpeg
+        - ffmpeg-libs
+        - libva-devel
+        - libva-intel-driver
+        - libva-intel-hybrid-driver
+        - libva-utils
+        - libva-vdpau-driver
+        - libvdpau-va-gl
+        - compat-ffmpeg28
+        - compat-ffmpeg28-devel
+      become: yes
+
+    - name: Install Programs (GUI Programs)
+      dnf:
+          name: "{{ item }}"
+          state: present
+      with_items:
+        - gnome-tweak-tool
+        - libnotify
+        - libnotify-devel
+        - gimp
+        - keepassxc
+        - telegram-desktop
+        - gparted
+        - gnome-mpv
+        - syncthing
+        - syncthing-gtk 
+        - VirtualBox 
+        - akmod-VirtualBox
+      become: yes
+
+    - name: Install Programs (Terminal Programs)
+      dnf:
+          name: "{{ item }}"
+          state: present
+      with_items:
+        - vim
+        - vim-enhanced
+        - tmate
+        - tmux
+        - xclip
+        - ripgrep
+        - wmctrl
+        - xdotool
+        - inotify-tools
+        - firejail
+      become: yes
+
+    - name: install the 'Development tools' package group
+      dnf:
+        name: "{{ item }}"
+        state: present
+        with_items:
+            - '@C Development Tools and Libraries'
+            - '@Development tools'
+      become: yes
+
+    - name: Install Programs (Programming Packages)
+      dnf:
+          name: "{{ item }}"
+          state: present
+      with_items:
+        - java 
+        - java-devel
+        - clang
+        - clang-analyzer
+        - clang-tools-extra
+        - clang-devel
+        - golang
+        - golint
+        - npm nodejs
+        - ShellCheck
+        - ncurses-compat-libs
+        - boost-devel
+        - python2 
+        - python2-devel
+        - python3 
+        - python3-devel
+        - cmake
+        - ctags
+        - ctags-etags
+        - global-ctags
+      become: yes
+
+    - name: Install Programs (Programming Packages) - pip
+      pip:
+          name: "{{ item }}"
+          state: present
+      with_items:
+        - flake8
+        - pep8
+        - pylint
+        - neovim
+        - jedi
+        - pyflakes
+        - pycodestyle
+        - autopep8
+        - demjson
+        - clang
+        - yamlfmt
+
+    - name: "Ensure {{ ansible_env.HOME }}/Programs Exists"
+      file:
+        path: "{{ ansible_env.HOME }}/Programs"
+        state: directory
+
+    - name: Download DrawIO
+      get_url:
+        url: https://github.com/jgraph/drawio-desktop/releases/download/v9.3.1/draw.io-x86_64-9.3.1.AppImage
+        dest: "{{ ansible_env.HOME }}/Programs/draw.io-x86_64-9.3.1.AppImage"
+        mode: '0755'
+
+    - name: Install Rsync-Time-Backup
+      git:
+        repo: https://github.com/laurent22/rsync-time-backup 
+        dest: "{{ ansible_env.HOME }}/Programs/rsync-time-backup"
+        update: yes
+        
+    - name: Setup GOLANG environment
+      shell: "go get -u -v {{ item }}"
+      environment: 
+        GOPATH: "{{ ansible_env.HOME }}/.local/go"
+        PATH: "$PATH:$GOROOT/bin:$GOPATH/bin:$PATH:{{ ansible_env.HOME }}/.cargo/bin:{{ ansible_env.HOME }}/.local/bin:$PATH"
+      with_items:
+        - github.com/moul/advanced-ssh-config/cmd/assh
+        - mvdan.cc/sh/cmd/shfmt
+        - github.com/nsf/gocode
+
+     # LSP
+     # c/cpp clangd -> clang-tools-extra
+     # java -> https://download.eclipse.org/jdtls/milestones/?d
+     # xml -> https://github.com/angelozerr/lsp4xml/releases
+     # golang -> go-langserver
+     #
+     # Formatters:
+     # gofmt -> golang
+     # jsonlint -> demjson (pip install it)
+     # autopep8 -> pip install it
+     # clang-format -> clang
+     # shfmt -> go get it
+     # yamlftm -> pip install it
+    - name: Install Bash,Yaml,GOlang,Python LSP
+      shell: "{{ item }}"
+      with_items:
+        - npm i -g bash-language-server
+        - npm i -g yaml-language-server
+        - go get -u -v github.com/sourcegraph/go-langserver
+        - pip3 install python-language-server
+
+    - name: "Ensure {{ ansible_env.HOME }}/Programs/xml-language-server/ Exists"
+      file:
+        path: "{{ ansible_env.HOME }}/Programs/xml-language-server/"
+        state: directory
+    - name: Install XML Lang Server
+      get_url:
+        url: https://github.com/angelozerr/lsp4xml/releases/download/0.3.0/org.eclipse.lsp4xml-0.3.0-uber.jar
+        dest: "{{ ansible_env.HOME }}/Programs/xml-language-server/"
+        mode: '0755'
+
+    - name: "Ensure {{ ansible_env.HOME }}/Programs/jtd-language-server/ Exists"
+      file:
+        path: "{{ ansible_env.HOME }}/Programs/jtd-language-server/"
+        state: directory
+    - name: Download Java Lang Server
+      get_url:
+        url: http://download.eclipse.org/jdtls/milestones/0.39.0/jdt-language-server-0.39.0-201905150127.tar.gz
+        dest: "{{ ansible_env.HOME }}/Programs/jtd-language-server/"
+        mode: '0755'
+    - name: Extract archive
+      unarchive: 
+        src: "{{ ansible_env.HOME }}/Programs/jtd-language-server/jdt-language-server-0.39.0-201905150127.tar.gz"
+        dest: "{{ ansible_env.HOME }}/Programs/jtd-language-server/"
+
+    - name: "Ensure {{ ansible_env.HOME }}/Programs/jtd-language-server/ Exists"
+      file:
+        path: "{{ ansible_env.HOME }}/Programs/jtd-language-server/"
+        state: directory
+    - name: Install Java Lang Server
+      get_url:
+        url: http://download.eclipse.org/jdtls/milestones/0.39.0/jdt-language-server-0.39.0-201905150127.tar.gz
+        dest: "{{ ansible_env.HOME }}/Programs/jtd-language-server/"
+        mode: '0755'
+
+    - name: Only Office (Key)
+      rpm_key:
+        state: present
+        key: "http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x8320CA65CB2DE8E5"
+      become: yes
+
+    - name: Only Office (Repo)
+      yum_repository:
+        name: onlyoffice repo
+        baseurl: http://download.onlyoffice.com/repo/centos/main/noarch/ 
+        gpgcheck: yes
+        enabled: yes
+        file: onlyoffice_repo
+      become: yes
+
+    - name: Only Office (Links)
+      shell: "ln -s /usr/lib64/libcurl.so.4.5.0 /usr/lib64/libcurl-gnutls.so.4"
+      become: yes
+
+    - name: Only Office (Install)
+      dnf:
+        name: onlyoffice-desktopeditors
+        state: present
+      become: yes
+    
+    - name: Libinput Gestures (Clone)
+      git:
+        repo: https://github.com/bulletmark/libinput-gestures
+        dest: "{{ ansible_env.HOME }}/Programs/libinput-gestures"
+        update: yes
+
+    - name: Libinput Gestures (Group and Dependency)
+      shell: "{{ item }}"
+      with_items:
+        - usermod -a -G input luca-linux
+        - dnf install systemd-devel libinput-devel
+        - "cd {{ ansible_env.HOME }}/Programs/libinput-gestures; make install"
+      become: yes
+
+    - name: Libinput Gestures (Start and Autorun)
+      shell: "{{ item }}"
+      with_items:
+        - libinput-gestures-setup autostart   
+        - libinput-gestures-setup start   
+
+    - name: Opensnitch Install (Dnf Dependency)
+      dnf:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - protobuf-compiler
+        - libpcap-devel
+        - libnetfilter_queue-devel
+      become: yes
+        
+    - name: Opensnitch Install (Userland Dependency)
+      shell: "{{ item }}"
+      with_items:
+        - go get github.com/golang/protobuf/protoc-gen-go
+        - go get -u github.com/golang/dep/cmd/dep
+        - pip3 install grpcio-tools
+        - go get github.com/evilsocket/opensnitch
+
+    - name: Opensnitch Install
+      shell: "cd $GOPATH/src/github.com/evilsocket/opensnitch; {{ item }} "
+      environment: 
+        GOPATH: "{{ ansible_env.HOME }}/.local/go"
+        PATH: "$PATH:$GOROOT/bin:$GOPATH/bin:$PATH:{{ ansible_env.HOME }}/.cargo/bin:{{ ansible_env.HOME }}/.local/bin:$PATH"
+      with_items:
+        - make
+        - make install
+      become: yes
+
+    - name: Opensnitch Start
+      systemd:
+        name: opensnitchd
+        state: started
+        enabled: yes
+      become: yes
+
+    - name: FSTrim Enable
+      systemd:
+        name: fstrim.timer
+        state: started
+        enabled: yes
+      become: yes
+
+    - name: Install Power Management (Laptop)
+      dnf:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - powertop msr-tools 
+        - tlp 
+        - tlp-rdw
+      become: yes
+
+    - name: Powertop Enable
+      systemd:
+        name: powertop.service
+        state: started
+        enabled: yes
+      become: yes
+
+    - name: Tlp Enable
+      systemd:
+        name: tlp.service
+        state: started
+        enabled: yes
+      become: yes
+
+    - sysctl:
+        name: "{{ item.name }}"
+        value: "{{ item.value }}" 
+        sysctl_set: yes
+        state: present
+        reload: yes
+      with_items:
+        - { name: vm.laptop_mode, value: 5 }
+        - { name: kernel.nmi_watchdog, value: 0 }
+        - { name: vm.swappiness, value: 5 }
+        - { name: vm.oom_kill_allocating_task, value: 1 }
+        - { name: vm.block_dump=1 }
+        - { name: vm.vfs_cache_pressure, value: 100 }
+        - { name: vm.dirty_ratio, value: 90 }
+        - { name: vm.dirty_background_ratio, value: 50 }
+        - { name: vm.dirty_writeback_centisecs, value: 60000 }
+        - { name: vm.dirty_expire_centisecs, value: 60000 } 
+      become: yes
+
+    - name: Check if Crypttab discard is enabled
+      shell: "grep discard /etc/crypttab"
+      register: test_grep
+      become: yes
+      ignore_errors: yes
+    - name: Enable Discard Crypttab
+      shell: "sed -i 's/none/none discard/g' /etc/crypttab"
+      become: yes
+      when: test_grep.rc == 1
+
+    - name: Check if fstab discard is enabled
+      shell: grep "discard" /etc/crypttab
+      register: test_grep
+      become: yes
+      ignore_errors: yes
+    - name: Enable Discard Fstab
+      shell: "sed -i 's/defaults/defaults,discard/g' /etc/fstab"
+      become: yes
+      when: test_grep.rc == 1
+
+    - name: Update fstab file with tmpfs /tmp
+      lineinfile:
+        path: "/etc/fstab"
+        regexp: "tmpfs /tmp tmpfs"
+        line: "tmpfs /tmp tmpfs defaults,lazytime,noatime,nodiratime 0 0"
+        state: present
+        backup: yes
+      become: yes
+
+    - name: Enable discard lvm
+      shell: "sed -i 's/issue_discards = 0/issue_discards = 1/g' /etc/lvm/lvm.conf"
+      become: yes
+
+    - kernel_blacklist:
+        name: intel_powerclamp
+        state: present
+      become: yes
+
+    - name: Check if /etc/modprobe.d/i915.conf exists
+      stat:
+        path: /etc/modprobe.d/i915.conf
+      register: file_exists
+    - name: Set i915 driver options
+      shell: echo "options i915 disable_power_well=0 enable_dc=2 enable_psr=3 enable_rc6=7 enable_fbc=1 powersave=1 semaphores=1" > /etc/modprobe.d/i915.conf 
+      become: yes
+      when: file_exists.stat.exists == False
+
+    - name: Check if /etc/modprobe.d/snd_hda_intel.conf exists
+      stat:
+        path: /etc/modprobe.d/snd_hda_intel.conf
+      register: file_exists
+    - name: Set Intel HDA driver options
+      shell: echo 'options snd_hda_intel power_save_controlle=Y power_save=1' > /etc/modprobe.d/snd_hda_intel.conf
+      become: yes
+      when: file_exists.stat.exists == False
+
+    - name: Check if /etc/modprobe.d/e1000e.conf exists
+      stat:
+        path: /etc/modprobe.d/e1000e.conf
+      register: file_exists
+    - name: Set Intel ETH driver options
+      shell: echo 'options e1000e SmartPowerDownEnable=1' > /etc/modprobe.d/e1000e.conf
+      become: yes
+      when: file_exists.stat.exists == False
+
+    - name: Check if /etc/modprobe.d/iwlwifi.conf exists
+      stat:
+        path: /etc/modprobe.d/iwlwifi.conf
+      register: file_exists
+    - name: Set Intel Wifi driver options
+      shell:  echo 'options iwlwifi power_save=Y power_level=5 iwlmvm power_scheme=3' > /etc/modprobe.d/iwlwifi.conf
+      become: yes
+      when: file_exists.stat.exists == False
+
+
+    - name: Check Grub Flags are deployed
+      shell: grep "nmi_watchdog=0 pcie_aspm.policy=powersupersave pcie_aspm=force drm.debug=0 drm.vblankoffdelay=1 scsi_mod.use_blk_mq=1 mmc_mod.use_blk_mq=1 pti=off spectre_v2=off l1tf=off nospec_store_bypass_disable no_stf_barrier" /etc/default/grub
+      register: test_grep
+      become: yes
+      ignore_errors: yes
+    - name: Deploy Grub Flags
+      shell: "sed -i 's/quiet/quiet nmi_watchdog=0 pcie_aspm.policy=powersupersave pcie_aspm=force drm.debug=0 drm.vblankoffdelay=1 scsi_mod.use_blk_mq=1 mmc_mod.use_blk_mq=1 pti=off spectre_v2=off l1tf=off nospec_store_bypass_disable no_stf_barrier/g' /etc/fstab"
+      become: yes
+      when: test_grep.rc == 1
+    - name: Update Grub and Initramfs
+      shell: "{{ item }}"
+      with_items:
+        - grub2-mkconfig -o $(find /boot -name "grub.cfg" -print | head -n 1)
+        - dracut --force --regenerate-all -v
+      become: yes
+
+    - name: Check if /etc/modules-load.d/iosched.conf exists
+      stat:
+        path: /etc/modules-load.d/iosched.conf
+      register: file_exists
+    - name: Load IO Schedulers at boot
+      shell:  "echo {{ item }} >> /etc/modules-load.d/iosched.conf"
+      with_items:
+        - bfq
+        - mq-deadline
+        - kyber-iosched
+      become: yes
+      when: file_exists.stat.exists == False
+
+    - name: Check if /etc/udev/rules.d/powersave.rules exists
+      stat:
+        path: /etc/udev/rules.d/powersave.rules
+      register: file_exists
+    - name: Load IO Schedulers at boot
+      shell:  "echo {{ item }} >> /etc/udev/rules.d/powersave.rules"
+      with_items:
+        - ACTION=="add", SUBSYSTEM=="pci", ATTR{power/control}="auto"
+        - ACTION=="add", SUBSYSTEM=="ahci", ATTR{power/control}="auto"
+        - ACTION=="add", SUBSYSTEM=="scsi_host", KERNEL=="host*", ATTR{link_power_management_policy}="min_power"
+        - ACTION=="add", SUBSYSTEM=="scsi", ATTR{power/control}="auto"
+        - ACTION=="add", SUBSYSTEM=="acpi", ATTR{power/control}="auto"
+        - ACTION=="add", SUBSYSTEM=="block", ATTR{power/control}="auto"
+        - ACTION=="add", SUBSYSTEM=="workqueue", ATTR{power/control}="auto"
+        - ACTION=="add", SUBSYSTEM=="i2c", ATTR{power/control}="auto"
+        - ACTION=="add", SUBSYSTEM=="net", KERNEL=="enp*", RUN+="/usr/sbin/ethtool -s %k wol d"
+        - ACTION=="add", SUBSYSTEM=="net", KERNEL=="wlp*", RUN+="/usr/sbin/ethtool -s %k wol d"
+        - ACTION=="add", SUBSYSTEM=="net", KERNEL=="wlp*", RUN+="/usr/sbin/iw dev %k set power_save on"
+        - ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/read_ahead_kb}="65536"
+        - ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="bfq"
+        - ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="0", ATTR{queue/iosched/low_latency}="1"
+        - ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq"
+        - ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/iosched/low_latency}="1"
+        - ACTION=="add|change", KERNEL=="sd[a-z]", RUN+="/usr/sbin/hdparm -B 1 /dev/%k"
+      become: yes
+      when: file_exists.stat.exists == False
+
+#     ######## BBSWITCH ################
+#     sudo dnf copr enable chenxiaolong/bumblebee
+#     echo "blacklist nouveau
+#     blacklist lbm-nouveau
+#     alias nouveau off
+#     alias lbm-nouveau off
+#     options nouveau modeset=0" | sudo tee /etc/modprobe.d/nouveau_blacklist.conf
+#     echo "options bbswitch load_state=0 unload_state=0" | sudo tee /etc/modprobe.d/bbswitch.conf
+#     echo "bbswitch" | sudo tee /etc/modules-load.d/bbswitch.conf
+#     sudo mv /usr/lib/systemd/system/switcheroo-control.service /usr/lib/systemd/system/switcheroo-control.service.bak
