@@ -6,7 +6,6 @@ call plug#begin('~/.vim/plugged')
 Plug 'scrooloose/nerdtree'                                      " split file manager
 Plug 'vim-airline/vim-airline'                                  " tabs and statusline
 Plug 'airblade/vim-gitgutter'                                   " +,-,~ on modified lines in git repo
-Plug 'yggdroot/indentline'
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
@@ -81,27 +80,26 @@ let g:deoplete#enable_at_startup = 1
 let g:deoplete#enable_smart_case = 1
 let g:deoplete#auto_completion_start_length = 2
 let g:deoplete#manual_completion_start_length = 1
-call deoplete#custom#source('LanguageClient',
-            \ 'min_pattern_length',
-            \ 2)
 " Async Complete + LSP
 set completeopt+=preview
 set signcolumn=yes
 let g:LanguageClient_autoStart = 1
 let g:LanguageClient_diagnosticsEnable = 1
+let g:LanguageClient_diagnosticsList = "Location"
+let g:LanguageClient_hasSnippetSupport = 1
 let g:LanguageClient_loadSettings = 1
 let g:LanguageClient_serverCommands = {
             \ 'c': ['clangd'],
             \ 'cpp': ['clangd'],
             \ 'python': ['/usr/local/bin/pyls'],
             \ 'go' : ['~/.local/go/bin/go-langserver'],
-            \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
             \ 'sh' : ['~/.npm-packages/bin/bash-language-server', 'start'],
             \ 'yaml': ['~/.npm-packages/bin/yaml-language-server', '--stdio'],
             \ 'yaml.ansible': ['~/.npm-packages/bin/yaml-language-server', '--stdio'],
             \ 'xml': ['~/bin/xmlls'],
-            \ 'java': ['~/bin/jdtls'],
+            \ 'java': ['~/bin/jdtls', '-data', getcwd()],
             \ }
+            "\ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
 
 function! s:setYamlSchema()
     echom &ft
@@ -135,6 +133,8 @@ let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 "
 " Ctrl+] goTo Definition, default Tags, if present use Lang Server
 set formatexpr=LanguageClient#textDocument_rangeFormatting_sync()
+" Launch fix-netbeans-project to update jar libs and restart the lang server
+map <silent> <leader>u :!fix-netbeans-classpath <cr>:call LanguageClient#exit()<cr>
 " Language client shortcuts with leader:
 map <silent> <leader>h :call LanguageClient_textDocument_hover()<cr>
 map <silent> <leader>m :call LanguageClient_contextMenu()<cr>
@@ -147,6 +147,17 @@ map <silent> <leader>l :call LanguageClient#textDocument_formatting()<cr>
 map <silent> <leader>i :call LanguageClient_textDocument_implementation()<cr>
 map <silent> <leader>td :call LanguageClient_textDocument_typeDefinition()<cr>
 map <silent> <leader>e :call LanguageClient#explainErrorAtPoint()<cr>
+
+map <silent> <C-F> :<C-u>call ToggleErrors()<CR>
+function! ToggleErrors()
+    if empty(filter(tabpagebuflist(), 'getbufvar(v:val, "&buftype") is# "quickfix"'))
+        " No location/quickfix list shown, open Loclist error location panel
+        lopen
+    else
+        lclose
+    endif
+endfunction
+
 
 " Ctrl+T fuzzy find ctags
 noremap <C-T> :Tags<CR>
@@ -230,8 +241,8 @@ set hlsearch incsearch ignorecase smartcase             " Highlight search resul
 set nowrap                                              " play nicely with long lines
 set number                                              " Enable line numbers
 set updatetime=1000                                     " reduce update time from 4s to 1s
+set noshowcmd
 let &colorcolumn=join(range(81,999),",")
-set guioptions=
 syntax on
 
 " play nicely with modern graphics

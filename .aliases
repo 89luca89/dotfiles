@@ -21,3 +21,4 @@ export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 export PATH=$HOME/.local/bin:$PATH
 export NPM_PACKAGES="${HOME}/.npm-packages"
 export PATH="$PATH:$NPM_PACKAGES/bin"
+export JAVA_HOME="/usr/lib/jvm/java"
