@@ -36,8 +36,8 @@
     - name: Load Gnome Keybindings
       shell: "dconf load /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/ < {{ ansible_env.HOME }}/dotfiles/gnome-keybindings.conf"
 
-    - name: Load Gnome-Terminal Profiles
-      shell: "dconf load /org/gnome/terminal/ < {{ ansible_env.HOME }}/dotfiles/gnome-terminal.conf"
+      #- name: Load Gnome-Terminal Profiles
+      #  shell: "dconf load /org/gnome/terminal/ < {{ ansible_env.HOME }}/dotfiles/gnome-terminal.conf"
 
     - name: Configure Caps -> Ctrl
       dconf:
@@ -97,7 +97,6 @@
         - setroubleshoot-legacy
         - setroubleshoot-plugins
         - setroubleshoot-server
-        - tracker-miners
         - cheese
         - gfbgraph
         - simple-scan
@@ -105,6 +104,7 @@
         - virtualbox-guest-additions
         - totem
       become: yes
+      tags: bloat
 
     - name: Setup /usr/local directory
       shell: "chown -R luca-linux:luca-linux /usr/local"
@@ -119,6 +119,7 @@
         - http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_facts.distribution_version }}.noarch.rpm
         - https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
       become: yes
+      tags: pkg_install
 
     - name: Install Flathub
       shell: "flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo"
@@ -138,6 +139,7 @@
         - xdotool
         - wmctrl
       become: yes
+      tags: pkg_install
 
       # See: https://github.com/ansible/ansible/issues/54949
     - name: Configure etckeeper.conf
@@ -180,6 +182,7 @@
         - compat-ffmpeg28
         - compat-ffmpeg28-devel
       become: yes
+      tags: pkg_install
 
     - name: Install Programs (GUI Programs)
       package:
@@ -199,6 +202,7 @@
         - VirtualBox
         - akmod-VirtualBox
       become: yes
+      tags: pkg_install
 
     - name: Install Programs (Terminal Programs)
       package:
@@ -216,6 +220,7 @@
         - inotify-tools
         - firejail
       become: yes
+      tags: pkg_install
 
     - name: install the 'Development tools' package group
       dnf:
@@ -225,6 +230,7 @@
         - "@C Development Tools and Libraries"
         - "@Development tools"
       become: yes
+      tags: pkg_install
 
     - name: Install Programs (Programming Packages)
       package:
@@ -253,6 +259,7 @@
         - ctags-etags
         - global-ctags
       become: yes
+      tags: pkg_install
 
     - name: Install Programs (Programming Packages) - pip
       pip:
@@ -294,12 +301,9 @@
     - name: Setup GOLANG environment
       shell: |
         export GOPATH=$HOME/.local/go
-        export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
-        export PATH=$PATH:$HOME/.cargo/bin
-        export PATH=$HOME/.local/bin:$PATH
-        go get -u github.com/moul/advanced-ssh-config/cmd/assh
-        go get -u mvdan.cc/sh/cmd/shfmt
-        go get -u github.com/nsf/gocode
+        cd $(mktemp -d); go mod init tmp; go get mvdan.cc/sh/cmd/shfmt
+        cd $(mktemp -d); go mod init tmp; go get -u moul.io/assh
+        Gcd $(mktemp -d); go mod init tmp; O111MODULE=on go get -u -v github.com/sourcegraph/go-langserver
       args:
         executable: /bin/bash
 
@@ -321,7 +325,6 @@
       with_items:
         - npm i -g bash-language-server
         - npm i -g yaml-language-server
-        - go get -u -v github.com/sourcegraph/go-langserver
         - pip3 install python-language-server
       args:
         executable: /bin/bash
@@ -336,19 +339,19 @@
         dest: "{{ ansible_env.HOME }}/Programs/xml-language-server/"
         mode: "0755"
 
-    - name: "Ensure {{ ansible_env.HOME }}/Programs/jtd-language-server/ Exists"
+    - name: "Ensure {{ ansible_env.HOME }}/Programs/jdt-language-server/ Exists"
       file:
-        path: "{{ ansible_env.HOME }}/Programs/jtd-language-server/"
+        path: "{{ ansible_env.HOME }}/Programs/jdt-language-server/"
         state: directory
     - name: Download Java Lang Server
       get_url:
         url: http://download.eclipse.org/jdtls/milestones/0.39.0/jdt-language-server-0.39.0-201905150127.tar.gz
-        dest: "{{ ansible_env.HOME }}/Programs/jtd-language-server/"
+        dest: "{{ ansible_env.HOME }}/Programs/jdt-language-server/"
         mode: "0755"
     - name: Extract archive
       unarchive:
-        src: "{{ ansible_env.HOME }}/Programs/jtd-language-server/jdt-language-server-0.39.0-201905150127.tar.gz"
-        dest: "{{ ansible_env.HOME }}/Programs/jtd-language-server/"
+        src: "{{ ansible_env.HOME }}/Programs/jdt-language-server/jdt-language-server-0.39.0-201905150127.tar.gz"
+        dest: "{{ ansible_env.HOME }}/Programs/jdt-language-server/"
 
     - name: Only Office (Key)
       rpm_key:
