@@ -97,7 +97,7 @@ let g:LanguageClient_serverCommands = {
             \ 'yaml': ['~/.npm-packages/bin/yaml-language-server', '--stdio'],
             \ 'yaml.ansible': ['~/.npm-packages/bin/yaml-language-server', '--stdio'],
             \ 'xml': ['~/bin/xmlls'],
-            \ 'java': ['~/bin/jdtls', '-data', getcwd()],
+            \ 'java': ['~/bin/jdtls', '-data', "./workspace" ],
             \ }
             "\ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
 
