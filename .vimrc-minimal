@@ -5,7 +5,6 @@ call plug#begin('~/.vim/plugged')
 " utilities
 Plug 'scrooloose/nerdtree'                                      " split file manager
 Plug 'vim-airline/vim-airline'                                  " tabs and statusline
-Plug 'ctrlpvim/ctrlp.vim'                                       " fuzzy finder
 
 " color schemes
 Plug 'flazz/vim-colorschemes'
@@ -31,24 +30,8 @@ augroup autoformat_settings
     autocmd FileType yaml noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!yamlfmt<CR>:loadview<CR>
 augroup END
 
-" Icons
-let NERDTreeShowHidden=1
-let NERDTreeHijackNetrw=1
-let g:NERDTreeDirArrowExpandable = '▸'
-let g:NERDTreeDirArrowCollapsible = '▾'
-
-""" CtrlP
 " Use Ripgrep = superfast
 set grepprg=rg
-let g:ctrlp_user_command = 'rg %s --files --color=never --glob ""'
-let g:ctrlp_clear_cache_on_exit = 0
-" set ctrlp to same working directory
-let g:ctrlp_working_path_mode = 'ra'
-" exclude compiled files class and svns
-let g:ctrlp_custom_ignore = {
-            \ 'dir':  '\v[\/]\.(git|hg|svn|bin|out)$',
-            \ 'file': '\v\.(exe|so|dll|class|bin|out)$',
-            \ }
 
 " Path to python interpreter for neovim
 let g:python3_host_prog  = '/usr/bin/python3'
@@ -57,15 +40,6 @@ let g:python3_host_skip_check = 1
 """ Airline -> bufferline
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
-" Ctrl+T fuzzy find ctags
-noremap <C-T> :CtrlPTag<CR>
-" Ctrl+P fuzzy find files
-noremap <C-P> :CtrlP<CR>
-
-" Ctrl+B open/close file explorer
-noremap <C-B> :NERDTreeToggle<CR>
-" Ctrl+N relocate file explorer to opened file
-noremap <C-N> :NERDTreeFind<CR>
 
 """ Visual Mode
 """ Ctrl-C copy visual selection to clipboard
@@ -76,15 +50,19 @@ function! ToggleTheme()
     if &background == 'light'
         set background=dark
         colorscheme hybrid
-        "highlight Normal guibg=#111111
+        AirlineTheme jellybeans
+        highlight ColorColumn ctermbg=235
     else
         set background=light
         colorscheme github
-        highlight LineNr guibg=#FFFFFF
-        highlight nonText guibg=#FFFFFF
-        " highlight LineNr guibg=NONE
-        " highlight nonText guibg=NONE
-        "highlight Normal guibg=#FFFFFF
+        highlight ColorColumn ctermbg=255
+        highlight VertSplit ctermbg=255 ctermfg=255
+        highlight LineNr ctermbg=white ctermfg=black
+        highlight nonText ctermbg=white ctermfg=black
+        highlight Normal ctermbg=white ctermfg=black
+        AirlineTheme base16
+        sleep 100m
+        AirlineTheme zenburn
     endif
 endfunction
 
@@ -125,11 +103,12 @@ set hlsearch incsearch ignorecase smartcase             " Highlight search resul
 set nowrap                                              " play nicely with long lines
 set number                                              " Enable line numbers
 set updatetime=1000                                     " reduce update time from 4s to 1s
-let &colorcolumn="80"
+let &colorcolumn=join(range(81,999),",")
 syntax on
 
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
 colorscheme hybrid
-" set termguicolors
+let g:airline_theme='jellybeans'
+highlight ColorColumn ctermbg=235
