@@ -24,15 +24,6 @@ if [ "$(shopt | grep checkwinsize | awk '{print $2}')" = "off" ]; then
 	shopt -s checkwinsize
 fi
 
-if [ "$EUID" -ne 0 ]; then
-	if [ ! -S ~/.ssh/ssh_auth_sock ]; then
-		eval $(ssh-agent)
-		ln -sf "$SSH_AUTH_SOCK" ~/.ssh/ssh_auth_sock
-	fi
-	export SSH_AUTH_SOCK=~/.ssh/ssh_auth_sock
-	ssh-add -l | grep "The agent has no identities" && ssh-add
-fi
-
 # BASH COMPLETION
 source /usr/share/bash-completion/bash_completion
 
