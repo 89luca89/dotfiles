@@ -1,7 +1,8 @@
 set nocompatible              " required
 filetype off                  " required
 
-call plug#begin('~/.vim/plugged')
+"call plug#begin('~/.vim/plugged')
+call plug#begin('~/.nvim/plugged')
 " utilities
 Plug 'scrooloose/nerdtree'                                      " split file manager
 Plug 'vim-airline/vim-airline'                                  " tabs and statusline
@@ -10,13 +11,7 @@ Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
 " Deoplete
-if has('nvim')
-    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-else
-    Plug 'Shougo/deoplete.nvim'
-    Plug 'roxma/nvim-yarp'
-    Plug 'roxma/vim-hug-neovim-rpc'
-endif
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 
 " snippets
 Plug 'sirver/ultisnips' 
@@ -170,13 +165,13 @@ noremap <C-B> :NERDTreeToggle<CR>
 noremap <C-N> :NERDTreeFind<CR>
 
 " Double tap ESC or ESC+Timeout to exit tmode
-tnoremap <Esc> <C-W>N
-tnoremap <Esc><Esc> <C-W>N
+tnoremap <Esc>  <C-\><C-n>
+tnoremap <Esc><Esc>  <C-\><C-n>
 set timeout timeoutlen=1000  " Default
 set ttimeout ttimeoutlen=100  " Set by defaults.vim
-nnoremap <C-a>s :terminal<CR>
+nnoremap <C-a>s :split<bar>:te<CR>
 tnoremap <C-a>s <C-\><C-n>:terminal<CR>
-nnoremap <C-a>v :vert term<CR>
+nnoremap <C-a>v :vs<bar>:te<CR>
 tnoremap <C-a>v <C-\><C-n>:vert term<cr>
 
 """ Visual Mode
