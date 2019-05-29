@@ -33,29 +33,29 @@
         - { src: "~/dotfiles/.clang-format", dest: "~/.clang-format" }
         - { src: "~/dotfiles/libinput-gestures.conf", dest: "~/.config/libinput-gestures.conf" }
 
-    - name: Load Gnome Keybindings
-      shell: "dconf load /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/ < {{ ansible_env.HOME }}/dotfiles/gnome-keybindings.conf"
+    - name: Load Gnome Keybindings and Terminal Settings
+      shell: "dconf load {{ item.key }} < {{ item.value }}"
+      with_items:
+        - { key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/", value: "{{ ansible_env.HOME }}/dotfiles/gnome-keybindings.conf" }
+        - { key: "/org/gnome/terminal/", value: "{{ ansible_env.HOME }}/dotfiles/gnome-terminal.conf" }
 
-      #- name: Load Gnome-Terminal Profiles
-      #  shell: "dconf load /org/gnome/terminal/ < {{ ansible_env.HOME }}/dotfiles/gnome-terminal.conf"
-
-    - name: Configure Caps -> Ctrl
+    - name: Configure Keyboard and Cursor Options
       dconf:
-        key: "/org/gnome/desktop/input-sources/xkb-options"
-        value: "['caps:ctrl_modifier']"
+        key: "{{item.key}}"
+        value: "{{item.value}}"
         state: present
-
-    - name: Configure Keyboars IT+US
-      dconf:
-        key: "/org/gnome/desktop/input-sources/sources"
-        value: "[('xkb', 'it'), ('xkb', 'us+altgr-intl')]"
-        state: present
-
-    - name: Deactivate Cursor Blinking
-      dconf:
-        key: "/org/gnome/desktop/interface/cursor-blink"
-        value: "false"
-        state: present
+      with_items:
+        - { key: '/org/gnome/desktop/input-sources/sources', value: "[('xkb', 'it'), ('xkb', 'us+altgr-intl')]" }
+        - { key: '/org/gnome/desktop/interface/cursor-blink', value: 'false' }
+        - { key: '/org/gnome/desktop/search-providers/disable-external', value: 'true'}
+        - { key: 'org/gnome/desktop/privacy/disable-microphone', value: 'true' }
+        - { key: 'org/gnome/desktop/privacy/recent-files-max-age', value: '7' }
+        - { key: 'org/gnome/desktop/privacy/remove-old-temp-files', value: 'true' }
+        - { key: 'org/gnome/desktop/privacy/old-files-age', value: 'uint321', value: '7' }
+        - { key: 'org/gnome/desktop/privacy/disable-camera', value: 'true' }
+        - { key: 'org/gnome/desktop/privacy/report-technical-problems', value: 'false' }
+        - { key: 'org/gnome/desktop/privacy/remove-old-trash-files', value: 'true' }
+        - { key: 'org/gnome/desktop/privacy/send-software-usage-stats', value: 'false' }
 
     - name: Update the /etc/hosts file with node name
       lineinfile:
@@ -97,7 +97,6 @@
         - setroubleshoot-legacy
         - setroubleshoot-plugins
         - setroubleshoot-server
-        - cheese
         - gfbgraph
         - simple-scan
         - open-vm-tools
@@ -189,7 +188,20 @@
         name: "{{ item }}"
         state: present
       with_items:
+        - eog
+        - evince
+        - evolution-data-server
+        - flatpak
+        - gdm
+        - gnome-keyring
+        - gnome-menus
+        - gnome-screenshot
+        - gnome-shell
+        - gnome-terminal
         - gnome-tweak-tool
+        - gnome-mpv
+        - nautilus
+        - redhat-menus
         - libnotify
         - libnotify-devel
         - libreoffice-calc
@@ -197,11 +209,10 @@
         - libreoffice-impress
         - libreoffice-math
         - libreoffice-writer
-        - gimp
-        - keepassxc
         - telegram-desktop
+        - keepassxc
         - gparted
-        - gnome-mpv
+        - gimp
         - syncthing
         - syncthing-gtk
         - VirtualBox
@@ -305,10 +316,10 @@
 
     - name: Setup GOLANG environment
       shell: |
-        export GOPATH=$HOME/.local/go
+        export GOPATH={{ ansible_env.HOME }}/.local/go
         cd $(mktemp -d); go mod init tmp; go get mvdan.cc/sh/cmd/shfmt
         cd $(mktemp -d); go mod init tmp; go get -u moul.io/assh
-        Gcd $(mktemp -d); go mod init tmp; O111MODULE=on go get -u -v github.com/sourcegraph/go-langserver
+        cd $(mktemp -d); go mod init tmp; GO111MODULE=on go get -u -v github.com/sourcegraph/go-langserver
       args:
         executable: /bin/bash
 
@@ -404,44 +415,50 @@
         - libinput-gestures-setup autostart
         - libinput-gestures-setup start
 
-      #    - name: Opensnitch Install (Dnf Dependency)
-      #      package:
-      #        name: "{{ item }}"
-      #        state: present
-      #      with_items:
-      #        - protobuf-compiler
-      #        - libpcap-devel
-      #        - libnetfilter_queue-devel
-      #      become: yes
-      #
-      #    - name: Opensnitch Install (Userland Dependency)
-      #      shell: "{{ item }}"
-      #      with_items:
-      #        - go get github.com/golang/protobuf/protoc-gen-go
-      #        - go get -u github.com/golang/dep/cmd/dep
-      #        - pip3 install grpcio-tools
-      #        - go get github.com/evilsocket/opensnitch
-      #      ignore_errors: yes
-      #
-      #    - name: Opensnitch Install
-      #      shell: |
-      #        export GOPATH={{ ansible_env.HOME }}/.local/go
-      #        export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
-      #        export PATH={{ ansible_env.HOME }}/.local/bin:$PATH
-      #        cd $GOPATH/src/github.com/evilsocket/opensnitch;
-      #        make
-      #        make install
-      #      args:
-      #        executable: /bin/bash
-      #      become: yes
-      #
-      #    - name: Opensnitch Start
-      #      systemd:
-      #        name: opensnitchd
-      #        state: started
-      #        enabled: yes
-      #      become: yes
-      #
+    - name: Opensnitch Install (Dnf Dependency)
+      package:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - protobuf-compiler
+        - libpcap-devel
+        - libnetfilter_queue-devel
+        - python3-grpcio
+      become: yes
+    
+    - name: Opensnitch Install (Userland Dependency)
+      shell:  |
+        export GOPATH={{ ansible_env.HOME }}/.local/go
+        go get github.com/golang/protobuf/protoc-gen-go
+        go get github.com/golang/dep/cmd/dep
+        git clone https://github.com/evilsocket/opensnitch $GOPATH/src/github.com/evilsocket/opensnitch || true
+      args:
+        executable: /bin/bash
+      ignore_errors: yes
+    
+    - name: Opensnitch Install
+      shell: |
+        export GOPATH={{ ansible_env.HOME }}/.local/go
+        cd $GOPATH/src/github.com/evilsocket/opensnitch
+        make
+        make install
+        cd $GOPATH/src/github.com/evilsocket/opensnitch/daemon
+        make
+        make install
+        cd $GOPATH/src/github.com/evilsocket/opensnitch/daemon
+        make
+        make install
+      args:
+        executable: /bin/bash
+      become: yes
+    
+    - name: Opensnitch Start
+      systemd:
+        name: opensnitchd
+        state: started
+        enabled: yes
+      become: yes
+    
     - name: FSTrim Enable
       systemd:
         name: fstrim.timer
