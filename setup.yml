@@ -192,6 +192,11 @@
         - gnome-tweak-tool
         - libnotify
         - libnotify-devel
+        - libreoffice-calc
+        - libreoffice-draw
+        - libreoffice-impress
+        - libreoffice-math
+        - libreoffice-writer
         - gimp
         - keepassxc
         - telegram-desktop
