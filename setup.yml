@@ -44,7 +44,7 @@
         - { src: "~/dotfiles/.bashrc", dest: "~/.bashrc" }
         - { src: "~/dotfiles/.tmux.conf", dest: "~/.tmux.conf" }
         - { src: "~/dotfiles/.vimrc-minimal", dest: "~/.vimrc" }
-        - { src: "~/dotfiles/.vimrc", dest: "~/.config/nvim/init.vim" }
+        - { src: "~/dotfiles/.vimrc-full", dest: "~/.config/nvim/init.vim" }
         - { src: "~/dotfiles/.zshrc", dest: "~/.zshrc" }
         - { src: "~/dotfiles/.toprc", dest: "~/.toprc" }
         - { src: "~/dotfiles/.npmrc", dest: "~/.npmrc" }
