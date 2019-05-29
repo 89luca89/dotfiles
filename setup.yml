@@ -49,14 +49,14 @@
         - { key: '/org/gnome/desktop/input-sources/sources', value: "[('xkb', 'it'), ('xkb', 'us+altgr-intl')]" }
         - { key: '/org/gnome/desktop/interface/cursor-blink', value: 'false' }
         - { key: '/org/gnome/desktop/search-providers/disable-external', value: 'true'}
-        - { key: 'org/gnome/desktop/privacy/disable-microphone', value: 'true' }
-        - { key: 'org/gnome/desktop/privacy/recent-files-max-age', value: '7' }
-        - { key: 'org/gnome/desktop/privacy/remove-old-temp-files', value: 'true' }
-        - { key: 'org/gnome/desktop/privacy/old-files-age', value: 'uint321', value: '7' }
-        - { key: 'org/gnome/desktop/privacy/disable-camera', value: 'true' }
-        - { key: 'org/gnome/desktop/privacy/report-technical-problems', value: 'false' }
-        - { key: 'org/gnome/desktop/privacy/remove-old-trash-files', value: 'true' }
-        - { key: 'org/gnome/desktop/privacy/send-software-usage-stats', value: 'false' }
+        - { key: '/org/gnome/desktop/privacy/disable-microphone', value: 'true' }
+        - { key: '/org/gnome/desktop/privacy/recent-files-max-age', value: '7' }
+        - { key: '/org/gnome/desktop/privacy/remove-old-temp-files', value: 'true' }
+        - { key: '/org/gnome/desktop/privacy/old-files-age', value: 'uint321', value: '7' }
+        - { key: '/org/gnome/desktop/privacy/disable-camera', value: 'true' }
+        - { key: '/org/gnome/desktop/privacy/report-technical-problems', value: 'false' }
+        - { key: '/org/gnome/desktop/privacy/remove-old-trash-files', value: 'true' }
+        - { key: '/org/gnome/desktop/privacy/send-software-usage-stats', value: 'false' }
 
     - name: Update the /etc/hosts file with node name
       lineinfile:
@@ -370,18 +370,12 @@
         src: "{{ ansible_env.HOME }}/Programs/jdt-language-server/jdt-language-server-0.39.0-201905150127.tar.gz"
         dest: "{{ ansible_env.HOME }}/Programs/jdt-language-server/"
 
-    - name: Only Office (Key)
-      rpm_key:
-        state: present
-        key: "http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x8320CA65CB2DE8E5"
-      become: yes
-
     - name: Only Office (Repo)
       yum_repository:
         name: onlyoffice
         baseurl: http://download.onlyoffice.com/repo/centos/main/noarch/
         description: onlyoffice repo
-        gpgcheck: yes
+        gpgcheck: no
         enabled: yes
         file: onlyoffice
       become: yes
@@ -436,6 +430,14 @@
       args:
         executable: /bin/bash
       ignore_errors: yes
+    
+    - name: Opensnitch Stop
+      systemd:
+        name: opensnitchd
+        state: stopped
+        enabled: yes
+      ignore_errors: yes
+      become: yes
     
     - name: Opensnitch Install
       shell: |
