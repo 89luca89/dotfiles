@@ -23,6 +23,7 @@
         dest: "{{ item.dest }}"
         state: link
       with_items:
+        - { src: "~/dotfiles/.aliases", dest: "~/.aliases" }
         - { src: "~/dotfiles/.bashrc", dest: "~/.bashrc" }
         - { src: "~/dotfiles/.tmux.conf", dest: "~/.tmux.conf" }
         - { src: "~/dotfiles/.vimrc", dest: "~/.vimrc" }
@@ -32,7 +33,7 @@
         - { src: "~/dotfiles/.ctags", dest: "~/.ctags" }
         - { src: "~/dotfiles/.clang-format", dest: "~/.clang-format" }
         - { src: "~/dotfiles/libinput-gestures.conf", dest: "~/.config/libinput-gestures.conf" }
-
+      tags: dotfiles
     - name: Load Gnome Keybindings and Terminal Settings
       shell: "dconf load {{ item.key }} < {{ item.value }}"
       with_items:
