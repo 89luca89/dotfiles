@@ -92,7 +92,6 @@
       with_items:
           - export MOZ_USE_XINPUT2=1
       become: yes
-      tags: test
 
     - name: Remove Programs (Unused Programs)
       package:
@@ -313,23 +312,15 @@
 
     - name: Install Programs (Programming Packages) - pip
       pip:
-        name: "{{ item }}"
+        name: "{{ item[1] }}"
         state: present
-        executable: pip-2
-      with_items:
-        - flake8
-        - pep8
-        - pylint
-        - neovim
-        - jedi
-        - pyflakes
-        - pycodestyle
-        - autopep8
-        - demjson
-        - clang
-        - yamlfmt
-        - libclang-py3
+        executable: "{{ item[0] }}"
+      with_nested:
+      - [pip-2, pip-3]
+      - [flake8, pep8, pylint, neovim, jedi, pyflakes, pycodestyle, autopep8, demjson,
+        clang, libclang-py3]
       become: yes
+      tags: test
 
     - name: "Ensure {{ ansible_env.HOME }}/Programs Exists"
       file:
@@ -373,9 +364,10 @@
     - name: Install Bash,Yaml,GOlang,Python LSP
       shell: "{{ item }}"
       with_items:
+        - npm i -g neovim
         - npm i -g bash-language-server
         - npm i -g yaml-language-server
-        - pip3 install python-language-server
+        - pip3 install 'python-language-server[all]' yamllint
       args:
         executable: /bin/bash
 
