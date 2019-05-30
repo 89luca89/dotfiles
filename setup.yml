@@ -231,7 +231,7 @@
         - gnome-shell
         - gnome-terminal
         - gnome-tweak-tool
-        - gnome-mpv
+        - mpv
         - nautilus
         - redhat-menus
         - libnotify

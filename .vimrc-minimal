@@ -77,6 +77,9 @@ map <S-Tab> :bp<CR>
 " Ctrl+C close buffer ( pipe commands to fix behaviour with splits and netrw/nerdtree)
 nnoremap <C-c> :bp<bar>sp<bar>bn<bar>bd!<CR>
 
+" Fix typo of Wq instead of wq 
+cmap Wq wq
+
 " " Resize split window horizontally and vertically
 " Shortcuts to Shift-Alt-Arrows - Alt is mapped as M in vim
 noremap <S-M-Up> :2winc+<cr>

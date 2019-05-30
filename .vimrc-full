@@ -149,6 +149,9 @@ tnoremap <Esc><Esc>  <C-\><C-n>
 nnoremap <C-a>s :split<bar>:te<CR>
 nnoremap <C-a>v :vs<bar>:te<CR>
 
+" Fix typo of Wq instead of wq 
+cmap Wq wq
+
 """ Visual Mode
 """ Ctrl-C copy isual selection to clipboard
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
