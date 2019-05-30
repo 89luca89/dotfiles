@@ -82,6 +82,18 @@
         backup: yes
       become: yes
 
+    - name: Update the profiles file with personal variables
+      lineinfile:
+        path: "/etc/profile"
+        regexp: "{{ item }}"
+        line: "{{ item }}"
+        state: present
+        backup: yes
+      with_items:
+          - export MOZ_USE_XINPUT2=1
+      become: yes
+      tags: test
+
     - name: Remove Programs (Unused Programs)
       package:
         name: "{{ item }}"
