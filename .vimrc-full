@@ -4,22 +4,19 @@ filetype off                  " required
 "call plug#begin('~/.vim/plugged')
 call plug#begin('~/.nvim/plugged')
 " utilities
-Plug 'scrooloose/nerdtree'                                      " split file manager
 Plug 'vim-airline/vim-airline'                                  " tabs and statusline
+Plug 'scrooloose/nerdtree'                                      " split file manager
 Plug 'airblade/vim-gitgutter'                                   " +,-,~ on modified lines in git repo
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
 " Deoplete
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-
 " snippets
 Plug 'sirver/ultisnips' 
 Plug 'honza/vim-snippets'
 Plug 'phenomenes/ansible-snippets'
-
 " Vim LanguageClient setup
-" download for java http://download.eclipse.org/jdtls/milestones/?d
 Plug 'pearofducks/ansible-vim'
 Plug 'autozimu/languageclient-neovim', {
             \ 'branch': 'next',
@@ -61,12 +58,6 @@ let g:ansible_extra_keywords_highlight = 1
 let g:ansible_normal_keywords_highlight = 'Constant'
 let g:ansible_with_keywords_highlight = 'Constant'
 
-" Icons
-let NERDTreeShowHidden=1
-let NERDTreeHijackNetrw=1
-let g:NERDTreeDirArrowExpandable = '▸'
-let g:NERDTreeDirArrowCollapsible = '▾'
-
 " Deoplete
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#enable_smart_case = 1
@@ -97,11 +88,11 @@ function! s:setYamlSchema()
     echom &ft
     if &ft == "yaml.ansible"
         echom "Yaml-Language-Server using ansible schema."
-        let config = json_decode(system("cat ~/.vim/yaml/ansible.json"))
+        let config = json_decode(system("cat ~/dotfiles/yaml/ansible.json"))
         call LanguageClient#Notify('workspace/didChangeConfiguration', { 'settings': config })
     elseif &ft=="yaml"
         echom "Yaml-Language-Server using default schema."
-        let config = json_decode(system("cat ~/.vim/yaml/default.json"))
+        let config = json_decode(system("cat ~/dotfiles/yaml/default.json"))
         call LanguageClient#Notify('workspace/didChangeConfiguration', { 'settings': config })
     endif
 endfunction
@@ -113,8 +104,8 @@ augroup END
 
 """ Airline -> bufferline
 let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#formatter = 'unique_tail'
 let g:airline#extensions#wordcount#enabled = 0
+let g:airline#extensions#tabline#formatter = 'unique_tail'
 
 " I Like snippets!
 let g:UltiSnipsListSnippets="<c-h>"
@@ -124,8 +115,6 @@ let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 
 """ GENERIC PROGRAMMING
 "
-" Ctrl+] goTo Definition, default Tags, if present use Lang Server
-set formatexpr=LanguageClient#textDocument_rangeFormatting_sync()
 " Launch fix-netbeans-project to update jar libs and restart the lang server
 map <silent> <leader>u :LanguageClientStop<cr>:LanguageClientStart<cr>
 " Language client shortcuts with leader:
@@ -152,14 +141,13 @@ noremap <C-T> :Tags<CR>
 noremap <C-P> :FZF<CR>
 
 " Ctrl+N relocate file explorer to opened file
-noremap <C-B> :NERDTreeFind<CR>
+noremap <C-\> :NERDTreeToggle<CR>
+noremap <C-N> :NERDTreeFind<CR>
 
 " Double tap ESC or ESC+Timeout to exit tmode
 tnoremap <Esc><Esc>  <C-\><C-n>
 nnoremap <C-a>s :split<bar>:te<CR>
-tnoremap <C-a>s <C-\><C-n>:terminal<CR>
 nnoremap <C-a>v :vs<bar>:te<CR>
-tnoremap <C-a>v <C-\><C-n>:vert term<cr>
 
 """ Visual Mode
 """ Ctrl-C copy isual selection to clipboard

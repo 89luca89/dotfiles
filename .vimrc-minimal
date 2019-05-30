@@ -45,7 +45,7 @@ let g:airline#extensions#tabline#formatter = 'unique_tail'
 """ Ctrl-C copy visual selection to clipboard
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 
-map <silent> <C-D> :<C-u>call ToggleTheme()<CR>
+map <silent> <C-E> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
