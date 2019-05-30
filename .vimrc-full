@@ -16,6 +16,7 @@ Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 " snippets
 Plug 'sirver/ultisnips' 
 Plug 'honza/vim-snippets'
+Plug 'phenomenes/ansible-snippets'
 
 " Vim LanguageClient setup
 " download for java http://download.eclipse.org/jdtls/milestones/?d
@@ -66,10 +67,6 @@ let NERDTreeHijackNetrw=1
 let g:NERDTreeDirArrowExpandable = '▸'
 let g:NERDTreeDirArrowCollapsible = '▾'
 
-" Path to python interpreter for neovim
-let g:python3_host_prog  = '/usr/bin/python3'
-" Skip the check of neovim module
-let g:python3_host_skip_check = 1
 " Deoplete
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#enable_smart_case = 1
@@ -117,6 +114,7 @@ augroup END
 """ Airline -> bufferline
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
+let g:airline#extensions#wordcount#enabled = 0
 
 " I Like snippets!
 let g:UltiSnipsListSnippets="<c-h>"
@@ -148,16 +146,13 @@ function! ToggleErrors()
     endif
 endfunction
 
-
 " Ctrl+T fuzzy find ctags
-noremap <C-T> :Tags<CR>
 " Ctrl+P fuzzy find files
+noremap <C-T> :Tags<CR>
 noremap <C-P> :FZF<CR>
 
-" Ctrl+B open/close file explorer
-noremap <C-B> :NERDTreeToggle<CR>
 " Ctrl+N relocate file explorer to opened file
-noremap <C-N> :NERDTreeFind<CR>
+noremap <C-B> :NERDTreeFind<CR>
 
 " Double tap ESC or ESC+Timeout to exit tmode
 tnoremap <Esc><Esc>  <C-\><C-n>
@@ -175,7 +170,7 @@ function! ToggleTheme()
     if &background == 'light'
         set background=dark
         colorscheme hybrid
-        AirlineTheme jellybeans
+        AirlineTheme dark
         highlight ColorColumn ctermbg=235
     else
         set background=light
@@ -236,5 +231,5 @@ syntax on
 set encoding=utf8
 set background=dark
 colorscheme hybrid
-let g:airline_theme='jellybeans'
+let g:airline_theme='dark'
 highlight ColorColumn ctermbg=235
