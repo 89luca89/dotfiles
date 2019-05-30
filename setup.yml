@@ -660,6 +660,7 @@
         - ACTION=="add|change", KERNEL=="sd[a-z]", RUN+="/usr/sbin/hdparm -B 1 /dev/%k"
       become: yes
       when: file_exists.stat.exists == False
+
 #     ######## BBSWITCH ################
 #     sudo dnf copr enable chenxiaolong/bumblebee
 #     echo "blacklist nouveau
@@ -670,3 +671,9 @@
 #     echo "options bbswitch load_state=0 unload_state=0" | sudo tee /etc/modprobe.d/bbswitch.conf
 #     echo "bbswitch" | sudo tee /etc/modules-load.d/bbswitch.conf
 #     sudo mv /usr/lib/systemd/system/switcheroo-control.service /usr/lib/systemd/system/switcheroo-control.service.bak
+#
+#     ####### SDK Android ############
+#       sdkmanager --install "platforms;android-28"
+#       sdkmanager --install "extras;android;m2repository"
+#       sdkmanager --install "build-tools;28.0.3" 
+#       sdkmanager --install "platform-tools" 

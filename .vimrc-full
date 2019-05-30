@@ -93,8 +93,8 @@ let g:LanguageClient_serverCommands = {
             \ 'yaml.ansible': ['~/.npm-packages/bin/yaml-language-server', '--stdio'],
             \ 'xml': ['~/bin/xmlls'],
             \ 'java': ['~/bin/jdtls', '-data', "./workspace" ],
+            \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
             \ }
-            "\ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
 
 function! s:setYamlSchema()
     echom &ft
@@ -129,19 +129,14 @@ let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 " Ctrl+] goTo Definition, default Tags, if present use Lang Server
 set formatexpr=LanguageClient#textDocument_rangeFormatting_sync()
 " Launch fix-netbeans-project to update jar libs and restart the lang server
-map <silent> <leader>u :!fix-netbeans-classpath <cr>:call LanguageClient#exit()<cr>
+map <silent> <leader>u :LanguageClientStop<cr>:LanguageClientStart<cr>
 " Language client shortcuts with leader:
-map <silent> <leader>h :call LanguageClient_textDocument_hover()<cr>
 map <silent> <leader>m :call LanguageClient_contextMenu()<cr>
 map <silent> <leader>r :call LanguageClient_textDocument_rename()<cr>
-map <silent> <leader>t :call LanguageClient_textDocument_documentSymbol()<cr>
-map <silent> <leader>g :call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<cr>
-map <silent> <leader>a :call LanguageClient#textDocument_codeAction()<cr>
-map <silent> <leader>rf :call LanguageClient#textDocument_references()<cr>
+map <silent> <leader>] :call LanguageClient#textDocument_definition()<cr>
+map <silent> <leader>[ :call LanguageClient_textDocument_implementation()<cr>
+map <silent> <leader>p :call LanguageClient#textDocument_references()<cr>
 map <silent> <leader>l :call LanguageClient#textDocument_formatting()<cr>
-map <silent> <leader>i :call LanguageClient_textDocument_implementation()<cr>
-map <silent> <leader>td :call LanguageClient_textDocument_typeDefinition()<cr>
-map <silent> <leader>e :call LanguageClient#explainErrorAtPoint()<cr>
 
 map <silent> <C-F> :<C-u>call ToggleErrors()<CR>
 function! ToggleErrors()
@@ -165,10 +160,7 @@ noremap <C-B> :NERDTreeToggle<CR>
 noremap <C-N> :NERDTreeFind<CR>
 
 " Double tap ESC or ESC+Timeout to exit tmode
-tnoremap <Esc>  <C-\><C-n>
 tnoremap <Esc><Esc>  <C-\><C-n>
-set timeout timeoutlen=1000  " Default
-set ttimeout ttimeoutlen=100  " Set by defaults.vim
 nnoremap <C-a>s :split<bar>:te<CR>
 tnoremap <C-a>s <C-\><C-n>:terminal<CR>
 nnoremap <C-a>v :vs<bar>:te<CR>
