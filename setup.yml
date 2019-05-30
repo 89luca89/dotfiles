@@ -8,9 +8,9 @@
   gather_facts: True
   tasks:
 
-    - name: "Ensure {{ ansible_env.HOME }}/config/nvim Exists"
+    - name: "Ensure {{ ansible_env.HOME }}/.config/nvim Exists"
       file:
-        path: "{{ ansible_env.HOME }}/config/nvim"
+        path: "{{ ansible_env.HOME }}/.config/nvim"
         state: directory
     - name: "Ensure {{ ansible_env.HOME }}/.vim Exists"
       file:
@@ -21,7 +21,7 @@
       shell: |
         curl -fLo {{ item }}/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
       with_items:
-        - "{{ ansible_env.HOME }}/config/nvim"
+        - "{{ ansible_env.HOME }}/.config/nvim"
         - "{{ ansible_env.HOME }}/.vim"
 
     - name: Check if Dotfile folder is present
@@ -64,9 +64,7 @@
         value: "{{item.value}}"
         state: present
       with_items:
-        - { key: '/org/gnome/desktop/input-sources/sources', value: "[('xkb', 'it'), ('xkb', 'us+altgr-intl')]" }
         - { key: '/org/gnome/desktop/interface/cursor-blink', value: 'false' }
-        - { key: '/org/gnome/desktop/search-providers/disable-external', value: 'true'}
         - { key: '/org/gnome/desktop/privacy/disable-microphone', value: 'true' }
         - { key: '/org/gnome/desktop/privacy/recent-files-max-age', value: '7' }
         - { key: '/org/gnome/desktop/privacy/remove-old-temp-files', value: 'true' }
@@ -126,7 +124,11 @@
     - name: Setup /usr/local directory
       shell: "chown -R luca-linux:luca-linux /usr/local"
       become: yes
-
+      
+    - name: Check if rpmfusion exists
+      stat:
+        path: /etc/yum.repos.d/rpmfusion-free.repo
+      register: file_exists
     - name: Install the rpmfusion and fonts repo packages
       dnf:
         name: "{{ item }}"
@@ -137,6 +139,7 @@
         - https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
       become: yes
       tags: pkg_install
+      when: file_exists.stat.exists == False
 
     - name: Install Flathub
       shell: "flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo"
