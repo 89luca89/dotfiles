@@ -139,6 +139,7 @@ endfunction
 " Ctrl+P fuzzy find files
 noremap <C-T> :Tags<CR>
 noremap <C-P> :FZF<CR>
+noremap <C-G> :Rg<CR>
 
 " Ctrl+N relocate file explorer to opened file
 noremap <C-\> :NERDTreeToggle<CR>
