@@ -5,10 +5,12 @@ call plug#begin('~/.vim/plugged')
 " utilities
 Plug 'scrooloose/nerdtree'                                      " split file manager
 Plug 'vim-airline/vim-airline'                                  " tabs and statusline
+Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
 
 " color schemes
-Plug 'flazz/vim-colorschemes'
-Plug 'vim-airline/vim-airline-themes'
+Plug 'tomasiser/vim-code-dark'
+Plug 'endel/vim-github-colorscheme'
 
 call plug#end()               " required
 filetype plugin indent on     " required
@@ -32,25 +34,20 @@ augroup END
 
 " Use Ripgrep = superfast
 set grepprg=rg
+" Ctrl+P fuzzy find files
+" Ctrl+G grep -r in the folder
+noremap <C-P> :FZF<CR>
+noremap <C-G> :Rg<CR>
 
-" Path to python interpreter for neovim
-let g:python3_host_prog  = '/usr/bin/python3'
-" Skip the check of neovim module
-let g:python3_host_skip_check = 1
 """ Airline -> bufferline
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
-
-""" Visual Mode
-""" Ctrl-C copy visual selection to clipboard
-vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 
 map <silent> <C-E> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        colorscheme hybrid
-        AirlineTheme jellybeans
+        colorscheme codedark
         highlight ColorColumn ctermbg=235
     else
         set background=light
@@ -60,9 +57,6 @@ function! ToggleTheme()
         highlight LineNr ctermbg=white ctermfg=black
         highlight nonText ctermbg=white ctermfg=black
         highlight Normal ctermbg=white ctermfg=black
-        AirlineTheme base16
-        sleep 100m
-        AirlineTheme zenburn
     endif
 endfunction
 
@@ -74,11 +68,10 @@ autocmd VimResized * :wincmd =
 " navigate tabs Tab (fw) S-Tab (prev)
 map <Tab> :bn<CR>
 map <S-Tab> :bp<CR>
+""" Ctrl-C copy visual selection to clipboard
+vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 " Ctrl+C close buffer ( pipe commands to fix behaviour with splits and netrw/nerdtree)
 nnoremap <C-c> :bp<bar>sp<bar>bn<bar>bd!<CR>
-
-" Fix typo of Wq instead of wq 
-cmap Wq wq
 
 " " Resize split window horizontally and vertically
 " Shortcuts to Shift-Alt-Arrows - Alt is mapped as M in vim
@@ -92,7 +85,7 @@ set undofile
 set undodir=$HOME/.vim/undo
 set undolevels=1000
 set noswapfile
-
+cmap Wq wq
 set signcolumn=yes
 set lazyredraw ttyfast synmaxcol=200 ttimeoutlen=20
 set mouse=a                                             " it's always useful to use the mouse then needed
@@ -112,6 +105,5 @@ syntax on
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
-colorscheme hybrid
-let g:airline_theme='jellybeans'
+colorscheme codedark
 highlight ColorColumn ctermbg=235

@@ -8,20 +8,10 @@
   gather_facts: True
   tasks:
 
-    - name: "Ensure {{ ansible_env.HOME }}/.config/nvim Exists"
-      file:
-        path: "{{ ansible_env.HOME }}/.config/nvim"
-        state: directory
-    - name: "Ensure {{ ansible_env.HOME }}/.vim Exists"
-      file:
-        path: "{{ ansible_env.HOME }}/.vim"
-        state: directory
-
     - name: Install vimplug before starting dotfiles
       shell: |
         curl -fLo {{ item }}/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
       with_items:
-        - "{{ ansible_env.HOME }}/.config/nvim"
         - "{{ ansible_env.HOME }}/.vim"
 
     - name: Check if Dotfile folder is present
@@ -43,8 +33,8 @@
         - { src: "~/dotfiles/.aliases", dest: "~/.aliases" }
         - { src: "~/dotfiles/.bashrc", dest: "~/.bashrc" }
         - { src: "~/dotfiles/.tmux.conf", dest: "~/.tmux.conf" }
-        - { src: "~/dotfiles/.vimrc-minimal", dest: "~/.vimrc" }
-        - { src: "~/dotfiles/.vimrc-full", dest: "~/.config/nvim/init.vim" }
+          #- { src: "~/dotfiles/.vimrc-minimal", dest: "~/.vimrc" }
+        - { src: "~/dotfiles/.vimrc-full", dest: "~/.vimrc" }
         - { src: "~/dotfiles/.zshrc", dest: "~/.zshrc" }
         - { src: "~/dotfiles/.toprc", dest: "~/.toprc" }
         - { src: "~/dotfiles/.npmrc", dest: "~/.npmrc" }
@@ -259,7 +249,6 @@
       with_items:
         - vim
         - vim-enhanced
-        - neovim
         - tmate
         - tmux
         - xclip
@@ -317,7 +306,7 @@
         executable: "{{ item[0] }}"
       with_nested:
       - [pip-2, pip-3]
-      - [flake8, pep8, pylint, neovim, jedi, pyflakes, pycodestyle, autopep8, demjson,
+      - [flake8, pep8, pylint, jedi, pyflakes, pycodestyle, autopep8, demjson,
         clang, libclang-py3]
       become: yes
       tags: test
@@ -364,7 +353,6 @@
     - name: Install Bash,Yaml,GOlang,Python LSP
       shell: "{{ item }}"
       with_items:
-        - npm i -g neovim
         - npm i -g bash-language-server
         - npm i -g yaml-language-server
         - pip3 install 'python-language-server[all]' yamllint

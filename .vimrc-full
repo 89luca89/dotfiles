@@ -1,8 +1,7 @@
 set nocompatible              " required
 filetype off                  " required
 
-"call plug#begin('~/.vim/plugged')
-call plug#begin('~/.nvim/plugged')
+call plug#begin('~/.vim/plugged')
 " utilities
 Plug 'vim-airline/vim-airline'                                  " tabs and statusline
 Plug 'scrooloose/nerdtree'                                      " split file manager
@@ -11,7 +10,9 @@ Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 
 " Deoplete
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'Shougo/deoplete.nvim'
+Plug 'roxma/nvim-yarp'
+Plug 'roxma/vim-hug-neovim-rpc'
 " snippets
 Plug 'sirver/ultisnips' 
 Plug 'honza/vim-snippets'
@@ -24,8 +25,8 @@ Plug 'autozimu/languageclient-neovim', {
             \ }
 
 " color schemes
-Plug 'vim-airline/vim-airline-themes'
-Plug 'flazz/vim-colorschemes'
+Plug 'tomasiser/vim-code-dark'
+Plug 'endel/vim-github-colorscheme'
 
 call plug#end()               " required
 filetype plugin indent on     " required
@@ -52,11 +53,19 @@ set grepprg=rg
 let g:gitgutter_grep = 'rg'
 let g:fzf_tags_command = 'ctags -R'
 
+""" Ansible Lang settings
 let g:ansible_attribute_highlight = "ab"
 let g:ansible_name_highlight = 'd'
 let g:ansible_extra_keywords_highlight = 1
 let g:ansible_normal_keywords_highlight = 'Constant'
 let g:ansible_with_keywords_highlight = 'Constant'
+
+""" Java Lang settings
+let g:java_comment_strings=1
+let g:java_highlight_functions=1
+let g:java_minlines=1
+let g:java_highlight_all=1
+let g:java_highlight_java_lang_ids=1
 
 " Deoplete
 let g:deoplete#enable_at_startup = 1
@@ -64,8 +73,6 @@ let g:deoplete#enable_smart_case = 1
 let g:deoplete#auto_completion_start_length = 2
 let g:deoplete#manual_completion_start_length = 1
 " Async Complete + LSP
-set completeopt+=preview
-set signcolumn=yes
 let g:LanguageClient_autoStart = 1
 let g:LanguageClient_diagnosticsEnable = 1
 let g:LanguageClient_diagnosticsList = "Location"
@@ -113,8 +120,6 @@ let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 
-""" GENERIC PROGRAMMING
-"
 " Launch fix-netbeans-project to update jar libs and restart the lang server
 map <silent> <leader>u :LanguageClientStop<cr>:LanguageClientStart<cr>
 " Language client shortcuts with leader:
@@ -137,6 +142,7 @@ endfunction
 
 " Ctrl+T fuzzy find ctags
 " Ctrl+P fuzzy find files
+" Ctrl+G grep -r in the folder
 noremap <C-T> :Tags<CR>
 noremap <C-P> :FZF<CR>
 noremap <C-G> :Rg<CR>
@@ -146,23 +152,17 @@ noremap <C-\> :NERDTreeToggle<CR>
 noremap <C-N> :NERDTreeFind<CR>
 
 " Double tap ESC or ESC+Timeout to exit tmode
+" Ctrl+a+v new terminal split vertical
+" Ctrl+a+s new terminal split orizontal
 tnoremap <Esc><Esc>  <C-\><C-n>
 nnoremap <C-a>s :split<bar>:te<CR>
 nnoremap <C-a>v :vs<bar>:te<CR>
-
-" Fix typo of Wq instead of wq 
-cmap Wq wq
-
-""" Visual Mode
-""" Ctrl-C copy isual selection to clipboard
-vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        colorscheme hybrid
-        AirlineTheme dark
+        colorscheme codedark
         highlight ColorColumn ctermbg=235
     else
         set background=light
@@ -172,9 +172,6 @@ function! ToggleTheme()
         highlight LineNr ctermbg=white ctermfg=black
         highlight nonText ctermbg=white ctermfg=black
         highlight Normal ctermbg=white ctermfg=black
-        AirlineTheme base16
-        sleep 100m
-        AirlineTheme zenburn
     endif
 endfunction
 
@@ -188,7 +185,8 @@ map <Tab> :bn<CR>
 map <S-Tab> :bp<CR>
 " Ctrl+C close buffer ( pipe commands to fix behaviour with splits and netrw/nerdtree)
 nnoremap <C-c> :bp<bar>sp<bar>bn<bar>bd!<CR>
-
+""" Ctrl-C copy isual selection to clipboard
+vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 " " Resize split window horizontally and vertically
 " Shortcuts to Shift-Alt-Arrows - Alt is mapped as M in vim
 noremap <S-M-Up> :2winc+<cr>
@@ -201,7 +199,7 @@ set undofile
 set undodir=$HOME/.vim/undo
 set undolevels=1000
 set noswapfile
-
+cmap Wq wq
 set signcolumn=yes
 set lazyredraw ttyfast ttimeoutlen=20
 set mouse=a                                             " it's always useful to use the mouse then needed
@@ -222,6 +220,7 @@ syntax on
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
-colorscheme hybrid
-let g:airline_theme='dark'
+
+
+colorscheme codedark
 highlight ColorColumn ctermbg=235
