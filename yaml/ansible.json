@@ -1,14 +1,8 @@
-{
-    "yaml": {
-            "format": {
-                "enable": false
-            },
-            "schemas": {
-                 "file:///home/hurricanehrndz/.config/nvim/schemas/ansible.json": "/*ansible*.yml"
-            },
-            "validate": true
-        },
-    "http": {
-        "proxyStrictSSL": true
+{ 
+  "http" : { "proxyStrictSSL" : true },
+  "yaml" : { 
+      "format" : { "enable" : true },
+      "schemas" : { "http://json.schemastore.org/ansible-stable-2.5" : "/*" },
+      "validate" : true
     }
 }

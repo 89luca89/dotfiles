@@ -1,11 +1,7 @@
-{
-    "yaml": {
-            "format": {
-                "enable": false
-            },
-            "validate": true
-        },
-    "http": {
-        "proxyStrictSSL": true
+{ 
+  "http" : { "proxyStrictSSL" : true },
+  "yaml" : { 
+      "format" : { "enable" : false },
+      "validate" : true
     }
 }
