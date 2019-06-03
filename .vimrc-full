@@ -6,8 +6,8 @@ call plug#begin('~/.vim/plugged')
 Plug 'vim-airline/vim-airline'                                  " tabs and statusline
 Plug 'scrooloose/nerdtree'                                      " split file manager
 Plug 'airblade/vim-gitgutter'                                   " +,-,~ on modified lines in git repo
-Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
+Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 
 " Deoplete
 Plug 'Shougo/deoplete.nvim'
@@ -16,12 +16,12 @@ Plug 'roxma/vim-hug-neovim-rpc'
 " snippets
 Plug 'sirver/ultisnips' 
 Plug 'honza/vim-snippets'
-Plug 'phenomenes/ansible-snippets'
-" Vim LanguageClient setup
 Plug 'pearofducks/ansible-vim'
+" Vim LanguageClient setup
 Plug 'autozimu/languageclient-neovim', {
             \ 'branch': 'next',
             \ 'do': 'bash install.sh',
+Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
             \ }
 
 " color schemes
@@ -31,41 +31,18 @@ Plug 'endel/vim-github-colorscheme'
 call plug#end()               " required
 filetype plugin indent on     " required
 
-" Formatting
-" Ctrl+L Format Code
-" This performs a write, and then pipes the file to the formatter (by default
-" uses the default vim formatter)
-" :w save file, :mkview remember line, :%!formatter % to format and output,
-" :loadview to return to previous line
-noremap <C-L> <Esc>:w<CR>:mkview<CR>ggVG=<CR>:loadview<CR>
-augroup autoformat_settings
-    autocmd FileType go noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!gofmt %<CR>:loadview<CR>
-    autocmd FileType html,css,json noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!jsonlint -f %<CR>:loadview<CR>
-    autocmd FileType rust noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!rustfmt %<CR>:loadview<CR>
-    autocmd FileType python noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!autopep8 %<CR>:loadview<CR>
-    autocmd FileType c,cpp,objc,proto,typescript,javascript,java noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!clang-format -style=file %<CR>:loadview<CR>
-    autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!shfmt %<CR>:loadview<CR>
-    autocmd FileType yaml noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!yamlfmt<CR>:loadview<CR>
-augroup END
-
 """ Git signs in gutter
 set grepprg=rg
 let g:gitgutter_grep = 'rg'
 let g:fzf_tags_command = 'ctags -R'
 
-""" Ansible Lang settings
-let g:ansible_attribute_highlight = "ab"
-let g:ansible_name_highlight = 'd'
-let g:ansible_extra_keywords_highlight = 1
-let g:ansible_normal_keywords_highlight = 'Constant'
-let g:ansible_with_keywords_highlight = 'Constant'
-
-""" Java Lang settings
-let g:java_comment_strings=1
-let g:java_highlight_functions=1
-let g:java_minlines=1
+"""" Java Lang settings
 let g:java_highlight_all=1
-let g:java_highlight_java_lang_ids=1
+let g:python_highlight_all = 1
+let g:yaml_highlight_all = 1
+let g:xml_highlight_all = 1
+let g:sh_highlight_all = 1
+let g:ansible_highlight_all = 1
 
 " Deoplete
 let g:deoplete#enable_at_startup = 1
@@ -91,24 +68,6 @@ let g:LanguageClient_serverCommands = {
             \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
             \ }
 
-function! s:setYamlSchema()
-    echom &ft
-    if &ft == "yaml.ansible"
-        echom "Yaml-Language-Server using ansible schema."
-        let config = json_decode(system("cat ~/dotfiles/yaml/ansible.json"))
-        call LanguageClient#Notify('workspace/didChangeConfiguration', { 'settings': config })
-    elseif &ft=="yaml"
-        echom "Yaml-Language-Server using default schema."
-        let config = json_decode(system("cat ~/dotfiles/yaml/default.json"))
-        call LanguageClient#Notify('workspace/didChangeConfiguration', { 'settings': config })
-    endif
-endfunction
-
-augroup LanguageClient_config
-    autocmd!
-    autocmd User LanguageClientStarted call s:setYamlSchema()
-augroup END
-
 """ Airline -> bufferline
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#wordcount#enabled = 0
@@ -128,7 +87,25 @@ map <silent> <leader>r :call LanguageClient_textDocument_rename()<cr>
 map <silent> <leader>] :call LanguageClient#textDocument_definition()<cr>
 map <silent> <leader>[ :call LanguageClient_textDocument_implementation()<cr>
 map <silent> <leader>p :call LanguageClient#textDocument_references()<cr>
-map <silent> <leader>l :call LanguageClient#textDocument_formatting()<cr>
+" Ctrl+L Format Code
+" default on lang server
+" if not use the specific implementation
+noremap <C-L> :call LanguageClient#textDocument_formatting()<cr>
+noremap <C-L> <Esc>:w<CR>:mkview<CR>ggVG=<CR>:loadview<CR>
+augroup autoformat_settings
+    autocmd FileType python noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!autopep8 %<CR>:loadview<CR>
+    autocmd FileType c,cpp,objc,proto,typescript,javascript,java noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!clang-format -style=file %<CR>:loadview<CR>
+    autocmd FileType html,css,json noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!jsonlint -f %<CR>:loadview<CR>
+    autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!shfmt %<CR>:loadview<CR>
+augroup END
+
+augroup LanguageClient_config
+    autocmd!
+    autocmd FileType yaml let config = json_decode(system("cat ~/dotfiles/yaml/default.json"))
+    autocmd FileType yaml.ansible let config = json_decode(system("cat ~/dotfiles/yaml/ansible.json"))
+Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
+    autocmd User LanguageClientStarted call LanguageClient#Notify('workspace/didChangeConfiguration', { 'settings': config })
+augroup END
 
 map <silent> <C-F> :<C-u>call ToggleErrors()<CR>
 function! ToggleErrors()
@@ -148,15 +125,10 @@ noremap <C-P> :FZF<CR>
 noremap <C-G> :Rg<CR>
 
 " Ctrl+N relocate file explorer to opened file
+let NERDTreeShowHidden=1
 noremap <C-\> :NERDTreeToggle<CR>
 noremap <C-N> :NERDTreeFind<CR>
 
-" Double tap ESC or ESC+Timeout to exit tmode
-" Ctrl+a+v new terminal split vertical
-" Ctrl+a+s new terminal split orizontal
-tnoremap <Esc><Esc>  <C-\><C-n>
-nnoremap <C-a>s :split<bar>:te<CR>
-nnoremap <C-a>v :vs<bar>:te<CR>
 
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
@@ -194,12 +166,12 @@ noremap <S-M-Down> :2winc-<cr>
 noremap <S-M-Left> :2winc><cr>
 noremap <S-M-Right> :2winc<<cr>
 
-" Persistent undo
+cmap Wq wq
 set undofile
 set undodir=$HOME/.vim/undo
+set directory=$HOME/.vim/swap
 set undolevels=1000
 set noswapfile
-cmap Wq wq
 set signcolumn=yes
 set lazyredraw ttyfast ttimeoutlen=20
 set mouse=a                                             " it's always useful to use the mouse then needed
@@ -212,7 +184,6 @@ set expandtab shiftwidth=4 tabstop=4 softtabstop=4      " Four spaces for tabs e
 set hlsearch incsearch ignorecase smartcase             " Highlight search results, ignore case if search is all lowercase
 set nowrap                                              " play nicely with long lines
 set number                                              " Enable line numbers
-set updatetime=1000                                     " reduce update time from 4s to 1s
 set noshowcmd
 let &colorcolumn=join(range(81,999),",")
 syntax on
@@ -220,7 +191,5 @@ syntax on
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
-
-
 colorscheme codedark
 highlight ColorColumn ctermbg=235
