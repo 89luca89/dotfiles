@@ -8,11 +8,20 @@
   gather_facts: True
   tasks:
 
+    - name: "Ensure {{ item }} Exists"
+      file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - "{{ ansible_env.HOME }}/.config/nvim"
+        - "{{ ansible_env.HOME }}/.vim"
+
     - name: Install vimplug before starting dotfiles
       shell: |
         curl -fLo {{ item }}/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
       with_items:
         - "{{ ansible_env.HOME }}/.vim"
+        - "{{ ansible_env.HOME }}/.config/nvim"
 
     - name: Check if Dotfile folder is present
       stat:
@@ -33,8 +42,8 @@
         - { src: "~/dotfiles/.aliases", dest: "~/.aliases" }
         - { src: "~/dotfiles/.bashrc", dest: "~/.bashrc" }
         - { src: "~/dotfiles/.tmux.conf", dest: "~/.tmux.conf" }
-          #- { src: "~/dotfiles/.vimrc-minimal", dest: "~/.vimrc" }
-        - { src: "~/dotfiles/.vimrc-full", dest: "~/.vimrc" }
+        - { src: "~/dotfiles/.vimrc-minimal", dest: "~/.vimrc" }
+        - { src: "~/dotfiles/.vimrc-full", dest: "~/.config/nvim/init.vim" }
         - { src: "~/dotfiles/.zshrc", dest: "~/.zshrc" }
         - { src: "~/dotfiles/.toprc", dest: "~/.toprc" }
         - { src: "~/dotfiles/.npmrc", dest: "~/.npmrc" }
@@ -247,6 +256,7 @@
         name: "{{ item }}"
         state: present
       with_items:
+        - neovim
         - vim
         - vim-enhanced
         - tmate
@@ -307,7 +317,7 @@
       with_nested:
       - [pip-2, pip-3]
       - [flake8, pep8, pylint, jedi, pyflakes, pycodestyle, autopep8, demjson,
-        clang, libclang-py3]
+        clang, libclang-py3, neovim]
       become: yes
       tags: test
 
@@ -351,6 +361,7 @@
     - name: Install Bash,Yaml,GOlang,Python LSP
       shell: "{{ item }}"
       with_items:
+        - npm i -g neovim
         - npm i -g bash-language-server
         - npm i -g yaml-language-server
         - pip3 install 'python-language-server[all]'

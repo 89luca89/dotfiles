@@ -11,8 +11,6 @@ Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 
 " Deoplete
 Plug 'Shougo/deoplete.nvim'
-Plug 'roxma/nvim-yarp'
-Plug 'roxma/vim-hug-neovim-rpc'
 " snippets
 Plug 'sirver/ultisnips' 
 Plug 'honza/vim-snippets'
@@ -21,7 +19,6 @@ Plug 'pearofducks/ansible-vim'
 Plug 'autozimu/languageclient-neovim', {
             \ 'branch': 'next',
             \ 'do': 'bash install.sh',
-Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
             \ }
 
 " color schemes
@@ -67,6 +64,23 @@ let g:LanguageClient_serverCommands = {
             \ 'java': ['~/bin/jdtls', '-data', "./workspace" ],
             \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
             \ }
+function! s:setYamlSchema()
+    echom &ft
+    if &ft == "yaml.ansible"
+        echom "Yaml-Language-Server using ansible schema."
+        let config = json_decode(system("cat ~/dotfiles/yaml/ansible.json"))
+        call LanguageClient#Notify('workspace/didChangeConfiguration', { 'settings': config })
+    elseif &ft=="yaml"
+        echom "Yaml-Language-Server using default schema."
+        let config = json_decode(system("cat ~/dotfiles/yaml/default.json"))
+        call LanguageClient#Notify('workspace/didChangeConfiguration', { 'settings': config })
+    endif
+endfunction
+
+augroup LanguageClient_config
+    autocmd!
+    autocmd User LanguageClientStarted call s:setYamlSchema()
+augroup END
 
 """ Airline -> bufferline
 let g:airline#extensions#tabline#enabled = 1
@@ -99,14 +113,6 @@ augroup autoformat_settings
     autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!shfmt %<CR>:loadview<CR>
 augroup END
 
-augroup LanguageClient_config
-    autocmd!
-    autocmd FileType yaml let config = json_decode(system("cat ~/dotfiles/yaml/default.json"))
-    autocmd FileType yaml.ansible let config = json_decode(system("cat ~/dotfiles/yaml/ansible.json"))
-Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
-    autocmd User LanguageClientStarted call LanguageClient#Notify('workspace/didChangeConfiguration', { 'settings': config })
-augroup END
-
 map <silent> <C-F> :<C-u>call ToggleErrors()<CR>
 function! ToggleErrors()
     if empty(filter(tabpagebuflist(), 'getbufvar(v:val, "&buftype") is# "quickfix"'))
@@ -129,6 +135,12 @@ let NERDTreeShowHidden=1
 noremap <C-\> :NERDTreeToggle<CR>
 noremap <C-N> :NERDTreeFind<CR>
 
+" Double tap ESC or ESC+Timeout to exit tmode
+" Ctrl+a+v new terminal split vertical
+" Ctrl+a+s new terminal split orizontal
+tnoremap <Esc><Esc>  <C-\><C-n>
+nnoremap <C-a>s :split<bar>:te<CR>
+nnoremap <C-a>v :vs<bar>:te<CR>
 
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
