@@ -344,18 +344,16 @@
       # golang -> go-langserver
       #
       # Formatters:
-      # gofmt -> golang
       # jsonlint -> demjson (pip install it)
       # autopep8 -> pip install it
       # clang-format -> clang
       # shfmt -> go get it
-      # yamlftm -> pip install it
     - name: Install Bash,Yaml,GOlang,Python LSP
       shell: "{{ item }}"
       with_items:
         - npm i -g bash-language-server
         - npm i -g yaml-language-server
-        - pip3 install 'python-language-server[all]' yamllint
+        - pip3 install 'python-language-server[all]'
       args:
         executable: /bin/bash
 
