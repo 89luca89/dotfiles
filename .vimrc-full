@@ -1,7 +1,7 @@
 set nocompatible              " required
 filetype off                  " required
 
-call plug#begin('~/.vim/plugged')
+call plug#begin('~/.nvim/plugged')
 " utilities
 Plug 'vim-airline/vim-airline'                                  " tabs and statusline
 Plug 'scrooloose/nerdtree'                                      " split file manager
@@ -56,14 +56,14 @@ let g:LanguageClient_serverCommands = {
             \ 'c': ['clangd'],
             \ 'cpp': ['clangd'],
             \ 'python': ['/usr/local/bin/pyls'],
-            \ 'go' : ['~/.local/go/bin/go-langserver'],
             \ 'sh' : ['~/.npm-packages/bin/bash-language-server', 'start'],
             \ 'yaml': ['~/.npm-packages/bin/yaml-language-server', '--stdio'],
             \ 'yaml.ansible': ['~/.npm-packages/bin/yaml-language-server', '--stdio'],
             \ 'xml': ['~/bin/xmlls'],
             \ 'java': ['~/bin/jdtls', '-data', "./workspace" ],
-            \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
             \ }
+            "\ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
+            "\ 'go' : ['~/.local/go/bin/go-langserver'],
 function! s:setYamlSchema()
     echom &ft
     if &ft == "yaml.ansible"
@@ -116,7 +116,6 @@ augroup END
 map <silent> <C-F> :<C-u>call ToggleErrors()<CR>
 function! ToggleErrors()
     if empty(filter(tabpagebuflist(), 'getbufvar(v:val, "&buftype") is# "quickfix"'))
-        " No location/quickfix list shown, open Loclist error location panel
         lopen
     else
         lclose
@@ -169,8 +168,9 @@ map <Tab> :bn<CR>
 map <S-Tab> :bp<CR>
 " Ctrl+C close buffer ( pipe commands to fix behaviour with splits and netrw/nerdtree)
 nnoremap <C-c> :bp<bar>sp<bar>bn<bar>bd!<CR>
-""" Ctrl-C copy isual selection to clipboard
-vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
+""" leader+y/p copy/paste selection to clipboard
+noremap <leader>y "+y
+noremap <leader>p "+p
 " " Resize split window horizontally and vertically
 " Shortcuts to Shift-Alt-Arrows - Alt is mapped as M in vim
 noremap <S-M-Up> :2winc+<cr>
@@ -180,8 +180,8 @@ noremap <S-M-Right> :2winc<<cr>
 
 cmap Wq wq
 set undofile
-set undodir=$HOME/.vim/undo
-set directory=$HOME/.vim/swap
+set undodir=$HOME/.nvim/undo
+set directory=$HOME/.nvim/swap
 set undolevels=1000
 set noswapfile
 set signcolumn=yes
