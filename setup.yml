@@ -14,6 +14,7 @@
         state: directory
       with_items:
         - "{{ ansible_env.HOME }}/.config/nvim"
+        - "{{ ansible_env.HOME }}/.nvim"
         - "{{ ansible_env.HOME }}/.vim"
         - "{{ ansible_env.HOME }}/.nvim/swap"
         - "{{ ansible_env.HOME }}/.vim/swap"
