@@ -14,10 +14,8 @@ fpath=(/usr/local/share/zsh-completions $fpath)
 
 ZSH_THEME="gnzh"
 CASE_SENSITIVE="true"
-ENABLE_CORRECTION="false"
-COMPLETION_WAITING_DOTS="true"
 
-plugins=(git ssh-agent zsh-autosuggestions history history-substring-search zsh-syntax-highlighting dnf)
+plugins=(git ssh-agent zsh-autosuggestions history history-substring-search zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 source $HOME/.aliases
@@ -26,9 +24,9 @@ source $HOME/.aliases
 
 SAVEHIST=100000
 setopt NO_HIST_VERIFY
-setopt APPEND_HISTORY # adds history
-setopt INC_APPEND_HISTORY SHARE_HISTORY  # adds history incrementally and share it across sessions
-setopt HIST_IGNORE_ALL_DUPS  # don't record dupes in history
+setopt APPEND_HISTORY                       # adds history
+setopt INC_APPEND_HISTORY SHARE_HISTORY     # adds history incrementally and share it across sessions
+setopt HIST_IGNORE_ALL_DUPS                 # don't record dupes in history
 setopt HIST_REDUCE_BLANKS
 
 # include custom files

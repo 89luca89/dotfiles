@@ -1,5 +1,3 @@
-#########################
-
 # Path to the bash it configuration
 export BASH_IT="$HOME/.local/bin/bash_it"
 
@@ -30,6 +28,9 @@ source /usr/share/bash-completion/bash_completion
 # include custom files
 if [ -f $HOME/.localrc ]; then
     source $HOME/.localrc
+fi
+if [ "${TMUX}" ]; then
+    export FZF_TMUX=1
 fi
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
