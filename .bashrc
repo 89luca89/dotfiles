@@ -12,6 +12,12 @@ export BASH_IT_THEME='pure'
 source $BASH_IT/bash_it.sh
 source $HOME/.aliases
 
+if [ ! -d "$BASH_IT/.initialized" ]; then
+    bash-it enable plugin alias-completion base dirs fzf git history proxy ssh sshagent tmux 
+    bash-it enable completion bash-it dirs export defaults git makefile pip pip3 ssh tmux
+    mkdir "$BASH_IT/.initialized"
+fi
+
 # HISTORY SIZE
 export HISTCONTROL=ignoredups:erasedups # no duplicate entries
 export HISTSIZE=100000                  # big big history
