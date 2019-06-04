@@ -81,6 +81,7 @@ cmap Wq wq
 set undofile
 set undodir=$HOME/.vim/undo
 set directory=$HOME/.vim/swap
+set path+=**
 set undolevels=1000
 set noswapfile
 set signcolumn=yes

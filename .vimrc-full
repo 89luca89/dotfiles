@@ -182,6 +182,7 @@ cmap Wq wq
 set undofile
 set undodir=$HOME/.nvim/undo
 set directory=$HOME/.nvim/swap
+set path+=**
 set undolevels=1000
 set noswapfile
 set signcolumn=yes
