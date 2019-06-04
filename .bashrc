@@ -17,6 +17,7 @@ export HISTCONTROL=ignoredups:erasedups # no duplicate entries
 export HISTSIZE=100000                  # big big history
 export HISTFILESIZE=100000              # big big history
 shopt -s histappend                     # append to history, don't overwrite it
+export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
 
 if [ "$(shopt | grep checkwinsize | awk '{print $2}')" = "off" ]; then
 	shopt -s checkwinsize
