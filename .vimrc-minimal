@@ -2,10 +2,6 @@ set nocompatible              " required
 filetype off                  " required
 
 call plug#begin('~/.vim/plugged')
-" utilities
-Plug 'vim-airline/vim-airline'                                  " tabs and statusline
-Plug 'junegunn/fzf.vim'
-Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 
 " color schemes
 Plug 'tomasiser/vim-code-dark'
@@ -16,14 +12,6 @@ filetype plugin indent on     " required
 
 " Use Ripgrep = superfast
 set grepprg=rg
-" Ctrl+P fuzzy find files
-" Ctrl+G grep -r in the folder
-noremap <C-P> :FZF<CR>
-noremap <C-G> :Rg<CR>
-
-""" Airline -> bufferline
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#formatter = 'unique_tail'
 
 map <silent> <C-E> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
