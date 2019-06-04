@@ -15,6 +15,10 @@
       with_items:
         - "{{ ansible_env.HOME }}/.config/nvim"
         - "{{ ansible_env.HOME }}/.vim"
+        - "{{ ansible_env.HOME }}/.nvim/swap"
+        - "{{ ansible_env.HOME }}/.vim/swap"
+        - "{{ ansible_env.HOME }}/.nvim/undo"
+        - "{{ ansible_env.HOME }}/.vim/undo"
 
     - name: Install vimplug before starting dotfiles
       shell: |
