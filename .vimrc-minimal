@@ -30,9 +30,7 @@ function! ToggleTheme()
     endif
 endfunction
 
-" ==========================================================================="
-" Resize Split When the window is resized"
-autocmd VimResized * :wincmd =
+autocmd VimResized * :wincmd =                          " Resize Split When the window is resized"
 
 """ Tabs Navigation
 " navigate tabs Tab (fw) S-Tab (prev)
@@ -50,18 +48,16 @@ noremap <S-M-Down> :2winc-<cr>
 noremap <S-M-Left> :2winc><cr>
 noremap <S-M-Right> :2winc<<cr>
 
+" Remap Wq to wq to have less typo on exit
 cmap Wq wq
-set undofile
-set undodir=$HOME/.vim/undo
-set directory=$HOME/.vim/swap
-set path+=**
+set undofile                                            " Undo file and directory
 set undolevels=1000
-set noswapfile
-set signcolumn=yes
-set lazyredraw ttyfast ttimeoutlen=20
-set mouse=a                                             " it's always useful to use the mouse then needed
+set undodir=$HOME/.vim/undo
+set directory=$HOME/.vim/swap                          " Custom swapfile directory
+set path+=**                                            " Recursive path Tab autocomplete
+set wildmenu
+set lazyredraw ttyfast ttimeoutlen=20                   " Faster redraw
 set hidden                                              " change buffer without saving
-set wildmenu                                            " Tab autocomplete in command mode
 set backspace=indent,eol,start                          " http://vi.stackexchange.com/a/2163
 set splitright splitbelow                               " Open new splits to the right and bottom
 set autoindent smartindent                              " always set autoindenting on
@@ -70,6 +66,7 @@ set hlsearch incsearch ignorecase smartcase             " Highlight search resul
 set nowrap                                              " play nicely with long lines
 set number                                              " Enable line numbers
 set noshowcmd
+set signcolumn=yes
 let &colorcolumn=join(range(81,999),",")
 syntax on
 
