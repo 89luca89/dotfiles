@@ -195,6 +195,7 @@ set hlsearch incsearch ignorecase smartcase             " Highlight search resul
 set nowrap                                              " play nicely with long lines
 set number                                              " Enable line numbers
 set noshowcmd
+set nomodeline                                          " protect against https://github.com/numirias/security/blob/master/doc/2019-06-04_ace-vim-neovim.md
 set signcolumn=yes
 let &colorcolumn=join(range(81,999),",")
 syntax on
