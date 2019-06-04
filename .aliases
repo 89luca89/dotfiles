@@ -10,7 +10,8 @@ alias cl='clear'
 alias ssh='assh wrapper ssh'
 alias whois="whois -h whois-servers.net"
 alias ccat="pygmentize -g"
-    
+alias :q='logout'
+alias :e='vim'   
 export PATH=$HOME/bin:$PATH
 export VAGRANT_DEFAULT_PROVIDER=virtualbox
 export ANDROID_HOME=/home/luca-linux/Programs/android-sdk-linux
