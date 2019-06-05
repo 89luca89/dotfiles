@@ -3,6 +3,7 @@ set mouse=a                   " it's always useful to use the mouse then needed
 filetype off                  " required
 
 call plug#begin('~/.nvim/plugged')
+Plug 'christoomey/vim-tmux-navigator'
 " utilities
 Plug 'vim-airline/vim-airline'                                  " tabs and statusline
 Plug 'scrooloose/nerdtree'                                      " split file manager
@@ -162,7 +163,12 @@ noremap <S-M-Up> :2winc+<cr>
 noremap <S-M-Down> :2winc-<cr>
 noremap <S-M-Left> :2winc><cr>
 noremap <S-M-Right> :2winc<<cr>
-
+let g:tmux_navigator_no_mappings = 1
+nnoremap <silent> <M-Left> :TmuxNavigateLeft<cr>
+nnoremap <silent> <M-Down> :TmuxNavigateDown<cr>
+nnoremap <silent> <M-Up> :TmuxNavigateUp<cr>
+nnoremap <silent> <M-Right> :TmuxNavigateRight<cr>
+"nnoremap <silent> <M-\> :TmuxNavigatePrevious<cr>
 " Remap Wq to wq to have less typo on exit
 cmap Wq wq
 set undofile                                            " Undo file and directory
@@ -182,6 +188,7 @@ set nowrap                                              " play nicely with long 
 set number                                              " Enable line numbers
 set noshowcmd
 set nomodeline                                          " protect against https://github.com/numirias/security/blob/master/doc/2019-06-04_ace-vim-neovim.md
+set cursorline                                          " locate the line
 set signcolumn=yes
 let &colorcolumn=join(range(81,999),",")
 syntax on
