@@ -15,8 +15,8 @@ Plug 'Shougo/deoplete.nvim'
 " snippets
 Plug 'sirver/ultisnips' 
 Plug 'honza/vim-snippets'
-Plug 'pearofducks/ansible-vim'
 " Vim LanguageClient setup
+Plug 'sheerun/vim-polyglot'
 Plug 'autozimu/languageclient-neovim', {
             \ 'branch': 'next',
             \ 'do': 'bash install.sh',
@@ -33,14 +33,6 @@ filetype plugin indent on     " required
 set grepprg=rg
 let g:gitgutter_grep = 'rg'
 let g:fzf_tags_command = 'ctags -R'
-
-"""" Java Lang settings
-let g:java_highlight_all=1
-let g:python_highlight_all = 1
-let g:yaml_highlight_all = 1
-let g:xml_highlight_all = 1
-let g:sh_highlight_all = 1
-let g:ansible_highlight_all = 1
 
 " Deoplete
 let g:deoplete#enable_at_startup = 1
@@ -147,15 +139,9 @@ function! ToggleTheme()
     if &background == 'light'
         set background=dark
         colorscheme codedark
-        highlight ColorColumn ctermbg=235
     else
         set background=light
         colorscheme github
-        highlight ColorColumn ctermbg=255
-        highlight VertSplit ctermbg=255 ctermfg=255
-        highlight LineNr ctermbg=white ctermfg=black
-        highlight nonText ctermbg=white ctermfg=black
-        highlight Normal ctermbg=white ctermfg=black
     endif
 endfunction
 
@@ -203,5 +189,6 @@ syntax on
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
+set termguicolors
 colorscheme codedark
 highlight ColorColumn ctermbg=235

@@ -3,9 +3,11 @@ filetype off                  " required
 
 call plug#begin('~/.vim/plugged')
 
+Plug 'sheerun/vim-polyglot'
 " color schemes
 Plug 'tomasiser/vim-code-dark'
 Plug 'endel/vim-github-colorscheme'
+
 
 call plug#end()               " required
 filetype plugin indent on     " required
@@ -13,24 +15,19 @@ filetype plugin indent on     " required
 " Use Ripgrep = superfast
 set grepprg=rg
 
-map <silent> <C-E> :<C-u>call ToggleTheme()<CR>
+autocmd VimResized * :wincmd =                          " Resize Split When the window is resized"
+
+map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
         colorscheme codedark
-        highlight ColorColumn ctermbg=235
     else
         set background=light
         colorscheme github
-        highlight ColorColumn ctermbg=255
-        highlight VertSplit ctermbg=255 ctermfg=255
-        highlight LineNr ctermbg=white ctermfg=black
-        highlight nonText ctermbg=white ctermfg=black
-        highlight Normal ctermbg=white ctermfg=black
     endif
 endfunction
 
-autocmd VimResized * :wincmd =                          " Resize Split When the window is resized"
 
 """ Tabs Navigation
 " navigate tabs Tab (fw) S-Tab (prev)
