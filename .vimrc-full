@@ -2,7 +2,7 @@ set nocompatible              " required
 set mouse=a                   " it's always useful to use the mouse then needed
 filetype off                  " required
 
-call plug#begin('~/.nvim/plugged')
+call plug#begin('~/.config/nvim/plugged')
 " vim tmux navigator
 Plug 'christoomey/vim-tmux-navigator'
 " utilities
@@ -156,8 +156,8 @@ nnoremap <silent> <M-Right> :TmuxNavigateRight<cr>
 cmap Wq wq
 set undofile                                            " Undo file and directory
 set undolevels=1000
-set undodir=$HOME/.nvim/undo
-set directory=$HOME/.nvim/swap                          " Custom swapfile directory
+set undodir=$HOME/.config/nvim/undo
+set directory=$HOME/.config/nvim/swap                          " Custom swapfile directory
 set path+=**                                            " Recursive path Tab autocomplete
 set wildmenu
 set lazyredraw ttyfast ttimeoutlen=20                   " Faster redraw
