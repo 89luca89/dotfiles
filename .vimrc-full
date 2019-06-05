@@ -3,19 +3,20 @@ set mouse=a                   " it's always useful to use the mouse then needed
 filetype off                  " required
 
 call plug#begin('~/.nvim/plugged')
+" vim tmux navigator
 Plug 'christoomey/vim-tmux-navigator'
 " utilities
-Plug 'vim-airline/vim-airline'                                  " tabs and statusline
 Plug 'scrooloose/nerdtree'                                      " split file manager
+Plug 'vim-airline/vim-airline'                                  " tabs and statusline
 Plug 'airblade/vim-gitgutter'                                   " +,-,~ on modified lines in git repo
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 
-" Deoplete
-Plug 'Shougo/deoplete.nvim'
 " snippets
 Plug 'sirver/ultisnips' 
 Plug 'honza/vim-snippets'
+" Deoplete
+Plug 'Shougo/deoplete.nvim'
 " Vim LanguageClient setup
 Plug 'sheerun/vim-polyglot'
 Plug 'autozimu/languageclient-neovim', {
@@ -58,23 +59,6 @@ let g:LanguageClient_serverCommands = {
             \ }
             "\ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
             "\ 'go' : ['~/.local/go/bin/go-langserver'],
-function! s:setYamlSchema()
-    echom &ft
-    if &ft == "yaml.ansible"
-        echom "Yaml-Language-Server using ansible schema."
-        let config = json_decode(system("cat ~/dotfiles/yaml/ansible.json"))
-        call LanguageClient#Notify('workspace/didChangeConfiguration', { 'settings': config })
-    elseif &ft=="yaml"
-        echom "Yaml-Language-Server using default schema."
-        let config = json_decode(system("cat ~/dotfiles/yaml/default.json"))
-        call LanguageClient#Notify('workspace/didChangeConfiguration', { 'settings': config })
-    endif
-endfunction
-
-augroup LanguageClient_config
-    autocmd!
-    autocmd User LanguageClientStarted call s:setYamlSchema()
-augroup END
 
 """ Airline -> bufferline
 let g:airline#extensions#tabline#enabled = 1
@@ -145,8 +129,8 @@ function! ToggleTheme()
         colorscheme github
     endif
 endfunction
-
-autocmd VimResized * :wincmd =                          " Resize Split When the window is resized"
+ " Resize Split When the window is resized"
+autocmd VimResized * :wincmd =
 
 """ Tabs Navigation
 " navigate tabs Tab (fw) S-Tab (prev)
@@ -158,17 +142,16 @@ nnoremap <C-c> :bp<bar>sp<bar>bn<bar>bd!<CR>
 noremap <leader>y "+y
 noremap <leader>p "+p
 " " Resize split window horizontally and vertically
-" Shortcuts to Shift-Alt-Arrows - Alt is mapped as M in vim
+" and add vim-tmux-navigator shortcuts 
+let g:tmux_navigator_no_mappings = 1
 noremap <S-M-Up> :2winc+<cr>
 noremap <S-M-Down> :2winc-<cr>
 noremap <S-M-Left> :2winc><cr>
 noremap <S-M-Right> :2winc<<cr>
-let g:tmux_navigator_no_mappings = 1
 nnoremap <silent> <M-Left> :TmuxNavigateLeft<cr>
 nnoremap <silent> <M-Down> :TmuxNavigateDown<cr>
 nnoremap <silent> <M-Up> :TmuxNavigateUp<cr>
 nnoremap <silent> <M-Right> :TmuxNavigateRight<cr>
-"nnoremap <silent> <M-\> :TmuxNavigatePrevious<cr>
 " Remap Wq to wq to have less typo on exit
 cmap Wq wq
 set undofile                                            " Undo file and directory
@@ -198,4 +181,3 @@ set encoding=utf8
 set background=dark
 set termguicolors
 colorscheme codedark
-highlight ColorColumn ctermbg=235

@@ -2,7 +2,8 @@ set nocompatible              " required
 filetype off                  " required
 
 call plug#begin('~/.vim/plugged')
-
+" vim tmux navigator
+Plug 'christoomey/vim-tmux-navigator'
 Plug 'sheerun/vim-polyglot'
 " color schemes
 Plug 'tomasiser/vim-code-dark'
@@ -39,11 +40,16 @@ vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 nnoremap <C-c> :bp<bar>sp<bar>bn<bar>bd!<CR>
 
 " " Resize split window horizontally and vertically
-" Shortcuts to Shift-Alt-Arrows - Alt is mapped as M in vim
+" and add vim-tmux-navigator shortcuts 
+let g:tmux_navigator_no_mappings = 1
 noremap <S-M-Up> :2winc+<cr>
 noremap <S-M-Down> :2winc-<cr>
 noremap <S-M-Left> :2winc><cr>
 noremap <S-M-Right> :2winc<<cr>
+nnoremap <silent> <M-Left> :TmuxNavigateLeft<cr>
+nnoremap <silent> <M-Down> :TmuxNavigateDown<cr>
+nnoremap <silent> <M-Up> :TmuxNavigateUp<cr>
+nnoremap <silent> <M-Right> :TmuxNavigateRight<cr>
 
 " Remap Wq to wq to have less typo on exit
 cmap Wq wq
