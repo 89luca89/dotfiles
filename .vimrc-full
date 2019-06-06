@@ -116,8 +116,8 @@ noremap <C-N> :NERDTreeFind<CR>
 " Ctrl+a+v new terminal split vertical
 " Ctrl+a+s new terminal split orizontal
 tnoremap <Esc><Esc>  <C-\><C-n>
-nnoremap <C-a>s :split<bar>:te<CR>
-nnoremap <C-a>v :vs<bar>:te<CR>
+nnoremap <leader>s :split<bar>:te<CR>
+nnoremap <leader>v :vs<bar>:te<CR>
 
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
@@ -152,6 +152,14 @@ nnoremap <silent> <M-Left> :TmuxNavigateLeft<cr>
 nnoremap <silent> <M-Down> :TmuxNavigateDown<cr>
 nnoremap <silent> <M-Up> :TmuxNavigateUp<cr>
 nnoremap <silent> <M-Right> :TmuxNavigateRight<cr>
+inoremap <silent> <M-Left> <Esc>:TmuxNavigateLeft<cr>
+inoremap <silent> <M-Down> <Esc>:TmuxNavigateDown<cr>
+inoremap <silent> <M-Up> <Esc>:TmuxNavigateUp<cr>
+inoremap <silent> <M-Right> <Esc>:TmuxNavigateRight<cr>
+tnoremap <silent> <M-Left> <C-\><C-n>:TmuxNavigateLeft<cr>
+tnoremap <silent> <M-Down> <C-\><C-n>:TmuxNavigateDown<cr>
+tnoremap <silent> <M-Up> <C-\><C-n>:TmuxNavigateUp<cr>
+tnoremap <silent> <M-Right> <C-\><C-n>:TmuxNavigateRight<cr>
 " Remap Wq to wq to have less typo on exit
 cmap Wq wq
 set undofile                                            " Undo file and directory
