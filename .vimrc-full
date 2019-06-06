@@ -138,9 +138,6 @@ map <Tab> :bn<CR>
 map <S-Tab> :bp<CR>
 " Ctrl+C close buffer ( pipe commands to fix behaviour with splits and netrw/nerdtree)
 nnoremap <C-c> :bp<bar>sp<bar>bn<bar>bd!<CR>
-""" leader+y/p copy/paste selection to clipboard
-noremap <leader>y "+y
-noremap <leader>p "+p
 " " Resize split window horizontally and vertically
 " and add vim-tmux-navigator shortcuts 
 let g:tmux_navigator_no_mappings = 1
@@ -182,6 +179,7 @@ set nomodeline                                          " protect against https:
 set cursorline                                          " locate the line
 set signcolumn=yes
 let &colorcolumn=join(range(81,999),",")
+set clipboard+=unnamedplus                              " use system clipboard
 syntax on
 
 " play nicely with modern graphics
