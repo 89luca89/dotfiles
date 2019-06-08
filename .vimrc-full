@@ -34,7 +34,6 @@ filetype plugin indent on     " required
 """ Git signs in gutter
 set grepprg=rg
 let g:gitgutter_grep = 'rg'
-let g:fzf_tags_command = 'ctags -R'
 
 " Deoplete
 let g:deoplete#enable_at_startup = 1
@@ -91,7 +90,7 @@ augroup autoformat_settings
     autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!shfmt %<CR>:loadview<CR>
 augroup END
 
-map <silent> <C-F> :<C-u>call ToggleErrors()<CR>
+map <silent> <C-P> :<C-u>call ToggleErrors()<CR>
 function! ToggleErrors()
     if empty(filter(tabpagebuflist(), 'getbufvar(v:val, "&buftype") is# "quickfix"'))
         lopen
@@ -101,11 +100,18 @@ function! ToggleErrors()
 endfunction
 
 " Ctrl+T fuzzy find ctags
-" Ctrl+P fuzzy find files
-" Ctrl+G grep -r in the folder
+" Ctrl+Space fuzzy find files
+" Ctrl+F grep -r in the folder
+" Ctrl+H command history
 noremap <C-T> :Tags<CR>
-noremap <C-P> :FZF<CR>
-noremap <C-G> :Rg<CR>
+noremap <C-Space> :Files<CR>
+noremap <C-F> :Rg<CR>
+noremap <C-H> :History:<CR>
+let $FZF_DEFAULT_COMMAND="find . -type f -not -path '*/\.git/*'"
+let g:fzf_files_options = "--preview 'if [ -d {1} ]; then ls -laH {1}; elif file {1} | grep text; then pygmentize -g {1} ; fi'"
+let g:fzf_tags_command = 'ctags -R'
+let g:fzf_action = {
+  \ 'alt-enter': 'vsplit' }
 
 " Ctrl+N relocate file explorer to opened file
 let NERDTreeShowHidden=1
