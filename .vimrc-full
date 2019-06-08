@@ -31,10 +31,6 @@ Plug 'endel/vim-github-colorscheme'
 call plug#end()               " required
 filetype plugin indent on     " required
 
-""" Git signs in gutter
-set grepprg=rg
-let g:gitgutter_grep = 'rg'
-
 " Deoplete
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#enable_smart_case = 1

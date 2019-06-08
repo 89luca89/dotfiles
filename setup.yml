@@ -216,6 +216,7 @@
         - libvdpau-va-gl
         - compat-ffmpeg28
         - compat-ffmpeg28-devel
+        - gvfs-fuse
       become: yes
       tags: pkg_install
 
@@ -235,6 +236,7 @@
         - gnome-shell
         - gnome-terminal
         - gnome-tweak-tool
+        - gigolo
         - mpv
         - nautilus
         - redhat-menus
