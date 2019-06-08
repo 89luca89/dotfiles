@@ -1,7 +1,9 @@
 --recurse=yes
 --exclude=.git
+--exclude=.gem
 --exclude=node_modules
 --exclude=vendor
+--exclude=workspace
 --exclude=*_compiled
 --exclude=*.md
 --exclude=*.xml
@@ -29,3 +31,8 @@
 --langmap=ansible:.yml.yaml
 --regex-ansible=/^[ \t]*-[ \t]*name:[ \t]*(.+)/\1/k,tasks/
 --languages=ansible,ruby,python
+--langdef=Go
+--langmap=Go:.go
+--regex-Go=/func([ \t]+\([^)]+\))?[ \t]+([a-zA-Z0-9_]+)/\2/d,func/
+--regex-Go=/var[ \t]+([a-zA-Z_][a-zA-Z0-9_]+)/\1/d,var/
+--regex-Go=/type[ \t]+([a-zA-Z_][a-zA-Z0-9_]+)/\1/d,type/
