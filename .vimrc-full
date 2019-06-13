@@ -59,9 +59,8 @@ let g:LanguageClient_serverCommands = {
             \ 'cpp': ['clangd'],
             \ 'python': ['/usr/local/bin/pyls'],
             \ 'yaml': ['~/.npm-packages/bin/yaml-language-server', '--stdio'],
-            \ 'yaml.ansible': ['~/.npm-packages/bin/yaml-language-server', '--stdio'],
-            \ 'xml': ['~/bin/xmlls'],
-            \ 'java': ['~/bin/jdtls', '-data', "./workspace" ],
+            \ 'xml': ['~/bin/lsp-xml'],
+            \ 'java': ['~/bin/lsp-java' ],
             \ }
             "\ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
             "\ 'go' : ['~/.local/go/bin/go-langserver'],
