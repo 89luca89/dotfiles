@@ -23,7 +23,8 @@ Plug 'autozimu/languageclient-neovim', {
             \ 'branch': 'next',
             \ 'do': 'bash install.sh',
             \ }
-
+" syntastic for non lsp-langs
+Plug 'vim-syntastic/syntastic'
 " color schemes
 Plug 'tomasiser/vim-code-dark'
 Plug 'endel/vim-github-colorscheme'
@@ -31,6 +32,17 @@ Plug 'endel/vim-github-colorscheme'
 call plug#end()               " required
 filetype plugin indent on     " required
 
+" Syntastic
+let g:syntastic_aggregate_errors = 1
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_mode_map = {
+    \ "mode": "passive",
+    \ "active_filetypes": ["sh", "ansible"],
+    \ "passive_filetypes": [] }
+let g:syntastic_sh_checkers = ['shellcheck', 'checkbashisms']
+let g:syntastic_ansible_checkers = ['ansible_lint']
+let g:syntastic_sh_checkbashisms_args = ['-fpx']
 " Deoplete
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#enable_smart_case = 1
@@ -46,7 +58,6 @@ let g:LanguageClient_serverCommands = {
             \ 'c': ['clangd'],
             \ 'cpp': ['clangd'],
             \ 'python': ['/usr/local/bin/pyls'],
-            \ 'sh' : ['~/.npm-packages/bin/bash-language-server', 'start'],
             \ 'yaml': ['~/.npm-packages/bin/yaml-language-server', '--stdio'],
             \ 'yaml.ansible': ['~/.npm-packages/bin/yaml-language-server', '--stdio'],
             \ 'xml': ['~/bin/xmlls'],
@@ -83,18 +94,10 @@ augroup autoformat_settings
     autocmd FileType python noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!autopep8 %<CR>:loadview<CR>
     autocmd FileType c,cpp,objc,proto,typescript,javascript,java noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!clang-format -style=file %<CR>:loadview<CR>
     autocmd FileType html,css,json noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!jsonlint -f %<CR>:loadview<CR>
-    autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!shfmt %<CR>:loadview<CR>
+    autocmd FileType sh noremap <buffer> <C-L> ggVG=
 augroup END
-
-map <silent> <C-P> :<C-u>call ToggleErrors()<CR>
-function! ToggleErrors()
-    if empty(filter(tabpagebuflist(), 'getbufvar(v:val, "&buftype") is# "quickfix"'))
-        lopen
-    else
-        lclose
-    endif
-endfunction
-
+" Ctrl+P loclist
+map <silent> <C-P> :<C-u>lopen<CR>
 " Ctrl+T fuzzy find ctags
 " Ctrl+Space fuzzy find files
 " Ctrl+F grep -r in the folder

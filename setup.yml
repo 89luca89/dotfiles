@@ -324,7 +324,7 @@
       with_nested:
       - [pip-2, pip-3]
       - [flake8, pep8, pylint, jedi, pyflakes, pycodestyle, autopep8, demjson,
-        clang, libclang-py3, neovim]
+        clang, libclang-py3, neovim, ansible, ansible-lint ]
       become: yes
       tags: test
 
@@ -348,7 +348,6 @@
     - name: Setup GOLANG environment
       shell: |
         export GOPATH={{ ansible_env.HOME }}/.local/go
-        cd $(mktemp -d); go mod init tmp; go get mvdan.cc/sh/cmd/shfmt
         cd $(mktemp -d); go mod init tmp; go get -u moul.io/assh
         cd $(mktemp -d); go mod init tmp; GO111MODULE=on go get -u -v github.com/sourcegraph/go-langserver
       args:
@@ -364,7 +363,6 @@
       # jsonlint -> demjson (pip install it)
       # autopep8 -> pip install it
       # clang-format -> clang
-      # shfmt -> go get it
     - name: Install Bash,Yaml,GOlang,Python LSP
       shell: "{{ item }}"
       with_items:
