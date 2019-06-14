@@ -24,7 +24,7 @@ Plug 'autozimu/languageclient-neovim', {
             \ 'do': 'bash install.sh',
             \ }
 " syntastic for non lsp-langs
-Plug 'vim-syntastic/syntastic'
+Plug 'w0rp/ale'
 " color schemes
 Plug 'tomasiser/vim-code-dark'
 Plug 'endel/vim-github-colorscheme'
@@ -32,16 +32,13 @@ Plug 'endel/vim-github-colorscheme'
 call plug#end()               " required
 filetype plugin indent on     " required
 
-" Syntastic
-let g:syntastic_aggregate_errors = 1
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_mode_map = {
-    \ "mode": "passive",
-    \ "active_filetypes": ["sh", "yaml", "ansible"],
-    \ "passive_filetypes": [] }
-let g:syntastic_sh_checkers = ['shellcheck', 'checkbashisms']
-let g:syntastic_ansible_checkers = ['ansible_lint']
-let g:syntastic_sh_checkbashisms_args = ['-fpx']
+let g:ale_sign_column_always = 1
+let g:ale_linters = {
+\   'sh': ['shellcheck', 'checkbashisms'],
+\	'json': ['jsonlint']
+\	'yaml': ['yamllint']
+\	'ansible': ['ansible-lint', 'yamllint']
+\}
 " Deoplete
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#enable_smart_case = 1
