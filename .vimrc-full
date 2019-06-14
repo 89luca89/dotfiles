@@ -35,10 +35,9 @@ filetype plugin indent on     " required
 " Syntastic
 let g:syntastic_aggregate_errors = 1
 let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_check_on_open = 1
 let g:syntastic_mode_map = {
     \ "mode": "passive",
-    \ "active_filetypes": ["sh", "ansible"],
+    \ "active_filetypes": ["sh", "yaml", "ansible"],
     \ "passive_filetypes": [] }
 let g:syntastic_sh_checkers = ['shellcheck', 'checkbashisms']
 let g:syntastic_ansible_checkers = ['ansible_lint']
