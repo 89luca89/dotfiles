@@ -22,8 +22,10 @@
         - "{{ ansible_env.HOME }}/.vim/undo"
 
     - name: Install vimplug before starting dotfiles
-      shell: |
-        curl -fLo {{ item }}/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+      get_url:
+        url: https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+        dest: "{{ item }}"
+        mode: 0755
       with_items:
         - "{{ ansible_env.HOME }}/.vim"
         - "{{ ansible_env.HOME }}/.config/nvim"
@@ -36,8 +38,9 @@
       git:
         repo: https://gitlab.com/89luca89/dotfiles
         dest: "{{ ansible_env.HOME }}/dotfiles"
+        version: master
         update: yes
-      when: file_exists.stat.exists == False
+      when: not file_exists.stat.exists
     - name: link dotfiles
       file:
         src: "{{ item.src }}"
@@ -64,8 +67,8 @@
 
     - name: Configure Keyboard and Cursor Options
       dconf:
-        key: "{{item.key}}"
-        value: "{{item.value}}"
+        key: "{{ item.key }}"
+        value: "{{ item.value }}"
         state: present
       with_items:
         - { key: '/org/gnome/desktop/interface/cursor-blink', value: 'false' }
@@ -137,9 +140,12 @@
       tags: bloat
 
     - name: Setup /usr/local directory
-      shell: "chown -R luca-linux:luca-linux /usr/local"
-      become: yes
-      
+      file:
+        dest: "/usr/local"
+        owner: luca-linux
+        group: luca-linux
+        recurse: yes
+
     - name: Check if rpmfusion exists
       stat:
         path: /etc/yum.repos.d/rpmfusion-free.repo
@@ -154,10 +160,14 @@
         - https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
       become: yes
       tags: pkg_install
-      when: file_exists.stat.exists == False
+      when: not file_exists.stat.exists
 
     - name: Install Flathub
-      shell: "flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo"
+      flatpak_remote:
+        name: flathub
+        state: present
+        flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
+        method: user
 
     - name: Install Programs (Generic Utilities)
       package:
@@ -303,6 +313,7 @@
         - npm
         - nodejs
         - ShellCheck
+        - devscripts-checkbashisms
         - ncurses-compat-libs
         - boost-devel
         - python2
@@ -322,9 +333,8 @@
         state: present
         executable: "{{ item[0] }}"
       with_nested:
-      - [pip-2, pip-3]
-      - [flake8, pep8, pylint, jedi, pyflakes, pycodestyle, autopep8, demjson,
-        clang, libclang-py3, neovim, ansible, ansible-lint ]
+      - [ pip-2, pip-3 ]
+      - [ 'python-language-server[all]', flake8, pep8, pylint, jedi, pyflakes, pycodestyle, autopep8, demjson, clang, libclang-py3, neovim, ansible, ansible-lint ]
       become: yes
       tags: test
 
@@ -343,6 +353,7 @@
       git:
         repo: https://github.com/laurent22/rsync-time-backup
         dest: "{{ ansible_env.HOME }}/Programs/rsync-time-backup"
+        version: master
         update: yes
 
     - name: Setup GOLANG environment
@@ -358,20 +369,21 @@
       # java -> https://download.eclipse.org/jdtls/milestones/?d
       # xml -> https://github.com/angelozerr/lsp4xml/releases
       # golang -> go-langserver
+      # rust -> rls
+      # yaml -> npm install
+      # python -> pip install
       #
       # Formatters:
       # jsonlint -> demjson (pip install it)
       # autopep8 -> pip install it
       # clang-format -> clang
-    - name: Install Bash,Yaml,GOlang,Python LSP
-      shell: "{{ item }}"
+    - name: Install missing LSP
+      npm:
+        name: "{{ item }}"
+        global: yes
       with_items:
         - npm i -g neovim
-        - npm i -g bash-language-server
         - npm i -g yaml-language-server
-        - pip3 install 'python-language-server[all]'
-      args:
-        executable: /bin/bash
 
     - name: "Ensure {{ ansible_env.HOME }}/Programs/xml-language-server/ Exists"
       file:
@@ -408,8 +420,11 @@
       become: yes
 
     - name: Only Office (Links)
-      shell: "ln -sf /usr/lib64/libcurl.so.4.5.0 /usr/lib64/libcurl-gnutls.so.4"
-      become: yes
+      file:
+        src: "/usr/lib64/libcurl.so.4.5.0"
+        dest: "/usr/lib64/libcurl-gnutls.so.4"
+        state: link
+        force: yes
 
     - name: Only Office (Install)
       package:
@@ -421,6 +436,7 @@
       git:
         repo: https://github.com/bulletmark/libinput-gestures
         dest: "{{ ansible_env.HOME }}/Programs/libinput-gestures"
+        version: master
         update: yes
 
     - name: Libinput Gestures (Group and Dependency)
@@ -447,7 +463,7 @@
         - libnetfilter_queue-devel
         - python3-grpcio
       become: yes
-    
+
     - name: Opensnitch Install (Userland Dependency)
       shell:  |
         export GOPATH={{ ansible_env.HOME }}/.local/go
@@ -457,7 +473,7 @@
       args:
         executable: /bin/bash
       ignore_errors: yes
-    
+
     - name: Opensnitch Stop
       systemd:
         name: opensnitchd
@@ -465,7 +481,7 @@
         enabled: yes
       ignore_errors: yes
       become: yes
-    
+
     - name: Opensnitch Install
       shell: |
         export GOPATH={{ ansible_env.HOME }}/.local/go
@@ -481,14 +497,14 @@
       args:
         executable: /bin/bash
       become: yes
-    
+
     - name: Opensnitch Start
       systemd:
         name: opensnitchd
         state: started
         enabled: yes
       become: yes
-    
+
     - name: FSTrim Enable
       systemd:
         name: fstrim.timer
@@ -521,7 +537,8 @@
         enabled: yes
       become: yes
 
-    - sysctl:
+    - name: Set sysctl variables
+      sysctl:
         name: "{{ item.name }}"
         value: "{{ item.value }}"
         sysctl_set: yes
@@ -573,7 +590,8 @@
       shell: "sed -i 's/issue_discards = 0/issue_discards = 1/g' /etc/lvm/lvm.conf"
       become: yes
 
-    - kernel_blacklist:
+    - name: Blacklist unused kernel module
+      kernel_blacklist:
         name: intel_powerclamp
         state: present
       become: yes
@@ -585,7 +603,7 @@
     - name: Set i915 driver options
       shell: echo "options i915 disable_power_well=0 enable_dc=2 enable_psr=3 enable_rc6=7 enable_fbc=1 powersave=1 semaphores=1" > /etc/modprobe.d/i915.conf
       become: yes
-      when: file_exists.stat.exists == False
+      when: not file_exists.stat.exists
 
     - name: Check if /etc/modprobe.d/snd_hda_intel.conf exists
       stat:
@@ -594,7 +612,7 @@
     - name: Set Intel HDA driver options
       shell: echo 'options snd_hda_intel power_save_controlle=Y power_save=1' > /etc/modprobe.d/snd_hda_intel.conf
       become: yes
-      when: file_exists.stat.exists == False
+      when: not file_exists.stat.exists
 
     - name: Check if /etc/modprobe.d/e1000e.conf exists
       stat:
@@ -603,7 +621,7 @@
     - name: Set Intel ETH driver options
       shell: echo 'options e1000e SmartPowerDownEnable=1' > /etc/modprobe.d/e1000e.conf
       become: yes
-      when: file_exists.stat.exists == False
+      when: not file_exists.stat.exists
 
     - name: Check if /etc/modprobe.d/iwlwifi.conf exists
       stat:
@@ -612,7 +630,7 @@
     - name: Set Intel Wifi driver options
       shell: echo 'options iwlwifi power_save=Y power_level=5 iwlmvm power_scheme=3' > /etc/modprobe.d/iwlwifi.conf
       become: yes
-      when: file_exists.stat.exists == False
+      when: not file_exists.stat.exists
 
     - name: Check Grub Flags are deployed
       shell: grep "nmi_watchdog=0 pcie_aspm.policy=powersupersave pcie_aspm=force drm.debug=0 drm.vblankoffdelay=1 scsi_mod.use_blk_mq=1 mmc_mod.use_blk_mq=1 pti=off spectre_v2=off l1tf=off nospec_store_bypass_disable no_stf_barrier" /etc/default/grub
@@ -641,7 +659,7 @@
         - mq-deadline
         - kyber-iosched
       become: yes
-      when: file_exists.stat.exists == False
+      when: not file_exists.stat.exists
 
     - name: Check if /etc/udev/rules.d/powersave.rules exists
       stat:
@@ -668,7 +686,7 @@
         - ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/iosched/low_latency}="1"
         - ACTION=="add|change", KERNEL=="sd[a-z]", RUN+="/usr/sbin/hdparm -B 1 /dev/%k"
       become: yes
-      when: file_exists.stat.exists == False
+      when: not file_exists.stat.exists
 
 #     ######## BBSWITCH ################
 #     sudo dnf copr enable chenxiaolong/bumblebee
@@ -684,5 +702,5 @@
 #     ####### SDK Android ############
 #       sdkmanager --install "platforms;android-28"
 #       sdkmanager --install "extras;android;m2repository"
-#       sdkmanager --install "build-tools;28.0.3" 
-#       sdkmanager --install "platform-tools" 
+#       sdkmanager --install "build-tools;28.0.3"
+#       sdkmanager --install "platform-tools"
