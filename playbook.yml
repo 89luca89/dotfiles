@@ -14,11 +14,10 @@
         state: directory
       with_items:
         - "{{ ansible_env.HOME }}/.config/nvim"
-        - "{{ ansible_env.HOME }}/.nvim"
+        - "{{ ansible_env.HOME }}/.config/nvim/swap"
+        - "{{ ansible_env.HOME }}/.config/nvim/undo"
         - "{{ ansible_env.HOME }}/.vim"
-        - "{{ ansible_env.HOME }}/.nvim/swap"
         - "{{ ansible_env.HOME }}/.vim/swap"
-        - "{{ ansible_env.HOME }}/.nvim/undo"
         - "{{ ansible_env.HOME }}/.vim/undo"
 
     - name: Install vimplug before starting dotfiles
@@ -145,6 +144,7 @@
         owner: luca-linux
         group: luca-linux
         recurse: yes
+      become: yes
 
     - name: Check if rpmfusion exists
       stat:
@@ -393,8 +393,8 @@
         name: "{{ item }}"
         global: yes
       with_items:
-        - npm i -g neovim
-        - npm i -g yaml-language-server
+        - neovim
+        - yaml-language-server
 
     - name: "Ensure {{ ansible_env.HOME }}/Programs/xml-language-server/ Exists"
       file:
