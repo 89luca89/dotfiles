@@ -11,20 +11,14 @@ Plug 'vim-airline/vim-airline'                                  " tabs and statu
 Plug 'airblade/vim-gitgutter'                                   " +,-,~ on modified lines in git repo
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
-
 " snippets
 Plug 'sirver/ultisnips' 
 Plug 'honza/vim-snippets'
-" Deoplete
-Plug 'Shougo/deoplete.nvim'
-" Vim LanguageClient setup
+" Vim as IDE Setup
 Plug 'sheerun/vim-polyglot'
-Plug 'autozimu/languageclient-neovim', {
-            \ 'branch': 'next',
-            \ 'do': 'bash install.sh',
-            \ }
-" syntastic for non lsp-langs
-Plug 'w0rp/ale'
+Plug 'Shougo/deoplete.nvim'
+Plug 'autozimu/languageclient-neovim', { 'branch': 'next', 'do': 'bash install.sh' }
+Plug 'w0rp/ale'                                                 " ALE For langs not supported by LSP
 " color schemes
 Plug 'tomasiser/vim-code-dark'
 Plug 'endel/vim-github-colorscheme'
@@ -33,12 +27,12 @@ call plug#end()               " required
 filetype plugin indent on     " required
 
 let g:ale_sign_column_always = 1
+let g:ale_linters_explicit = 1
 let g:ale_linters = {
-\   'sh': ['shellcheck', 'checkbashisms'],
-\	'json': ['jsonlint']
-\	'yaml': ['yamllint']
-\	'ansible': ['ansible-lint', 'yamllint']
-\}
+            \   'sh': ['shellcheck', 'checkbashisms'],
+            \	'json': ['jsonlint'],
+            \	'ansible': ['ansible-lint']
+            \}
 " Deoplete
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#enable_smart_case = 1
@@ -55,6 +49,7 @@ let g:LanguageClient_serverCommands = {
             \ 'cpp': ['clangd'],
             \ 'python': ['/usr/local/bin/pyls'],
             \ 'yaml': ['~/.npm-packages/bin/yaml-language-server', '--stdio'],
+            \ 'yaml.ansible': ['~/.npm-packages/bin/yaml-language-server', '--stdio'],
             \ 'xml': ['~/bin/lsp-xml'],
             \ 'java': ['~/bin/lsp-java' ],
             \ }
