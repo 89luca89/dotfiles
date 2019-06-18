@@ -97,6 +97,8 @@
         backup: yes
       with_items:
           - export MOZ_USE_XINPUT2=1
+          - export MOZ_ACCELLERATED=1
+          - export MOZ_WEBRENDER=1
       become: yes
 
     - name: Remove Programs (Unused Programs)
@@ -285,18 +287,8 @@
         - inotify-tools
         - firejail
         - zsh
-        - dash
       become: yes
       tags: pkg_install
-
-    - name: Set DASH as default posix sh
-      file:
-        src: /usr/bin/dash
-        dest: /bin/sh
-        state: link
-        follow: False
-        force: yes
-      become: yes
 
     - name: install the 'Development tools' package group
       dnf:
