@@ -35,7 +35,9 @@ let g:ale_linters_explicit = 1
 let g:ale_linters = {
             \   'sh': ['shellcheck', 'checkbashisms'],
             \	'json': ['jsonlint'],
+            \	'xml': ['xmllint'],
             \	'ansible': ['ansible-lint']
+            \	'Dockerfile': ['dockerfile_lint'],
             \}
 " Deoplete
 let g:deoplete#enable_at_startup = 1
@@ -49,14 +51,13 @@ let g:LanguageClient_diagnosticsList="Quickfix"
 let g:LanguageClient_serverCommands = {
             \ 'c': ['clangd'],
             \ 'cpp': ['clangd'],
-            \ 'python': ['/usr/local/bin/pyls'],
+            \ 'python': ['pyls'],
+            \ 'java': ['~/bin/lsp-java' ],
             \ 'yaml': ['~/.npm-packages/bin/yaml-language-server', '--stdio'],
             \ 'yaml.ansible': ['~/.npm-packages/bin/yaml-language-server', '--stdio'],
-            \ 'xml': ['~/bin/lsp-xml'],
-            \ 'java': ['~/bin/lsp-java' ],
+            \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
+            \ 'go' : ['~/.local/go/bin/go-langserver'],
             \ }
-            "\ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
-            "\ 'go' : ['~/.local/go/bin/go-langserver'],
 """ Airline -> bufferline
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'

@@ -45,7 +45,6 @@
         - { src: "~/dotfiles/.aliases", dest: "~/.aliases" }
         - { src: "~/dotfiles/.bashrc", dest: "~/.bashrc" }
         - { src: "~/dotfiles/.tmux.conf", dest: "~/.tmux.conf" }
-        # - { src: "~/dotfiles/.vimrc-minimal", dest: "~/.vimrc" }
         - { src: "~/dotfiles/.vimrc-full", dest: "~/.vimrc" }
         - { src: "~/dotfiles/.zshrc", dest: "~/.zshrc" }
         - { src: "~/dotfiles/.toprc", dest: "~/.toprc" }
@@ -323,6 +322,7 @@
         - ctags
         - ctags-etags
         - global-ctags
+        - libxml2
       become: yes
       tags: pkg_install
 
@@ -332,10 +332,13 @@
         state: present
         executable: "{{ item[0] }}"
       with_nested:
-      - [ pip-2, pip-3 ]
-      - [ 'python-language-server[all]', flake8, pep8, pylint, jedi, pyflakes, pycodestyle, autopep8, beautysh, demjson, clang, libclang-py3, neovim, ansible-lint ]
+      - [ pip-3 ]
+      - [ setuptools, pylint, jedi, pyflakes, pycodestyle, autopep8, mccabe, rope,
+          'python-language-server[all]', pyls-mypy, pyls-isort, pyls-black,
+          beautysh, demjson, ansible-lint,
+          clang, libclang-py3, cmakelint,
+          neovim ]
       become: yes
-      tags: test
 
     - name: "Ensure {{ ansible_env.HOME }}/Programs Exists"
       file:
@@ -366,32 +369,31 @@
       # LSP
       # c/cpp clangd -> clang-tools-extra
       # java -> https://download.eclipse.org/jdtls/milestones/?d
-      # xml -> https://github.com/angelozerr/lsp4xml/releases
       # golang -> go-langserver
       # rust -> rls
-      # yaml -> npm install
-      # python -> pip install
+      # yaml -> yaml-language-server
+      # python -> pyls
+      #
+      # Linters
+      # shellcheck, checkbashisms
+      # jsonlint
+      # ansible-lint
+      # cmakelint
+      # dockerfile_lint
+      # xmllint
       #
       # Formatters:
-      # jsonlint -> demjson (pip install it)
-      # autopep8 -> pip install it
+      # jsonlint -> demjson
+      # autopep8
+      # beautysh
       # clang-format -> clang
     - name: Install missing LSP
       npm:
         name: "{{ item }}"
         global: yes
       with_items:
+        - dockerfile_lint
         - yaml-language-server
-
-    - name: "Ensure {{ ansible_env.HOME }}/Programs/xml-language-server/ Exists"
-      file:
-        path: "{{ ansible_env.HOME }}/Programs/xml-language-server/"
-        state: directory
-    - name: Install XML Lang Server
-      get_url:
-        url: https://github.com/angelozerr/lsp4xml/releases/download/0.3.0/org.eclipse.lsp4xml-0.3.0-uber.jar
-        dest: "{{ ansible_env.HOME }}/Programs/xml-language-server/"
-        mode: "0755"
 
     - name: "Ensure {{ ansible_env.HOME }}/Programs/jdt-language-server/ Exists"
       file:
