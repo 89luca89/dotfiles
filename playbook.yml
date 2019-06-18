@@ -337,7 +337,7 @@
         executable: "{{ item[0] }}"
       with_nested:
       - [ pip-2, pip-3 ]
-      - [ 'python-language-server[all]', flake8, pep8, pylint, jedi, pyflakes, pycodestyle, autopep8, beautysh, demjson, clang, libclang-py3, neovim, ansible, ansible-lint ]
+      - [ 'python-language-server[all]', flake8, pep8, pylint, jedi, pyflakes, pycodestyle, autopep8, beautysh, demjson, clang, libclang-py3, neovim, ansible-lint ]
       become: yes
       tags: test
 
