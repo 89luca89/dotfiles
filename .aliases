@@ -10,9 +10,7 @@ alias cl='clear'
 alias ssh='assh wrapper ssh'
 alias whois="whois -h whois-servers.net"
 alias ccat="pygmentize -g"
-alias :q='logout'
-alias :e='vim'   
-alias vim='nvim'
+alias vim='vimx'
 alias diff="diff --color=always"
 export PATH=$HOME/bin:$PATH
 export VAGRANT_DEFAULT_PROVIDER=virtualbox

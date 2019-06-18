@@ -8,14 +8,11 @@
   gather_facts: True
   tasks:
 
-    - name: "Ensure {{ item }} Exists"
+    - name: "Ensure Vim folders Exists"
       file:
         path: "{{ item }}"
         state: directory
       with_items:
-        - "{{ ansible_env.HOME }}/.config/nvim"
-        - "{{ ansible_env.HOME }}/.config/nvim/swap"
-        - "{{ ansible_env.HOME }}/.config/nvim/undo"
         - "{{ ansible_env.HOME }}/.vim"
         - "{{ ansible_env.HOME }}/.vim/swap"
         - "{{ ansible_env.HOME }}/.vim/undo"
@@ -27,7 +24,6 @@
         mode: 0755
       with_items:
         - "{{ ansible_env.HOME }}/.vim"
-        - "{{ ansible_env.HOME }}/.config/nvim"
 
     - name: Check if Dotfile folder is present
       stat:
@@ -49,8 +45,8 @@
         - { src: "~/dotfiles/.aliases", dest: "~/.aliases" }
         - { src: "~/dotfiles/.bashrc", dest: "~/.bashrc" }
         - { src: "~/dotfiles/.tmux.conf", dest: "~/.tmux.conf" }
-        - { src: "~/dotfiles/.vimrc-minimal", dest: "~/.vimrc" }
-        - { src: "~/dotfiles/.vimrc-full", dest: "~/.config/nvim/init.vim" }
+        # - { src: "~/dotfiles/.vimrc-minimal", dest: "~/.vimrc" }
+        - { src: "~/dotfiles/.vimrc-full", dest: "~/.vimrc" }
         - { src: "~/dotfiles/.zshrc", dest: "~/.zshrc" }
         - { src: "~/dotfiles/.toprc", dest: "~/.toprc" }
         - { src: "~/dotfiles/.npmrc", dest: "~/.npmrc" }
@@ -275,9 +271,9 @@
         name: "{{ item }}"
         state: present
       with_items:
-        - neovim
         - vim
         - vim-enhanced
+        - vim-X11
         - tmate
         - tmux
         - xclip
@@ -385,7 +381,6 @@
         name: "{{ item }}"
         global: yes
       with_items:
-        - neovim
         - yaml-language-server
 
     - name: "Ensure {{ ansible_env.HOME }}/Programs/xml-language-server/ Exists"
