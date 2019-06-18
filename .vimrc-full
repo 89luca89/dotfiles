@@ -36,8 +36,8 @@ let g:ale_linters = {
             \   'sh': ['shellcheck', 'checkbashisms'],
             \	'json': ['jsonlint'],
             \	'xml': ['xmllint'],
-            \	'ansible': ['ansible-lint']
-            \	'Dockerfile': ['dockerfile_lint'],
+            \	'ansible': ['ansible-lint'],
+            \	'Dockerfile': ['dockerfile_lint']
             \}
 " Deoplete
 let g:deoplete#enable_at_startup = 1
