@@ -2,26 +2,26 @@ set nocompatible              " required
 set mouse=a                   " it's always useful to use the mouse then needed
 filetype off                  " required
 call plug#begin('~/.vim/plugged')
+" nvim compat
+Plug 'roxma/nvim-yarp'
+Plug 'roxma/vim-hug-neovim-rpc'
 " vim tmux navigator
 Plug 'christoomey/vim-tmux-navigator'
 " utilities
 Plug 'scrooloose/nerdtree'                                      " split file manager
 Plug 'vim-airline/vim-airline'                                  " tabs and statusline
 Plug 'airblade/vim-gitgutter'                                   " +,-,~ on modified lines in git repo
-Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
 " snippets
 Plug 'sirver/ultisnips' 
 Plug 'honza/vim-snippets'
 " Vim as IDE Setup
 Plug 'sheerun/vim-polyglot'
-" Deoplete
-Plug 'Shougo/deoplete.nvim'
-Plug 'roxma/nvim-yarp'
-Plug 'roxma/vim-hug-neovim-rpc'
 " LSP +  ALE For langs not supported by LSP
 Plug 'autozimu/languageclient-neovim', { 'branch': 'next', 'do': 'bash install.sh' }
 Plug 'w0rp/ale'                         
+Plug 'Shougo/deoplete.nvim'
 " color schemes
 Plug 'tomasiser/vim-code-dark'
 Plug 'endel/vim-github-colorscheme'
