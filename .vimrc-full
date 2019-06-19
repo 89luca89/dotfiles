@@ -2,9 +2,6 @@ set nocompatible              " required
 set mouse=a                   " it's always useful to use the mouse then needed
 filetype off                  " required
 call plug#begin('~/.vim/plugged')
-" nvim compat
-Plug 'roxma/nvim-yarp'
-Plug 'roxma/vim-hug-neovim-rpc'
 " vim tmux navigator
 Plug 'christoomey/vim-tmux-navigator'
 " utilities
@@ -13,20 +10,26 @@ Plug 'vim-airline/vim-airline'                                  " tabs and statu
 Plug 'airblade/vim-gitgutter'                                   " +,-,~ on modified lines in git repo
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
-" snippets
-Plug 'sirver/ultisnips' 
-Plug 'honza/vim-snippets'
-" Vim as IDE Setup
-Plug 'sheerun/vim-polyglot'
 " LSP +  ALE For langs not supported by LSP
+Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'yami-beta/asyncomplete-omni.vim'
 Plug 'autozimu/languageclient-neovim', { 'branch': 'next', 'do': 'bash install.sh' }
-Plug 'w0rp/ale'                         
-Plug 'Shougo/deoplete.nvim'
+Plug 'w0rp/ale'
+" Lang Packs
+Plug 'sheerun/vim-polyglot'
 " color schemes
 Plug 'tomasiser/vim-code-dark'
 Plug 'endel/vim-github-colorscheme'
 call plug#end()               " required
 filetype plugin indent on     " required
+
+set completeopt+=menuone,noselect,noinsert
+set omnifunc=LanguageClient#complete
+call asyncomplete#register_source(asyncomplete#sources#omni#get_source_options({
+\ 'name': 'omni',
+\ 'whitelist': ['*'],
+\ 'completor': function('asyncomplete#sources#omni#completor')
+\  }))
 
 let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 1
@@ -39,11 +42,6 @@ let g:ale_linters = {
             \	'ansible': ['ansible-lint'],
             \	'Dockerfile': ['dockerfile_lint']
             \}
-" Deoplete
-let g:deoplete#enable_at_startup = 1
-let g:deoplete#enable_smart_case = 1
-let g:deoplete#auto_completion_start_length = 2
-let g:deoplete#manual_completion_start_length = 1
 " Async Complete + LSP
 let g:LanguageClient_autoStart = 1
 let g:LanguageClient_diagnosticsEnable = 1
@@ -61,11 +59,6 @@ let g:LanguageClient_serverCommands = {
 """ Airline -> bufferline
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
-" I Like snippets!
-let g:UltiSnipsListSnippets="<c-h>"
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 " Launch fix-netbeans-project to update jar libs and restart the lang server
 map <silent> <leader>u :LanguageClientStop<cr>:LanguageClientStart<cr>
 " Language client shortcuts with leader:
