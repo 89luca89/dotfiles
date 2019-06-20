@@ -332,12 +332,12 @@
         state: present
         executable: "{{ item[0] }}"
       with_nested:
-      - [ pip-3 ]
+      - [ pip-2, pip-3 ]
       - [ setuptools, pylint, jedi, pyflakes, pycodestyle, autopep8, mccabe, rope,
           'python-language-server[all]', pyls-mypy, pyls-isort, pyls-black,
           beautysh, demjson,
           yamllint, yamlfmt, ansible-lint,
-          clang, libclang-py3, cmakelint,
+          clang, libclang-py3,
           neovim ]
       become: yes
 
@@ -379,7 +379,6 @@
       # shellcheck, checkbashisms
       # jsonlint
       # ansible-lint
-      # cmakelint
       # dockerfile_lint
       # xmllint
       #
@@ -388,7 +387,7 @@
       # autopep8
       # beautysh
       # clang-format -> clang
-    - name: Install missing LSP
+    - name: Install missing LSP/Linters
       npm:
         name: "{{ item }}"
         global: yes
