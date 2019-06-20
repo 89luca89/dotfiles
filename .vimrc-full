@@ -126,23 +126,22 @@ inoremap <silent> <M-Up> <Esc>:TmuxNavigateUp<cr>
 inoremap <silent> <M-Right> <Esc>:TmuxNavigateRight<cr>
 " Remap Wq to wq to have less typo on exit
 cmap Wq wq
-set nocompatible                                        " required
-set mouse=a                                             " it's always useful
-set undofile undolevels=1000 undodir=$HOME/.vim/undo    " Undo file and directory
-set directory=$HOME/.vim/swap                           " Custom swapfile directory
-set path+=** wildmenu                                   " Recursive path Tab autocomplete
+set nocompatible                                                  " required
+set mouse=a                                                       " it's always useful
+set undofile undolevels=1000 undodir=$HOME/.vim/undo              " Undo file and directory
+set directory=$HOME/.vim/swap                                     " Custom swapfile directory
+set path+=** wildmenu                                             " Recursive path Tab autocomplete
 set wildmenu
-set lazyredraw ttyfast ttimeoutlen=20                   " Faster redraw
-set hidden                                              " change buffer without saving
-set backspace=indent,eol,start                          " http://vi.stackexchange.com/a/2163
-set splitright splitbelow                               " Open new splits to the right and bottom
-set autoindent smartindent                              " always set autoindenting on
-set expandtab shiftwidth=4 tabstop=4 softtabstop=4      " Four spaces for tabs everywhere
-set hlsearch incsearch ignorecase smartcase             " Highlight search results, ignore case if search is all lowercase
-set nowrap                                              " play nicely with long lines
-set number                                              " Enable line numbers
-set nomodeline                                          " protect against https://github.com/numirias/security/blob/master/doc/2019-06-04_ace-vim-neovim.md
-set signcolumn=yes
+set lazyredraw ttyfast ttimeoutlen=20                             " Faster redraw
+set hidden                                                        " change buffer without saving
+set backspace=indent,eol,start                                    " http://vi.stackexchange.com/a/2163
+set splitright splitbelow                                         " Open new splits to the right and bottom
+set autoindent smartindent                                        " always set autoindenting on
+set smarttab expandtab shiftwidth=4 tabstop=4 softtabstop=4       " Four spaces for tabs everywhere
+set hlsearch incsearch ignorecase smartcase                       " Highlight search results, ignore case if search is all lowercase
+set nowrap number                                                 " play nicely with long lines
+set nomodeline                                                    " protect against https://github.com/numirias/security/blob/master/doc/2019-06-04_ace-vim-neovim.md
+set signcolumn=yes laststatus=2
 let &colorcolumn=join(range(81,999),",")
 syntax on
 " play nicely with modern graphics
