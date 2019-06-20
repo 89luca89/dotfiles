@@ -5,6 +5,10 @@ export BASH_IT="$HOME/.local/bin/bash_it"
 if [ ! -d "$BASH_IT" ]; then
 	git clone --depth=1 https://github.com/Bash-it/bash-it.git $BASH_IT
 fi
+if [ ! -d "$HOME/.local/bin/fzf" ]; then
+    git clone --depth 1 https://github.com/junegunn/fzf.git "$HOME/.local/bin/fzf"
+    "$HOME/.local/bin/fzf/install" --all
+fi
 
 export BASH_IT_THEME='pure'
 

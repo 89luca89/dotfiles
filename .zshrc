@@ -8,7 +8,10 @@ if [ ! -d "$ZSH" ]; then
 	git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH/custom/plugins/zsh-autosuggestions
 	git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH/custom/plugins/zsh-syntax-highlighting
 fi
-
+if [ ! -d "$HOME/.local/bin/fzf" ]; then
+    git clone --depth 1 https://github.com/junegunn/fzf.git "$HOME/.local/bin/fzf"
+    "$HOME/.local/bin/fzf/install" --all
+fi
 # Zsh completion
 fpath=(/usr/local/share/zsh-completions $fpath)
 
