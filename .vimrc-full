@@ -3,17 +3,17 @@ call plug#begin('~/.vim/plugged')
 " vim tmux navigator
 Plug 'christoomey/vim-tmux-navigator'
 " utilities
-Plug 'scrooloose/nerdtree'                                      " split file manager
 Plug 'vim-airline/vim-airline'                                  " tabs and statusline
+Plug 'scrooloose/nerdtree'                                      " split file manager
+Plug 'junegunn/fzf.vim'                                         " fuzzy find all the things
 Plug 'airblade/vim-gitgutter'                                   " +,-,~ on modified lines in git repo
-Plug 'junegunn/fzf', { 'dir':'~/.local/bin/fzf', 'do':'./install --all' }
-Plug 'junegunn/fzf.vim'
 " LSP + Completion
 Plug 'Shougo/deoplete.nvim'
 Plug 'autozimu/languageclient-neovim', { 'branch': 'next', 'do': 'bash install.sh' }
 " Snippets
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
+Plug 'wellle/tmux-complete.vim'                                 " completion from tmux panes
 " ALE For langs not supported by LSP
 Plug 'w0rp/ale'
 " Lang Packs
