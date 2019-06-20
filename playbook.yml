@@ -335,7 +335,8 @@
       - [ pip-3 ]
       - [ setuptools, pylint, jedi, pyflakes, pycodestyle, autopep8, mccabe, rope,
           'python-language-server[all]', pyls-mypy, pyls-isort, pyls-black,
-          beautysh, demjson, ansible-lint,
+          beautysh, demjson,
+          yamllint, yamlfmt, ansible-lint,
           clang, libclang-py3, cmakelint,
           neovim ]
       become: yes
