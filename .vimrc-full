@@ -4,20 +4,18 @@ call plug#begin('~/.vim/plugged')
 Plug 'christoomey/vim-tmux-navigator'
 " utilities
 Plug 'vim-airline/vim-airline'                                  " tabs and statusline
-Plug 'scrooloose/nerdtree'                                      " split file manager
 Plug 'junegunn/fzf'                                             " fuzzy find all the things
 Plug 'junegunn/fzf.vim'                                         " fuzzy find all the things
 Plug 'airblade/vim-gitgutter'                                   " +,-,~ on modified lines in git repo
-" LSP + Completion
+Plug 'sheerun/vim-polyglot'                                     " Lang packs
+" LSP + completion
 Plug 'w0rp/ale'                                                 " ALE For langs not supported by LSP
-Plug 'Shougo/deoplete.nvim'
+Plug 'shougo/deoplete.nvim'
 Plug 'autozimu/languageclient-neovim', { 'branch': 'next', 'do': 'bash install.sh' }
 " Snippets
-Plug 'SirVer/ultisnips'
+Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'wellle/tmux-complete.vim'                                 " completion from tmux panes
-" Lang Packs
-Plug 'sheerun/vim-polyglot'
 " nvim compatibility
 Plug 'roxma/nvim-yarp'
 Plug 'roxma/vim-hug-neovim-rpc'
@@ -91,10 +89,6 @@ augroup autoformat_settings
     autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:!beautysh -f %<CR>:e<CR>
     autocmd FileType yaml,ansible noremap <buffer> <C-L> <Esc>:w<CR>:!yamlfmt -w %<CR><CR>
 augroup END
-" Ctrl+N relocate file explorer to opened file
-let NERDTreeShowHidden=1
-noremap <C-\> :NERDTreeToggle<CR>
-noremap <C-N> :NERDTreeFind<CR>
 " leader y/p to use system clipboard
 noremap <Leader>y "+y
 noremap <Leader>p "+p
