@@ -8,12 +8,19 @@ Plug 'christoomey/vim-tmux-navigator'
 Plug 'scrooloose/nerdtree'                                      " split file manager
 Plug 'vim-airline/vim-airline'                                  " tabs and statusline
 Plug 'airblade/vim-gitgutter'                                   " +,-,~ on modified lines in git repo
-Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
+Plug 'junegunn/fzf', { 'dir':'~/.local/bin/fzf', 'do':'./install --all' }
 Plug 'junegunn/fzf.vim'
-" LSP +  ALE For langs not supported by LSP
-Plug 'prabirshrestha/asyncomplete.vim'
-Plug 'yami-beta/asyncomplete-omni.vim'
-Plug 'autozimu/languageclient-neovim', { 'branch': 'next', 'do': 'bash install.sh' }
+" LSP + Completion
+Plug 'prabirshrestha/async.vim'
+Plug 'prabirshrestha/vim-lsp'                                   " lsp client
+Plug 'prabirshrestha/asyncomplete.vim'                          " completion plugin
+Plug 'prabirshrestha/asyncomplete-lsp.vim'                      " completion lsp
+Plug 'prabirshrestha/asyncomplete-file.vim'                     " completion from filesystem
+Plug 'prabirshrestha/asyncomplete-ultisnips.vim'                " completion from snippets
+" Snippets
+Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
+" ALE For langs not supported by LSP
 Plug 'w0rp/ale'
 " Lang Packs
 Plug 'sheerun/vim-polyglot'
@@ -23,63 +30,9 @@ Plug 'endel/vim-github-colorscheme'
 call plug#end()               " required
 filetype plugin indent on     " required
 
-set completeopt+=menuone,noselect,noinsert
-set omnifunc=LanguageClient#complete
-call asyncomplete#register_source(asyncomplete#sources#omni#get_source_options({
-\ 'name': 'omni',
-\ 'whitelist': ['*'],
-\ 'completor': function('asyncomplete#sources#omni#completor')
-\  }))
-
-let g:ale_set_loclist = 0
-let g:ale_set_quickfix = 1
-let g:ale_sign_column_always = 1
-let g:ale_linters_explicit = 1
-let g:ale_linters = {
-            \   'sh': ['shellcheck', 'checkbashisms'],
-            \	'json': ['jsonlint'],
-            \	'xml': ['xmllint'],
-            \	'ansible': ['ansible-lint'],
-            \	'Dockerfile': ['dockerfile_lint']
-            \}
-" Async Complete + LSP
-let g:LanguageClient_autoStart = 1
-let g:LanguageClient_diagnosticsEnable = 1
-let g:LanguageClient_diagnosticsList="Quickfix"
-let g:LanguageClient_serverCommands = {
-            \ 'c': ['clangd'],
-            \ 'cpp': ['clangd'],
-            \ 'python': ['pyls'],
-            \ 'java': ['~/bin/lsp-java' ],
-            \ 'yaml': ['~/.npm-packages/bin/yaml-language-server', '--stdio'],
-            \ 'yaml.ansible': ['~/.npm-packages/bin/yaml-language-server', '--stdio'],
-            \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
-            \ 'go' : ['~/.local/go/bin/go-langserver'],
-            \ }
 """ Airline -> bufferline
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
-" Launch fix-netbeans-project to update jar libs and restart the lang server
-map <silent> <leader>u :LanguageClientStop<cr>:LanguageClientStart<cr>
-" Language client shortcuts with leader:
-map <silent> <leader>m :call LanguageClient_contextMenu()<cr>
-map <silent> <leader>r :call LanguageClient_textDocument_rename()<cr>
-map <silent> <leader>] :call LanguageClient#textDocument_definition()<cr>
-map <silent> <leader>[ :call LanguageClient_textDocument_implementation()<cr>
-map <silent> <leader>p :call LanguageClient#textDocument_references()<cr>
-map <silent> <leader>l :call LanguageClient#textDocument_formatting()<cr>
-" Ctrl+L Format Code
-" default on lang server
-" if not use the specific implementation
-noremap <C-L> <Esc>:w<CR>:mkview<CR>ggVG=<CR>:loadview<CR>
-augroup autoformat_settings
-    autocmd FileType python noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!autopep8 %<CR>:loadview<CR>
-    autocmd FileType c,cpp,objc,proto,typescript,javascript,java noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!clang-format -style=file %<CR>:loadview<CR>
-    autocmd FileType css,json noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!jsonlint -f %<CR>:loadview<CR>
-    autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:!beautysh -f %<CR>:e<CR>
-augroup END
-" Ctrl+P loclist
-map <silent> <C-P> :<C-u>vert copen<CR><C-W>=
 " Ctrl+T fuzzy find ctags
 " Ctrl+B fuzzy find files
 " Ctrl+F grep -r in the folder
@@ -91,7 +44,48 @@ noremap <C-H> :History:<CR>
 let $FZF_DEFAULT_COMMAND="find . -type f -not -path '*/\.git/*'"
 let g:fzf_files_options = "--preview 'pygmentize -g {1}'"
 let g:fzf_tags_command = 'ctags -R'
-let g:fzf_action = {'alt-enter': 'vsplit' }
+let g:fzf_action = {'alt-enter':'vsplit' }
+" ALE Linters (for non-lsp langs)
+let g:ale_set_loclist = 0
+let g:ale_set_quickfix = 1
+let g:ale_sign_column_always = 1
+let g:ale_linters_explicit = 1
+let g:ale_linters = {
+            \   'sh':['shellcheck', 'checkbashisms'],
+            \	'json':['jsonlint'],
+            \	'xml':['xmllint'],
+            \	'ansible':['ansible-lint'],
+            \	'Dockerfile':['dockerfile_lint']
+            \}
+" Async Complete + LSP
+set completeopt+=preview
+let g:lsp_signs_enabled = 1
+let g:lsp_diagnostics_echo_cursor = 1
+call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({'name':'file','whitelist':['*'],'priority':10,'completor':function('asyncomplete#sources#file#completor')}))
+call asyncomplete#register_source(asyncomplete#sources#ultisnips#get_source_options({'name':'ultisnips','whitelist':['*'], 'completor':function('asyncomplete#sources#ultisnips#completor'),}))
+au User lsp_setup call lsp#register_server({'name':'clangd','cmd':{server_info->['clangd', '-background-index']},'whitelist':['c', 'cpp', 'objc', 'objcpp'],})
+au User lsp_setup call lsp#register_server({'name':'pyls','cmd':{server_info->['pyls']},'whitelist':['python'],})
+au User lsp_setup call lsp#register_server({'name':'java-lsp','cmd':{server_info->['lsp-java']},'whitelist':['java'],})
+au User lsp_setup call lsp#register_server({'name':'yaml-language-server','cmd':{server_info->['yaml-language-server','--stdio']},'whitelist':['yaml', 'yaml.ansible'],})
+au User lsp_setup call lsp#register_server({'name':'go-langserver','cmd':{server_info->['go-langserver', '-gocodecompletion']},'whitelist':['go'],})
+au User lsp_setup call lsp#register_server({'name':'rls','cmd':{server_info->['rustup','run','stable', 'rls']},'workspace_config':{'rust':{'clippy_preference':'on'}},'whitelist':['rust'],})
+" Ctrl+L Format Code
+" if not use the specific implementation
+noremap <C-L> <Esc>:w<CR>:mkview<CR>ggVG=<CR>:loadview<CR>
+augroup autoformat_settings
+    autocmd FileType python noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!autopep8 %<CR>:loadview<CR>
+    autocmd FileType c,cpp,objc,proto,typescript,javascript,java noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!clang-format -style=file %<CR>:loadview<CR>
+    autocmd FileType css,json noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!jsonlint -f %<CR>:loadview<CR>
+    autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:!beautysh -f %<CR>:e<CR>
+augroup END
+" Language client shortcuts with leader:
+map <silent> <leader>m :LspCodeAction<cr>
+map <silent> <leader>r :LspRename<cr>
+map <silent> <leader>] :LspDefinition<cr>
+map <silent> <leader>[ :LspImplementation<cr>
+map <silent> <leader>l :LspDocumentFormat<cr>
+" Ctrl+P loclist
+map <silent> <C-P> :<C-u>LspDocumentDiagnostics<CR>:copen<CR>
 " Ctrl+N relocate file explorer to opened file
 let NERDTreeShowHidden=1
 noremap <C-\> :NERDTreeToggle<CR>
