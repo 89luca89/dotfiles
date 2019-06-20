@@ -5,6 +5,7 @@ Plug 'christoomey/vim-tmux-navigator'
 " utilities
 Plug 'vim-airline/vim-airline'                                  " tabs and statusline
 Plug 'scrooloose/nerdtree'                                      " split file manager
+Plug 'junegunn/fzf'                                             " fuzzy find all the things
 Plug 'junegunn/fzf.vim'                                         " fuzzy find all the things
 Plug 'airblade/vim-gitgutter'                                   " +,-,~ on modified lines in git repo
 " LSP + Completion
@@ -38,8 +39,8 @@ noremap <C-T> :Tags<CR>
 noremap <C-B> :Files<CR>
 noremap <C-F> :Rg<CR>
 noremap <C-H> :History:<CR>
-let $FZF_DEFAULT_COMMAND="find . -type f -not -path '*/\.git/*'"
-let g:fzf_files_options = "--preview 'pygmentize -g {1}'"
+let $FZF_DEFAULT_COMMAND="find . -type f -not -path '*/\.git/*' -not -path '*/\bin/*' -not -path '*/\out/*' -not -name '*.exe' -not -name '*.class' -not -name '*.so' -not -name '*.bin' -not -name '*.out'"
+let g:fzf_files_options = "--preview 'if file {1} | grep -i text; then pygmentize -g {1} ; fi'"
 let g:fzf_tags_command = 'ctags -R'
 let g:fzf_action = {'alt-enter':'vsplit' }
 " ALE Linters (for non-lsp langs)
