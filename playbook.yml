@@ -1,82 +1,82 @@
----
 # To run
 # ansible-playbook setup.yml --ask-become-pass
 
 - name: Playbook to manage My Distro
   hosts: localhost
   connection: local
-  gather_facts: True
+  gather_facts: true
   tasks:
 
-    - name: "Ensure Vim folders Exists"
+    - name: Ensure Vim folders Exists
       file:
-        path: "{{ item }}"
+        path: '{{ item }}'
         state: directory
       with_items:
-        - "{{ ansible_env.HOME }}/.vim"
-        - "{{ ansible_env.HOME }}/.vim/swap"
-        - "{{ ansible_env.HOME }}/.vim/undo"
+      - '{{ ansible_env.HOME }}/.vim'
+      - '{{ ansible_env.HOME }}/.vim/swap'
+      - '{{ ansible_env.HOME }}/.vim/undo'
 
     - name: Install vimplug before starting dotfiles
       get_url:
         url: https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-        dest: "{{ item }}"
+        dest: '{{ item }}'
         mode: 0755
       with_items:
-        - "{{ ansible_env.HOME }}/.vim"
+      - '{{ ansible_env.HOME }}/.vim'
 
     - name: Check if Dotfile folder is present
       stat:
-        path: "{{ ansible_env.HOME }}/dotfiles"
+        path: '{{ ansible_env.HOME }}/dotfiles'
       register: file_exists
     - name: Download Dotfiles
       git:
         repo: https://gitlab.com/89luca89/dotfiles
-        dest: "{{ ansible_env.HOME }}/dotfiles"
+        dest: '{{ ansible_env.HOME }}/dotfiles'
         version: master
         update: yes
       when: not file_exists.stat.exists
     - name: link dotfiles
       file:
-        src: "{{ item.src }}"
-        dest: "{{ item.dest }}"
+        src: '{{ item.src }}'
+        dest: '{{ item.dest }}'
         state: link
       with_items:
-        - { src: "~/dotfiles/.aliases", dest: "~/.aliases" }
-        - { src: "~/dotfiles/.bashrc", dest: "~/.bashrc" }
-        - { src: "~/dotfiles/.tmux.conf", dest: "~/.tmux.conf" }
-        - { src: "~/dotfiles/.vimrc-full", dest: "~/.vimrc" }
-        - { src: "~/dotfiles/.zshrc", dest: "~/.zshrc" }
-        - { src: "~/dotfiles/.toprc", dest: "~/.toprc" }
-        - { src: "~/dotfiles/.npmrc", dest: "~/.npmrc" }
-        - { src: "~/dotfiles/.ctags", dest: "~/.ctags" }
-        - { src: "~/dotfiles/.clang-format", dest: "~/.clang-format" }
-        - { src: "~/dotfiles/libinput-gestures.conf", dest: "~/.config/libinput-gestures.conf" }
+      - {src: ~/dotfiles/.aliases, dest: ~/.aliases}
+      - {src: ~/dotfiles/.bashrc, dest: ~/.bashrc}
+      - {src: ~/dotfiles/.tmux.conf, dest: ~/.tmux.conf}
+      - {src: ~/dotfiles/.vimrc-full, dest: ~/.vimrc}
+      - {src: ~/dotfiles/.zshrc, dest: ~/.zshrc}
+      - {src: ~/dotfiles/.toprc, dest: ~/.toprc}
+      - {src: ~/dotfiles/.npmrc, dest: ~/.npmrc}
+      - {src: ~/dotfiles/.ctags, dest: ~/.ctags}
+      - {src: ~/dotfiles/.clang-format, dest: ~/.clang-format}
+      - {src: ~/dotfiles/libinput-gestures.conf, dest: ~/.config/libinput-gestures.conf}
       tags: dotfiles
     - name: Load Gnome Keybindings and Terminal Settings
-      shell: "dconf load {{ item.key }} < {{ item.value }}"
+      shell: dconf load {{ item.key }} < {{ item.value }}
       with_items:
-        - { key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/", value: "{{ ansible_env.HOME }}/dotfiles/gnome-keybindings.conf" }
-        - { key: "/org/gnome/terminal/", value: "{{ ansible_env.HOME }}/dotfiles/gnome-terminal.conf" }
+      - {key: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/, value: '{{
+          ansible_env.HOME }}/dotfiles/gnome-keybindings.conf'}
+      - {key: /org/gnome/terminal/, value: '{{ ansible_env.HOME }}/dotfiles/gnome-terminal.conf'}
 
     - name: Configure Keyboard and Cursor Options
       dconf:
-        key: "{{ item.key }}"
-        value: "{{ item.value }}"
+        key: '{{ item.key }}'
+        value: '{{ item.value }}'
         state: present
       with_items:
-        - { key: '/org/gnome/desktop/interface/cursor-blink', value: 'false' }
-        - { key: '/org/gnome/desktop/privacy/disable-microphone', value: 'true' }
-        - { key: '/org/gnome/desktop/privacy/recent-files-max-age', value: '7' }
-        - { key: '/org/gnome/desktop/privacy/remove-old-temp-files', value: 'true' }
-        - { key: '/org/gnome/desktop/privacy/disable-camera', value: 'true' }
-        - { key: '/org/gnome/desktop/privacy/report-technical-problems', value: 'false' }
-        - { key: '/org/gnome/desktop/privacy/remove-old-trash-files', value: 'true' }
-        - { key: '/org/gnome/desktop/privacy/send-software-usage-stats', value: 'false' }
+      - {key: /org/gnome/desktop/interface/cursor-blink, value: 'false'}
+      - {key: /org/gnome/desktop/privacy/disable-microphone, value: 'true'}
+      - {key: /org/gnome/desktop/privacy/recent-files-max-age, value: '7'}
+      - {key: /org/gnome/desktop/privacy/remove-old-temp-files, value: 'true'}
+      - {key: /org/gnome/desktop/privacy/disable-camera, value: 'true'}
+      - {key: /org/gnome/desktop/privacy/report-technical-problems, value: 'false'}
+      - {key: /org/gnome/desktop/privacy/remove-old-trash-files, value: 'true'}
+      - {key: /org/gnome/desktop/privacy/send-software-usage-stats, value: 'false'}
 
     - name: Update the /etc/hosts file with node name
       lineinfile:
-        path: "/etc/hosts"
+        path: /etc/hosts
         regexp: "127.0.0.1\t{{ ansible_hostname }}"
         line: "127.0.0.1\t{{ ansible_hostname }}"
         state: present
@@ -85,59 +85,59 @@
 
     - name: Update the profiles file with personal variables
       lineinfile:
-        path: "/etc/profile"
-        regexp: "{{ item }}"
-        line: "{{ item }}"
+        path: /etc/profile
+        regexp: '{{ item }}'
+        line: '{{ item }}'
         state: present
         backup: yes
       with_items:
-          - export MOZ_USE_XINPUT2=1
-          - export MOZ_ACCELLERATED=1
-          - export MOZ_WEBRENDER=1
+      - export MOZ_USE_XINPUT2=1
+      - export MOZ_ACCELLERATED=1
+      - export MOZ_WEBRENDER=1
       become: yes
 
     - name: Remove Programs (Unused Programs)
       package:
-        name: "{{ item }}"
+        name: '{{ item }}'
         state: removed
       with_items:
-        - gnome-contacts
-        - gnome-calendar
-        - gnome-documents
-        - gnome-dictionary
-        - gnome-photos
-        - gnome-music
-        - gnome-boxes
-        - gnome-getting-started-docs
-        - gnome-initial-setup
-        - gnome-maps
-        - gnome-online-miners
-        - gnome-photos
-        - gnome-user-docs
-        - gnome-user-share
-        - gnome-video-effects
-        - gnome-weather
-        - gnome-shell-extension-alternate-tab
-        - gnome-shell-extension-apps-menu
-        - gnome-shell-extension-background-logo
-        - gnome-shell-extension-launch-new-instance
-        - gnome-shell-extension-places-menu
-        - gnome-shell-extension-window-list
-        - setroubleshoot
-        - setroubleshoot-legacy
-        - setroubleshoot-plugins
-        - setroubleshoot-server
-        - gfbgraph
-        - simple-scan
-        - open-vm-tools
-        - virtualbox-guest-additions
-        - totem
+      - gnome-contacts
+      - gnome-calendar
+      - gnome-documents
+      - gnome-dictionary
+      - gnome-photos
+      - gnome-music
+      - gnome-boxes
+      - gnome-getting-started-docs
+      - gnome-initial-setup
+      - gnome-maps
+      - gnome-online-miners
+      - gnome-photos
+      - gnome-user-docs
+      - gnome-user-share
+      - gnome-video-effects
+      - gnome-weather
+      - gnome-shell-extension-alternate-tab
+      - gnome-shell-extension-apps-menu
+      - gnome-shell-extension-background-logo
+      - gnome-shell-extension-launch-new-instance
+      - gnome-shell-extension-places-menu
+      - gnome-shell-extension-window-list
+      - setroubleshoot
+      - setroubleshoot-legacy
+      - setroubleshoot-plugins
+      - setroubleshoot-server
+      - gfbgraph
+      - simple-scan
+      - open-vm-tools
+      - virtualbox-guest-additions
+      - totem
       become: yes
       tags: bloat
 
     - name: Setup /usr/local directory
       file:
-        dest: "/usr/local"
+        dest: /usr/local
         owner: luca-linux
         group: luca-linux
         recurse: yes
@@ -149,12 +149,14 @@
       register: file_exists
     - name: Install the rpmfusion and fonts repo packages
       dnf:
-        name: "{{ item }}"
+        name: '{{ item }}'
         state: present
       with_items:
-        - http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_facts.distribution_version }}.noarch.rpm
-        - http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_facts.distribution_version }}.noarch.rpm
-        - https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
+      - http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_facts.distribution_version
+        }}.noarch.rpm
+      - http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{
+        ansible_facts.distribution_version }}.noarch.rpm
+      - https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
       become: yes
       tags: pkg_install
       when: not file_exists.stat.exists
@@ -168,18 +170,18 @@
 
     - name: Install Programs (Generic Utilities)
       package:
-        name: "{{ item }}"
+        name: '{{ item }}'
         state: present
       with_items:
-        - etckeeper
-        - flatpak
-        - cabextract
-        - lzip
-        - p7zip
-        - p7zip-plugins
-        - unrar
-        - xdotool
-        - wmctrl
+      - etckeeper
+      - flatpak
+      - cabextract
+      - lzip
+      - p7zip
+      - p7zip-plugins
+      - unrar
+      - xdotool
+      - wmctrl
       become: yes
       tags: pkg_install
 
@@ -187,175 +189,172 @@
     - name: Configure etckeeper.conf
       lineinfile:
         path: /etc/etckeeper/etckeeper.conf
-        regexp: "^GIT_COMMIT_OPTIONS=.*"
-        line: 'GIT_COMMIT_OPTIONS="-q"'
+        regexp: ^GIT_COMMIT_OPTIONS=.*
+        line: GIT_COMMIT_OPTIONS="-q"
 
     - name: Initialize Etckeeper
-      shell: "{{ item }}"
+      shell: '{{ item }}'
       with_items:
-        - etckeeper init
-        - etckeeper commit "Initial Commit"
+      - etckeeper init
+      - etckeeper commit "Initial Commit"
       ignore_errors: yes
       become: yes
 
     - name: Install Programs (Media Utilities)
       package:
-        name: "{{ item }}"
+        name: '{{ item }}'
         state: present
       with_items:
-        - gstreamer1-vaapi
-        - gstreamer1-libav
-        - gstreamer1-plugins-good
-        - gstreamer1-plugins-good-extras
-        - gstreamer1-plugins-ugly
-        - gstreamer1-plugins-ugly-free
-        - gstreamer1-plugins-bad-free
-        - gstreamer1-plugins-bad-nonfree
-        - gstreamer1-plugins-bad-freeworld
-        - gstreamer1-plugins-base-tools
-        - ffmpeg
-        - ffmpeg-libs
-        - libva-devel
-        - libva-intel-driver
-        - libva-intel-hybrid-driver
-        - libva-utils
-        - libva-vdpau-driver
-        - libvdpau-va-gl
-        - compat-ffmpeg28
-        - compat-ffmpeg28-devel
-        - gvfs-fuse
+      - gstreamer1-vaapi
+      - gstreamer1-libav
+      - gstreamer1-plugins-good
+      - gstreamer1-plugins-good-extras
+      - gstreamer1-plugins-ugly
+      - gstreamer1-plugins-ugly-free
+      - gstreamer1-plugins-bad-free
+      - gstreamer1-plugins-bad-nonfree
+      - gstreamer1-plugins-bad-freeworld
+      - gstreamer1-plugins-base-tools
+      - ffmpeg
+      - ffmpeg-libs
+      - libva-devel
+      - libva-intel-driver
+      - libva-intel-hybrid-driver
+      - libva-utils
+      - libva-vdpau-driver
+      - libvdpau-va-gl
+      - compat-ffmpeg28
+      - compat-ffmpeg28-devel
+      - gvfs-fuse
       become: yes
       tags: pkg_install
 
     - name: Install Programs (GUI Programs)
       package:
-        name: "{{ item }}"
+        name: '{{ item }}'
         state: present
       with_items:
-        - eog
-        - evince
-        - evolution-data-server
-        - flatpak
-        - gdm
-        - gnome-keyring
-        - gnome-menus
-        - gnome-screenshot
-        - gnome-shell
-        - gnome-terminal
-        - gnome-tweak-tool
-        - gigolo
-        - mpv
-        - nautilus
-        - redhat-menus
-        - libnotify
-        - libnotify-devel
-        - libreoffice-calc
-        - libreoffice-draw
-        - libreoffice-impress
-        - libreoffice-math
-        - libreoffice-writer
-        - telegram-desktop
-        - keepassxc
-        - gparted
-        - gimp
-        - syncthing
-        - syncthing-gtk
-        - VirtualBox
-        - akmod-VirtualBox
+      - eog
+      - evince
+      - evolution-data-server
+      - flatpak
+      - gdm
+      - gnome-keyring
+      - gnome-menus
+      - gnome-screenshot
+      - gnome-shell
+      - gnome-terminal
+      - gnome-tweak-tool
+      - gigolo
+      - mpv
+      - nautilus
+      - redhat-menus
+      - libnotify
+      - libnotify-devel
+      - libreoffice-calc
+      - libreoffice-draw
+      - libreoffice-impress
+      - libreoffice-math
+      - libreoffice-writer
+      - telegram-desktop
+      - keepassxc
+      - gparted
+      - gimp
+      - syncthing
+      - syncthing-gtk
+      - VirtualBox
+      - akmod-VirtualBox
       become: yes
       tags: pkg_install
 
     - name: Install Programs (Terminal Programs)
       package:
-        name: "{{ item }}"
+        name: '{{ item }}'
         state: present
       with_items:
-        - vim
-        - vim-enhanced
-        - vim-X11
-        - tmate
-        - tmux
-        - xclip
-        - ripgrep
-        - wmctrl
-        - xdotool
-        - inotify-tools
-        - firejail
-        - zsh
+      - vim
+      - vim-enhanced
+      - vim-X11
+      - tmate
+      - tmux
+      - xclip
+      - ripgrep
+      - wmctrl
+      - xdotool
+      - inotify-tools
+      - firejail
+      - zsh
       become: yes
       tags: pkg_install
 
     - name: install the 'Development tools' package group
       dnf:
-        name: "{{ item }}"
+        name: '{{ item }}'
         state: present
       with_items:
-        - "@C Development Tools and Libraries"
-        - "@Development tools"
+      - '@C Development Tools and Libraries'
+      - '@Development tools'
       become: yes
       tags: pkg_install
 
     - name: Install Programs (Programming Packages)
       package:
-        name: "{{ item }}"
+        name: '{{ item }}'
         state: present
       with_items:
-        - java
-        - java-devel
-        - clang
-        - clang-analyzer
-        - clang-tools-extra
-        - clang-devel
-        - golang
-        - golint
-        - npm
-        - nodejs
-        - ShellCheck
-        - devscripts-checkbashisms
-        - ncurses-compat-libs
-        - boost-devel
-        - python2
-        - python2-devel
-        - python3
-        - python3-devel
-        - cmake
-        - ctags
-        - ctags-etags
-        - global-ctags
-        - libxml2
+      - java
+      - java-devel
+      - clang
+      - clang-analyzer
+      - clang-tools-extra
+      - clang-devel
+      - golang
+      - golint
+      - npm
+      - nodejs
+      - ShellCheck
+      - devscripts-checkbashisms
+      - ncurses-compat-libs
+      - boost-devel
+      - python2
+      - python2-devel
+      - python3
+      - python3-devel
+      - cmake
+      - ctags
+      - ctags-etags
+      - global-ctags
+      - libxml2
       become: yes
       tags: pkg_install
 
     - name: Install Programs (Programming Packages) - pip
       pip:
-        name: "{{ item[1] }}"
+        name: '{{ item[1] }}'
         state: present
-        executable: "{{ item[0] }}"
+        executable: '{{ item[0] }}'
       with_nested:
-      - [ pip-2, pip-3 ]
-      - [ setuptools, pylint, jedi, pyflakes, pycodestyle, autopep8, mccabe, rope,
-          'python-language-server[all]', pyls-mypy, pyls-isort, pyls-black,
-          beautysh, demjson,
-          yamllint, yamlfmt, ansible-lint,
-          clang, libclang-py3,
-          neovim ]
+      - [pip-2, pip-3]
+      - [setuptools, pylint, jedi, pyflakes, pycodestyle, autopep8, mccabe, rope,
+        'python-language-server[all]', pyls-mypy, pyls-isort, pyls-black, beautysh,
+        demjson, yamllint, yamlfmt, ansible-lint, clang, libclang-py3, neovim]
       become: yes
 
-    - name: "Ensure {{ ansible_env.HOME }}/Programs Exists"
+    - name: Ensure {{ ansible_env.HOME }}/Programs Exists
       file:
-        path: "{{ ansible_env.HOME }}/Programs"
+        path: '{{ ansible_env.HOME }}/Programs'
         state: directory
 
     - name: Download DrawIO
       get_url:
         url: https://github.com/jgraph/drawio-desktop/releases/download/v9.3.1/draw.io-x86_64-9.3.1.AppImage
-        dest: "{{ ansible_env.HOME }}/Programs/draw.io-x86_64-9.3.1.AppImage"
-        mode: "0755"
+        dest: '{{ ansible_env.HOME }}/Programs/draw.io-x86_64-9.3.1.AppImage'
+        mode: '0755'
 
     - name: Install Rsync-Time-Backup
       git:
         repo: https://github.com/laurent22/rsync-time-backup
-        dest: "{{ ansible_env.HOME }}/Programs/rsync-time-backup"
+        dest: '{{ ansible_env.HOME }}/Programs/rsync-time-backup'
         version: master
         update: yes
 
@@ -389,25 +388,25 @@
       # clang-format -> clang
     - name: Install missing LSP/Linters
       npm:
-        name: "{{ item }}"
+        name: '{{ item }}'
         global: yes
       with_items:
-        - dockerfile_lint
-        - yaml-language-server
+      - dockerfile_lint
+      - yaml-language-server
 
-    - name: "Ensure {{ ansible_env.HOME }}/Programs/jdt-language-server/ Exists"
+    - name: Ensure {{ ansible_env.HOME }}/Programs/jdt-language-server/ Exists
       file:
-        path: "{{ ansible_env.HOME }}/Programs/jdt-language-server/"
+        path: '{{ ansible_env.HOME }}/Programs/jdt-language-server/'
         state: directory
     - name: Download Java Lang Server
       get_url:
         url: http://download.eclipse.org/jdtls/milestones/0.39.0/jdt-language-server-0.39.0-201905150127.tar.gz
-        dest: "{{ ansible_env.HOME }}/Programs/jdt-language-server/"
-        mode: "0755"
+        dest: '{{ ansible_env.HOME }}/Programs/jdt-language-server/'
+        mode: '0755'
     - name: Extract archive
       unarchive:
-        src: "{{ ansible_env.HOME }}/Programs/jdt-language-server/jdt-language-server-0.39.0-201905150127.tar.gz"
-        dest: "{{ ansible_env.HOME }}/Programs/jdt-language-server/"
+        src: '{{ ansible_env.HOME }}/Programs/jdt-language-server/jdt-language-server-0.39.0-201905150127.tar.gz'
+        dest: '{{ ansible_env.HOME }}/Programs/jdt-language-server/'
 
     - name: Only Office (Repo)
       yum_repository:
@@ -421,8 +420,8 @@
 
     - name: Only Office (Links)
       file:
-        src: "/usr/lib64/libcurl.so.4.5.0"
-        dest: "/usr/lib64/libcurl-gnutls.so.4"
+        src: /usr/lib64/libcurl.so.4.5.0
+        dest: /usr/lib64/libcurl-gnutls.so.4
         state: link
         force: yes
 
@@ -435,37 +434,37 @@
     - name: Libinput Gestures (Clone)
       git:
         repo: https://github.com/bulletmark/libinput-gestures
-        dest: "{{ ansible_env.HOME }}/Programs/libinput-gestures"
+        dest: '{{ ansible_env.HOME }}/Programs/libinput-gestures'
         version: master
         update: yes
 
     - name: Libinput Gestures (Group and Dependency)
-      shell: "{{ item }}"
+      shell: '{{ item }}'
       with_items:
-        - usermod -a -G input luca-linux
-        - dnf install -y systemd-devel libinput-devel
-        - "cd {{ ansible_env.HOME }}/Programs/libinput-gestures; make install"
+      - usermod -a -G input luca-linux
+      - dnf install -y systemd-devel libinput-devel
+      - cd {{ ansible_env.HOME }}/Programs/libinput-gestures; make install
       become: yes
 
     - name: Libinput Gestures (Start and Autorun)
-      shell: "{{ item }}"
+      shell: '{{ item }}'
       with_items:
-        - libinput-gestures-setup autostart
-        - libinput-gestures-setup start
+      - libinput-gestures-setup autostart
+      - libinput-gestures-setup start
 
     - name: Opensnitch Install (Dnf Dependency)
       package:
-        name: "{{ item }}"
+        name: '{{ item }}'
         state: present
       with_items:
-        - protobuf-compiler
-        - libpcap-devel
-        - libnetfilter_queue-devel
-        - python3-grpcio
+      - protobuf-compiler
+      - libpcap-devel
+      - libnetfilter_queue-devel
+      - python3-grpcio
       become: yes
 
     - name: Opensnitch Install (Userland Dependency)
-      shell:  |
+      shell: |
         export GOPATH={{ ansible_env.HOME }}/.local/go
         go get github.com/golang/protobuf/protoc-gen-go
         go get github.com/golang/dep/cmd/dep
@@ -514,13 +513,13 @@
 
     - name: Install Power Management (Laptop)
       package:
-        name: "{{ item }}"
+        name: '{{ item }}'
         state: present
       with_items:
-        - powertop
-        - msr-tools
-        - tlp
-        - tlp-rdw
+      - powertop
+      - msr-tools
+      - tlp
+      - tlp-rdw
       become: yes
 
     - name: Powertop Enable
@@ -539,31 +538,31 @@
 
     - name: Set sysctl variables
       sysctl:
-        name: "{{ item.name }}"
-        value: "{{ item.value }}"
+        name: '{{ item.name }}'
+        value: '{{ item.value }}'
         sysctl_set: yes
         state: present
         reload: yes
       with_items:
-        - { name: vm.laptop_mode, value: 5 }
-        - { name: kernel.nmi_watchdog, value: 0 }
-        - { name: vm.swappiness, value: 5 }
-        - { name: vm.oom_kill_allocating_task, value: 1 }
-        - { name: vm.block_dump, value: 1 }
-        - { name: vm.vfs_cache_pressure, value: 100 }
-        - { name: vm.dirty_ratio, value: 90 }
-        - { name: vm.dirty_background_ratio, value: 50 }
-        - { name: vm.dirty_writeback_centisecs, value: 60000 }
-        - { name: vm.dirty_expire_centisecs, value: 60000 }
+      - {name: vm.laptop_mode, value: 5}
+      - {name: kernel.nmi_watchdog, value: 0}
+      - {name: vm.swappiness, value: 5}
+      - {name: vm.oom_kill_allocating_task, value: 1}
+      - {name: vm.block_dump, value: 1}
+      - {name: vm.vfs_cache_pressure, value: 100}
+      - {name: vm.dirty_ratio, value: 90}
+      - {name: vm.dirty_background_ratio, value: 50}
+      - {name: vm.dirty_writeback_centisecs, value: 60000}
+      - {name: vm.dirty_expire_centisecs, value: 60000}
       become: yes
 
     - name: Check if Crypttab discard is enabled
-      shell: "grep discard /etc/crypttab"
+      shell: grep discard /etc/crypttab
       register: test_grep
       become: yes
       ignore_errors: yes
     - name: Enable Discard Crypttab
-      shell: "sed -i 's/none/none discard/g' /etc/crypttab"
+      shell: sed -i 's/none/none discard/g' /etc/crypttab
       become: yes
       when: test_grep.rc == 1
 
@@ -573,21 +572,21 @@
       become: yes
       ignore_errors: yes
     - name: Enable Discard Fstab
-      shell: "sed -i 's/defaults/defaults,discard/g' /etc/fstab"
+      shell: sed -i 's/defaults/defaults,discard/g' /etc/fstab
       become: yes
       when: test_grep.rc == 1
 
     - name: Update fstab file with tmpfs /tmp
       lineinfile:
-        path: "/etc/fstab"
-        regexp: "tmpfs /tmp tmpfs"
-        line: "tmpfs /tmp tmpfs defaults,lazytime,noatime,nodiratime 0 0"
+        path: /etc/fstab
+        regexp: tmpfs /tmp tmpfs
+        line: tmpfs /tmp tmpfs defaults,lazytime,noatime,nodiratime 0 0
         state: present
         backup: yes
       become: yes
 
     - name: Enable discard lvm
-      shell: "sed -i 's/issue_discards = 0/issue_discards = 1/g' /etc/lvm/lvm.conf"
+      shell: sed -i 's/issue_discards = 0/issue_discards = 1/g' /etc/lvm/lvm.conf
       become: yes
 
     - name: Blacklist unused kernel module
@@ -601,7 +600,8 @@
         path: /etc/modprobe.d/i915.conf
       register: file_exists
     - name: Set i915 driver options
-      shell: echo "options i915 disable_power_well=0 enable_dc=2 enable_psr=3 enable_rc6=7 enable_fbc=1 powersave=1 semaphores=1" > /etc/modprobe.d/i915.conf
+      shell: echo "options i915 disable_power_well=0 enable_dc=2 enable_psr=3 enable_rc6=7
+        enable_fbc=1 powersave=1 semaphores=1" > /etc/modprobe.d/i915.conf
       become: yes
       when: not file_exists.stat.exists
 
@@ -628,24 +628,31 @@
         path: /etc/modprobe.d/iwlwifi.conf
       register: file_exists
     - name: Set Intel Wifi driver options
-      shell: echo 'options iwlwifi power_save=Y power_level=5 iwlmvm power_scheme=3' > /etc/modprobe.d/iwlwifi.conf
+      shell: echo 'options iwlwifi power_save=Y power_level=5 iwlmvm power_scheme=3'
+        > /etc/modprobe.d/iwlwifi.conf
       become: yes
       when: not file_exists.stat.exists
 
     - name: Check Grub Flags are deployed
-      shell: grep "nmi_watchdog=0 pcie_aspm.policy=powersupersave pcie_aspm=force drm.debug=0 drm.vblankoffdelay=1 scsi_mod.use_blk_mq=1 mmc_mod.use_blk_mq=1 pti=off spectre_v2=off l1tf=off nospec_store_bypass_disable no_stf_barrier" /etc/default/grub
+      shell: grep "nmi_watchdog=0 pcie_aspm.policy=powersupersave pcie_aspm=force
+        drm.debug=0 drm.vblankoffdelay=1 scsi_mod.use_blk_mq=1 mmc_mod.use_blk_mq=1
+        pti=off spectre_v2=off l1tf=off nospec_store_bypass_disable no_stf_barrier"
+        /etc/default/grub
       register: test_grep
       become: yes
       ignore_errors: yes
     - name: Deploy Grub Flags
-      shell: "sed -i 's/quiet/quiet nmi_watchdog=0 pcie_aspm.policy=powersupersave pcie_aspm=force drm.debug=0 drm.vblankoffdelay=1 scsi_mod.use_blk_mq=1 mmc_mod.use_blk_mq=1 pti=off spectre_v2=off l1tf=off nospec_store_bypass_disable no_stf_barrier/g' /etc/fstab"
+      shell: sed -i 's/quiet/quiet nmi_watchdog=0 pcie_aspm.policy=powersupersave
+        pcie_aspm=force drm.debug=0 drm.vblankoffdelay=1 scsi_mod.use_blk_mq=1 mmc_mod.use_blk_mq=1
+        pti=off spectre_v2=off l1tf=off nospec_store_bypass_disable no_stf_barrier/g'
+        /etc/fstab
       become: yes
       when: test_grep.rc == 1
     - name: Update Grub and Initramfs
-      shell: "{{ item }}"
+      shell: '{{ item }}'
       with_items:
-        - grub2-mkconfig -o $(find /boot -name "grub.cfg" -print | head -n 1)
-        - dracut --force --regenerate-all -v
+      - grub2-mkconfig -o $(find /boot -name "grub.cfg" -print | head -n 1)
+      - dracut --force --regenerate-all -v
       become: yes
 
     - name: Check if /etc/modules-load.d/iosched.conf exists
@@ -653,11 +660,11 @@
         path: /etc/modules-load.d/iosched.conf
       register: file_exists
     - name: Load IO Schedulers at boot
-      shell: "echo {{ item }} >> /etc/modules-load.d/iosched.conf"
+      shell: echo {{ item }} >> /etc/modules-load.d/iosched.conf
       with_items:
-        - bfq
-        - mq-deadline
-        - kyber-iosched
+      - bfq
+      - mq-deadline
+      - kyber-iosched
       become: yes
       when: not file_exists.stat.exists
 
@@ -666,25 +673,28 @@
         path: /etc/udev/rules.d/powersave.rules
       register: file_exists
     - name: Set UDev Rules
-      shell: "echo {{ item }} >> /etc/udev/rules.d/powersave.rules"
+      shell: echo {{ item }} >> /etc/udev/rules.d/powersave.rules
       with_items:
-        - ACTION=="add", SUBSYSTEM=="pci", ATTR{power/control}="auto"
-        - ACTION=="add", SUBSYSTEM=="ahci", ATTR{power/control}="auto"
-        - ACTION=="add", SUBSYSTEM=="scsi_host", KERNEL=="host*", ATTR{link_power_management_policy}="min_power"
-        - ACTION=="add", SUBSYSTEM=="scsi", ATTR{power/control}="auto"
-        - ACTION=="add", SUBSYSTEM=="acpi", ATTR{power/control}="auto"
-        - ACTION=="add", SUBSYSTEM=="block", ATTR{power/control}="auto"
-        - ACTION=="add", SUBSYSTEM=="workqueue", ATTR{power/control}="auto"
-        - ACTION=="add", SUBSYSTEM=="i2c", ATTR{power/control}="auto"
-        - ACTION=="add", SUBSYSTEM=="net", KERNEL=="enp*", RUN+="/usr/sbin/ethtool -s %k wol d"
-        - ACTION=="add", SUBSYSTEM=="net", KERNEL=="wlp*", RUN+="/usr/sbin/ethtool -s %k wol d"
-        - ACTION=="add", SUBSYSTEM=="net", KERNEL=="wlp*", RUN+="/usr/sbin/iw dev %k set power_save on"
-        - ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/read_ahead_kb}="65536"
-        - ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="bfq"
-        - ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="0", ATTR{queue/iosched/low_latency}="1"
-        - ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq"
-        - ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/iosched/low_latency}="1"
-        - ACTION=="add|change", KERNEL=="sd[a-z]", RUN+="/usr/sbin/hdparm -B 1 /dev/%k"
+      - ACTION=="add", SUBSYSTEM=="pci", ATTR{power/control}="auto"
+      - ACTION=="add", SUBSYSTEM=="ahci", ATTR{power/control}="auto"
+      - ACTION=="add", SUBSYSTEM=="scsi_host", KERNEL=="host*", ATTR{link_power_management_policy}="min_power"
+      - ACTION=="add", SUBSYSTEM=="scsi", ATTR{power/control}="auto"
+      - ACTION=="add", SUBSYSTEM=="acpi", ATTR{power/control}="auto"
+      - ACTION=="add", SUBSYSTEM=="block", ATTR{power/control}="auto"
+      - ACTION=="add", SUBSYSTEM=="workqueue", ATTR{power/control}="auto"
+      - ACTION=="add", SUBSYSTEM=="i2c", ATTR{power/control}="auto"
+      - ACTION=="add", SUBSYSTEM=="net", KERNEL=="enp*", RUN+="/usr/sbin/ethtool -s
+        %k wol d"
+      - ACTION=="add", SUBSYSTEM=="net", KERNEL=="wlp*", RUN+="/usr/sbin/ethtool -s
+        %k wol d"
+      - ACTION=="add", SUBSYSTEM=="net", KERNEL=="wlp*", RUN+="/usr/sbin/iw dev %k
+        set power_save on"
+      - ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/read_ahead_kb}="65536"
+      - ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="bfq"
+      - ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="0", ATTR{queue/iosched/low_latency}="1"
+      - ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq"
+      - ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/iosched/low_latency}="1"
+      - ACTION=="add|change", KERNEL=="sd[a-z]", RUN+="/usr/sbin/hdparm -B 1 /dev/%k"
       become: yes
       when: not file_exists.stat.exists
 
