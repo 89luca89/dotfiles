@@ -101,11 +101,13 @@ map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
+        highlight Pmenu ctermbg=Black ctermfg=White
         highlight Normal ctermbg=235 ctermfg=White
         highlight ColorColumn ctermbg=234
         highlight VertSplit ctermbg=234 ctermfg=234
     else
         set background=light
+        highlight Pmenu ctermbg=255 ctermfg=Black
         highlight Normal ctermbg=White ctermfg=Black
         highlight ColorColumn ctermbg=255
         highlight VertSplit ctermbg=255 ctermfg=255
@@ -155,6 +157,7 @@ syntax on
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
+highlight Pmenu ctermbg=Black ctermfg=White
 highlight Normal ctermbg=235 ctermfg=White
 highlight ColorColumn ctermbg=234
 highlight VertSplit ctermbg=234 ctermfg=234
