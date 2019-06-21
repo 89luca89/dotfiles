@@ -23,6 +23,8 @@ Plug 'roxma/vim-hug-neovim-rpc'
 call plug#end()               " required
 filetype plugin indent on     " required
 
+let g:java_highlight_all=1
+let g:python_highlight_all=1
 """ Airline -> bufferline
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
