@@ -151,4 +151,5 @@ syntax on
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
-colorscheme default
+highlight ColorColumn ctermbg=235
+highlight VertSplit ctermbg=235 ctermfg=235
