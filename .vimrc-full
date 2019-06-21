@@ -8,6 +8,7 @@ Plug 'junegunn/fzf'                                             " fuzzy find all
 Plug 'junegunn/fzf.vim'                                         " fuzzy find all the things
 Plug 'airblade/vim-gitgutter'                                   " +,-,~ on modified lines in git repo
 Plug 'sheerun/vim-polyglot'                                     " Lang packs
+Plug 'scrooloose/nerdtree'
 " LSP + completion
 Plug 'w0rp/ale'                                                 " ALE For langs not supported by LSP
 Plug 'shougo/deoplete.nvim'
@@ -19,15 +20,16 @@ Plug 'wellle/tmux-complete.vim'                                 " completion fro
 " nvim compatibility
 Plug 'roxma/nvim-yarp'
 Plug 'roxma/vim-hug-neovim-rpc'
-" color schemes
-Plug 'tomasiser/vim-code-dark'
-Plug 'endel/vim-github-colorscheme'
 call plug#end()               " required
 filetype plugin indent on     " required
 
 """ Airline -> bufferline
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
+" Ctrl+N relocate file explorer to opened file
+let NERDTreeShowHidden=1
+noremap <C-\> :NERDTreeToggle<CR>
+noremap <C-N> :NERDTreeFind<CR>
 " Ctrl+T fuzzy find ctags
 " Ctrl+B fuzzy find files
 " Ctrl+F grep -r in the folder
@@ -97,10 +99,12 @@ map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        colorscheme codedark
+        highlight ColorColumn ctermbg=235
+        highlight VertSplit ctermbg=235 ctermfg=235
     else
         set background=light
-        colorscheme github
+        highlight ColorColumn ctermbg=255
+        highlight VertSplit ctermbg=255 ctermfg=255
     endif
 endfunction
 """ Tabs Navigation
@@ -147,5 +151,4 @@ syntax on
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
-set termguicolors
-colorscheme codedark
+colorscheme default
