@@ -17,9 +17,12 @@ Plug 'autozimu/languageclient-neovim', { 'branch': 'next', 'do': 'bash install.s
 Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'wellle/tmux-complete.vim'                                 " completion from tmux panes
-" nvim compatibility
+" neovim compatibility
 Plug 'roxma/nvim-yarp'
 Plug 'roxma/vim-hug-neovim-rpc'
+" Themes
+Plug 'tomasiser/vim-code-dark'
+Plug 'endel/vim-github-colorscheme'
 call plug#end()               " required
 filetype plugin indent on     " required
 
@@ -59,10 +62,8 @@ let g:ale_linters = {
             \ 'ansible':['ansible-lint'],
             \ 'Dockerfile':['dockerfile_lint']
             \}
-" Async Complete + LSP
+" LanguageClient Setup
 let g:deoplete#enable_at_startup = 1
-set completeopt+=preview
-set omnifunc=LanguageClient#complete
 let g:LanguageClient_autoStart = 1
 let g:LanguageClient_diagnosticsEnable = 1
 let g:LanguageClient_diagnosticsList="Quickfix"
@@ -101,16 +102,13 @@ map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        highlight Pmenu ctermbg=Black ctermfg=White
-        highlight Normal ctermbg=235 ctermfg=White
-        highlight ColorColumn ctermbg=234
-        highlight VertSplit ctermbg=234 ctermfg=234
+        colorscheme codedark
     else
         set background=light
-        highlight Pmenu ctermbg=255 ctermfg=Black
+        colorscheme github
         highlight Normal ctermbg=White ctermfg=Black
         highlight ColorColumn ctermbg=255
-        highlight VertSplit ctermbg=255 ctermfg=255
+        highlight VertSplit ctermbg=White ctermfg=255
     endif
 endfunction
 """ Tabs Navigation
@@ -157,7 +155,4 @@ syntax on
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
-highlight Pmenu ctermbg=Black ctermfg=White
-highlight Normal ctermbg=235 ctermfg=White
-highlight ColorColumn ctermbg=234
-highlight VertSplit ctermbg=234 ctermfg=234
+colorscheme codedark
