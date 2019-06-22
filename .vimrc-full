@@ -20,9 +20,6 @@ Plug 'wellle/tmux-complete.vim'                                 " completion fro
 " neovim compatibility
 Plug 'roxma/nvim-yarp'
 Plug 'roxma/vim-hug-neovim-rpc'
-" Themes
-Plug 'tomasiser/vim-code-dark'
-Plug 'endel/vim-github-colorscheme'
 call plug#end()               " required
 filetype plugin indent on     " required
 
@@ -102,13 +99,16 @@ map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        colorscheme codedark
+        hi Normal ctermbg=234 ctermfg=188
+        hi ColorColumn ctermbg=235
+        hi VertSplit ctermbg=White ctermfg=255
+        hi Pmenu ctermbg=235 ctermfg=250
     else
         set background=light
-        colorscheme github
-        highlight Normal ctermbg=White ctermfg=Black
-        highlight ColorColumn ctermbg=255
-        highlight VertSplit ctermbg=White ctermfg=255
+        hi Normal ctermbg=White ctermfg=Black
+        hi ColorColumn ctermbg=255
+        hi VertSplit ctermbg=White ctermfg=255
+        hi Pmenu ctermbg=250 ctermfg=235
     endif
 endfunction
 """ Tabs Navigation
@@ -155,4 +155,8 @@ syntax on
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
-colorscheme codedark
+hi LineNr ctermfg=240
+hi Normal ctermbg=234 ctermfg=188
+hi ColorColumn ctermbg=235
+hi VertSplit ctermbg=White ctermfg=255
+hi Pmenu ctermbg=235 ctermfg=250
