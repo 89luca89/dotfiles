@@ -101,13 +101,13 @@ function! ToggleTheme()
         set background=dark
         hi Normal ctermbg=234 ctermfg=188
         hi ColorColumn ctermbg=235
-        hi VertSplit ctermbg=White ctermfg=255
+        hi VertSplit ctermbg=240 ctermfg=234
         hi Pmenu ctermbg=235 ctermfg=250
     else
         set background=light
         hi Normal ctermbg=White ctermfg=Black
         hi ColorColumn ctermbg=255
-        hi VertSplit ctermbg=White ctermfg=255
+        hi VertSplit ctermbg=255 ctermfg=White
         hi Pmenu ctermbg=250 ctermfg=235
     endif
 endfunction
@@ -158,5 +158,5 @@ set background=dark
 hi LineNr ctermfg=240
 hi Normal ctermbg=234 ctermfg=188
 hi ColorColumn ctermbg=235
-hi VertSplit ctermbg=White ctermfg=255
+hi VertSplit ctermbg=240 ctermfg=234
 hi Pmenu ctermbg=235 ctermfg=250
