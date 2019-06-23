@@ -15,14 +15,16 @@
       - '{{ ansible_env.HOME }}/.vim'
       - '{{ ansible_env.HOME }}/.vim/swap'
       - '{{ ansible_env.HOME }}/.vim/undo'
+      - '{{ ansible_env.HOME }}/.vim/syntax'
 
-    - name: Install vimplug before starting dotfiles
+    - name: Install scripts before starting dotfiles
       get_url:
-        url: https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-        dest: '{{ item }}'
+        url: '{{ item.src }}'
+        dest: '{{ item.dest }}'
         mode: 0755
       with_items:
-      - '{{ ansible_env.HOME }}/.vim'
+        - {src:"https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim" , dest:"{{ ansible_env.HOME }}/.vim/autoload"}
+        - {src:"https://raw.githubusercontent.com/rudes/vim-java/master/syntax/java.vim" , dest:"{{ ansible_env.HOME }}/.vim/syntax"}
 
     - name: Check if Dotfile folder is present
       stat:
@@ -41,16 +43,16 @@
         dest: '{{ item.dest }}'
         state: link
       with_items:
-      - {src: ~/dotfiles/.aliases, dest: ~/.aliases}
-      - {src: ~/dotfiles/.bashrc, dest: ~/.bashrc}
-      - {src: ~/dotfiles/.tmux.conf, dest: ~/.tmux.conf}
-      - {src: ~/dotfiles/.vimrc-full, dest: ~/.vimrc}
-      - {src: ~/dotfiles/.zshrc, dest: ~/.zshrc}
-      - {src: ~/dotfiles/.toprc, dest: ~/.toprc}
-      - {src: ~/dotfiles/.npmrc, dest: ~/.npmrc}
-      - {src: ~/dotfiles/.ctags, dest: ~/.ctags}
-      - {src: ~/dotfiles/.clang-format, dest: ~/.clang-format}
-      - {src: ~/dotfiles/libinput-gestures.conf, dest: ~/.config/libinput-gestures.conf}
+        - {src: ~/dotfiles/.aliases, dest: ~/.aliases}
+        - {src: ~/dotfiles/.bashrc, dest: ~/.bashrc}
+        - {src: ~/dotfiles/.tmux.conf, dest: ~/.tmux.conf}
+        - {src: ~/dotfiles/.vimrc-full, dest: ~/.vimrc}
+        - {src: ~/dotfiles/.zshrc, dest: ~/.zshrc}
+        - {src: ~/dotfiles/.toprc, dest: ~/.toprc}
+        - {src: ~/dotfiles/.npmrc, dest: ~/.npmrc}
+        - {src: ~/dotfiles/.ctags, dest: ~/.ctags}
+        - {src: ~/dotfiles/.clang-format, dest: ~/.clang-format}
+        - {src: ~/dotfiles/libinput-gestures.conf, dest: ~/.config/libinput-gestures.conf}
       tags: dotfiles
     - name: Load Gnome Keybindings and Terminal Settings
       shell: dconf load {{ item.key }} < {{ item.value }}
