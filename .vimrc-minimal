@@ -3,7 +3,7 @@ filetype off                  " required
 
 call plug#begin('~/.vim/plugged')
 Plug 'sheerun/vim-polyglot'
-Plug 'nlknguyen/papercolor-theme'
+Plug 'w0ng/vim-hybrid'
 call plug#end()               " required
 filetype plugin indent on     " required
 
@@ -13,9 +13,10 @@ map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        highlight ColorColumn ctermbg=235
     else
         set background=light
+        highlight Normal ctermbg=White ctermfg=Black
+        highlight ColorColumn ctermbg=255
     endif
 endfunction
 """ Tabs Navigation
@@ -55,5 +56,4 @@ syntax on
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
-colorscheme PaperColor
-highlight ColorColumn ctermbg=235
+colorscheme hybrid
