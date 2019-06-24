@@ -3,7 +3,7 @@ filetype off                  " required
 
 call plug#begin('~/.vim/plugged')
 Plug 'sheerun/vim-polyglot'
-Plug 'w0ng/vim-hybrid'
+Plug 'flazz/vim-colorschemes'
 call plug#end()               " required
 filetype plugin indent on     " required
 
@@ -13,10 +13,12 @@ map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
+        colorscheme codedark
     else
         set background=light
-        highlight Normal ctermbg=White ctermfg=Black
-        highlight ColorColumn ctermbg=255
+        colorscheme eclipse
+        hi ColorColumn guibg=#eeeeee
+        hi VertSplit guibg=#eeeeee guifg=#aaaaaa
     endif
 endfunction
 """ Tabs Navigation
@@ -55,5 +57,6 @@ let &colorcolumn=join(range(81,999),",")
 syntax on
 " play nicely with modern graphics
 set encoding=utf8
+set termguicolors
 set background=dark
-colorscheme hybrid
+colorscheme codedark
