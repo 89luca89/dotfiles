@@ -221,7 +221,6 @@
       - ffmpeg-libs
       - libva-devel
       - intel-media-driver
-      - libva-mesa-driver
       - libva-intel-driver
       - libva-intel-hybrid-driver
       - libva-utils
