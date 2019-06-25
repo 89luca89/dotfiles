@@ -88,10 +88,11 @@ map <silent> <C-P> :<C-u>vert copen<bar>:50wincmd><CR>
 noremap <C-L> <Esc>:w<CR>:mkview<CR>ggVG=<CR>:loadview<CR>
 augroup autoformat_settings
     autocmd FileType python noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!autopep8 %<CR>:loadview<CR>
-    autocmd FileType c,cpp,objc,proto,typescript,javascript,java noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!clang-format -style=file %<CR>:loadview<CR>
+    autocmd FileType typescript,javascript noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!clang-format -style=file %<CR>:loadview<CR>
     autocmd FileType css,json noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!jsonlint -f %<CR>:loadview<CR>
     autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:!beautysh -f %<CR>:e<CR>
     autocmd FileType yaml,ansible noremap <buffer> <C-L> <Esc>:w<CR>:!yamlfmt -w %<CR><CR>
+    autocmd FileType c,cpp,java noremap <buffer> <C-L> :call LanguageClient#textDocument_formatting()<CR>
 augroup END
 " leader y/p to use system clipboard
 noremap <Leader>y "+y
@@ -107,6 +108,7 @@ function! ToggleTheme()
         colorscheme eclipse
         hi ColorColumn guibg=#eeeeee
         hi VertSplit guibg=#eeeeee guifg=#aaaaaa
+        hi Pmenu guibg=#aaaaaa
     endif
 endfunction
 """ Tabs Navigation
