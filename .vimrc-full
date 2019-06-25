@@ -9,6 +9,7 @@ Plug 'junegunn/fzf.vim'                                         " fuzzy find all
 Plug 'airblade/vim-gitgutter'                                   " +,-,~ on modified lines in git repo
 Plug 'sheerun/vim-polyglot'                                     " Lang packs
 Plug 'scrooloose/nerdtree'
+Plug 'yggdroot/indentline'
 " LSP + completion
 Plug 'w0rp/ale'                                                 " ALE For langs not supported by LSP
 Plug 'shougo/deoplete.nvim'
