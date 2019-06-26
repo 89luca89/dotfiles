@@ -12,15 +12,15 @@ Plug 'scrooloose/nerdtree'
 Plug 'yggdroot/indentline'
 " LSP + completion
 Plug 'w0rp/ale'                                                 " ALE For langs not supported by LSP
-Plug 'shougo/deoplete.nvim'
-Plug 'autozimu/languageclient-neovim', { 'branch': 'next', 'do': 'bash install.sh' }
+Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-json', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-python', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-java', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-rls', {'do': 'yarn install --frozen-lockfile'}
 " Snippets
 Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'wellle/tmux-complete.vim'                                 " completion from tmux panes
-" neovim compatibility
-Plug 'roxma/nvim-yarp'
-Plug 'roxma/vim-hug-neovim-rpc'
 " Colorschemes
 Plug 'flazz/vim-colorschemes'
 call plug#end()               " required
@@ -43,10 +43,6 @@ noremap <C-T> :Tags<CR>
 noremap <C-B> :Files<CR>
 noremap <C-F> :Rg<CR>
 noremap <C-H> :History:<CR>
-let $FZF_DEFAULT_COMMAND="find . -type f -not -path '*/\.git/*' -not -path '*/\bin/*' -not -path '*/\out/*' -not -name '*.exe' -not -name '*.class' -not -name '*.so' -not -name '*.bin' -not -name '*.out'"
-let g:fzf_files_options = "--preview 'if file {1} | grep -i text; then pygmentize -g {1} ; fi'"
-let g:fzf_tags_command = 'ctags -R'
-let g:fzf_action = {'alt-enter':'vsplit' }
 " ALE Linters (for non-lsp langs)
 let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 1
@@ -56,32 +52,25 @@ let g:ale_fix_on_save = 1
 let g:ale_fixers = {'*':['remove_trailing_lines', 'trim_whitespace'],}
 let g:ale_linters = {
             \ 'sh':['shellcheck', 'checkbashisms'],
-            \ 'json':['jsonlint'],
             \ 'xml':['xmllint'],
             \ 'yaml':['yamllint'],
             \ 'ansible':['ansible-lint'],
             \ 'Dockerfile':['dockerfile_lint']
             \}
-" LanguageClient Setup
-let g:deoplete#enable_at_startup = 1
-let g:LanguageClient_autoStart = 1
-let g:LanguageClient_diagnosticsEnable = 1
-let g:LanguageClient_diagnosticsList="Quickfix"
-let g:LanguageClient_serverCommands = {
-            \ 'c': ['clangd'],
-            \ 'cpp': ['clangd'],
-            \ 'python': ['pyls'],
-            \ 'java': ['~/bin/lsp-java' ],
-            \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
-            \ 'go' : ['~/.local/go/bin/go-langserver'],
-            \ }
+
+let $FZF_DEFAULT_COMMAND="find . -type f -not -path '*/\.git/*' -not -path '*/\bin/*' -not -path '*/\out/*' -not -name '*.exe' -not -name '*.class' -not -name '*.so' -not -name '*.bin' -not -name '*.out'"
+let g:fzf_files_options = "--preview 'if file {1} | grep -i text; then pygmentize -g {1} ; fi'"
+let g:fzf_tags_command = 'ctags -R'
+let g:fzf_action = {'alt-enter':'vsplit' }
 " Language client shortcuts with leader:
-map <silent> <leader>m :call LanguageClient_contextMenu()<cr>
-map <silent> <leader>r :call LanguageClient_textDocument_rename()<cr>
-map <silent> <leader>] :call LanguageClient#textDocument_definition()<cr>
-map <silent> <leader>[ :call LanguageClient_textDocument_implementation()<cr>
-map <silent> <leader>p :call LanguageClient#textDocument_references()<cr>
-map <silent> <leader>l :call LanguageClient#textDocument_formatting()<cr>
+map <silent> <leader>m :CocList actions<cr>
+map <silent> <leader>f :CocFix<cr>
+map <silent> <leader>h :call CocAction('doHover')<cr>
+map <silent> <leader>r :call CocAction('rename')<cr>
+map <silent> <leader>] :call CocAction('jumpDefinition')<cr>
+map <silent> <leader>[ :call CocAction('jumpImplementation')<cr>
+map <silent> <leader>p :call CocAction('jumpReferences')<cr>
+map <silent> <leader>l :call CocAction('format')<cr>
 " Ctrl+P loclist
 map <silent> <C-P> :<C-u>vert copen<bar>:50wincmd><CR>
 " Ctrl+L Format Code
@@ -93,7 +82,7 @@ augroup autoformat_settings
     autocmd FileType css,json noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!jsonlint -f %<CR>:loadview<CR>
     autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:!beautysh -f %<CR>:e<CR>
     autocmd FileType yaml,ansible noremap <buffer> <C-L> <Esc>:w<CR>:!yamlfmt -w %<CR><CR>
-    autocmd FileType c,cpp,java noremap <buffer> <C-L> :call LanguageClient#textDocument_formatting()<CR>
+    autocmd FileType c,cpp,java noremap <buffer> <C-L> :call CocAction('format')<CR>
 augroup END
 " leader y/p to use system clipboard
 noremap <Leader>y "+y
