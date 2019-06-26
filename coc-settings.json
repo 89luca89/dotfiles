@@ -1,6 +1,8 @@
 {
     "list.previewSplitRight": true,
     "suggest.autoTrigger": "always",
+    "suggest.triggerAfterInsertEnter": true,
+    "suggest.snippetIndicator": "►",
     "diagnostic.joinMessageLines": true,
     "diagnostic.displayByAle": true,
     "diagnostic.refreshOnInsertMode": true,
