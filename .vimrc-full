@@ -74,7 +74,7 @@ map <silent> <leader>[ :call CocAction('jumpImplementation')<cr>
 map <silent> <leader>r :call CocAction('jumpReferences')<cr>
 map <silent> <leader>l :call CocAction('format')<cr>
 " Ctrl+P loclist
-map <silent> <C-P> :<C-u>vert copen<bar>:50wincmd><CR>
+map <silent> <C-P> :<C-u>cw<CR>
 " Ctrl+L Format Code
 " if not use the specific implementation
 noremap <C-L> <Esc>:w<CR>:mkview<CR>ggVG=<CR>:loadview<CR>
