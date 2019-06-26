@@ -114,8 +114,8 @@ let &colorcolumn=join(range(81,999),",")
 syntax on
 " play nicely with modern graphics
 set encoding=utf8
-set termguicolors
 set background=dark
+set termguicolors
 colorscheme molokai
 " Toggle Theme
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
@@ -125,9 +125,6 @@ function! ToggleTheme()
         colorscheme molokai
     else
         set background=light
-        colorscheme eclipse
-        hi ColorColumn guibg=#eeeeee
-        hi VertSplit guibg=#eeeeee guifg=#aaaaaa
-        hi Pmenu guibg=#aaaaaa
+        colorscheme xcode
     endif
 endfunction
