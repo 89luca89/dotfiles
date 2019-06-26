@@ -17,6 +17,9 @@ Plug 'neoclide/coc-json', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-python', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-java', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-rls', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-yaml', {'do': 'yarn install --frozen-lockfile'}
+Plug 'fannheyward/coc-xml', {'do': 'yarn install --frozen-lockfile'}
+Plug 'josa42/coc-go', {'do': 'yarn install --frozen-lockfile'}
 " Snippets
 Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
@@ -52,8 +55,6 @@ let g:ale_fix_on_save = 1
 let g:ale_fixers = {'*':['remove_trailing_lines', 'trim_whitespace'],}
 let g:ale_linters = {
             \ 'sh':['shellcheck', 'checkbashisms'],
-            \ 'xml':['xmllint'],
-            \ 'yaml':['yamllint'],
             \ 'ansible':['ansible-lint'],
             \ 'Dockerfile':['dockerfile_lint']
             \}
@@ -65,11 +66,12 @@ let g:fzf_action = {'alt-enter':'vsplit' }
 " Language client shortcuts with leader:
 map <silent> <leader>m :CocList actions<cr>
 map <silent> <leader>f :CocFix<cr>
+map <silent> <leader>d :CocList diagnostics<cr>
 map <silent> <leader>h :call CocAction('doHover')<cr>
 map <silent> <leader>r :call CocAction('rename')<cr>
 map <silent> <leader>] :call CocAction('jumpDefinition')<cr>
 map <silent> <leader>[ :call CocAction('jumpImplementation')<cr>
-map <silent> <leader>p :call CocAction('jumpReferences')<cr>
+map <silent> <leader>r :call CocAction('jumpReferences')<cr>
 map <silent> <leader>l :call CocAction('format')<cr>
 " Ctrl+P loclist
 map <silent> <C-P> :<C-u>vert copen<bar>:50wincmd><CR>
