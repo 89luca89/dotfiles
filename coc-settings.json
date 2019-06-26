@@ -1,0 +1,24 @@
+{
+    "suggest.autoTrigger": "always",
+    "diagnostic.displayByAle": true,
+    "diagnostic.refreshOnInsertMode": true,
+    "coc.preferences.useQuickfixForLocations":true,
+    "list.previewSplitRight": true,
+    "languageserver": {
+        "clangd": {
+            "command": "clangd",
+            "filetypes": [
+                "c",
+                "cpp",
+                "cuda",
+                "objc",
+                "objcpp"
+            ],
+            "rootPatterns": [
+                ".vim/",
+                ".git/",
+                ".hg/"
+            ]
+        }
+    }
+}
