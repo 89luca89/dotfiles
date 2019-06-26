@@ -16,6 +16,11 @@
       - '{{ ansible_env.HOME }}/.vim/swap'
       - '{{ ansible_env.HOME }}/.vim/undo'
       - '{{ ansible_env.HOME }}/.vim/syntax'
+      tags: dotfiles
+
+    - name: Install yarn for coc.nvim
+      command: "curl --compressed -o- -L https://yarnpkg.com/install.sh | bash"
+      tags: dotfiles
 
     - name: Install scripts before starting dotfiles
       get_url:
@@ -25,11 +30,13 @@
       with_items:
         - {src:"https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim" , dest:"{{ ansible_env.HOME }}/.vim/autoload"}
         - {src:"https://raw.githubusercontent.com/rudes/vim-java/master/syntax/java.vim" , dest:"{{ ansible_env.HOME }}/.vim/syntax"}
+      tags: dotfiles
 
     - name: Check if Dotfile folder is present
       stat:
         path: '{{ ansible_env.HOME }}/dotfiles'
       register: file_exists
+      tags: dotfiles
     - name: Download Dotfiles
       git:
         repo: https://gitlab.com/89luca89/dotfiles
@@ -37,6 +44,7 @@
         version: master
         update: yes
       when: not file_exists.stat.exists
+      tags: dotfiles
     - name: link dotfiles
       file:
         src: '{{ item.src }}'
@@ -52,6 +60,7 @@
         - {src: ~/dotfiles/.npmrc, dest: ~/.npmrc}
         - {src: ~/dotfiles/.ctags, dest: ~/.ctags}
         - {src: ~/dotfiles/.clang-format, dest: ~/.clang-format}
+        - {src: ~/dotfiles/coc-settings.json, dest: ~/.vim/coc-settings.json}
         - {src: ~/dotfiles/libinput-gestures.conf, dest: ~/.config/libinput-gestures.conf}
       tags: dotfiles
     - name: Load Gnome Keybindings and Terminal Settings
@@ -60,6 +69,7 @@
       - {key: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/, value: '{{
           ansible_env.HOME }}/dotfiles/gnome-keybindings.conf'}
       - {key: /org/gnome/terminal/, value: '{{ ansible_env.HOME }}/dotfiles/gnome-terminal.conf'}
+      tags: dotfiles
 
     - name: Configure Keyboard and Cursor Options
       dconf:
@@ -75,6 +85,7 @@
       - {key: /org/gnome/desktop/privacy/report-technical-problems, value: 'false'}
       - {key: /org/gnome/desktop/privacy/remove-old-trash-files, value: 'true'}
       - {key: /org/gnome/desktop/privacy/send-software-usage-stats, value: 'false'}
+      tags: dotfiles
 
     - name: Update the /etc/hosts file with node name
       lineinfile:
@@ -84,6 +95,7 @@
         state: present
         backup: yes
       become: yes
+      tags: dotfiles
 
     - name: Update the profiles file with personal variables
       lineinfile:
@@ -97,6 +109,7 @@
       - export MOZ_ACCELLERATED=1
       - export MOZ_WEBRENDER=1
       become: yes
+      tags: dotfiles
 
     - name: Remove Programs (Unused Programs)
       package:
