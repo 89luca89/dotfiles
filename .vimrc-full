@@ -91,7 +91,7 @@ map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        colorscheme codedark
+        colorscheme molokai
     else
         set background=light
         colorscheme eclipse
@@ -145,4 +145,4 @@ syntax on
 set encoding=utf8
 set termguicolors
 set background=dark
-colorscheme codedark
+colorscheme molokai
