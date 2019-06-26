@@ -1,9 +1,9 @@
 {
+    "list.previewSplitRight": true,
     "suggest.autoTrigger": "always",
+    "diagnostic.joinMessageLines": true,
     "diagnostic.displayByAle": true,
     "diagnostic.refreshOnInsertMode": true,
-    "coc.preferences.useQuickfixForLocations":true,
-    "list.previewSplitRight": true,
     "languageserver": {
         "clangd": {
             "command": "clangd",
@@ -20,5 +20,19 @@
                 ".hg/"
             ]
         }
-    }
+    },
+    "java.completion.guessMethodArguments": true,
+    "java.codeGeneration.generateComments": true,
+    "java.referencesCodeLens.enabled": true,
+    "python.formatting.provider": "yapf",
+    "python.pythonPath": "/usr/bin/python3",
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    "python.linting.flake8Enabled": true,
+    "python.linting.flake8Args": [
+        "--max-line-length=80",
+        "--verbose"
+    ],
+    "coc.preferences.useQuickfixForLocations": true,
+    "coc.preferences.formatOnType": true
 }
