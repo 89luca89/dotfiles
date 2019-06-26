@@ -125,6 +125,9 @@ function! ToggleTheme()
         colorscheme molokai
     else
         set background=light
-        colorscheme xcode
+        colorscheme eclipse
+        hi ColorColumn guibg=#eeeeee
+        hi VertSplit guibg=#eeeeee guifg=#aaaaaa
+        hi Pmenu guibg=#aaaaaa
     endif
 endfunction
