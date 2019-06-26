@@ -13,13 +13,6 @@ Plug 'yggdroot/indentline'
 " LSP + completion
 Plug 'w0rp/ale'                                                 " ALE For langs not supported by LSP
 Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
-Plug 'neoclide/coc-json', {'do': 'yarn install --frozen-lockfile'}
-Plug 'neoclide/coc-python', {'do': 'yarn install --frozen-lockfile'}
-Plug 'neoclide/coc-java', {'do': 'yarn install --frozen-lockfile'}
-Plug 'neoclide/coc-rls', {'do': 'yarn install --frozen-lockfile'}
-Plug 'neoclide/coc-yaml', {'do': 'yarn install --frozen-lockfile'}
-Plug 'fannheyward/coc-xml', {'do': 'yarn install --frozen-lockfile'}
-Plug 'josa42/coc-go', {'do': 'yarn install --frozen-lockfile'}
 " Snippets
 Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
@@ -46,6 +39,10 @@ noremap <C-T> :Tags<CR>
 noremap <C-B> :Files<CR>
 noremap <C-F> :Rg<CR>
 noremap <C-H> :History:<CR>
+
+let g:coc_global_extensions = [ 'coc-json', 'coc-yaml', 'coc-xml', 'coc-go',
+                            \ 'coc-python', 'coc-java', 'coc-rls', 'coc-ultisnips' ]
+
 " ALE Linters (for non-lsp langs)
 let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 1
