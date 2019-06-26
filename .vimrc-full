@@ -4,8 +4,6 @@ call plug#begin('~/.vim/plugged')
 Plug 'christoomey/vim-tmux-navigator'
 " utilities
 Plug 'vim-airline/vim-airline'                                  " tabs and statusline
-Plug 'junegunn/fzf'                                             " fuzzy find all the things
-Plug 'junegunn/fzf.vim'                                         " fuzzy find all the things
 Plug 'airblade/vim-gitgutter'                                   " +,-,~ on modified lines in git repo
 Plug 'sheerun/vim-polyglot'                                     " Lang packs
 Plug 'scrooloose/nerdtree'
@@ -31,75 +29,48 @@ let g:airline#extensions#tabline#formatter = 'unique_tail'
 let NERDTreeShowHidden=1
 noremap <C-\> :NERDTreeToggle<CR>
 noremap <C-N> :NERDTreeFind<CR>
-" Ctrl+T fuzzy find ctags
-" Ctrl+B fuzzy find files
-" Ctrl+F grep -r in the folder
-" Ctrl+H command history
-noremap <C-T> :Tags<CR>
-noremap <C-B> :Files<CR>
-noremap <C-F> :Rg<CR>
-noremap <C-H> :History:<CR>
-
-let g:coc_global_extensions = [ 'coc-json', 'coc-yaml', 'coc-xml', 'coc-go',
-                            \ 'coc-python', 'coc-java', 'coc-rls', 'coc-ultisnips' ]
-
+let g:coc_global_extensions = [ 'coc-lists', 'coc-json', 'coc-xml', 'coc-go', 'coc-python', 'coc-java', 'coc-rls', 'coc-ultisnips' ]
 " ALE Linters (for non-lsp langs)
-let g:ale_set_loclist = 0
 let g:ale_set_quickfix = 1
-let g:ale_sign_column_always = 1
 let g:ale_linters_explicit = 1
 let g:ale_fix_on_save = 1
 let g:ale_fixers = {'*':['remove_trailing_lines', 'trim_whitespace'],}
 let g:ale_linters = {
             \ 'sh':['shellcheck', 'checkbashisms'],
+            \ 'yaml':['yamllint'],
             \ 'ansible':['ansible-lint'],
-            \ 'Dockerfile':['dockerfile_lint']
             \}
-
-let $FZF_DEFAULT_COMMAND="find . -type f -not -path '*/\.git/*' -not -path '*/\bin/*' -not -path '*/\out/*' -not -name '*.exe' -not -name '*.class' -not -name '*.so' -not -name '*.bin' -not -name '*.out'"
-let g:fzf_files_options = "--preview 'if file {1} | grep -i text; then pygmentize -g {1} ; fi'"
-let g:fzf_tags_command = 'ctags -R'
-let g:fzf_action = {'alt-enter':'vsplit' }
+" Ctrl+T fuzzy find ctags
+" Ctrl+B fuzzy find files
+" Ctrl+F grep -r in the folder
+" Ctrl+H command history
+noremap <C-T> :CocList tags <CR>
+noremap <C-B> :CocList files <CR>
+noremap <C-F> :CocList grep <CR>
+noremap <C-H> :CocList vimcommands<CR>
+noremap <C-P> :CocList diagnostics --normal<CR>
 " Language client shortcuts with leader:
 map <silent> <leader>m :CocList actions<cr>
 map <silent> <leader>f :CocFix<cr>
-map <silent> <leader>d :CocList diagnostics<cr>
 map <silent> <leader>h :call CocAction('doHover')<cr>
 map <silent> <leader>r :call CocAction('rename')<cr>
 map <silent> <leader>] :call CocAction('jumpDefinition')<cr>
 map <silent> <leader>[ :call CocAction('jumpImplementation')<cr>
 map <silent> <leader>r :call CocAction('jumpReferences')<cr>
 map <silent> <leader>l :call CocAction('format')<cr>
-" Ctrl+P loclist
-map <silent> <C-P> :<C-u>cw<CR>
 " Ctrl+L Format Code
 " if not use the specific implementation
 noremap <C-L> <Esc>:w<CR>:mkview<CR>ggVG=<CR>:loadview<CR>
 augroup autoformat_settings
-    autocmd FileType python noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!autopep8 %<CR>:loadview<CR>
     autocmd FileType typescript,javascript noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!clang-format -style=file %<CR>:loadview<CR>
-    autocmd FileType css,json noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!jsonlint -f %<CR>:loadview<CR>
+    autocmd FileType css noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!jsonlint -f %<CR>:loadview<CR>
     autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:!beautysh -f %<CR>:e<CR>
-    autocmd FileType yaml,ansible noremap <buffer> <C-L> <Esc>:w<CR>:!yamlfmt -w %<CR><CR>
-    autocmd FileType c,cpp,java noremap <buffer> <C-L> :call CocAction('format')<CR>
+    autocmd FileType ansible noremap <buffer> <C-L> <Esc>:w<CR>:!yamlfmt -w %<CR><CR>
+    autocmd FileType c,cpp,java,yaml,json,xml,go,rust,python noremap <buffer> <C-L> :call CocAction('format')<CR>
 augroup END
 " leader y/p to use system clipboard
 noremap <Leader>y "+y
 noremap <Leader>p "+p
-" Toggle Theme
-map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
-function! ToggleTheme()
-    if &background == 'light'
-        set background=dark
-        colorscheme molokai
-    else
-        set background=light
-        colorscheme eclipse
-        hi ColorColumn guibg=#eeeeee
-        hi VertSplit guibg=#eeeeee guifg=#aaaaaa
-        hi Pmenu guibg=#aaaaaa
-    endif
-endfunction
 """ Tabs Navigation
 " navigate tabs Tab (fw) S-Tab (prev)
 map <Tab> :bn<CR>
@@ -123,7 +94,7 @@ inoremap <silent> <M-Up> <Esc>:TmuxNavigateUp<cr>
 inoremap <silent> <M-Right> <Esc>:TmuxNavigateRight<cr>
 " Remap Wq to wq to have less typo on exit
 cmap Wq wq
-set nocompatible                                                  " required
+set nocompatible nowritebackup nobackup                           " required
 set mouse=a                                                       " it's always useful
 set undofile undolevels=1000 undodir=$HOME/.vim/undo              " Undo file and directory
 set directory=$HOME/.vim/swap                                     " Custom swapfile directory
@@ -146,3 +117,17 @@ set encoding=utf8
 set termguicolors
 set background=dark
 colorscheme molokai
+" Toggle Theme
+map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
+function! ToggleTheme()
+    if &background == 'light'
+        set background=dark
+        colorscheme molokai
+    else
+        set background=light
+        colorscheme eclipse
+        hi ColorColumn guibg=#eeeeee
+        hi VertSplit guibg=#eeeeee guifg=#aaaaaa
+        hi Pmenu guibg=#aaaaaa
+    endif
+endfunction
