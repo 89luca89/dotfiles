@@ -2,19 +2,18 @@ filetype off                  " required
 call plug#begin('~/.vim/plugged')
 " vim tmux navigator
 Plug 'christoomey/vim-tmux-navigator'
+Plug 'wellle/tmux-complete.vim'                                 " completion from tmux panes
 " utilities
-Plug 'vim-airline/vim-airline'                                  " tabs and statusline
+Plug 'ap/vim-buftabline'
 Plug 'airblade/vim-gitgutter'                                   " +,-,~ on modified lines in git repo
 Plug 'sheerun/vim-polyglot'                                     " Lang packs
 Plug 'scrooloose/nerdtree'
-Plug 'yggdroot/indentline'
 " LSP + completion
 Plug 'w0rp/ale'                                                 " ALE For langs not supported by LSP
 Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
 " Snippets
 Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
-Plug 'wellle/tmux-complete.vim'                                 " completion from tmux panes
 " Colorschemes
 Plug 'flazz/vim-colorschemes'
 call plug#end()               " required
@@ -63,7 +62,6 @@ map <silent> <leader>l :call CocAction('format')<cr>
 noremap <C-L> <Esc>:w<CR>:mkview<CR>ggVG=<CR>:loadview<CR>
 augroup autoformat_settings
     autocmd FileType typescript,javascript noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!clang-format -style=file %<CR>:loadview<CR>
-    autocmd FileType css noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!jsonlint -f %<CR>:loadview<CR>
     autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:!beautysh -f %<CR>:e<CR>
     autocmd FileType yaml,ansible noremap <buffer> <C-L> <Esc>:w<CR>:!yamlfmt -w %<CR><CR>
     autocmd FileType c,cpp,java,json,xml,go,rust,python noremap <buffer> <C-L> :call CocAction('format')<CR>
