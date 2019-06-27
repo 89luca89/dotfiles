@@ -115,12 +115,16 @@ set encoding=utf8
 set background=dark
 set termguicolors
 colorscheme molokai
+hi StatusLineNC guifg=#151515 guibg=#888888
+hi StatusLine guifg=#555555 guibg=#151515
 " Toggle Theme
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
         colorscheme molokai
+        hi StatusLineNC guifg=#151515 guibg=#888888
+        hi StatusLine guifg=#555555 guibg=#151515
     else
         set background=light
         colorscheme eclipse
