@@ -1,7 +1,0 @@
-{ 
-  "http" : { "proxyStrictSSL" : true },
-  "yaml" : { 
-      "format" : { "enable" : false },
-      "validate" : true
-    }
-}

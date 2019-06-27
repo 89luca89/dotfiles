@@ -1,8 +1,0 @@
-{ 
-  "http" : { "proxyStrictSSL" : true },
-  "yaml" : { 
-      "format" : { "enable" : true },
-      "schemas" : { "http://json.schemastore.org/ansible-stable-2.5" : "/*ansible*.yml" },
-      "validate" : true
-    }
-}
