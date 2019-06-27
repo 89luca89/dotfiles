@@ -6,22 +6,8 @@ Plug 'sheerun/vim-polyglot'
 Plug 'flazz/vim-colorschemes'
 call plug#end()               " required
 filetype plugin indent on     " required
-
 " Use Ripgrep = superfast
 set grepprg=rg
-map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
-function! ToggleTheme()
-    if &background == 'light'
-        set background=dark
-        colorscheme codedark
-    else
-        set background=light
-        colorscheme eclipse
-        hi ColorColumn guibg=#eeeeee
-        hi VertSplit guibg=#eeeeee guifg=#aaaaaa
-    endif
-endfunction
-""" Tabs Navigation
 " navigate tabs Tab (fw) S-Tab (prev)
 map <Tab> :bn<CR>
 map <S-Tab> :bp<CR>
@@ -59,4 +45,23 @@ syntax on
 set encoding=utf8
 set termguicolors
 set background=dark
-colorscheme codedark
+set termguicolors
+colorscheme molokai
+hi StatusLineNC guifg=#151515 guibg=#888888
+hi StatusLine guifg=#555555 guibg=#151515
+" Toggle Theme
+map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
+function! ToggleTheme()
+    if &background == 'light'
+        set background=dark
+        colorscheme molokai
+        hi StatusLineNC guifg=#151515 guibg=#888888
+        hi StatusLine guifg=#555555 guibg=#151515
+    else
+        set background=light
+        colorscheme eclipse
+        hi ColorColumn guibg=#eeeeee
+        hi VertSplit guibg=#eeeeee guifg=#aaaaaa
+        hi Pmenu guibg=#aaaaaa
+    endif
+endfunction

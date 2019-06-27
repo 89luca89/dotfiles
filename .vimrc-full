@@ -69,7 +69,6 @@ augroup END
 " leader y/p to use system clipboard
 noremap <Leader>y "+y
 noremap <Leader>p "+p
-""" Tabs Navigation
 " navigate tabs Tab (fw) S-Tab (prev)
 map <Tab> :bn<CR>
 map <S-Tab> :bp<CR>
