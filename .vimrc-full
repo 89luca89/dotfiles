@@ -43,6 +43,7 @@ let mapleader = ','
 map <Leader>y "+y
 map <Leader>p "+p
 " Utility shortcuts with leader:
+map <leader>/ :nohlsearch<CR>
 map <leader>t :CocList tags <CR>
 map <leader>b :CocList files <CR>
 map <leader>f :CocList grep <CR>
