@@ -2,11 +2,9 @@ filetype off                  " required
 call plug#begin('~/.vim/plugged')
 " vim tmux navigator
 Plug 'christoomey/vim-tmux-navigator'
-Plug 'wellle/tmux-complete.vim'                                 " completion from tmux panes
 " utilities
-Plug 'ap/vim-buftabline'
-Plug 'airblade/vim-gitgutter'                                   " +,-,~ on modified lines in git repo
-Plug 'sheerun/vim-polyglot'                                     " Lang packs
+Plug 'vim-airline/vim-airline'
+Plug 'airblade/vim-gitgutter'
 Plug 'scrooloose/nerdtree'
 " LSP + completion
 Plug 'w0rp/ale'                                                 " ALE For langs not supported by LSP
@@ -15,6 +13,7 @@ Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
 Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
 " Colorschemes
+Plug 'sheerun/vim-polyglot'                                     " Lang packs
 Plug 'flazz/vim-colorschemes'
 call plug#end()               " required
 filetype plugin indent on     " required
@@ -39,24 +38,26 @@ let g:ale_linters = {
             \ 'yaml':['yamllint'],
             \ 'ansible':['ansible-lint'],
             \}
-" Ctrl+T fuzzy find ctags
-" Ctrl+B fuzzy find files
-" Ctrl+F grep -r in the folder
-" Ctrl+H command history
-noremap <C-T> :CocList tags <CR>
-noremap <C-B> :CocList files <CR>
-noremap <C-F> :CocList grep <CR>
-noremap <C-H> :CocList vimcommands<CR>
-noremap <C-P> :CocList diagnostics --normal<CR>
+let mapleader = ','
+" leader y/p to use system clipboard
+map <Leader>y "+y
+map <Leader>p "+p
+" Utility shortcuts with leader:
+map <leader>t :CocList tags <CR>
+map <leader>b :CocList files <CR>
+map <leader>f :CocList grep <CR>
+map <leader>h :CocList vimcommands<CR>
+map <leader>e :CocList diagnostics --normal<CR>
+map <leader><leader>b :CocList buffers --normal<CR>
 " Language client shortcuts with leader:
-map <silent> <leader>m :CocList actions<cr>
-map <silent> <leader>f :CocFix<cr>
-map <silent> <leader>h :call CocAction('doHover')<cr>
-map <silent> <leader>r :call CocAction('rename')<cr>
-map <silent> <leader>] :call CocAction('jumpDefinition')<cr>
-map <silent> <leader>[ :call CocAction('jumpImplementation')<cr>
-map <silent> <leader>r :call CocAction('jumpReferences')<cr>
-map <silent> <leader>l :call CocAction('format')<cr>
+map <leader>m :CocList actions<cr>
+map <leader>f :CocFix<cr>
+map <leader>h :call CocAction('doHover')<cr>
+map <leader>r :call CocAction('rename')<cr>
+map <leader>] :call CocAction('jumpDefinition')<cr>
+map <leader>[ :call CocAction('jumpImplementation')<cr>
+map <leader>r :call CocAction('jumpReferences')<cr>
+map <leader>l :call CocAction('format')<cr>
 " Ctrl+L Format Code
 " if not use the specific implementation
 noremap <C-L> <Esc>:w<CR>:mkview<CR>ggVG=<CR>:loadview<CR>
@@ -66,9 +67,6 @@ augroup autoformat_settings
     autocmd FileType yaml,ansible noremap <buffer> <C-L> <Esc>:w<CR>:!yamlfmt -w %<CR><CR>
     autocmd FileType c,cpp,java,json,xml,go,rust,python noremap <buffer> <C-L> :call CocAction('format')<CR>
 augroup END
-" leader y/p to use system clipboard
-noremap <Leader>y "+y
-noremap <Leader>p "+p
 " navigate tabs Tab (fw) S-Tab (prev)
 map <Tab> :bn<CR>
 map <S-Tab> :bp<CR>
@@ -91,7 +89,7 @@ inoremap <silent> <M-Up> <Esc>:TmuxNavigateUp<cr>
 inoremap <silent> <M-Right> <Esc>:TmuxNavigateRight<cr>
 " Remap Wq to wq to have less typo on exit
 cmap Wq wq
-set nocompatible nowritebackup nobackup                           " required
+set title nocompatible nowritebackup nobackup                    " required
 set mouse=a                                                       " it's always useful
 set undofile undolevels=1000 undodir=$HOME/.vim/undo              " Undo file and directory
 set directory=$HOME/.vim/swap                                     " Custom swapfile directory
@@ -101,7 +99,7 @@ set lazyredraw ttyfast ttimeoutlen=20                             " Faster redra
 set hidden                                                        " change buffer without saving
 set backspace=indent,eol,start                                    " http://vi.stackexchange.com/a/2163
 set splitright splitbelow                                         " Open new splits to the right and bottom
-set autoindent smartindent                                        " always set autoindenting on
+set autoindent smartindent copyindent                             " always set autoindenting on
 set smarttab expandtab shiftwidth=4 tabstop=4 softtabstop=4       " Four spaces for tabs everywhere
 set hlsearch incsearch ignorecase smartcase                       " Highlight search results, ignore case if search is all lowercase
 set nowrap number                                                 " play nicely with long lines
