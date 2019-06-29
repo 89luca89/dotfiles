@@ -38,7 +38,7 @@ let g:ale_linters = {
             \ 'yaml':['yamllint'],
             \ 'ansible':['ansible-lint'],
             \}
-let mapleader = ','
+let mapleader = ' '
 " leader y/p to use system clipboard
 map <Leader>y "+y
 map <Leader>p "+p
