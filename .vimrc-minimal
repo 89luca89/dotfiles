@@ -23,7 +23,7 @@ noremap <S-M-Left> :2winc><cr>
 noremap <S-M-Right> :2winc<<cr>
 " Remap Wq to wq to have less typo on exit
 cmap Wq wq
-set nocompatible                                                  " required
+set title nocompatible nowritebackup nobackup                    " required
 set mouse=a                                                       " it's always useful
 set undofile undolevels=1000 undodir=$HOME/.vim/undo              " Undo file and directory
 set directory=$HOME/.vim/swap                                     " Custom swapfile directory
@@ -33,7 +33,7 @@ set lazyredraw ttyfast ttimeoutlen=20                             " Faster redra
 set hidden                                                        " change buffer without saving
 set backspace=indent,eol,start                                    " http://vi.stackexchange.com/a/2163
 set splitright splitbelow                                         " Open new splits to the right and bottom
-set autoindent smartindent                                        " always set autoindenting on
+set autoindent smartindent copyindent                             " always set autoindenting on
 set smarttab expandtab shiftwidth=4 tabstop=4 softtabstop=4       " Four spaces for tabs everywhere
 set hlsearch incsearch ignorecase smartcase                       " Highlight search results, ignore case if search is all lowercase
 set nowrap number                                                 " play nicely with long lines
@@ -43,25 +43,4 @@ let &colorcolumn=join(range(81,999),",")
 syntax on
 " play nicely with modern graphics
 set encoding=utf8
-set termguicolors
 set background=dark
-set termguicolors
-colorscheme molokai
-hi StatusLineNC guifg=#151515 guibg=#888888
-hi StatusLine guifg=#555555 guibg=#151515
-" Toggle Theme
-map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
-function! ToggleTheme()
-    if &background == 'light'
-        set background=dark
-        colorscheme molokai
-        hi StatusLineNC guifg=#151515 guibg=#888888
-        hi StatusLine guifg=#555555 guibg=#151515
-    else
-        set background=light
-        colorscheme eclipse
-        hi ColorColumn guibg=#eeeeee
-        hi VertSplit guibg=#eeeeee guifg=#aaaaaa
-        hi Pmenu guibg=#aaaaaa
-    endif
-endfunction
