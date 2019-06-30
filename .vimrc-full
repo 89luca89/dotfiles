@@ -6,6 +6,8 @@ Plug 'christoomey/vim-tmux-navigator'
 Plug 'vim-airline/vim-airline'
 Plug 'airblade/vim-gitgutter'
 Plug 'scrooloose/nerdtree'
+Plug 'junegunn/fzf'                                             " fuzzy find all the things
+Plug 'junegunn/fzf.vim'                                         " fuzzy find all the things
 " LSP + completion
 Plug 'w0rp/ale'                                                 " ALE For langs not supported by LSP
 Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
@@ -15,8 +17,8 @@ Plug 'honza/vim-snippets'
 " Colorschemes
 Plug 'sheerun/vim-polyglot'                                     " Lang packs
 Plug 'flazz/vim-colorschemes'
-call plug#end()               " required
-filetype plugin indent on     " required
+call plug#end()                                                 " required
+filetype plugin indent on                                       " required
 
 autocmd VimResized * :wincmd =
 let g:java_highlight_all=1
@@ -28,7 +30,7 @@ let g:airline#extensions#tabline#formatter = 'unique_tail'
 let NERDTreeShowHidden=1
 noremap <C-\> :NERDTreeToggle<CR>
 noremap <C-N> :NERDTreeFind<CR>
-let g:coc_global_extensions = [ 'coc-lists', 'coc-json', 'coc-xml', 'coc-go', 'coc-python', 'coc-java', 'coc-rls', 'coc-ultisnips' ]
+let g:coc_global_extensions = [ 'coc-json', 'coc-xml', 'coc-go', 'coc-python', 'coc-java', 'coc-rls', 'coc-ultisnips' ]
 " ALE Linters (for non-lsp langs)
 let g:ale_set_quickfix = 1
 let g:ale_linters_explicit = 1
@@ -39,21 +41,24 @@ let g:ale_linters = {
             \ 'yaml':['yamllint'],
             \ 'ansible':['ansible-lint'],
             \}
+let $FZF_DEFAULT_COMMAND="rg --files ."
+let g:fzf_files_options = "--preview 'if file {1} | grep -i text; then pygmentize -g {1} ; fi'"
+let g:fzf_tags_command = 'ctags -R'
+let g:fzf_action = {'alt-enter':'vsplit' }
 let mapleader = ' '
 " leader y/p to use system clipboard
 map <Leader>y "+y
 map <Leader>p "+p
 " Utility shortcuts with leader:
 map <leader>/ :nohlsearch<CR>
-map <leader>t :CocList tags <CR>
-map <leader>b :CocList files <CR>
-map <leader>f :CocList grep <CR>
-map <leader>h :CocList vimcommands<CR>
-map <leader>e :CocList diagnostics --normal<CR>
-map <leader><leader>b :CocList buffers --normal<CR>
+map <leader>t :Tags<CR>
+map <leader>b :Files<CR>
+map <leader>f :Rg<CR>
+map <leader>e :CocList --normal diagnostics<CR>
+map <leader><leader>b :CocList --normal buffers<CR>
 " Language client shortcuts with leader:
 map <leader>m :CocList actions<cr>
-map <leader>f :CocFix<cr>
+map <leader>F :CocFix<cr>
 map <leader>h :call CocAction('doHover')<cr>
 map <leader>r :call CocAction('rename')<cr>
 map <leader>] :call CocAction('jumpDefinition')<cr>
@@ -62,9 +67,9 @@ map <leader>r :call CocAction('jumpReferences')<cr>
 map <leader>l :call CocAction('format')<cr>
 " Ctrl+L Format Code
 " if not use the specific implementation
-noremap <C-L> <Esc>:w<CR>:mkview<CR>ggVG=<CR>:loadview<CR>
+noremap <C-L> <Esc>:w<CR>:mkview<CR>gg=G<CR>:loadview<CR>
 augroup autoformat_settings
-    autocmd FileType typescript,javascript noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!clang-format -style=file %<CR>:loadview<CR>
+    autocmd FileType typescript,javascript noremap <buffer> <C-L><Esc>:w<CR>:mkview<CR>:%!clang-format -style=Google %<CR>:loadview<CR>
     autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:!beautysh -f %<CR>:e<CR>
     autocmd FileType c,cpp,java,json,xml,go,rust,python noremap <buffer> <C-L> :call CocAction('format')<CR>
 augroup END
@@ -72,7 +77,7 @@ augroup END
 map <Tab> :bn<CR>
 map <S-Tab> :bp<CR>
 " Ctrl+C close buffer ( pipe commands to fix behaviour with splits and netrw/nerdtree)
-nnoremap <C-c> :bp<bar>sp<bar>bn<bar>bd!<CR>
+map <C-c> :bp<bar>sp<bar>bn<bar>bd!<CR>
 " " Resize split window horizontally and vertically
 noremap <S-M-Up> :2winc+<cr>
 noremap <S-M-Down> :2winc-<cr>

@@ -1,8 +1,6 @@
 {
     "coc.preferences.useQuickfixForLocations": true,
     "coc.preferences.formatOnType": true,
-    "list.previewSplitRight": true,
-    "list.source.grep.command": "rg",
     "suggest.autoTrigger": "always",
     "suggest.triggerAfterInsertEnter": true,
     "suggest.snippetIndicator": "►",
