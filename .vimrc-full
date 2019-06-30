@@ -17,6 +17,7 @@ Plug 'sheerun/vim-polyglot'                                     " Lang packs
 Plug 'flazz/vim-colorschemes'
 call plug#end()               " required
 filetype plugin indent on     " required
+
 autocmd VimResized * :wincmd =
 let g:java_highlight_all=1
 let g:python_highlight_all=1
@@ -32,7 +33,7 @@ let g:coc_global_extensions = [ 'coc-lists', 'coc-json', 'coc-xml', 'coc-go', 'c
 let g:ale_set_quickfix = 1
 let g:ale_linters_explicit = 1
 let g:ale_fix_on_save = 1
-let g:ale_fixers = {'*':['remove_trailing_lines', 'trim_whitespace'],}
+let g:ale_fixers = {'*':['remove_trailing_lines', 'trim_whitespace']}
 let g:ale_linters = {
             \ 'sh':['shellcheck', 'checkbashisms'],
             \ 'yaml':['yamllint'],
@@ -65,7 +66,6 @@ noremap <C-L> <Esc>:w<CR>:mkview<CR>ggVG=<CR>:loadview<CR>
 augroup autoformat_settings
     autocmd FileType typescript,javascript noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!clang-format -style=file %<CR>:loadview<CR>
     autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:!beautysh -f %<CR>:e<CR>
-    autocmd FileType yaml,ansible noremap <buffer> <C-L> <Esc>:w<CR>:!yamlfmt -w %<CR><CR>
     autocmd FileType c,cpp,java,json,xml,go,rust,python noremap <buffer> <C-L> :call CocAction('format')<CR>
 augroup END
 " navigate tabs Tab (fw) S-Tab (prev)
