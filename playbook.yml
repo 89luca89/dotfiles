@@ -394,6 +394,7 @@
       shell: |
         export GOPATH={{ ansible_env.HOME }}/.local/go
         cd $(mktemp -d); go mod init tmp; go get -u moul.io/assh
+        cd $(mktemp -d); go mod init tmp; go get -u github.com/jingweno/ccat
       args:
         executable: /bin/bash
 
