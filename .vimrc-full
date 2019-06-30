@@ -26,6 +26,8 @@ let g:python_highlight_all=1
 """ Airline -> bufferline
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
+" GitGutter Ripgrep
+let g:gitgutter_grep_command = 'rg --hidden --follow --glob "!.git/*"'
 " Ctrl+N relocate file explorer to opened file
 let NERDTreeShowHidden=1
 noremap <C-\> :NERDTreeToggle<CR>
