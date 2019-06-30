@@ -39,7 +39,7 @@ set hlsearch incsearch ignorecase smartcase                       " Highlight se
 set nowrap number                                                 " play nicely with long lines
 set nomodeline                                                    " protect against https://github.com/numirias/security/blob/master/doc/2019-06-04_ace-vim-neovim.md
 set signcolumn=yes laststatus=2
-let &colorcolumn=join(range(81,999),",")
+set colorcolumn=80
 syntax on
 " play nicely with modern graphics
 set encoding=utf8
