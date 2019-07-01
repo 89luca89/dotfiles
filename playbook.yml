@@ -134,6 +134,10 @@
         - gnome-user-share
         - gnome-video-effects
         - gnome-weather
+        - gnome-logs
+        - gnome-characters
+        - gnome-font-viewer
+        - yelp
         - gnome-shell-extension-alternate-tab
         - gnome-shell-extension-apps-menu
         - gnome-shell-extension-background-logo
