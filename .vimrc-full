@@ -56,6 +56,7 @@ map <Leader>y "+y
 map <Leader>p "+p
 " Utility shortcuts with leader:
 map <leader>/ :nohlsearch<CR>
+map <leader>gf :vert wincmd f<CR>
 map <leader>t :Tags<CR>
 map <leader>b :Files<CR>
 map <leader>f :Rg<CR>
