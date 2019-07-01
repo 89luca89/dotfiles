@@ -328,6 +328,7 @@
         - clang-analyzer
         - clang-tools-extra
         - clang-devel
+        - checkstyle
         - golang
         - golint
         - npm

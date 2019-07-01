@@ -6,6 +6,7 @@ Plug 'christoomey/vim-tmux-navigator'
 Plug 'vim-airline/vim-airline'
 Plug 'airblade/vim-gitgutter'
 Plug 'scrooloose/nerdtree'
+Plug 'terryma/vim-multiple-cursors'
 Plug 'junegunn/fzf'                                             " fuzzy find all the things
 Plug 'junegunn/fzf.vim'                                         " fuzzy find all the things
 " LSP + completion
@@ -22,7 +23,7 @@ filetype plugin indent on                                       " required
 
 autocmd VimResized * :wincmd =
 let g:java_highlight_all=1
-let g:python_highlight_all=1
+let g:java_highlight_java_lang_ids=1
 let g:ansible_yamlKeyName = 'yamlKey'
 let g:ansible_attribute_highlight = 'ab'
 let g:ansible_name_highlight = 'd'
@@ -34,10 +35,6 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 " GitGutter Ripgrep
 let g:gitgutter_grep_command = 'rg --hidden --follow --glob "!.git/*"'
-" Ctrl+N relocate file explorer to opened file
-let NERDTreeShowHidden=1
-noremap <C-\> :NERDTreeToggle<CR>
-noremap <C-N> :NERDTreeFind<CR>
 let g:coc_global_extensions = [ 'coc-json', 'coc-xml', 'coc-go', 'coc-python', 'coc-java', 'coc-rls', 'coc-ultisnips' ]
 " ALE Linters (for non-lsp langs)
 let g:ale_set_quickfix = 1
@@ -48,9 +45,10 @@ let g:ale_linters = {
             \ 'sh':['shellcheck', 'checkbashisms'],
             \ 'yaml':['yamllint'],
             \ 'ansible':['ansible-lint'],
+            \ 'java':['checkstyle']
             \}
 let $FZF_DEFAULT_COMMAND="rg --files --hidden"
-let g:fzf_files_options = "--preview 'if file {1} | grep -i text; then ccat --color=always {1} ; fi'"
+let g:fzf_files_options = "--preview 'if file {1} | grep -i text; then highlight {1} --force -s molokai -O truecolor ; fi'"
 let g:fzf_tags_command = 'ctags -R'
 let g:fzf_action = {'alt-enter':'vsplit' }
 let mapleader = ' '
@@ -73,6 +71,10 @@ map <leader>] :call CocAction('jumpDefinition')<cr>
 map <leader>[ :call CocAction('jumpImplementation')<cr>
 map <leader>r :call CocAction('jumpReferences')<cr>
 map <leader>l :call CocAction('format')<cr>
+" leader+n or \ relocate file explorer to opened file
+let NERDTreeShowHidden=1
+map <leader>\ :NERDTreeToggle<CR>
+map <leader>n :NERDTreeFind<CR>
 " Ctrl+L Format Code
 " if not use the specific implementation
 noremap <C-L> <Esc>:w<CR>:mkview<CR>gg=G<CR>:loadview<CR>
