@@ -23,6 +23,12 @@ filetype plugin indent on                                       " required
 autocmd VimResized * :wincmd =
 let g:java_highlight_all=1
 let g:python_highlight_all=1
+let g:ansible_yamlKeyName = 'yamlKey'
+let g:ansible_attribute_highlight = "ob"
+let g:ansible_name_highlight = 'b'
+let g:ansible_extra_keywords_highlight = 1
+let g:ansible_normal_keywords_highlight = 'Define'
+let g:ansible_with_keywords_highlight = 'Operator'
 """ Airline -> bufferline
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
