@@ -46,6 +46,7 @@ let g:ale_linters = {
             \ 'ansible':['ansible-lint'],
             \ 'java':['checkstyle']
             \}
+let g:ale_yaml_yamllint_options = "-d '{extends: relaxed, rules: {line-length: {max: 160}}}'"
 let $FZF_DEFAULT_COMMAND="rg --files --hidden"
 let g:fzf_files_options = "--preview 'if file {1} | grep -i text; then highlight {1} --force -s molokai -O truecolor ; fi'"
 let g:fzf_tags_command = 'ctags -R'
@@ -71,6 +72,7 @@ map <leader>] :call CocAction('jumpDefinition')<cr>
 map <leader>[ :call CocAction('jumpImplementation')<cr>
 map <leader>r :call CocAction('jumpReferences')<cr>
 map <leader>l :call CocAction('format')<cr>
+map <leader>j :set ft=.jinja2<Left><Left><Left><Left><Left><Left><Left>
 " leader+n or \ relocate file explorer to opened file
 let NERDTreeShowHidden=1
 map <leader>\ :NERDTreeToggle<CR>
