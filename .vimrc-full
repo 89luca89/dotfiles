@@ -21,6 +21,7 @@ call plug#end()                                                 " required
 filetype plugin indent on                                       " required
 
 autocmd VimResized * :wincmd =
+let g:coc_global_extensions = [ 'coc-json', 'coc-xml', 'coc-go', 'coc-python', 'coc-java', 'coc-rls', 'coc-ultisnips' ]
 let g:java_highlight_all=1
 let g:java_highlight_java_lang_ids=1
 let g:ansible_yamlKeyName = 'yamlKey'
@@ -32,9 +33,6 @@ let g:ansible_with_keywords_highlight = 'Operator'
 """ Airline -> bufferline
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
-" GitGutter Ripgrep
-let g:gitgutter_grep_command = 'rg --hidden --follow --glob "!.git/*"'
-let g:coc_global_extensions = [ 'coc-json', 'coc-xml', 'coc-go', 'coc-python', 'coc-java', 'coc-rls', 'coc-ultisnips' ]
 " ALE Linters (for non-lsp langs)
 let g:ale_set_quickfix = 1
 let g:ale_linters_explicit = 1
