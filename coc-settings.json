@@ -24,15 +24,10 @@
             "command": "clangd",
             "filetypes": [
                 "c",
-                "cpp",
-                "cuda",
-                "objc",
-                "objcpp"
+                "cpp"
             ],
             "rootPatterns": [
-                ".vim/",
-                ".git/",
-                ".hg/"
+                ".git/"
             ]
         }
     }
