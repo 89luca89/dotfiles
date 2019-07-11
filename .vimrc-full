@@ -5,7 +5,6 @@ Plug 'christoomey/vim-tmux-navigator'
 " utilities
 Plug 'vim-airline/vim-airline'
 Plug 'airblade/vim-gitgutter'
-Plug 'scrooloose/nerdtree'
 Plug 'junegunn/fzf'                                             " fuzzy find all the things
 Plug 'junegunn/fzf.vim'                                         " fuzzy find all the things
 " LSP + completion
@@ -23,7 +22,7 @@ filetype plugin indent on                                       " required
 autocmd VimResized * :wincmd =
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
-let g:coc_global_extensions = [ 'coc-json', 'coc-xml', 'coc-go', 'coc-python', 'coc-java', 'coc-rls', 'coc-ultisnips' ]
+let g:coc_global_extensions = [ 'coc-go', 'coc-python', 'coc-java', 'coc-rls', 'coc-ultisnips' ]
 let g:java_highlight_all=1
 let g:java_highlight_java_lang_ids=1
 let g:ansible_yamlKeyName = 'yamlKey'
@@ -39,15 +38,21 @@ let g:ale_fix_on_save = 1
 let g:ale_fixers = {'*':['remove_trailing_lines', 'trim_whitespace']}
 let g:ale_linters = {
             \ 'sh':['shellcheck', 'checkbashisms'],
+            \ 'xml':['xmllint'],
+            \ 'json':['jsonlint'],
             \ 'yaml':['yamllint'],
-            \ 'ansible':['ansible-lint'],
-            \ 'java':['checkstyle']
+            \ 'ansible':['ansible-lint']
             \}
-let g:ale_yaml_yamllint_options = "-d '{extends: relaxed, rules: {line-length: {max: 160}}}'"
 let $FZF_DEFAULT_COMMAND="rg --files --hidden"
 let g:fzf_files_options = "--preview 'if file {1} | grep -i text; then highlight {1} --force -s molokai -O truecolor ; fi'"
 let g:fzf_tags_command = 'ctags -R'
 let g:fzf_action = {'alt-enter':'vsplit' }
+" Netrw setup
+let g:netrw_banner = 0
+let g:netrw_winsize = 20
+let g:netrw_liststyle = 3
+let g:netrw_browse_split = 4
+let g:netrw_altv = 1
 let mapleader = ' '
 " leader y/p to use system clipboard
 map <Leader>y "+y
@@ -70,17 +75,14 @@ map <leader>[ :call CocAction('jumpImplementation')<cr>
 map <leader>r :call CocAction('jumpReferences')<cr>
 map <leader>l :call CocAction('format')<cr>
 map <leader>j :set ft=.jinja2<Left><Left><Left><Left><Left><Left><Left>
-" leader+n or \ relocate file explorer to opened file
-let NERDTreeShowHidden=1
-map <leader>\ :NERDTreeToggle<CR>
-map <leader>n :NERDTreeFind<CR>
 " Ctrl+L Format Code
 " if not use the specific implementation
 noremap <C-L> <Esc>:w<CR>:mkview<CR>gg=G<CR>:loadview<CR>
 augroup autoformat_settings
     autocmd FileType typescript,javascript noremap <buffer> <C-L><Esc>:w<CR>:mkview<CR>:%!clang-format -style=Google %<CR>:loadview<CR>
     autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:!beautysh -f %<CR>:e<CR>
-    autocmd FileType c,cpp,java,json,xml,go,rust,python noremap <buffer> <C-L> :call CocAction('format')<CR>
+    autocmd FileType json noremap <buffer> <C-L> <Esc>:w<CR>:!jsonlint -f %<CR>:e<CR>
+    autocmd FileType c,cpp,java,go,rust,python noremap <buffer> <C-L> :call CocAction('format')<CR>
 augroup END
 " navigate tabs Tab (fw) S-Tab (prev)
 map <Tab> :bn<CR>
@@ -109,7 +111,6 @@ set mouse=a                                                       " it's always 
 set undofile undolevels=1000 undodir=$HOME/.vim/undo              " Undo file and directory
 set directory=$HOME/.vim/swap                                     " Custom swapfile directory
 set path+=** wildmenu                                             " Recursive path Tab autocomplete
-set wildmenu
 set lazyredraw ttyfast ttimeoutlen=20                             " Faster redraw
 set hidden                                                        " change buffer without saving
 set backspace=indent,eol,start                                    " http://vi.stackexchange.com/a/2163
