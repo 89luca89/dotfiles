@@ -709,6 +709,24 @@
       become: true
       when: not file_exists.stat.exists
 
+      #echo '
+      #[Unit]
+      #Description=Keep a tunnel to 'homeserver01' open
+      #After=network-online.target
+      #
+      #
+      #[Service]
+      #Type=forking
+      #User=luca-linux
+      #ExecStart=/usr/bin/autossh -M 20100 -N -f -o "ServerAliveInterval 30" -o "ServerAliveCountMax 3" -o "ExitOnForwardFailure=yes" -F /dev/null -i /home/luca-linux/.ssh/id_rsa -R 9100:localhost:22 -p 50363 -l root 89luca89.homelinuxserver.org
+      #
+      #ExecStop=/usr/bin/pkill -9 -u autotunnel
+      #Restart=always
+      #
+      #[Install]
+      #WantedBy=multi-user.target
+      #' | sudo tee /etc/systemd/system/autossh.service
+
 #     ######## BBSWITCH ################
 #     sudo dnf copr enable chenxiaolong/bumblebee
 #     echo "blacklist nouveau
