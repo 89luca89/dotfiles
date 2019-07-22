@@ -81,7 +81,7 @@ noremap <C-L> <Esc>:w<CR>:mkview<CR>gg=G<CR>:loadview<CR>
 augroup autoformat_settings
     autocmd FileType typescript,javascript noremap <buffer> <C-L><Esc>:w<CR>:mkview<CR>:%!clang-format -style=Google %<CR>:loadview<CR>
     autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:!beautysh -f %<CR>:e<CR>
-    autocmd FileType json noremap <buffer> <C-L> <Esc>:w<CR>:!jsonlint -f %<CR>:e<CR>
+    autocmd FileType json noremap <buffer> <C-L> <Esc>:w<CR>:%!jsonlint -f %<CR>:e<CR>
     autocmd FileType c,cpp,java,go,rust,python noremap <buffer> <C-L> :call CocAction('format')<CR>
 augroup END
 " navigate tabs Tab (fw) S-Tab (prev)
