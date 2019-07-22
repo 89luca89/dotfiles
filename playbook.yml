@@ -349,6 +349,27 @@
       become: true
       tags: pkg_install
 
+    - name: Install Cockpit
+      package:
+        cockpit-bridge
+        cockpit-composer
+        cockpit-dashboard
+        cockpit-docker
+        cockpit-kdump
+        cockpit-machines
+        cockpit-networkmanager
+        cockpit-ostree
+        cockpit-packagekit
+        cockpit-pcp
+        cockpit-podman
+        cockpit-selinux
+        cockpit-session-recording
+        cockpit-storaged
+        cockpit-system
+        cockpit-ws
+      become: true
+      tags: cockpit
+
       # LSP
       # c/cpp clangd -> clang-tools-extra
       # java -> https://download.eclipse.org/jdtls/milestones/?d
