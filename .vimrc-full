@@ -7,15 +7,15 @@ Plug 'vim-airline/vim-airline'
 Plug 'airblade/vim-gitgutter'
 Plug 'junegunn/fzf'                                             " fuzzy find all the things
 Plug 'junegunn/fzf.vim'                                         " fuzzy find all the things
+" Colorschemes
+Plug 'sheerun/vim-polyglot'                                     " Lang packs
+Plug 'flazz/vim-colorschemes'
 " LSP + completion
 Plug 'w0rp/ale'                                                 " ALE For langs not supported by LSP
 Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
 " Snippets
 Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
-" Colorschemes
-Plug 'sheerun/vim-polyglot'                                     " Lang packs
-Plug 'flazz/vim-colorschemes'
 call plug#end()                                                 " required
 filetype plugin indent on                                       " required
 

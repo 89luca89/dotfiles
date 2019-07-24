@@ -7,9 +7,9 @@ alias top='top -o %CPU'
 alias open='xdg-open'
 alias gcc='gcc -Wall -Wextra -lm'
 alias cl='clear'
-alias ssh='assh wrapper ssh'
+#alias ssh='assh wrapper ssh'
 alias whois="whois -h whois-servers.net"
-alias vi='vim -u ~/dotfiles/.vimrc-minimal'
+alias vi='vimx -u ~/dotfiles/.vimrc-minimal'
 alias vim='vimx'
 alias diff="diff --color=always"
 alias gitdiff="git difftool --tool=vimdiff --no-prompt"

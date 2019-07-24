@@ -2,6 +2,8 @@ set nocompatible              " required
 filetype off                  " required
 
 call plug#begin('~/.vim/plugged')
+" vim tmux navigator
+Plug 'christoomey/vim-tmux-navigator'
 Plug 'sheerun/vim-polyglot'
 Plug 'flazz/vim-colorschemes'
 call plug#end()               " required
@@ -19,6 +21,16 @@ map <leader>/ :nohlsearch<CR>
 map <leader>gf :vert wincmd f<CR>
 """ Ctrl-C copy visual selection to clipboard
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
+" vim-tmux-navigator shortcuts
+let g:tmux_navigator_no_mappings = 1
+nnoremap <silent> <M-Left> :TmuxNavigateLeft<cr>
+nnoremap <silent> <M-Down> :TmuxNavigateDown<cr>
+nnoremap <silent> <M-Up> :TmuxNavigateUp<cr>
+nnoremap <silent> <M-Right> :TmuxNavigateRight<cr>
+inoremap <silent> <M-Left> <Esc>:TmuxNavigateLeft<cr>
+inoremap <silent> <M-Down> <Esc>:TmuxNavigateDown<cr>
+inoremap <silent> <M-Up> <Esc>:TmuxNavigateUp<cr>
+inoremap <silent> <M-Right> <Esc>:TmuxNavigateRight<cr>
 " Remap Wq to wq to have less typo on exit
 cmap Wq wq
 set title nocompatible nowritebackup nobackup                    " required
@@ -42,3 +54,5 @@ syntax on
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
+set termguicolors
+colorscheme molokai
