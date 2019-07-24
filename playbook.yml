@@ -351,22 +351,25 @@
 
     - name: Install Cockpit
       package:
-        cockpit-bridge
-        cockpit-composer
-        cockpit-dashboard
-        cockpit-docker
-        cockpit-kdump
-        cockpit-machines
-        cockpit-networkmanager
-        cockpit-ostree
-        cockpit-packagekit
-        cockpit-pcp
-        cockpit-podman
-        cockpit-selinux
-        cockpit-session-recording
-        cockpit-storaged
-        cockpit-system
-        cockpit-ws
+        name: '{{ item }}'
+        state: present
+      with_items:
+        - cockpit-bridge
+        - cockpit-composer
+        - cockpit-dashboard
+        - cockpit-docker
+        - cockpit-kdump
+        - cockpit-machines
+        - cockpit-networkmanager
+        - cockpit-ostree
+        - cockpit-packagekit
+        - cockpit-pcp
+        - cockpit-podman
+        - cockpit-selinux
+        - cockpit-session-recording
+        - cockpit-storaged
+        - cockpit-system
+        - cockpit-ws
       become: true
       tags: cockpit
 
