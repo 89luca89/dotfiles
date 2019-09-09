@@ -3,6 +3,7 @@ call plug#begin('~/.vim/plugged')
 " vim tmux navigator
 Plug 'christoomey/vim-tmux-navigator'
 " utilities
+Plug 'scrooloose/nerdtree'
 Plug 'vim-airline/vim-airline'
 Plug 'airblade/vim-gitgutter'
 Plug 'scrooloose/nerdtree'
@@ -84,6 +85,8 @@ map <leader>j :set ft=.jinja2<Left><Left><Left><Left><Left><Left><Left>
 " Ctrl+L Format Code
 " if not use the specific implementation
 noremap <C-L> <Esc>:w<CR>:mkview<CR>gg=G<CR>:loadview<CR>
+noremap <C-B> <Esc>:NERDTreeToggle<CR>
+noremap <C-N> <Esc>:NERDTreeFind<CR>
 augroup autoformat_settings
     autocmd FileType c,cpp,java,typescript,javascript noremap <buffer> <C-L><Esc>:w<CR>:mkview<CR>:%!clang-format -style=Google %<CR>:loadview<CR>
     autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:!beautysh -f %<CR>:e<CR>
@@ -94,6 +97,8 @@ map <Tab> :bn<CR>
 map <S-Tab> :bp<CR>
 " Ctrl+C close buffer ( pipe commands to fix behaviour with splits and netrw/nerdtree)
 map <C-c> :bp<bar>sp<bar>bn<bar>bd!<CR>
+""" Ctrl-C copy visual selection to clipboard
+vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 " " Resize split window horizontally and vertically
 noremap <S-M-Up> :2winc+<cr>
 noremap <S-M-Down> :2winc-<cr>

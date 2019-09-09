@@ -177,8 +177,18 @@
         - http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_facts.distribution_version }}.noarch.rpm
         - https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
       become: true
-      tags: pkg_install
+      tags: rpmfusion
       when: not file_exists.stat.exists
+
+    - name: Install VSCodium
+      shell: |
+        rpm --import https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg
+        printf "[gitlab.com_paulcarroty_vscodium_repo]\nname=gitlab.com_paulcarroty_vscodium_repo\nbaseurl=https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/repos/rpms/\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg" |sudo tee -a /etc/yum.repos.d/vscodium.repo
+        dnf update
+        dnf install codium -y
+      become: true
+      tags: codium
+
 
     - name: Install Flathub
       flatpak_remote:
@@ -198,11 +208,10 @@
         - lzip
         - p7zip
         - p7zip-plugins
-        - unrar
         - xdotool
         - wmctrl
       become: true
-      tags: pkg_install
+      tags: term_pkg
 
       # See: https://github.com/ansible/ansible/issues/54949
     - name: Configure etckeeper.conf
@@ -210,6 +219,8 @@
         path: /etc/etckeeper/etckeeper.conf
         regexp: ^GIT_COMMIT_OPTIONS=.*
         line: GIT_COMMIT_OPTIONS="-q"
+      become: true
+      tags: term_pkg
 
     - name: Initialize Etckeeper
       shell: '{{ item }}'
@@ -218,6 +229,7 @@
         - etckeeper commit "Initial Commit"
       ignore_errors: true
       become: true
+      tags: term_pkg
 
     - name: Install Programs (Media Utilities)
       package:
@@ -247,7 +259,7 @@
         - compat-ffmpeg28-devel
         - gvfs-fuse
       become: true
-      tags: pkg_install
+      tags: media
 
     - name: Install Programs (GUI Programs)
       package:
@@ -285,7 +297,7 @@
         - VirtualBox
         - akmod-VirtualBox
       become: true
-      tags: pkg_install
+      tags: gui
 
     - name: Install Programs (Terminal Programs)
       package:
@@ -295,17 +307,14 @@
         - vim
         - vim-enhanced
         - vim-X11
-        - tmate
         - tmux
         - xclip
         - ripgrep
         - wmctrl
         - xdotool
-        - inotify-tools
-        - firejail
         - zsh
       become: true
-      tags: pkg_install
+      tags: term
 
     - name: install the 'Development tools' package group
       dnf:
@@ -315,7 +324,7 @@
         - '@C Development Tools and Libraries'
         - '@Development tools'
       become: true
-      tags: pkg_install
+      tags: devel
 
     - name: Install Programs (Programming Packages)
       package:
@@ -347,31 +356,7 @@
         - global-ctags
         - libxml2
       become: true
-      tags: pkg_install
-
-    - name: Install Cockpit
-      package:
-        name: '{{ item }}'
-        state: present
-      with_items:
-        - cockpit-bridge
-        - cockpit-composer
-        - cockpit-dashboard
-        - cockpit-docker
-        - cockpit-kdump
-        - cockpit-machines
-        - cockpit-networkmanager
-        - cockpit-ostree
-        - cockpit-packagekit
-        - cockpit-pcp
-        - cockpit-podman
-        - cockpit-selinux
-        - cockpit-session-recording
-        - cockpit-storaged
-        - cockpit-system
-        - cockpit-ws
-      become: true
-      tags: cockpit
+      tags: devel
 
       # LSP
       # c/cpp clangd -> clang-tools-extra
@@ -400,24 +385,12 @@
         - [pip-2, pip-3]
         - [setuptools, pylint, jedi, pyflakes, pycodestyle, autopep8, mccabe, rope, beautysh, demjson, yamllint, ansible-lint, clang, libclang-py3, neovim]
       become: true
+      tags: devel
 
     - name: Ensure {{ ansible_env.HOME }}/Programs Exists
       file:
         path: '{{ ansible_env.HOME }}/Programs'
         state: directory
-
-    - name: Download DrawIO
-      get_url:
-        url: https://github.com/jgraph/drawio-desktop/releases/download/v9.3.1/draw.io-x86_64-9.3.1.AppImage
-        dest: '{{ ansible_env.HOME }}/Programs/draw.io-x86_64-9.3.1.AppImage'
-        mode: '0755'
-
-    - name: Install Rsync-Time-Backup
-      git:
-        repo: https://github.com/laurent22/rsync-time-backup
-        dest: '{{ ansible_env.HOME }}/Programs/rsync-time-backup'
-        version: master
-        update: true
 
     - name: Setup GOLANG environment
       shell: |
@@ -426,6 +399,7 @@
         cd $(mktemp -d); go mod init tmp; go get -u github.com/jingweno/ccat
       args:
         executable: /bin/bash
+      tags: programs
 
     - name: Only Office (Repo)
       yum_repository:
@@ -436,6 +410,7 @@
         enabled: true
         file: onlyoffice
       become: true
+      tags: programs
 
     - name: Only Office (Links)
       file:
@@ -443,12 +418,15 @@
         dest: /usr/lib64/libcurl-gnutls.so.4
         state: link
         force: true
+      tags: programs
+      become: true
 
     - name: Only Office (Install)
       package:
         name: onlyoffice-desktopeditors
         state: present
       become: true
+      tags: programs
 
     - name: Libinput Gestures (Clone)
       git:
@@ -456,6 +434,7 @@
         dest: '{{ ansible_env.HOME }}/Programs/libinput-gestures'
         version: master
         update: true
+      tags: programs
 
     - name: Libinput Gestures (Group and Dependency)
       shell: '{{ item }}'
@@ -464,64 +443,14 @@
         - dnf install -y systemd-devel libinput-devel
         - cd {{ ansible_env.HOME }}/Programs/libinput-gestures; make install
       become: true
+      tags: programs
 
     - name: Libinput Gestures (Start and Autorun)
       shell: '{{ item }}'
       with_items:
         - libinput-gestures-setup autostart
         - libinput-gestures-setup start
-
-    - name: Opensnitch Install (Dnf Dependency)
-      package:
-        name: '{{ item }}'
-        state: present
-      with_items:
-        - protobuf-compiler
-        - libpcap-devel
-        - libnetfilter_queue-devel
-        - python3-grpcio
-      become: true
-
-    - name: Opensnitch Install (Userland Dependency)
-      shell: |
-        export GOPATH={{ ansible_env.HOME }}/.local/go
-        go get github.com/golang/protobuf/protoc-gen-go
-        go get github.com/golang/dep/cmd/dep
-        git clone https://github.com/evilsocket/opensnitch $GOPATH/src/github.com/evilsocket/opensnitch || true
-      args:
-        executable: /bin/bash
-      ignore_errors: true
-
-    - name: Opensnitch Stop
-      systemd:
-        name: opensnitchd
-        state: stopped
-        enabled: true
-      ignore_errors: true
-      become: true
-
-    - name: Opensnitch Install
-      shell: |
-        export GOPATH={{ ansible_env.HOME }}/.local/go
-        cd $GOPATH/src/github.com/evilsocket/opensnitch
-        make
-        make install
-        cd $GOPATH/src/github.com/evilsocket/opensnitch/daemon
-        make
-        make install
-        cd $GOPATH/src/github.com/evilsocket/opensnitch/daemon
-        make
-        make install
-      args:
-        executable: /bin/bash
-      become: true
-
-    - name: Opensnitch Start
-      systemd:
-        name: opensnitchd
-        state: started
-        enabled: true
-      become: true
+      tags: programs
 
     - name: FSTrim Enable
       systemd:
@@ -712,23 +641,23 @@
       become: true
       when: not file_exists.stat.exists
 
-      #echo '
-      #[Unit]
-      #Description=Keep a tunnel to 'homeserver01' open
-      #After=network-online.target
-      #
-      #
-      #[Service]
-      #Type=forking
-      #User=luca-linux
-      #ExecStart=/usr/bin/autossh -M 20100 -N -f -o "ServerAliveInterval 30" -o "ServerAliveCountMax 3" -o "ExitOnForwardFailure=yes" -F /dev/null -i /home/luca-linux/.ssh/id_rsa -R 9100:localhost:22 -p 50363 -l root 89luca89.homelinuxserver.org
-      #
-      #ExecStop=/usr/bin/pkill -9 -u autotunnel
-      #Restart=always
-      #
-      #[Install]
-      #WantedBy=multi-user.target
-      #' | sudo tee /etc/systemd/system/autossh.service
+#echo '
+#[Unit]
+#Description=Keep a tunnel to homeserver01 open
+#After=network-online.target
+
+
+#[Service]
+#Type=forking
+#User=luca-linux
+#ExecStart=/usr/bin/autossh -M 20000 -N -f -o "ServerAliveInterval 30" -o "ServerAliveCountMax 3" -o "ExitOnForwardFailure=yes" -F /dev/null -i /home/luca-linux/.ssh/id_rsa -R 0.0.0.0:9300:localhost:22 -p 50362 -l root luca-lan.privatedns.org
+
+#ExecStop=/usr/bin/killall -9 autossh
+#Restart=always
+
+#[Install]
+#WantedBy=multi-user.target
+#' | sudo tee /etc/systemd/system/autossh.service
 
 #     ######## BBSWITCH ################
 #     sudo dnf copr enable chenxiaolong/bumblebee
