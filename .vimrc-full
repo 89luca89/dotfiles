@@ -13,7 +13,8 @@ Plug 'junegunn/fzf.vim'                                         " fuzzy find all
 Plug 'sheerun/vim-polyglot'                                     " Lang packs
 Plug 'flazz/vim-colorschemes'
 " LSP + completion
-Plug 'w0rp/ale'                                                 " ALE For langs not supported by LSP
+Plug 'w0rp/ale'
+Plug 'autozimu/languageclient-neovim', { 'branch': 'next', 'do': 'bash install.sh' }          " LSP For langs not supported by ALE
 Plug 'shougo/deoplete.nvim'
 " Snippets
 Plug 'sirver/ultisnips'
@@ -46,14 +47,25 @@ let g:ale_linters_explicit = 1
 let g:ale_fix_on_save = 1
 let g:ale_fixers = {'*':['remove_trailing_lines', 'trim_whitespace']}
 let g:ale_linters = {
-            \ 'c':['ccls', 'gcc'],
-            \ 'cpp':['ccls', 'gcc'],
-            \ 'sh':['shellcheck', 'language_server'],
-            \ 'python': ['pyls', 'flake8'],
+            \ 'sh':['shellcheck', 'shell'],
+            \ 'python': ['flake8'],
             \ 'xml':['xmllint'],
             \ 'json':['jsonlint'],
             \ 'yaml':['yamllint'],
             \ 'ansible':['ansible-lint']
+            \}
+" LanguageClient Setup
+let g:deoplete#enable_at_startup = 1
+let g:LanguageClient_autoStart = 1
+let g:LanguageClient_diagnosticsEnable = 1
+let g:LanguageClient_diagnosticsList="Quickfix"
+let g:LanguageClient_serverCommands = {
+            \ 'c': ['clangd'],
+            \ 'cpp': ['clangd'],
+            \ 'python': ['pyls'],
+            \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
+            \ 'go' : ['~/.local/go/bin/go-langserver'],
+            \ 'sh': ['~/.npm-packages/bin/bash-language-server', 'start']
             \}
 let $FZF_DEFAULT_COMMAND="rg --files --hidden"
 let g:fzf_files_options = "--preview 'if file {1} | grep -i text; then highlight {1} --force -s molokai -O truecolor ; fi'"
