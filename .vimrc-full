@@ -138,6 +138,7 @@ set encoding=utf8
 set background=dark
 " set termguicolors
 highlight Pmenu ctermbg=Black ctermfg=White
+hi LineNr ctermfg=240
 highlight Normal ctermbg=235 ctermfg=White
 highlight ColorColumn ctermbg=234
 highlight VertSplit ctermbg=234 ctermfg=234
@@ -146,6 +147,7 @@ map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
+        hi LineNr ctermfg=240
         highlight Pmenu ctermbg=Black ctermfg=White
         highlight Normal ctermbg=235 ctermfg=White
         highlight ColorColumn ctermbg=234
@@ -158,4 +160,3 @@ function! ToggleTheme()
         highlight VertSplit ctermbg=255 ctermfg=255
     endif
 endfunction
-
