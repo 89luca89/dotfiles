@@ -136,16 +136,26 @@ syntax on
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
-set termguicolors
-colorscheme molokai
+" set termguicolors
+highlight Pmenu ctermbg=Black ctermfg=White
+highlight Normal ctermbg=235 ctermfg=White
+highlight ColorColumn ctermbg=234
+highlight VertSplit ctermbg=234 ctermfg=234
 " Toggle Theme
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        colorscheme molokai
+        highlight Pmenu ctermbg=Black ctermfg=White
+        highlight Normal ctermbg=235 ctermfg=White
+        highlight ColorColumn ctermbg=234
+        highlight VertSplit ctermbg=234 ctermfg=234
     else
         set background=light
-        colorscheme xcode
+        highlight Pmenu ctermbg=255 ctermfg=Black
+        highlight Normal ctermbg=White ctermfg=Black
+        highlight ColorColumn ctermbg=255
+        highlight VertSplit ctermbg=255 ctermfg=255
     endif
 endfunction
+
