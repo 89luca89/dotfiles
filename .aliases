@@ -10,7 +10,7 @@ alias cl='clear'
 #alias ssh='assh wrapper ssh'
 alias whois="whois -h whois-servers.net"
 alias vi='vimx -u ~/dotfiles/.vimrc-minimal'
-alias vim='vimx'
+alias vim='vimx +NERDTree'
 alias diff="diff --color=always"
 alias gitdiff="git difftool --tool=vimdiff --no-prompt"
 export PATH=$HOME/bin:$PATH
