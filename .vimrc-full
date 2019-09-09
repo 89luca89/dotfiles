@@ -3,6 +3,7 @@ call plug#begin('~/.vim/plugged')
 " vim tmux navigator
 Plug 'christoomey/vim-tmux-navigator'
 " utilities
+Plug 'scrooloose/nerdtree'
 Plug 'vim-airline/vim-airline'
 Plug 'airblade/vim-gitgutter'
 Plug 'junegunn/fzf'                                             " fuzzy find all the things
@@ -79,6 +80,8 @@ map <leader>j :set ft=.jinja2<Left><Left><Left><Left><Left><Left><Left>
 " Ctrl+L Format Code
 " if not use the specific implementation
 noremap <C-L> <Esc>:w<CR>:mkview<CR>gg=G<CR>:loadview<CR>
+noremap <C-B> <Esc>:NERDTreeToggle<CR>
+noremap <C-N> <Esc>:NERDTreeFind<CR>
 augroup autoformat_settings
     autocmd FileType typescript,javascript noremap <buffer> <C-L><Esc>:w<CR>:mkview<CR>:%!clang-format -style=Google %<CR>:loadview<CR>
     autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:!beautysh -f %<CR>:e<CR>
