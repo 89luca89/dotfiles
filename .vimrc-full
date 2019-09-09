@@ -16,6 +16,7 @@ Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
 " Snippets
 Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
+Plug 'phenomenes/ansible-snippets'
 call plug#end()                                                 " required
 filetype plugin indent on                                       " required
 
@@ -89,6 +90,8 @@ map <Tab> :bn<CR>
 map <S-Tab> :bp<CR>
 " Ctrl+C close buffer ( pipe commands to fix behaviour with splits and netrw/nerdtree)
 map <C-c> :bp<bar>sp<bar>bn<bar>bd!<CR>
+""" Ctrl-C copy visual selection to clipboard
+vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 " " Resize split window horizontally and vertically
 noremap <S-M-Up> :2winc+<cr>
 noremap <S-M-Down> :2winc-<cr>

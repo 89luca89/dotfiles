@@ -180,6 +180,16 @@
       tags: pkg_install
       when: not file_exists.stat.exists
 
+    - name: Install VSCodium
+      shell: |
+        rpm --import https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg
+        printf "[gitlab.com_paulcarroty_vscodium_repo]\nname=gitlab.com_paulcarroty_vscodium_repo\nbaseurl=https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/repos/rpms/\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg" |sudo tee -a /etc/yum.repos.d/vscodium.repo
+        dnf update
+        dnf install codium
+      become: true
+      tags: pkg_install
+
+
     - name: Install Flathub
       flatpak_remote:
         name: flathub
@@ -348,30 +358,6 @@
         - libxml2
       become: true
       tags: pkg_install
-
-    - name: Install Cockpit
-      package:
-        name: '{{ item }}'
-        state: present
-      with_items:
-        - cockpit-bridge
-        - cockpit-composer
-        - cockpit-dashboard
-        - cockpit-docker
-        - cockpit-kdump
-        - cockpit-machines
-        - cockpit-networkmanager
-        - cockpit-ostree
-        - cockpit-packagekit
-        - cockpit-pcp
-        - cockpit-podman
-        - cockpit-selinux
-        - cockpit-session-recording
-        - cockpit-storaged
-        - cockpit-system
-        - cockpit-ws
-      become: true
-      tags: cockpit
 
       # LSP
       # c/cpp clangd -> clang-tools-extra
@@ -712,23 +698,23 @@
       become: true
       when: not file_exists.stat.exists
 
-      #echo '
-      #[Unit]
-      #Description=Keep a tunnel to 'homeserver01' open
-      #After=network-online.target
-      #
-      #
-      #[Service]
-      #Type=forking
-      #User=luca-linux
-      #ExecStart=/usr/bin/autossh -M 20100 -N -f -o "ServerAliveInterval 30" -o "ServerAliveCountMax 3" -o "ExitOnForwardFailure=yes" -F /dev/null -i /home/luca-linux/.ssh/id_rsa -R 9100:localhost:22 -p 50363 -l root 89luca89.homelinuxserver.org
-      #
-      #ExecStop=/usr/bin/pkill -9 -u autotunnel
-      #Restart=always
-      #
-      #[Install]
-      #WantedBy=multi-user.target
-      #' | sudo tee /etc/systemd/system/autossh.service
+#echo '
+#[Unit]
+#Description=Keep a tunnel to homeserver01 open
+#After=network-online.target
+
+
+#[Service]
+#Type=forking
+#User=luca-linux
+#ExecStart=/usr/bin/autossh -M 20000 -N -f -o "ServerAliveInterval 30" -o "ServerAliveCountMax 3" -o "ExitOnForwardFailure=yes" -F /dev/null -i /home/luca-linux/.ssh/id_rsa -R 0.0.0.0:9300:localhost:22 -p 50362 -l root luca-lan.privatedns.org
+
+#ExecStop=/usr/bin/killall -9 autossh
+#Restart=always
+
+#[Install]
+#WantedBy=multi-user.target
+#' | sudo tee /etc/systemd/system/autossh.service
 
 #     ######## BBSWITCH ################
 #     sudo dnf copr enable chenxiaolong/bumblebee
