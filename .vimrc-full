@@ -5,6 +5,7 @@ Plug 'christoomey/vim-tmux-navigator'
 " utilities
 Plug 'vim-airline/vim-airline'
 Plug 'airblade/vim-gitgutter'
+Plug 'scrooloose/nerdtree'
 Plug 'junegunn/fzf'                                             " fuzzy find all the things
 Plug 'junegunn/fzf.vim'                                         " fuzzy find all the things
 " Colorschemes
@@ -12,17 +13,21 @@ Plug 'sheerun/vim-polyglot'                                     " Lang packs
 Plug 'flazz/vim-colorschemes'
 " LSP + completion
 Plug 'w0rp/ale'                                                 " ALE For langs not supported by LSP
-Plug 'neoclide/coc.nvim', {'do': 'yarn install --frozen-lockfile'}
+Plug 'shougo/deoplete.nvim'
 " Snippets
 Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
+Plug 'phenomenes/ansible-snippets'
+" neovim compatibility
+Plug 'roxma/nvim-yarp'
+Plug 'roxma/vim-hug-neovim-rpc'
+
 call plug#end()                                                 " required
 filetype plugin indent on                                       " required
 
 autocmd VimResized * :wincmd =
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
-let g:coc_global_extensions = [ 'coc-go', 'coc-python', 'coc-java', 'coc-rls', 'coc-ultisnips' ]
 let g:java_highlight_all=1
 let g:java_highlight_java_lang_ids=1
 let g:ansible_yamlKeyName = 'yamlKey'
@@ -32,12 +37,18 @@ let g:ansible_extra_keywords_highlight = 1
 let g:ansible_normal_keywords_highlight = 'Define'
 let g:ansible_with_keywords_highlight = 'Operator'
 " ALE Linters (for non-lsp langs)
+let g:deoplete#enable_at_startup = 1
+let g:deoplete#enable_refresh_always = 1
+let g:ale_completion_enabled = 1
 let g:ale_set_quickfix = 1
 let g:ale_linters_explicit = 1
 let g:ale_fix_on_save = 1
 let g:ale_fixers = {'*':['remove_trailing_lines', 'trim_whitespace']}
 let g:ale_linters = {
-            \ 'sh':['shellcheck', 'checkbashisms'],
+            \ 'c':['ccls', 'gcc'],
+            \ 'cpp':['ccls', 'gcc'],
+            \ 'sh':['shellcheck', 'language_server'],
+            \ 'python': ['pyls', 'flake8'],
             \ 'xml':['xmllint'],
             \ 'json':['jsonlint'],
             \ 'yaml':['yamllint'],
@@ -47,12 +58,9 @@ let $FZF_DEFAULT_COMMAND="rg --files --hidden"
 let g:fzf_files_options = "--preview 'if file {1} | grep -i text; then highlight {1} --force -s molokai -O truecolor ; fi'"
 let g:fzf_tags_command = 'ctags -R'
 let g:fzf_action = {'alt-enter':'vsplit' }
-" Netrw setup
-let g:netrw_banner = 0
-let g:netrw_winsize = 20
-let g:netrw_liststyle = 3
-let g:netrw_browse_split = 4
-let g:netrw_altv = 1
+" Nerdtree setup
+noremap <C-B> :NERDTreeToggle<CR>
+noremap <C-N> :NERDTreeFind<CR>
 let mapleader = ' '
 " leader y/p to use system clipboard
 map <Leader>y "+y
@@ -63,26 +71,23 @@ map <leader>gf :vert wincmd f<CR>
 map <leader>t :Tags<CR>
 map <leader>b :Files<CR>
 map <leader>f :Rg<CR>
-map <leader>e :CocList --normal diagnostics<CR>
 map <leader><leader>b :Buffers<CR>
 " Language client shortcuts with leader:
-map <leader>m :CocList actions<cr>
-map <leader>F :CocFix<cr>
-map <leader>h :call CocAction('doHover')<cr>
-map <leader>r :call CocAction('rename')<cr>
-map <leader>] :call CocAction('jumpDefinition')<cr>
-map <leader>[ :call CocAction('jumpImplementation')<cr>
-map <leader>r :call CocAction('jumpReferences')<cr>
-map <leader>l :call CocAction('format')<cr>
+map <leader>F :ALEFixSuggest<cr>
+map <leader>h :ALEHover<cr>
+" map <leader>r :call CocAction('rename')<cr>
+map <leader>] :ALEGoToDefinition<cr>
+" map <leader>[ :call CocAction('jumpImplementation')<cr>
+" map <leader>r :call CocAction('jumpReferences')<cr>
+map <leader>l :ALEFix<cr>
 map <leader>j :set ft=.jinja2<Left><Left><Left><Left><Left><Left><Left>
 " Ctrl+L Format Code
 " if not use the specific implementation
 noremap <C-L> <Esc>:w<CR>:mkview<CR>gg=G<CR>:loadview<CR>
 augroup autoformat_settings
-    autocmd FileType typescript,javascript noremap <buffer> <C-L><Esc>:w<CR>:mkview<CR>:%!clang-format -style=Google %<CR>:loadview<CR>
+    autocmd FileType c,cpp,java,typescript,javascript noremap <buffer> <C-L><Esc>:w<CR>:mkview<CR>:%!clang-format -style=Google %<CR>:loadview<CR>
     autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:!beautysh -f %<CR>:e<CR>
     autocmd FileType json noremap <buffer> <C-L> <Esc>:w<CR>:%!jsonlint -f %<CR>:e<CR>
-    autocmd FileType c,cpp,java,go,rust,python noremap <buffer> <C-L> :call CocAction('format')<CR>
 augroup END
 " navigate tabs Tab (fw) S-Tab (prev)
 map <Tab> :bn<CR>
