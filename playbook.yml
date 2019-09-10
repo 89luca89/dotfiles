@@ -502,6 +502,7 @@
         - { name: vm.dirty_background_ratio, value: 50 }
         - { name: vm.dirty_writeback_centisecs, value: 60000 }
         - { name: vm.dirty_expire_centisecs, value: 60000 }
+        - { name: fs.inotify.max_user_watches, value: 524288 }
       become: true
 
     - name: Check if Crypttab discard is enabled
