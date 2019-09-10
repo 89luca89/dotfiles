@@ -148,9 +148,12 @@ syntax on
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
-" set termguicolors
+" common
+highlight LineNr ctermfg=240
+highlight CursorLine cterm=NONE ctermbg=grey ctermfg=white
+highlight Search cterm=NONE ctermfg=white ctermbg=blue
+" dark
 highlight Pmenu ctermbg=Black ctermfg=White
-hi LineNr ctermfg=240
 highlight Normal ctermbg=235 ctermfg=White
 highlight ColorColumn ctermbg=234
 highlight VertSplit ctermbg=234 ctermfg=234
@@ -159,7 +162,6 @@ map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        hi LineNr ctermfg=240
         highlight Pmenu ctermbg=Black ctermfg=White
         highlight Normal ctermbg=235 ctermfg=White
         highlight ColorColumn ctermbg=234
