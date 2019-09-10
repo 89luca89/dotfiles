@@ -660,6 +660,15 @@
 #WantedBy=multi-user.target
 #' | sudo tee /etc/systemd/system/autossh.service
 
+# echo 'Section "InputClass"
+#         Identifier "libinput pointer catchall"
+#         MatchIsPointer "on"
+#         MatchDevicePath "/dev/input/event*"
+#         Driver "libinput"
+#         Option "ScrollMethod" "button"
+#         Option "ScrollButton" "2"
+# EndSection' | sudo tee -a  /usr/share/X11/xorg.conf.d/40-libinput.conf
+
 #     ######## BBSWITCH ################
 #     sudo dnf copr enable chenxiaolong/bumblebee
 #     echo "blacklist nouveau
