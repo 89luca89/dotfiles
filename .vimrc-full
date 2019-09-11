@@ -25,6 +25,9 @@ Plug 'Shougo/deoplete.nvim'
 Plug 'roxma/nvim-yarp'
 Plug 'roxma/vim-hug-neovim-rpc'
 
+"Theme
+Plug 'tomasiser/vim-code-dark'
+Plug 'endel/vim-github-colorscheme'
 
 call plug#end()                                                 " required
 filetype plugin indent on                                       " required
@@ -48,8 +51,6 @@ let g:ale_set_quickfix = 1
 let g:ale_linters_explicit = 1
 let g:ale_set_highlights = 0
 let g:ale_fix_on_save = 1
-let g:ale_sign_error = '⤫'
-let g:ale_sign_warning = '⚠'
 let g:ale_fixers = {'*':['remove_trailing_lines', 'trim_whitespace']}
 let g:ale_linters = {
             \ 'c': ['gcc'],
@@ -67,8 +68,6 @@ let g:deoplete#enable_at_startup = 1
 let g:deoplete#enable_smart_case = 1
 let g:deoplete#auto_completion_start_length = 2
 let g:deoplete#manual_completion_start_length = 1
-set completeopt+=preview
-set signcolumn=yes
 let g:LanguageClient_autoStart = 1
 let g:LanguageClient_diagnosticsEnable = 1
 let g:LanguageClient_serverCommands = {
@@ -113,14 +112,17 @@ map <leader>f :Rg<CR>
 map <leader><leader>b :Buffers<CR>
 map <leader>j :set ft=.jinja2<Left><Left><Left><Left><Left><Left><Left>
 
-" LSP shortcuts with leader:
-map <leader>F :ALEFixSuggest<cr>
-map <leader>h :ALEHover<cr>
-map <leader>r :call CocAction('rename')<cr>
-map <leader>] :ALEGoToDefinition<cr>
-map <leader>[ :call CocAction('jumpImplementation')<cr>
-map <leader>r :call CocAction('jumpReferences')<cr>
-map <leader>l :ALEFix<cr>
+" Language client shortcuts with leader:
+map <silent> <leader>h :call LanguageClient_textDocument_hover()<cr>
+map <silent> <leader>m :call LanguageClient_contextMenu()<cr>
+map <silent> <leader>r :call LanguageClient_textDocument_rename()<cr>
+map <silent> <leader>] :call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<cr>
+map <silent> <leader>[ :call LanguageClient#textDocument_references()<cr>
+map <silent> <leader>a :call LanguageClient#textDocument_codeAction()<cr>
+map <silent> <leader>l :call LanguageClient#textDocument_formatting()<cr>
+map <silent> <leader>i :call LanguageClient_textDocument_implementation()<cr>
+map <silent> <leader>td :call LanguageClient_textDocument_typeDefinition()<cr>
+map <silent> <leader>e :call LanguageClient#explainErrorAtPoint()<cr>
 
 " Ctrl+L Format Code
 " if not use the specific implementation
@@ -174,31 +176,17 @@ syntax on
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
-
-" common
-highlight LineNr ctermfg=240
-highlight CursorLine cterm=NONE ctermbg=grey ctermfg=white
-highlight Search cterm=NONE ctermfg=white ctermbg=blue
-" dark
-highlight Pmenu ctermbg=Black ctermfg=White
-highlight Normal ctermbg=235 ctermfg=White
-highlight ColorColumn ctermbg=234
-highlight VertSplit ctermbg=234 ctermfg=234
+set termguicolors
+colorscheme codedark
 
 " Toggle Theme
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        highlight Pmenu ctermbg=Black ctermfg=White
-        highlight Normal ctermbg=235 ctermfg=White
-        highlight ColorColumn ctermbg=234
-        highlight VertSplit ctermbg=234 ctermfg=234
+        colorscheme codedark
     else
         set background=light
-        highlight Pmenu ctermbg=255 ctermfg=Black
-        highlight Normal ctermbg=White ctermfg=Black
-        highlight ColorColumn ctermbg=255
-        highlight VertSplit ctermbg=255 ctermfg=255
+        colorscheme github
     endif
 endfunction
