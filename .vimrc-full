@@ -18,9 +18,9 @@ Plug 'phenomenes/ansible-snippets'
 " LSP
 Plug 'w0rp/ale'
 Plug 'Shougo/deoplete.nvim'
-Plug 'deoplete-plugins/deoplete-clang'
-Plug 'deoplete-plugins/deoplete-jedi'
-Plug 'wellle/tmux-complete.vim'
+Plug 'deoplete-plugins/deoplete-clang'                          " C/Cpp/ASM
+Plug 'deoplete-plugins/deoplete-jedi'                           " Python
+Plug 'wellle/tmux-complete.vim'                                 " Complete from text on other splits
 
 " Compatibility
 Plug 'roxma/nvim-yarp'
@@ -31,6 +31,8 @@ filetype plugin indent on                                       " required
 autocmd VimResized * :wincmd =
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
+
+" Langs
 let g:python_highlight_all=1
 let g:ansible_yamlKeyName = 'yamlKey'
 let g:ansible_attribute_highlight = 'ab'
@@ -83,8 +85,6 @@ noremap <C-N> :NERDTreeFind<CR>
 map <C-c> :bp<bar>sp<bar>bn<bar>bd!<CR>
 """ Ctrl-C copy visual selection to clipboard
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
-" Ctrl+P loclist
-map <silent> <C-P> :<C-u>vert copen<bar>:50wincmd><CR>
 
 let mapleader = ' '
 " leader y/p to use system clipboard
@@ -96,7 +96,7 @@ map <leader>gf :vert wincmd f<CR>
 map <leader>t :Tags<CR>
 map <leader>b :Files<CR>
 map <leader>f :Rg<CR>
-map <leader><leader>b :Buffers<CR>
+map <leader><Tab> :Buffers<CR>
 map <leader>j :set ft=.jinja2<Left><Left><Left><Left><Left><Left><Left>
 
 " Ctrl+L Format Code
@@ -129,7 +129,6 @@ inoremap <silent> <M-Down> <Esc>:TmuxNavigateDown<cr>
 inoremap <silent> <M-Up> <Esc>:TmuxNavigateUp<cr>
 inoremap <silent> <M-Right> <Esc>:TmuxNavigateRight<cr>
 
-" Remap Wq to wq to have less typo on exit
 set title nocompatible nowritebackup nobackup                    " required
 set mouse=a                                                       " it's always useful
 set undofile undolevels=1000 undodir=$HOME/.vim/undo              " Undo file and directory

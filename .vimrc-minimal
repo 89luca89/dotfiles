@@ -1,44 +1,13 @@
 set nocompatible              " required
 filetype off                  " required
-
-call plug#begin('~/.vim/plugged')
-" vim tmux navigator
-Plug 'christoomey/vim-tmux-navigator'
-Plug 'sheerun/vim-polyglot'
-Plug 'flazz/vim-colorschemes'
-call plug#end()               " required
 filetype plugin indent on     " required
-" Use Ripgrep = superfast
-set grepprg=rg
-" navigate tabs Tab (fw) S-Tab (prev)
-let mapleader = ' '
-map <Tab> :bn<CR>
-map <S-Tab> :bp<CR>
-map <Leader>p :e **/*
-map <Leader>v :vsplit **/*
-map <Leader>s :split **/*
-map <leader>/ :nohlsearch<CR>
-map <leader>gf :vert wincmd f<CR>
 """ Ctrl-C copy visual selection to clipboard
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
-" vim-tmux-navigator shortcuts
-let g:tmux_navigator_no_mappings = 1
-nnoremap <silent> <M-Left> :TmuxNavigateLeft<cr>
-nnoremap <silent> <M-Down> :TmuxNavigateDown<cr>
-nnoremap <silent> <M-Up> :TmuxNavigateUp<cr>
-nnoremap <silent> <M-Right> :TmuxNavigateRight<cr>
-inoremap <silent> <M-Left> <Esc>:TmuxNavigateLeft<cr>
-inoremap <silent> <M-Down> <Esc>:TmuxNavigateDown<cr>
-inoremap <silent> <M-Up> <Esc>:TmuxNavigateUp<cr>
-inoremap <silent> <M-Right> <Esc>:TmuxNavigateRight<cr>
-" Remap Wq to wq to have less typo on exit
-cmap Wq wq
 set title nocompatible nowritebackup nobackup                    " required
 set mouse=a                                                       " it's always useful
 set undofile undolevels=1000 undodir=$HOME/.vim/undo              " Undo file and directory
 set directory=$HOME/.vim/swap                                     " Custom swapfile directory
 set path+=** wildmenu                                             " Recursive path Tab autocomplete
-set wildmenu
 set lazyredraw ttyfast ttimeoutlen=20                             " Faster redraw
 set hidden                                                        " change buffer without saving
 set backspace=indent,eol,start                                    " http://vi.stackexchange.com/a/2163
@@ -49,10 +18,35 @@ set hlsearch incsearch ignorecase smartcase                       " Highlight se
 set nowrap number                                                 " play nicely with long lines
 set nomodeline                                                    " protect against https://github.com/numirias/security/blob/master/doc/2019-06-04_ace-vim-neovim.md
 set signcolumn=yes laststatus=2
-set colorcolumn=80
+let &colorcolumn=join(range(81,999),",")
 syntax on
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
-set termguicolors
-colorscheme molokai
+" common
+highlight LineNr ctermfg=240
+highlight CursorLine cterm=NONE ctermbg=grey ctermfg=white
+highlight Search cterm=NONE ctermfg=white ctermbg=blue
+" dark
+highlight Pmenu ctermbg=Black ctermfg=White
+highlight Normal ctermbg=235 ctermfg=White
+highlight ColorColumn ctermbg=234
+highlight VertSplit ctermbg=234 ctermfg=234
+
+" Toggle Theme
+map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
+function! ToggleTheme()
+    if &background == 'light'
+        set background=dark
+        highlight Pmenu ctermbg=Black ctermfg=White
+        highlight Normal ctermbg=235 ctermfg=White
+        highlight ColorColumn ctermbg=234
+        highlight VertSplit ctermbg=234 ctermfg=234
+    else
+        set background=light
+        highlight Pmenu ctermbg=255 ctermfg=Black
+        highlight Normal ctermbg=White ctermfg=Black
+        highlight ColorColumn ctermbg=255
+        highlight VertSplit ctermbg=255 ctermfg=255
+    endif
+endfunction
