@@ -17,14 +17,20 @@ Plug 'phenomenes/ansible-snippets'
 
 " LSP
 Plug 'w0rp/ale'
-Plug 'Shougo/deoplete.nvim'
-Plug 'deoplete-plugins/deoplete-clang'                          " C/Cpp/ASM
+Plug 'shougo/deoplete.nvim'
+Plug 'shougo/neco-syntax'
+Plug 'deoplete-plugins/deoplete-clang'                          " C/C++//Obj-C/Obj-C++
 Plug 'deoplete-plugins/deoplete-jedi'                           " Python
 Plug 'wellle/tmux-complete.vim'                                 " Complete from text on other splits
 
 " Compatibility
 Plug 'roxma/nvim-yarp'
 Plug 'roxma/vim-hug-neovim-rpc'
+
+"Theme
+Plug 'tomasiser/vim-code-dark'
+Plug 'endel/vim-github-colorscheme'
+
 call plug#end()                                                 " required
 filetype plugin indent on                                       " required
 
@@ -103,10 +109,10 @@ map <leader>j :set ft=.jinja2<Left><Left><Left><Left><Left><Left><Left>
 " if not use the specific implementation
 noremap <C-L> <Esc>:w<CR>:mkview<CR>gg=G<CR>:loadview<CR>
 augroup autoformat_settings
-  autocmd FileType c,cpp,java,typescript,javascript noremap <buffer> <C-L><Esc>:w<CR>:mkview<CR>:%!clang-format -style=Google %<CR>:loadview<CR>
-  autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:!beautysh -f %<CR>:e<CR>
-  autocmd FileType json noremap <buffer> <C-L> <Esc>:w<CR>:%!jsonlint -f %<CR>:e<CR>
-  autocmd FileType python noremap <buffer> <C-L> <Esc>:w<CR>:%!autopep8 %<CR>
+    autocmd FileType c,cpp,java,typescript,javascript noremap <buffer> <C-L><Esc>:w<CR>:mkview<CR>:%!clang-format -style=Google %<CR>:loadview<CR>
+    autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:!beautysh -f %<CR>:e<CR>
+    autocmd FileType json noremap <buffer> <C-L> <Esc>:w<CR>:%!jsonlint -f %<CR>:e<CR>
+    autocmd FileType python noremap <buffer> <C-L> <Esc>:w<CR>:%!autopep8 %<CR>
 augroup END
 
 " navigate tabs Tab (fw) S-Tab (prev)
@@ -149,30 +155,17 @@ syntax on
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
-" common
-highlight LineNr ctermfg=240
-highlight CursorLine cterm=NONE ctermbg=grey ctermfg=white
-highlight Search cterm=NONE ctermfg=white ctermbg=blue
-" dark
-highlight Pmenu ctermbg=Black ctermfg=White
-highlight Normal ctermbg=235 ctermfg=White
-highlight ColorColumn ctermbg=234
-highlight VertSplit ctermbg=234 ctermfg=234
+set termguicolors
+colorscheme codedark
 
 " Toggle Theme
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        highlight Pmenu ctermbg=Black ctermfg=White
-        highlight Normal ctermbg=235 ctermfg=White
-        highlight ColorColumn ctermbg=234
-        highlight VertSplit ctermbg=234 ctermfg=234
+colorscheme codedark
     else
         set background=light
-        highlight Pmenu ctermbg=255 ctermfg=Black
-        highlight Normal ctermbg=White ctermfg=Black
-        highlight ColorColumn ctermbg=255
-        highlight VertSplit ctermbg=255 ctermfg=255
+        colorscheme github
     endif
 endfunction
