@@ -18,10 +18,6 @@
         - '{{ ansible_env.HOME }}/.vim/syntax'
       tags: dotfiles
 
-    - name: Install yarn for coc.nvim
-      command: curl --compressed -o- -L https://yarnpkg.com/install.sh | bash
-      tags: dotfiles
-
     - name: Install scripts before starting dotfiles
       get_url:
         url: '{{ item.src }}'
@@ -62,7 +58,6 @@
         - { src: "~/dotfiles/.npmrc", dest: "~/.npmrc" }
         - { src: "~/dotfiles/.ctags", dest: "~/.ctags" }
         - { src: "~/dotfiles/.clang-format", dest: "~/.clang-format" }
-        - { src: "~/dotfiles/coc-settings.json", dest: "~/.vim/coc-settings.json" }
         - { src: "~/dotfiles/libinput-gestures.conf", dest: "~/.config/libinput-gestures.conf" }
       tags: dotfiles
 
@@ -168,6 +163,7 @@
       stat:
         path: /etc/yum.repos.d/rpmfusion-free.repo
       register: file_exists
+      tags: rpmfusion
     - name: Install the rpmfusion and fonts repo packages
       dnf:
         name: '{{ item }}'
@@ -196,6 +192,7 @@
         state: present
         flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
         method: user
+      tags: flathub
 
     - name: Install Programs (Generic Utilities)
       package:
@@ -282,12 +279,7 @@
         - nautilus
         - redhat-menus
         - libnotify
-        - libnotify-devel
-        - libreoffice-calc
         - libreoffice-draw
-        - libreoffice-impress
-        - libreoffice-math
-        - libreoffice-writer
         - telegram-desktop
         - keepassxc
         - gparted
@@ -331,19 +323,13 @@
         name: '{{ item }}'
         state: present
       with_items:
-        - java
-        - java-devel
         - clang
-        - clang-analyzer
-        - clang-tools-extra
-        - clang-devel
         - checkstyle
         - golang
         - golint
         - npm
         - nodejs
         - ShellCheck
-        - devscripts-checkbashisms
         - ncurses-compat-libs
         - boost-devel
         - python2
@@ -383,7 +369,7 @@
         executable: '{{ item[0] }}'
       with_nested:
         - [pip-2, pip-3]
-        - [setuptools, pylint, jedi, pyflakes, pycodestyle, autopep8, mccabe, rope, beautysh, demjson, yamllint, ansible-lint, clang, libclang-py3, neovim]
+        - [setuptools, pylint, jedi, pyflakes, pycodestyle, autopep8, mccabe, rope, beautysh, demjson, yamllint, ansible-lint]
       become: true
       tags: devel
 
@@ -391,6 +377,7 @@
       file:
         path: '{{ ansible_env.HOME }}/Programs'
         state: directory
+      tags: programs
 
     - name: Setup GOLANG environment
       shell: |
@@ -588,13 +575,16 @@
       register: test_grep
       become: true
       ignore_errors: true
+      tags: grub
     - name: Deploy Grub Flags
       shell: |
         sed -i 's/quiet/quiet nmi_watchdog=0 pcie_aspm.policy=powersupersave \
         pcie_aspm=force drm.debug=0 drm.vblankoffdelay=1 scsi_mod.use_blk_mq=1 mmc_mod.use_blk_mq=1 \
-        pti=off spectre_v2=off l1tf=off nospec_store_bypass_disable no_stf_barrier/g' /etc/fstab
+        pti=off spectre_v2=off l1tf=off nospec_store_bypass_disable no_stf_barrier/g' /etc/default/grub
       become: true
       when: test_grep.rc == 1
+      tags: grub
+
     - name: Update Grub and Initramfs
       shell: '{{ item }}'
       with_items:
