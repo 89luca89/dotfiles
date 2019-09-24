@@ -155,7 +155,6 @@ syntax on
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
-set termguicolors
 colorscheme codedark
 
 " Toggle Theme
@@ -167,5 +166,9 @@ colorscheme codedark
     else
         set background=light
         colorscheme github
+        highlight Pmenu ctermbg=255 ctermfg=Black
+        highlight Normal ctermbg=White ctermfg=Black
+        highlight ColorColumn ctermbg=255
+        highlight VertSplit ctermbg=255 ctermfg=255
     endif
 endfunction
