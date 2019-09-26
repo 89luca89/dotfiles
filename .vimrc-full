@@ -28,8 +28,8 @@ Plug 'roxma/nvim-yarp'
 Plug 'roxma/vim-hug-neovim-rpc'
 
 "Theme
-Plug 'tomasiser/vim-code-dark'
 Plug 'endel/vim-github-colorscheme'
+Plug 'morhetz/gruvbox'
 
 call plug#end()                                                 " required
 filetype plugin indent on                                       " required
@@ -155,14 +155,17 @@ syntax on
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
-colorscheme codedark
+colorscheme gruvbox
+highlight ColorColumn ctermbg=235
+let g:gruvbox_contrast_dark = "hard"
 
 " Toggle Theme
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-colorscheme codedark
+        highlight ColorColumn ctermbg=235
+colorscheme gruvbox
     else
         set background=light
         colorscheme github
