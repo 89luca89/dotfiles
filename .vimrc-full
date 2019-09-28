@@ -3,7 +3,6 @@ call plug#begin('~/.vim/plugged')
 " vim tmux navigator
 Plug 'christoomey/vim-tmux-navigator'
 " utilities
-Plug 'scrooloose/nerdtree'
 Plug 'vim-airline/vim-airline'
 Plug 'airblade/vim-gitgutter'
 Plug 'junegunn/fzf'                                             " fuzzy find all the things
@@ -14,7 +13,6 @@ Plug 'sheerun/vim-polyglot'                                     " Lang packs
 Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'phenomenes/ansible-snippets'
-
 " LSP
 Plug 'w0rp/ale'
 Plug 'shougo/deoplete.nvim'
@@ -33,6 +31,11 @@ Plug 'morhetz/gruvbox'
 
 call plug#end()                                                 " required
 filetype plugin indent on                                       " required
+
+let g:netrw_banner = 0
+let g:netrw_liststyle = 3
+let g:netrw_winsize = 25
+let g:netrw_altv = 1
 
 autocmd VimResized * :wincmd =
 let g:airline#extensions#tabline#enabled = 1
@@ -83,12 +86,8 @@ let g:fzf_files_options = "--preview 'if file {1} | grep -i text; then highlight
 let g:fzf_tags_command = 'ctags -R'
 let g:fzf_action = {'alt-enter':'vsplit' }
 
-" Nerdtree setup
-noremap <C-B> :NERDTreeToggle<CR>
-noremap <C-N> :NERDTreeFind<CR>
-
-" Ctrl+C close buffer ( pipe commands to fix behaviour with splits and netrw/nerdtree)
-map <C-c> :bp<bar>sp<bar>bn<bar>bd!<CR>
+"map <C-c> :bp<bar>sp<bar>bn<bar>bd!<CR>
+map <C-c> :bd<CR>
 """ Ctrl-C copy visual selection to clipboard
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 
@@ -102,6 +101,7 @@ map <leader>gf :vert wincmd f<CR>
 map <leader>t :Tags<CR>
 map <leader>b :Files<CR>
 map <leader>f :Rg<CR>
+map <leader>\ :Lexplore<CR>
 map <leader><Tab> :Buffers<CR>
 map <leader>j :set ft=.jinja2<Left><Left><Left><Left><Left><Left><Left>
 
@@ -155,17 +155,17 @@ syntax on
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
-colorscheme gruvbox
-highlight ColorColumn ctermbg=235
 let g:gruvbox_contrast_dark = "hard"
+colorscheme gruvbox
+highlight ColorColumn ctermbg=233
 
 " Toggle Theme
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        highlight ColorColumn ctermbg=235
-colorscheme gruvbox
+        colorscheme gruvbox
+        highlight ColorColumn ctermbg=233
     else
         set background=light
         colorscheme github
