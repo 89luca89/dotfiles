@@ -176,16 +176,6 @@
       tags: rpmfusion
       when: not file_exists.stat.exists
 
-    - name: Install VSCodium
-      shell: |
-        rpm --import https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg
-        printf "[gitlab.com_paulcarroty_vscodium_repo]\nname=gitlab.com_paulcarroty_vscodium_repo\nbaseurl=https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/repos/rpms/\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg" |sudo tee -a /etc/yum.repos.d/vscodium.repo
-        dnf update
-        dnf install codium -y
-      become: true
-      tags: codium
-
-
     - name: Install Flathub
       flatpak_remote:
         name: flathub
@@ -265,19 +255,11 @@
       with_items:
         - eog
         - evince
+        - evolution
         - evolution-data-server
-        - flatpak
-        - gdm
-        - gnome-keyring
-        - gnome-menus
-        - gnome-screenshot
-        - gnome-shell
-        - gnome-terminal
         - gnome-tweak-tool
         - gigolo
         - mpv
-        - nautilus
-        - redhat-menus
         - libnotify
         - libreoffice-draw
         - telegram-desktop
@@ -286,8 +268,7 @@
         - gimp
         - syncthing
         - syncthing-gtk
-        - VirtualBox
-        - akmod-VirtualBox
+        - virt-manager
       become: true
       tags: gui
 
@@ -305,6 +286,9 @@
         - wmctrl
         - xdotool
         - zsh
+        - openssh-askpass
+        - libvirt
+        - "libvirt-daemon-*"
       become: true
       tags: term
 
@@ -327,8 +311,6 @@
         - checkstyle
         - golang
         - golint
-        - npm
-        - nodejs
         - ShellCheck
         - ncurses-compat-libs
         - boost-devel
@@ -344,32 +326,37 @@
       become: true
       tags: devel
 
-      # LSP
-      # c/cpp clangd -> clang-tools-extra
-      # java -> https://download.eclipse.org/jdtls/milestones/?d
-      # golang -> go-langserver
-      # rust -> rls
-      # python -> pyls
-      #
       # Linters
-      # shellcheck, checkbashisms
+      # shellcheck
+      # xmllint
       # jsonlint
       # ansible-lint
       # yamllint
+      # pylint
+      # clang/gcc
       #
       # Formatters:
       # jsonlint -> demjson
-      # autopep8
+      # autopep8,isort
       # beautysh
       # clang-format -> clang
     - name: Install Programs (Programming Packages) - pip
       pip:
-        name: '{{ item[1] }}'
+        name: '{{ item }}'
         state: present
-        executable: '{{ item[0] }}'
-      with_nested:
-        - [pip-2, pip-3]
-        - [setuptools, pylint, jedi, pyflakes, pycodestyle, autopep8, mccabe, rope, beautysh, demjson, yamllint, ansible-lint]
+        executable: pip3
+      with_items:
+        - setuptools
+        - pylint
+        - jedi
+        - pyflakes
+        - pycodestyle
+        - autopep8
+        - rope
+        - beautysh
+        - demjson
+        - yamllint
+        - ansible-lint
       become: true
       tags: devel
 
@@ -377,15 +364,6 @@
       file:
         path: '{{ ansible_env.HOME }}/Programs'
         state: directory
-      tags: programs
-
-    - name: Setup GOLANG environment
-      shell: |
-        export GOPATH={{ ansible_env.HOME }}/.local/go
-        cd $(mktemp -d); go mod init tmp; go get -u moul.io/assh
-        cd $(mktemp -d); go mod init tmp; go get -u github.com/jingweno/ccat
-      args:
-        executable: /bin/bash
       tags: programs
 
     - name: Only Office (Repo)
@@ -445,6 +423,7 @@
         state: started
         enabled: true
       become: true
+      tags: system
 
     - name: Install Power Management (Laptop)
       package:
@@ -456,6 +435,7 @@
         - tlp
         - tlp-rdw
       become: true
+      tags: system
 
     - name: Powertop Enable
       systemd:
@@ -463,6 +443,7 @@
         state: started
         enabled: true
       become: true
+      tags: system
 
     - name: Tlp Enable
       systemd:
@@ -470,6 +451,7 @@
         state: started
         enabled: true
       become: true
+      tags: system
 
     - name: Set sysctl variables
       sysctl:
@@ -491,26 +473,31 @@
         - { name: vm.dirty_expire_centisecs, value: 60000 }
         - { name: fs.inotify.max_user_watches, value: 524288 }
       become: true
+      tags: system
 
     - name: Check if Crypttab discard is enabled
       shell: grep discard /etc/crypttab
       register: test_grep
       become: true
       ignore_errors: true
+      tags: system
     - name: Enable Discard Crypttab
       shell: sed -i 's/none/none discard/g' /etc/crypttab
       become: true
       when: test_grep.rc == 1
+      tags: system
 
     - name: Check if fstab discard is enabled
       shell: grep "discard" /etc/crypttab
       register: test_grep
       become: true
       ignore_errors: true
+      tags: system
     - name: Enable Discard Fstab
       shell: sed -i 's/defaults/defaults,discard/g' /etc/fstab
       become: true
       when: test_grep.rc == 1
+      tags: system
 
     - name: Update fstab file with tmpfs /tmp
       lineinfile:
@@ -520,52 +507,63 @@
         state: present
         backup: true
       become: true
+      tags: system
 
     - name: Enable discard lvm
       shell: sed -i 's/issue_discards = 0/issue_discards = 1/g' /etc/lvm/lvm.conf
       become: true
+      tags: system
 
     - name: Blacklist unused kernel module
       kernel_blacklist:
         name: intel_powerclamp
         state: present
       become: true
+      tags: system
 
     - name: Check if /etc/modprobe.d/i915.conf exists
       stat:
         path: /etc/modprobe.d/i915.conf
       register: file_exists
+      tags: system
     - name: Set i915 driver options
       shell: echo "options i915 disable_power_well=0 enable_dc=2 enable_psr=3 enable_rc6=7 enable_fbc=1 powersave=1 semaphores=1" > /etc/modprobe.d/i915.conf
       become: true
       when: not file_exists.stat.exists
+      tags: system
 
     - name: Check if /etc/modprobe.d/snd_hda_intel.conf exists
       stat:
         path: /etc/modprobe.d/snd_hda_intel.conf
       register: file_exists
+      tags: system
     - name: Set Intel HDA driver options
       shell: echo 'options snd_hda_intel power_save_controlle=Y power_save=1' > /etc/modprobe.d/snd_hda_intel.conf
       become: true
       when: not file_exists.stat.exists
+      tags: system
 
     - name: Check if /etc/modprobe.d/e1000e.conf exists
       stat:
         path: /etc/modprobe.d/e1000e.conf
       register: file_exists
+      tags: system
     - name: Set Intel ETH driver options
       shell: echo 'options e1000e SmartPowerDownEnable=1' > /etc/modprobe.d/e1000e.conf
       become: true
       when: not file_exists.stat.exists
+      tags: system
 
     - name: Check if /etc/modprobe.d/iwlwifi.conf exists
       stat:
         path: /etc/modprobe.d/iwlwifi.conf
       register: file_exists
+      tags: system
     - name: Set Intel Wifi driver options
       shell: echo 'options iwlwifi power_save=Y power_level=5 iwlmvm power_scheme=3' > /etc/modprobe.d/iwlwifi.conf
       become: true
       when: not file_exists.stat.exists
+      tags: system
 
     - name: Check Grub Flags are deployed
       shell: |
@@ -573,13 +571,13 @@
       register: test_grep
       become: true
       ignore_errors: true
-      tags: grub
+      tags: system
     - name: Deploy Grub Flags
       shell: |
         sed -i 's/quiet/quiet nmi_watchdog=0 pcie_aspm.policy=powersupersave pcie_aspm=force drm.debug=0 drm.vblankoffdelay=1 scsi_mod.use_blk_mq=1 mmc_mod.use_blk_mq=1 mitigations=off/g' /etc/default/grub
       become: true
       when: test_grep.rc == 1
-      tags: grub
+      tags: system
 
     - name: Update Grub and Initramfs
       shell: '{{ item }}'
@@ -587,11 +585,13 @@
         - grub2-mkconfig -o $(find /boot -name "grub.cfg" -print | head -n 1)
         - dracut --force --regenerate-all -v
       become: true
+      tags: system
 
     - name: Check if /etc/modules-load.d/iosched.conf exists
       stat:
         path: /etc/modules-load.d/iosched.conf
       register: file_exists
+      tags: system
     - name: Load IO Schedulers at boot
       shell: echo {{ item }} >> /etc/modules-load.d/iosched.conf
       with_items:
@@ -600,11 +600,13 @@
         - kyber-iosched
       become: true
       when: not file_exists.stat.exists
+      tags: system
 
     - name: Check if /etc/udev/rules.d/powersave.rules exists
       stat:
         path: /etc/udev/rules.d/powersave.rules
       register: file_exists
+      tags: system
     - name: Set UDev Rules
       shell: echo {{ item }} >> /etc/udev/rules.d/powersave.rules
       with_items:
@@ -627,6 +629,9 @@
         - ACTION=="add|change", KERNEL=="sd[a-z]", RUN+="/usr/sbin/hdparm -B 1 /dev/%k"
       become: true
       when: not file_exists.stat.exists
+      tags: system
+
+# cp ~/Syncthing/Conf/Windows10LTSC2019.xml /etc/libvirt/qemu/
 
 #echo '
 #[Unit]
