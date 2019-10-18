@@ -1,7 +1,5 @@
 filetype off                  " required
 call plug#begin('~/.vim/plugged')
-" vim tmux navigator
-Plug 'christoomey/vim-tmux-navigator'
 " utilities
 Plug 'vim-airline/vim-airline'
 Plug 'airblade/vim-gitgutter'
@@ -13,12 +11,13 @@ Plug 'sheerun/vim-polyglot'                                     " Lang packs
 Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'phenomenes/ansible-snippets'
-" LSP
+" ALE
 Plug 'w0rp/ale'
+" Deoplete
 Plug 'shougo/deoplete.nvim'
-Plug 'shougo/neco-syntax'
 Plug 'deoplete-plugins/deoplete-clang'                          " C/C++//Obj-C/Obj-C++
 Plug 'deoplete-plugins/deoplete-jedi'                           " Python
+Plug 'deoplete-plugins/deoplete-tag'
 Plug 'wellle/tmux-complete.vim'                                 " Complete from text on other splits
 
 " Compatibility
@@ -32,14 +31,13 @@ Plug 'morhetz/gruvbox'
 call plug#end()                                                 " required
 filetype plugin indent on                                       " required
 
-let g:netrw_banner = 0
-let g:netrw_liststyle = 3
-let g:netrw_winsize = 25
-let g:netrw_altv = 1
-
 autocmd VimResized * :wincmd =
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
+
+" Gitgutter
+let g:gitgutter_grep = 'rg'
+let g:gitgutter_max_signs = 1000
 
 " Langs
 let g:python_highlight_all=1
@@ -56,7 +54,12 @@ let g:ale_set_quickfix = 1
 let g:ale_linters_explicit = 1
 let g:ale_set_highlights = 0
 let g:ale_fix_on_save = 1
-let g:ale_fixers = {'*':['remove_trailing_lines', 'trim_whitespace'], 'python':['isort', 'autopep8']}
+let g:ale_fixers = {
+            \ '*':['remove_trailing_lines', 'trim_whitespace'],
+            \ 'sh':['shfmt'],
+            \ 'xml':['xmllint'],
+            \ 'python':['autopep8','isort']
+            \}
 let g:ale_linters = {
             \ 'asm': ['gcc'],
             \ 'c': ['gcc'],
@@ -86,18 +89,15 @@ let g:fzf_files_options = "--preview 'if file {1} | grep -i text; then highlight
 let g:fzf_tags_command = 'ctags -R'
 let g:fzf_action = {'alt-enter':'vsplit' }
 
-"map <C-c> :bp<bar>sp<bar>bn<bar>bd!<CR>
-map <C-c> :bd<CR>
 """ Ctrl-C copy visual selection to clipboard
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
+nnoremap <C-c> :bd<CR>
 
 let mapleader = ' '
 " leader y/p to use system clipboard
 map <leader>y "+y
 map <leader>p "+p
 " Utility shortcuts with leader:
-map <leader>/ :nohlsearch<CR>
-map <leader>gf :vert wincmd f<CR>
 map <leader>t :Tags<CR>
 map <leader>b :Files<CR>
 map <leader>f :Rg<CR>
@@ -110,37 +110,26 @@ map <leader>j :set ft=.jinja2<Left><Left><Left><Left><Left><Left><Left>
 noremap <C-L> <Esc>:w<CR>:mkview<CR>gg=G<CR>:loadview<CR>
 augroup autoformat_settings
     autocmd FileType c,cpp,java,typescript,javascript noremap <buffer> <C-L><Esc>:w<CR>:mkview<CR>:%!clang-format -style=Google %<CR>:loadview<CR>
-    autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:!beautysh -f %<CR>:e<CR>
-    autocmd FileType json noremap <buffer> <C-L> <Esc>:w<CR>:%!jsonlint -f %<CR>:e<CR>
-    autocmd FileType python noremap <buffer> <C-L> <Esc>:w<CR>:%!autopep8 %<CR>
+    autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:!beautysh -f %<CR>:e<CR>:loadview<CR>
+    autocmd FileType json noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!jsonlint -f %<CR>:e<CR>:loadview<CR>
+    autocmd FileType python noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!autopep8 %<CR>:w<CR>:!isort %<CR><CR>:e<CR>:loadview<CR>
 augroup END
-
 " navigate tabs Tab (fw) S-Tab (prev)
 map <Tab> :bn<CR>
 map <S-Tab> :bp<CR>
+"map <C-c> :bp<bar>sp<bar>bn<bar>bd!<CR>
 " " Resize split window horizontally and vertically
 noremap <S-M-Up> :2winc+<cr>
 noremap <S-M-Down> :2winc-<cr>
-noremap <S-M-Left> :2winc><cr>
-noremap <S-M-Right> :2winc<<cr>
+noremap <S-M-Left> :2winc<<cr>
+noremap <S-M-Right> :2winc><cr>
 
-" vim-tmux-navigator shortcuts
-let g:tmux_navigator_no_mappings = 1
-nnoremap <silent> <M-Left> :TmuxNavigateLeft<cr>
-nnoremap <silent> <M-Down> :TmuxNavigateDown<cr>
-nnoremap <silent> <M-Up> :TmuxNavigateUp<cr>
-nnoremap <silent> <M-Right> :TmuxNavigateRight<cr>
-inoremap <silent> <M-Left> <Esc>:TmuxNavigateLeft<cr>
-inoremap <silent> <M-Down> <Esc>:TmuxNavigateDown<cr>
-inoremap <silent> <M-Up> <Esc>:TmuxNavigateUp<cr>
-inoremap <silent> <M-Right> <Esc>:TmuxNavigateRight<cr>
-
+set updatetime=500
 set title nocompatible nowritebackup nobackup                    " required
 set mouse=a                                                       " it's always useful
 set undofile undolevels=1000 undodir=$HOME/.vim/undo              " Undo file and directory
 set directory=$HOME/.vim/swap                                     " Custom swapfile directory
 set path+=** wildmenu                                             " Recursive path Tab autocomplete
-set lazyredraw ttyfast ttimeoutlen=20                             " Faster redraw
 set hidden                                                        " change buffer without saving
 set backspace=indent,eol,start                                    " http://vi.stackexchange.com/a/2163
 set splitright splitbelow                                         " Open new splits to the right and bottom
@@ -157,21 +146,24 @@ set encoding=utf8
 set background=dark
 let g:gruvbox_contrast_dark = "hard"
 colorscheme gruvbox
+highlight Normal ctermbg=232
+highlight SignColumn ctermbg=232
 highlight ColorColumn ctermbg=233
-
 " Toggle Theme
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
         colorscheme gruvbox
+        highlight Normal ctermbg=232
+        highlight SignColumn ctermbg=232
         highlight ColorColumn ctermbg=233
     else
         set background=light
         colorscheme github
-        highlight Pmenu ctermbg=255 ctermfg=Black
+        highlight Pmenu ctermbg=254 ctermfg=Black
         highlight Normal ctermbg=White ctermfg=Black
         highlight ColorColumn ctermbg=255
-        highlight VertSplit ctermbg=255 ctermfg=255
+        highlight VertSplit ctermbg=255 ctermfg=232
     endif
 endfunction
