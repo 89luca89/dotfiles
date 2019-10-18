@@ -18,7 +18,7 @@ fpath=(/usr/local/share/zsh-completions $fpath)
 ZSH_THEME="gnzh"
 CASE_SENSITIVE="true"
 
-plugins=(git ssh-agent zsh-autosuggestions history history-substring-search zsh-syntax-highlighting)
+plugins=(git zsh-autosuggestions history history-substring-search zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 source $HOME/.aliases
@@ -38,6 +38,12 @@ if [ -f $HOME/.localrc ]; then
 fi
 if [ "${TMUX}" ]; then
     export FZF_TMUX=1
+fi
+
+if [ -z "$SSH_AUTH_SOCK" ] ; then
+    eval `ssh-agent -s`
+    ssh-add ~/.ssh/id_rsa
+    ssh-add ~/.ssh/id_rsa_ext
 fi
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
