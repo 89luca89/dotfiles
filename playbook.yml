@@ -25,7 +25,6 @@
         mode: 0755
       with_items:
         - { src: "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim", dest: '{{ ansible_env.HOME }}/.vim/autoload' }
-        - { src: "https://raw.githubusercontent.com/rudes/vim-java/master/syntax/java.vim", dest: '{{ ansible_env.HOME }}/.vim/syntax' }
       tags: dotfiles
 
     - name: Check if Dotfile folder is present
@@ -113,8 +112,6 @@
         name: '{{ item }}'
         state: removed
       with_items:
-        - gnome-contacts
-        - gnome-calendar
         - gnome-documents
         - gnome-dictionary
         - gnome-photos
@@ -133,12 +130,6 @@
         - gnome-characters
         - gnome-font-viewer
         - yelp
-        - gnome-shell-extension-alternate-tab
-        - gnome-shell-extension-apps-menu
-        - gnome-shell-extension-background-logo
-        - gnome-shell-extension-launch-new-instance
-        - gnome-shell-extension-places-menu
-        - gnome-shell-extension-window-list
         - setroubleshoot
         - setroubleshoot-legacy
         - setroubleshoot-plugins
@@ -158,6 +149,7 @@
         group: luca-linux
         recurse: true
       become: true
+      tags: system
 
     - name: Check if rpmfusion exists
       stat:
@@ -366,32 +358,32 @@
         state: directory
       tags: programs
 
-    - name: Only Office (Repo)
-      yum_repository:
-        name: onlyoffice
-        baseurl: http://download.onlyoffice.com/repo/centos/main/noarch/
-        description: onlyoffice repo
-        gpgcheck: no
-        enabled: true
-        file: onlyoffice
-      become: true
-      tags: programs
+      #  - name: Only Office (Repo)
+      #    yum_repository:
+      #      name: onlyoffice
+      #      baseurl: http://download.onlyoffice.com/repo/centos/main/noarch/
+      #      description: onlyoffice repo
+      #      gpgcheck: no
+      #      enabled: true
+      #      file: onlyoffice
+      #    become: true
+      #    tags: programs
 
-    - name: Only Office (Links)
-      file:
-        src: /usr/lib64/libcurl.so.4.5.0
-        dest: /usr/lib64/libcurl-gnutls.so.4
-        state: link
-        force: true
-      tags: programs
-      become: true
+      #  - name: Only Office (Links)
+      #    file:
+      #      src: /usr/lib64/libcurl.so.4.5.0
+      #      dest: /usr/lib64/libcurl-gnutls.so.4
+      #      state: link
+      #      force: true
+      #    tags: programs
+      #    become: true
 
-    - name: Only Office (Install)
-      package:
-        name: onlyoffice-desktopeditors
-        state: present
-      become: true
-      tags: programs
+      #  - name: Only Office (Install)
+      #    package:
+      #      name: onlyoffice-desktopeditors
+      #      state: present
+      #    become: true
+      #    tags: programs
 
     - name: Libinput Gestures (Clone)
       git:
