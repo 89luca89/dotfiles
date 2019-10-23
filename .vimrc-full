@@ -24,6 +24,9 @@ Plug 'wellle/tmux-complete.vim'                                 " Complete from 
 Plug 'roxma/nvim-yarp'
 Plug 'roxma/vim-hug-neovim-rpc'
 
+" Theme
+Plug 'flazz/vim-colorschemes'
+
 call plug#end()                                                 " required
 filetype plugin indent on                                       " required
 
@@ -140,29 +143,20 @@ syntax on
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
-" common
-highlight LineNr ctermfg=240
-highlight CursorLine cterm=NONE ctermbg=grey ctermfg=white
-highlight Search cterm=NONE ctermfg=white ctermbg=blue
-" dark
-highlight Pmenu ctermbg=Black ctermfg=White
-highlight Normal ctermbg=234 ctermfg=White
-highlight ColorColumn ctermbg=233
-highlight VertSplit ctermbg=234 ctermfg=234
+colorscheme molokai
+set termguicolors
+highlight Normal guibg=#121212 guifg=#FFFFFF
+highlight ColorColumn guibg=#181818
 " Toggle Theme
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        highlight Pmenu ctermbg=Black ctermfg=White
-        highlight Normal ctermbg=234 ctermfg=White
-        highlight ColorColumn ctermbg=233
-        highlight VertSplit ctermbg=234 ctermfg=234
+        colorscheme molokai
+        highlight Normal guibg=#121212 guifg=#FFFFFF
+        highlight ColorColumn guibg=#181818
     else
         set background=light
-        highlight Pmenu ctermbg=255 ctermfg=Black
-        highlight Normal ctermbg=White ctermfg=Black
-        highlight ColorColumn ctermbg=255
-        highlight VertSplit ctermbg=255 ctermfg=255
+        colorscheme xcode
     endif
 endfunction
