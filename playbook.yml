@@ -183,6 +183,7 @@
       with_items:
         - etckeeper
         - flatpak
+        - highlight
         - cabextract
         - lzip
         - p7zip
