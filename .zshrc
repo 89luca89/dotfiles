@@ -15,10 +15,10 @@ fi
 # Zsh completion
 fpath=(/usr/local/share/zsh-completions $fpath)
 
-ZSH_THEME="gnzh"
+ZSH_THEME="gentoo"
 CASE_SENSITIVE="true"
 
-plugins=(git zsh-autosuggestions history history-substring-search zsh-syntax-highlighting)
+plugins=(zsh-autosuggestions zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 source $HOME/.aliases

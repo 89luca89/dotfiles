@@ -44,4 +44,12 @@ if [ "${TMUX}" ]; then
     export FZF_TMUX=1
 fi
 
+if [ -z "$SSH_AUTH_SOCK" ] ; then
+    eval `ssh-agent -s`
+    for key in $HOME/.ssh/id_*; do
+        echo $key
+        ssh-add $key
+    done
+fi
+
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
