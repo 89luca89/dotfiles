@@ -151,16 +151,16 @@ set encoding=utf8
 set background=dark
 colorscheme molokai
 set termguicolors
-highlight Normal guibg=#121212 guifg=#FFFFFF
-highlight ColorColumn guibg=#181818
+highlight Normal guibg=#151515 guifg=#FFFFFF
+highlight ColorColumn guibg=#101010
 " Toggle Theme
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
         colorscheme molokai
-        highlight Normal guibg=#121212 guifg=#FFFFFF
-        highlight ColorColumn guibg=#181818
+        highlight Normal guibg=#151515 guifg=#FFFFFF
+        highlight ColorColumn guibg=#101010
     else
         set background=light
         colorscheme xcode
