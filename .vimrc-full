@@ -6,39 +6,30 @@ Plug 'airblade/vim-gitgutter'
 Plug 'junegunn/fzf'                                             " fuzzy find all the things
 Plug 'junegunn/fzf.vim'                                         " fuzzy find all the things
 
-" Snippets
-Plug 'sheerun/vim-polyglot'                                     " Lang packs
-Plug 'sirver/ultisnips'
-Plug 'honza/vim-snippets'
-Plug 'phenomenes/ansible-snippets'
 " ALE
 Plug 'w0rp/ale'
 " Deoplete
-Plug 'shougo/deoplete.nvim'
-Plug 'deoplete-plugins/deoplete-clang'                          " C/C++//Obj-C/Obj-C++
-Plug 'deoplete-plugins/deoplete-jedi'                           " Python
-Plug 'deoplete-plugins/deoplete-tag'
+Plug 'prabirshrestha/async.vim'
+Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'prabirshrestha/asyncomplete-file.vim'
+Plug 'prabirshrestha/asyncomplete-tags.vim'
+Plug 'prabirshrestha/asyncomplete-buffer.vim'
+Plug 'prabirshrestha/asyncomplete-lsp.vim'
+Plug 'prabirshrestha/vim-lsp'
 Plug 'wellle/tmux-complete.vim'                                 " Complete from text on other splits
 
-" Compatibility
-Plug 'roxma/nvim-yarp'
-Plug 'roxma/vim-hug-neovim-rpc'
+" Lang Packs
+Plug 'sheerun/vim-polyglot'                                     " Lang packs
 
 " Theme
 Plug 'flazz/vim-colorschemes'
-Plug 'vim-airline/vim-airline-themes'
 
 call plug#end()                                                 " required
 filetype plugin indent on                                       " required
-
-let g:netrw_liststyle = 3
-let g:netrw_browse_split = 4
-let g:netrw_altv = 1
-let g:netrw_winsize = 25
-
-autocmd VimResized * :wincmd =
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
+let g:netrw_liststyle = 3
+let g:netrw_winsize = 25
 
 " Gitgutter
 let g:gitgutter_grep = 'rg'
@@ -76,18 +67,6 @@ let g:ale_linters = {
             \ 'yaml':['yamllint'],
             \ 'ansible':['ansible-lint']
             \}
-
-" Deoplete
-let g:deoplete#enable_at_startup = 1
-let g:deoplete#enable_smart_case = 1
-let g:deoplete#auto_completion_start_length = 2
-let g:deoplete#manual_completion_start_length = 1
-
-" I Like snippets!
-let g:UltiSnipsListSnippets="<c-h>"
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 
 let $FZF_DEFAULT_COMMAND="rg --files --hidden"
 let g:fzf_files_options = "--preview 'if file {1} | grep -i text; then highlight {1} --force -s molokai -O truecolor ; fi'"
@@ -143,7 +122,6 @@ set smarttab expandtab shiftwidth=4 tabstop=4 softtabstop=4       " Four spaces 
 set hlsearch incsearch ignorecase smartcase                       " Highlight search results, ignore case if search is all lowercase
 set nowrap number                                                 " play nicely with long lines
 set nomodeline                                                    " protect against https://github.com/numirias/security/blob/master/doc/2019-06-04_ace-vim-neovim.md
-set signcolumn=yes laststatus=2
 let &colorcolumn=join(range(81,999),",")
 syntax on
 " play nicely with modern graphics
@@ -166,3 +144,43 @@ function! ToggleTheme()
         colorscheme xcode
     endif
 endfunction
+
+" Register completion files
+au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
+    \ 'name': 'file',
+    \ 'whitelist': ['*'],
+    \ 'priority': 10,
+    \ 'completor': function('asyncomplete#sources#file#completor')
+    \ }))
+" Register completion tags
+au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#tags#get_source_options({
+    \ 'name': 'tags',
+    \ 'whitelist': ['*'],
+    \ 'blacklist': ['c','cpp','python'],
+    \ 'completor': function('asyncomplete#sources#tags#completor'),
+    \ 'config': {
+    \    'max_file_size': 50000000,
+    \  },
+    \ }))
+" Register completion buffer
+au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
+    \ 'name': 'buffer',
+    \ 'whitelist': ['*'],
+    \ 'blacklist': ['go'],
+    \ 'completor': function('asyncomplete#sources#buffer#completor'),
+    \ 'config': {
+    \    'max_buffer_size': 5000000,
+    \  },
+    \ }))
+" Register LSP python
+au User lsp_setup call lsp#register_server({
+    \ 'name': 'pyls',
+    \ 'cmd': {server_info->['pyls']},
+    \ 'whitelist': ['python'],
+    \ })
+" Register LSP C/C++/ASM...
+au User lsp_setup call lsp#register_server({
+    \ 'name': 'clangd',
+    \ 'cmd': {server_info->['clangd']},
+    \ 'whitelist': ['c','cpp','asm'],
+    \ })
