@@ -11,42 +11,23 @@ set path+=** wildmenu                                             " Recursive pa
 set lazyredraw ttyfast ttimeoutlen=20                             " Faster redraw
 set hidden                                                        " change buffer without saving
 set backspace=indent,eol,start                                    " http://vi.stackexchange.com/a/2163
-set splitright splitbelow                                         " Open new splits to the right and bottom
 set autoindent smartindent copyindent                             " always set autoindenting on
 set smarttab expandtab shiftwidth=4 tabstop=4 softtabstop=4       " Four spaces for tabs everywhere
 set hlsearch incsearch ignorecase smartcase                       " Highlight search results, ignore case if search is all lowercase
 set nowrap number                                                 " play nicely with long lines
-set nomodeline                                                    " protect against https://github.com/numirias/security/blob/master/doc/2019-06-04_ace-vim-neovim.md
-set signcolumn=yes laststatus=2
-let &colorcolumn=join(range(81,999),",")
+set colorcolumn=80
 syntax on
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
-" common
-highlight LineNr ctermfg=240
-highlight CursorLine cterm=NONE ctermbg=grey ctermfg=white
-highlight Search cterm=NONE ctermfg=white ctermbg=blue
-" dark
-highlight Pmenu ctermbg=Black ctermfg=White
-highlight Normal ctermbg=235 ctermfg=White
 highlight ColorColumn ctermbg=234
-highlight VertSplit ctermbg=234 ctermfg=234
 
 " Toggle Theme
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        highlight Pmenu ctermbg=Black ctermfg=White
-        highlight Normal ctermbg=235 ctermfg=White
-        highlight ColorColumn ctermbg=234
-        highlight VertSplit ctermbg=234 ctermfg=234
     else
         set background=light
-        highlight Pmenu ctermbg=255 ctermfg=Black
-        highlight Normal ctermbg=White ctermfg=Black
-        highlight ColorColumn ctermbg=255
-        highlight VertSplit ctermbg=255 ctermfg=255
     endif
 endfunction
