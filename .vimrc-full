@@ -1,39 +1,34 @@
 filetype off                  " required
 call plug#begin('~/.vim/plugged')
 " utilities
-Plug 'vim-airline/vim-airline'
-Plug 'airblade/vim-gitgutter'
+Plug 'ap/vim-buftabline'
+Plug 'mhinz/vim-signify'
 Plug 'junegunn/fzf'                                             " fuzzy find all the things
 Plug 'junegunn/fzf.vim'                                         " fuzzy find all the things
+" Lang Packs
+Plug 'sheerun/vim-polyglot'                                     " Lang packs
 
 " ALE
-Plug 'w0rp/ale'
+Plug 'dense-analysis/ale'
 " Deoplete
 Plug 'prabirshrestha/async.vim'
 Plug 'prabirshrestha/asyncomplete.vim'
 Plug 'prabirshrestha/asyncomplete-file.vim'
 Plug 'prabirshrestha/asyncomplete-tags.vim'
 Plug 'prabirshrestha/asyncomplete-buffer.vim'
-Plug 'prabirshrestha/asyncomplete-lsp.vim'
-Plug 'prabirshrestha/vim-lsp'
+Plug 'yami-beta/asyncomplete-omni.vim'
 Plug 'wellle/tmux-complete.vim'                                 " Complete from text on other splits
-
-" Lang Packs
-Plug 'sheerun/vim-polyglot'                                     " Lang packs
 
 " Theme
 Plug 'flazz/vim-colorschemes'
 
 call plug#end()                                                 " required
 filetype plugin indent on                                       " required
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#formatter = 'unique_tail'
+
+autocmd VimResized * :wincmd =
+
 let g:netrw_liststyle = 3
 let g:netrw_winsize = 25
-
-" Gitgutter
-let g:gitgutter_grep = 'rg'
-let g:gitgutter_max_signs = 1000
 
 " Langs
 let g:python_highlight_all=1
@@ -50,6 +45,7 @@ let g:ale_set_quickfix = 1
 let g:ale_linters_explicit = 1
 let g:ale_set_highlights = 0
 let g:ale_fix_on_save = 1
+let g:ale_completion_enabled = 1
 let g:ale_fixers = {
             \ '*':['remove_trailing_lines', 'trim_whitespace'],
             \ 'sh':['shfmt'],
@@ -57,11 +53,11 @@ let g:ale_fixers = {
             \ 'python':['autopep8','isort']
             \}
 let g:ale_linters = {
-            \ 'asm': ['gcc'],
-            \ 'c': ['gcc'],
-            \ 'cpp': ['gcc'],
+            \ 'asm': ['clangd', 'gcc'],
+            \ 'c': ['clangd', 'gcc'],
+            \ 'cpp': ['clangd', 'gcc'],
             \ 'sh':['shellcheck', 'shell'],
-            \ 'python': ['python','pylint'],
+            \ 'python': ['pyls', 'python','pylint'],
             \ 'xml':['xmllint'],
             \ 'json':['jsonlint'],
             \ 'yaml':['yamllint'],
@@ -122,6 +118,7 @@ set smarttab expandtab shiftwidth=4 tabstop=4 softtabstop=4       " Four spaces 
 set hlsearch incsearch ignorecase smartcase                       " Highlight search results, ignore case if search is all lowercase
 set nowrap number                                                 " play nicely with long lines
 set nomodeline                                                    " protect against https://github.com/numirias/security/blob/master/doc/2019-06-04_ace-vim-neovim.md
+set laststatus=2
 let &colorcolumn=join(range(81,999),",")
 syntax on
 " play nicely with modern graphics
@@ -131,6 +128,8 @@ colorscheme molokai
 set termguicolors
 highlight Normal guibg=#151515 guifg=#FFFFFF
 highlight ColorColumn guibg=#101010
+highlight StatusLineNC guifg=#101010 guibg=#888888
+highlight StatusLine guifg=#555555 guibg=#EEEEEE
 " Toggle Theme
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
@@ -139,6 +138,8 @@ function! ToggleTheme()
         colorscheme molokai
         highlight Normal guibg=#151515 guifg=#FFFFFF
         highlight ColorColumn guibg=#101010
+        highlight StatusLineNC guifg=#151515 guibg=#888888
+        highlight StatusLine guifg=#555555 guibg=#EEEEEE
     else
         set background=light
         colorscheme xcode
@@ -157,30 +158,16 @@ au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#source
     \ 'name': 'tags',
     \ 'whitelist': ['*'],
     \ 'blacklist': ['c','cpp','python'],
-    \ 'completor': function('asyncomplete#sources#tags#completor'),
-    \ 'config': {
-    \    'max_file_size': 50000000,
-    \  },
+    \ 'completor': function('asyncomplete#sources#tags#completor')
     \ }))
 " Register completion buffer
 au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
     \ 'name': 'buffer',
     \ 'whitelist': ['*'],
-    \ 'blacklist': ['go'],
-    \ 'completor': function('asyncomplete#sources#buffer#completor'),
-    \ 'config': {
-    \    'max_buffer_size': 5000000,
-    \  },
+    \ 'completor': function('asyncomplete#sources#buffer#completor')
     \ }))
-" Register LSP python
-au User lsp_setup call lsp#register_server({
-    \ 'name': 'pyls',
-    \ 'cmd': {server_info->['pyls']},
-    \ 'whitelist': ['python'],
-    \ })
-" Register LSP C/C++/ASM...
-au User lsp_setup call lsp#register_server({
-    \ 'name': 'clangd',
-    \ 'cmd': {server_info->['clangd']},
-    \ 'whitelist': ['c','cpp','asm'],
-    \ })
+call asyncomplete#register_source(asyncomplete#sources#omni#get_source_options({
+    \ 'name': 'omni',
+    \ 'whitelist': ['*'],
+    \ 'completor': function('asyncomplete#sources#omni#completor')
+    \ }))
