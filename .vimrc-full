@@ -1,7 +1,7 @@
 filetype off                  " required
 call plug#begin('~/.vim/plugged')
 " utilities
-Plug 'ap/vim-buftabline'
+Plug 'vim-airline/vim-airline'
 Plug 'mhinz/vim-signify'
 Plug 'junegunn/fzf'                                             " fuzzy find all the things
 Plug 'junegunn/fzf.vim'                                         " fuzzy find all the things
@@ -26,6 +26,10 @@ call plug#end()                                                 " required
 filetype plugin indent on                                       " required
 
 autocmd VimResized * :wincmd =
+
+"let g:airline_extensions = ['tabline']
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#formatter = 'unique_tail'
 
 let g:netrw_liststyle = 3
 let g:netrw_winsize = 25
@@ -118,7 +122,6 @@ set smarttab expandtab shiftwidth=4 tabstop=4 softtabstop=4       " Four spaces 
 set hlsearch incsearch ignorecase smartcase                       " Highlight search results, ignore case if search is all lowercase
 set nowrap number                                                 " play nicely with long lines
 set nomodeline                                                    " protect against https://github.com/numirias/security/blob/master/doc/2019-06-04_ace-vim-neovim.md
-set laststatus=2
 let &colorcolumn=join(range(81,999),",")
 syntax on
 " play nicely with modern graphics
