@@ -17,8 +17,8 @@ source $BASH_IT/bash_it.sh
 source $HOME/.aliases
 
 if [ ! -d "$BASH_IT/.initialized" ]; then
-    bash-it enable plugin alias-completion base dirs fzf git history proxy ssh sshagent tmux 
-    bash-it enable completion bash-it dirs export defaults git makefile pip pip3 ssh tmux
+    bash-it enable plugin alias-completion base dirs fzf git history
+    bash-it enable completion bash-it dirs export defaults git makefile
     mkdir "$BASH_IT/.initialized"
 fi
 

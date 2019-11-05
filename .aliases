@@ -1,21 +1,16 @@
 # BASIC ALIASES
 alias grep='grep --color=auto'
-alias ls='ls -Ah --group-directories-first --color'
 alias ll='ls -Ahl --group-directories-first --color'
 alias tree='tree -C'
 alias top='top -o %CPU'
 alias open='xdg-open'
 alias gcc='gcc -Wall -Wextra -lm'
-alias cl='clear'
-#alias ssh='assh wrapper ssh'
 alias whois="whois -h whois-servers.net"
 alias vi='vimx -u ~/dotfiles/.vimrc-minimal'
 alias vim='vimx'
 alias diff="diff --color=always"
-alias gitdiff="git difftool --tool=vimdiff --no-prompt"
 export PATH=$HOME/bin:$PATH
 export VAGRANT_DEFAULT_PROVIDER=virtualbox
-export ANDROID_HOME=/home/luca-linux/Programs/android-sdk-linux
 export LC_ALL=en_US.UTF-8
 export GOPATH=$HOME/.local/go
 export PATH=$PATH:$ANDROID_HOME/platform-tools
