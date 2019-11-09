@@ -1,7 +1,7 @@
 filetype off                  " required
 call plug#begin('~/.vim/plugged')
 " utilities
-Plug 'vim-airline/vim-airline'
+Plug 'ap/vim-buftabline'
 Plug 'mhinz/vim-signify'
 Plug 'junegunn/fzf'                                             " fuzzy find all the things
 Plug 'junegunn/fzf.vim'                                         " fuzzy find all the things
@@ -24,12 +24,7 @@ Plug 'flazz/vim-colorschemes'
 
 call plug#end()                                                 " required
 filetype plugin indent on                                       " required
-
 autocmd VimResized * :wincmd =
-
-"let g:airline_extensions = ['tabline']
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#formatter = 'unique_tail'
 
 let g:netrw_liststyle = 3
 let g:netrw_winsize = 25
@@ -44,6 +39,7 @@ let g:ansible_normal_keywords_highlight = 'Define'
 let g:ansible_with_keywords_highlight = 'Operator'
 
 " ALE linter
+set omnifunc=ale#completion#OmniFunc
 let g:ale_enabled = 1
 let g:ale_set_quickfix = 1
 let g:ale_linters_explicit = 1
@@ -122,6 +118,7 @@ set smarttab expandtab shiftwidth=4 tabstop=4 softtabstop=4       " Four spaces 
 set hlsearch incsearch ignorecase smartcase                       " Highlight search results, ignore case if search is all lowercase
 set nowrap number                                                 " play nicely with long lines
 set nomodeline                                                    " protect against https://github.com/numirias/security/blob/master/doc/2019-06-04_ace-vim-neovim.md
+set laststatus=2
 let &colorcolumn=join(range(81,999),",")
 syntax on
 " play nicely with modern graphics
@@ -129,8 +126,8 @@ set encoding=utf8
 set background=dark
 colorscheme molokai
 set termguicolors
-highlight Normal guibg=#151515 guifg=#FFFFFF
-highlight ColorColumn guibg=#101010
+highlight Normal guibg=#101010 guifg=#EEEEEE
+highlight ColorColumn guibg=#131313
 highlight StatusLineNC guifg=#101010 guibg=#888888
 highlight StatusLine guifg=#555555 guibg=#EEEEEE
 " Toggle Theme
@@ -139,9 +136,9 @@ function! ToggleTheme()
     if &background == 'light'
         set background=dark
         colorscheme molokai
-        highlight Normal guibg=#151515 guifg=#FFFFFF
-        highlight ColorColumn guibg=#101010
-        highlight StatusLineNC guifg=#151515 guibg=#888888
+        highlight Normal guibg=#101010 guifg=#EEEEEE
+        highlight ColorColumn guibg=#131313
+        highlight StatusLineNC guifg=#101010 guibg=#888888
         highlight StatusLine guifg=#555555 guibg=#EEEEEE
     else
         set background=light
