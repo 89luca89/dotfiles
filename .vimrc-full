@@ -124,25 +124,21 @@ syntax on
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
-colorscheme molokai
-set termguicolors
-highlight Normal guibg=#101010 guifg=#EEEEEE
-highlight ColorColumn guibg=#131313
-highlight StatusLineNC guifg=#101010 guibg=#888888
-highlight StatusLine guifg=#555555 guibg=#EEEEEE
+colorscheme codedark
+highlight ColorColumn ctermbg=232
+highlight Normal ctermbg=233
 " Toggle Theme
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        colorscheme molokai
-        highlight Normal guibg=#101010 guifg=#EEEEEE
-        highlight ColorColumn guibg=#131313
-        highlight StatusLineNC guifg=#101010 guibg=#888888
-        highlight StatusLine guifg=#555555 guibg=#EEEEEE
+        colorscheme codedark
+        highlight ColorColumn ctermbg=232
+        highlight Normal ctermbg=233
     else
         set background=light
-        colorscheme xcode
+        colorscheme xcode-default
+        highlight ColorColumn ctermbg=255
     endif
 endfunction
 
