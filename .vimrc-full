@@ -3,6 +3,7 @@ call plug#begin('~/.vim/plugged')
 " utilities
 Plug 'ap/vim-buftabline'
 Plug 'mhinz/vim-signify'
+Plug 'scrooloose/nerdtree'
 Plug 'junegunn/fzf'                                             " fuzzy find all the things
 Plug 'junegunn/fzf.vim'                                         " fuzzy find all the things
 " Lang Packs
@@ -25,9 +26,6 @@ Plug 'flazz/vim-colorschemes'
 call plug#end()                                                 " required
 filetype plugin indent on                                       " required
 autocmd VimResized * :wincmd =
-
-let g:netrw_liststyle = 3
-let g:netrw_winsize = 25
 
 " Langs
 let g:python_highlight_all=1
@@ -78,11 +76,17 @@ let mapleader = ' '
 map <leader>y "+y
 map <leader>p "+p
 " Utility shortcuts with leader:
+map <leader><Tab> :Buffers<CR>
 map <leader>t :Tags<CR>
 map <leader>b :Files<CR>
 map <leader>f :Rg<CR>
-map <leader>\ :Lexplore<CR>
-map <leader><Tab> :Buffers<CR>
+map <leader>r :ALEFindReferences<CR>
+map <leader>gt :ALEGoToDefinitionInVSplit<CR>
+map <leader>tg :ALEGoToTypeDefinitionInVSplit<CR>
+map <leader>h :ALEHover<CR>
+map <leader>t :ALERename<CR>
+map <leader>\ :NERDTreeToggle<CR>
+map <leader>e :NERDTreeFind<CR>
 map <leader>j :set ft=.jinja2<Left><Left><Left><Left><Left><Left><Left>
 
 " Ctrl+L Format Code
