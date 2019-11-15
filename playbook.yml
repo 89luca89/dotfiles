@@ -196,6 +196,7 @@
         - ripgrep
         - zsh
         - openssh-askpass
+        - syncthing
         - libvirt
         - "libvirt-daemon-*"
       become: true
@@ -261,14 +262,12 @@
         - evolution
         - evolution-data-server
         - gnome-tweak-tool
-        - gigolo
         - mpv
         - libnotify
         - telegram-desktop
         - keepassxc
         - gparted
         - gimp
-        - syncthing
         - syncthing-gtk
         - virt-manager
       become: true
