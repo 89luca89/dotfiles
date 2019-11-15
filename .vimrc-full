@@ -81,8 +81,8 @@ map <leader>t :Tags<CR>
 map <leader>b :Files<CR>
 map <leader>f :Rg<CR>
 map <leader>r :ALEFindReferences<CR>
-map <leader>gt :ALEGoToDefinitionInVSplit<CR>
-map <leader>tg :ALEGoToTypeDefinitionInVSplit<CR>
+map <leader>gt :ALEGoToDefinition<CR>
+map <leader>tg :ALEGoToTypeDefinition<CR>
 map <leader>h :ALEHover<CR>
 map <leader>t :ALERename<CR>
 map <leader>\ :NERDTreeToggle<CR>
@@ -131,6 +131,7 @@ set background=dark
 colorscheme codedark
 highlight ColorColumn ctermbg=232
 highlight Normal ctermbg=233
+highlight StatusLine ctermbg=19
 " Toggle Theme
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
@@ -139,10 +140,12 @@ function! ToggleTheme()
         colorscheme codedark
         highlight ColorColumn ctermbg=232
         highlight Normal ctermbg=233
+        highlight StatusLine ctermbg=19
     else
         set background=light
         colorscheme xcode-default
         highlight ColorColumn ctermbg=255
+        highlight StatusLine ctermfg=19 ctermbg=255
     endif
 endfunction
 
