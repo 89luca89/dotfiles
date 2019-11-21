@@ -131,7 +131,7 @@ set background=dark
 colorscheme codedark
 highlight ColorColumn ctermbg=232
 highlight Normal ctermbg=233
-highlight StatusLine ctermbg=19
+highlight StatusLine ctermbg=27
 " Toggle Theme
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
@@ -141,11 +141,12 @@ function! ToggleTheme()
         highlight ColorColumn ctermbg=232
         highlight Normal ctermbg=233
         highlight StatusLine ctermbg=19
+        highlight StatusLine ctermbg=27
     else
         set background=light
         colorscheme xcode-default
         highlight ColorColumn ctermbg=255
-        highlight StatusLine ctermfg=19 ctermbg=255
+        highlight StatusLine ctermfg=27 ctermbg=255
     endif
 endfunction
 
