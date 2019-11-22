@@ -25,7 +25,7 @@ Plug 'flazz/vim-colorschemes'
 
 call plug#end()                                                 " required
 filetype plugin indent on                                       " required
-autocmd VimResized * :wincmd =
+"autocmd VimResized * :wincmd =
 
 " Langs
 let g:python_highlight_all=1
@@ -140,13 +140,13 @@ function! ToggleTheme()
         colorscheme codedark
         highlight ColorColumn ctermbg=232
         highlight Normal ctermbg=233
-        highlight StatusLine ctermbg=19
         highlight StatusLine ctermbg=27
     else
         set background=light
-        colorscheme xcode-default
+        colorscheme github
         highlight ColorColumn ctermbg=255
-        highlight StatusLine ctermfg=27 ctermbg=255
+        highlight Normal ctermbg=white
+        highlight StatusLine ctermbg=27 ctermfg=255
     endif
 endfunction
 

@@ -15,7 +15,7 @@ fi
 # Zsh completion
 fpath=(/usr/local/share/zsh-completions $fpath)
 
-ZSH_THEME="gentoo"
+ZSH_THEME="gnzh"
 CASE_SENSITIVE="true"
 
 plugins=(zsh-autosuggestions zsh-syntax-highlighting)
