@@ -1,5 +1,7 @@
 filetype off                  " required
 call plug#begin('~/.vim/plugged')
+" vim tmux navigator
+Plug 'christoomey/vim-tmux-navigator'
 " utilities
 Plug 'ap/vim-buftabline'
 Plug 'mhinz/vim-signify'
@@ -9,24 +11,28 @@ Plug 'junegunn/fzf.vim'                                         " fuzzy find all
 " Lang Packs
 Plug 'sheerun/vim-polyglot'                                     " Lang packs
 
-" ALE
+" ALE+LSP
 Plug 'dense-analysis/ale'
 " Deoplete
-Plug 'prabirshrestha/async.vim'
-Plug 'prabirshrestha/asyncomplete.vim'
-Plug 'prabirshrestha/asyncomplete-file.vim'
-Plug 'prabirshrestha/asyncomplete-tags.vim'
-Plug 'prabirshrestha/asyncomplete-buffer.vim'
-Plug 'yami-beta/asyncomplete-omni.vim'
-Plug 'wellle/tmux-complete.vim'                                 " Complete from text on other splits
+Plug 'shougo/deoplete.nvim'
+Plug 'deoplete-plugins/deoplete-tag'
+Plug 'deoplete-plugins/deoplete-clang'
+Plug 'deoplete-plugins/deoplete-jedi'
+Plug 'wellle/tmux-complete.vim'
 
 " Theme
 Plug 'flazz/vim-colorschemes'
 
+Plug 'roxma/nvim-yarp'
+Plug 'roxma/vim-hug-neovim-rpc'
 call plug#end()                                                 " required
 filetype plugin indent on                                       " required
-"autocmd VimResized * :wincmd =
+autocmd VimResized * :wincmd =
 
+let g:signify_sign_add               = '+'
+let g:signify_sign_delete            = '-'
+let g:signify_sign_delete_first_line = '-'
+let g:signify_sign_change            = '!'
 " Langs
 let g:python_highlight_all=1
 let g:ansible_yamlKeyName = 'yamlKey'
@@ -36,8 +42,17 @@ let g:ansible_extra_keywords_highlight = 1
 let g:ansible_normal_keywords_highlight = 'Define'
 let g:ansible_with_keywords_highlight = 'Operator'
 
+" Deoplete
+let g:deoplete#enable_at_startup = 0
+autocmd InsertEnter * call deoplete#enable()
+let g:python3_host_prog = "/usr/bin/python3"
+let g:deoplete#enable_smart_case = 1
+let g:deoplete#auto_completion_start_length = 2
+let g:deoplete#manual_completion_start_length = 1
+
 " ALE linter
-set omnifunc=ale#completion#OmniFunc
+let g:ale_sign_error = '✘'
+let g:ale_sign_warning = '⚠'
 let g:ale_enabled = 1
 let g:ale_set_quickfix = 1
 let g:ale_linters_explicit = 1
@@ -48,14 +63,14 @@ let g:ale_fixers = {
             \ '*':['remove_trailing_lines', 'trim_whitespace'],
             \ 'sh':['shfmt'],
             \ 'xml':['xmllint'],
-            \ 'python':['autopep8','isort']
+            \ 'python':['yapf','isort']
             \}
 let g:ale_linters = {
             \ 'asm': ['clangd', 'gcc'],
             \ 'c': ['clangd', 'gcc'],
             \ 'cpp': ['clangd', 'gcc'],
             \ 'sh':['shellcheck', 'shell'],
-            \ 'python': ['pyls', 'python','pylint'],
+            \ 'python': ['flake8', 'pylint'],
             \ 'xml':['xmllint'],
             \ 'json':['jsonlint'],
             \ 'yaml':['yamllint'],
@@ -77,16 +92,12 @@ map <leader>y "+y
 map <leader>p "+p
 " Utility shortcuts with leader:
 map <leader><Tab> :Buffers<CR>
+map <leader>e :<C-u>vert copen<bar>:50wincmd><CR>
 map <leader>t :Tags<CR>
 map <leader>b :Files<CR>
 map <leader>f :Rg<CR>
-map <leader>r :ALEFindReferences<CR>
-map <leader>gt :ALEGoToDefinition<CR>
-map <leader>tg :ALEGoToTypeDefinition<CR>
-map <leader>h :ALEHover<CR>
-map <leader>t :ALERename<CR>
 map <leader>\ :NERDTreeToggle<CR>
-map <leader>e :NERDTreeFind<CR>
+map <leader>/ :NERDTreeFind<CR>
 map <leader>j :set ft=.jinja2<Left><Left><Left><Left><Left><Left><Left>
 
 " Ctrl+L Format Code
@@ -96,12 +107,21 @@ augroup autoformat_settings
     autocmd FileType c,cpp,java,typescript,javascript noremap <buffer> <C-L><Esc>:w<CR>:mkview<CR>:%!clang-format -style=Google %<CR>:loadview<CR>
     autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:!beautysh -f %<CR>:e<CR>:loadview<CR>
     autocmd FileType json noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!jsonlint -f %<CR>:e<CR>:loadview<CR>
-    autocmd FileType python noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!autopep8 %<CR>:w<CR>:!isort %<CR><CR>:e<CR>:loadview<CR>
+    autocmd FileType python noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!yapf %<CR>:w<CR>:!isort %<CR><CR>:e<CR>:loadview<CR>
 augroup END
 " navigate tabs Tab (fw) S-Tab (prev)
 map <Tab> :bn<CR>
 map <S-Tab> :bp<CR>
-"map <C-c> :bp<bar>sp<bar>bn<bar>bd!<CR>
+" vim-tmux-navigator shortcuts
+let g:tmux_navigator_no_mappings = 1
+nnoremap <silent> <M-Left> :TmuxNavigateLeft<cr>
+nnoremap <silent> <M-Down> :TmuxNavigateDown<cr>
+nnoremap <silent> <M-Up> :TmuxNavigateUp<cr>
+nnoremap <silent> <M-Right> :TmuxNavigateRight<cr>
+inoremap <silent> <M-Left> <Esc>:TmuxNavigateLeft<cr>
+inoremap <silent> <M-Down> <Esc>:TmuxNavigateDown<cr>
+inoremap <silent> <M-Up> <Esc>:TmuxNavigateUp<cr>
+inoremap <silent> <M-Right> <Esc>:TmuxNavigateRight<cr>
 " " Resize split window horizontally and vertically
 noremap <S-M-Up> :2winc+<cr>
 noremap <S-M-Down> :2winc-<cr>
@@ -128,50 +148,43 @@ syntax on
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
-colorscheme codedark
-highlight ColorColumn ctermbg=232
-highlight Normal ctermbg=233
-highlight StatusLine ctermbg=27
+colorscheme molokai
+set termguicolors
+highlight Normal guibg=#101010 guifg=#FFFFFF
+highlight ColorColumn guibg=#181818
+highlight StatusLineNC guifg=#101010 guibg=#888888
+highlight StatusLine guifg=#007acc guibg=#FFFFFF
+highlight ALEErrorSign guibg=NONE guifg=#FF0000
+highlight ALEWarningSign guibg=NONE guifg=#FFFF00
+highlight ALEWarning guibg=#333300
+highlight SignifySignAdd    guifg=#00ff00
+highlight SignifySignDelete guifg=#ff0000
+highlight SignifySignChange guifg=#ffff00
 " Toggle Theme
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        colorscheme codedark
-        highlight ColorColumn ctermbg=232
-        highlight Normal ctermbg=233
-        highlight StatusLine ctermbg=27
+        colorscheme molokai
+        highlight Normal guibg=#101010 guifg=#FFFFFF
+        highlight ColorColumn guibg=#181818
+        highlight StatusLineNC guifg=#101010 guibg=#888888
+        highlight StatusLine guifg=#007acc guibg=#FFFFFF
+        highlight ALEWarning guibg=#333300
+        highlight ALEErrorSign guibg=NONE guifg=#FF0000
+        highlight ALEWarningSign guibg=NONE guifg=#FFFF00
+        highlight SignifySignAdd    guifg=#00ff00
+        highlight SignifySignDelete guifg=#ff0000
+        highlight SignifySignChange guifg=#ffff00
     else
         set background=light
         colorscheme github
-        highlight ColorColumn ctermbg=255
-        highlight Normal ctermbg=white
-        highlight StatusLine ctermbg=27 ctermfg=255
+        highlight StatusLine guibg=#007acc guifg=#FFFFFF
+        highlight ALEWarning guibg=#e4e4e4
+        highlight ALEErrorSign guibg=#888888 guifg=#FF0000
+        highlight ALEWarningSign guibg=#888888 guifg=#FFFF00
+        highlight SignifySignAdd    guifg=#00ff00 guibg=#888888
+        highlight SignifySignDelete guifg=#ff0000 guibg=#888888
+        highlight SignifySignChange guifg=#ffff00 guibg=#888888
     endif
 endfunction
-
-" Register completion files
-au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
-    \ 'name': 'file',
-    \ 'whitelist': ['*'],
-    \ 'priority': 10,
-    \ 'completor': function('asyncomplete#sources#file#completor')
-    \ }))
-" Register completion tags
-au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#tags#get_source_options({
-    \ 'name': 'tags',
-    \ 'whitelist': ['*'],
-    \ 'blacklist': ['c','cpp','python'],
-    \ 'completor': function('asyncomplete#sources#tags#completor')
-    \ }))
-" Register completion buffer
-au User asyncomplete_setup call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
-    \ 'name': 'buffer',
-    \ 'whitelist': ['*'],
-    \ 'completor': function('asyncomplete#sources#buffer#completor')
-    \ }))
-call asyncomplete#register_source(asyncomplete#sources#omni#get_source_options({
-    \ 'name': 'omni',
-    \ 'whitelist': ['*'],
-    \ 'completor': function('asyncomplete#sources#omni#completor')
-    \ }))
