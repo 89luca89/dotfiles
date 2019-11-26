@@ -3,7 +3,7 @@ call plug#begin('~/.vim/plugged')
 " vim tmux navigator
 Plug 'christoomey/vim-tmux-navigator'
 " utilities
-Plug 'ap/vim-buftabline'
+Plug 'vim-airline/vim-airline'
 Plug 'mhinz/vim-signify'
 Plug 'scrooloose/nerdtree'
 Plug 'junegunn/fzf'                                             " fuzzy find all the things
@@ -29,6 +29,9 @@ call plug#end()                                                 " required
 filetype plugin indent on                                       " required
 autocmd VimResized * :wincmd =
 
+let g:airline_extensions = ['tabline']
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#formatter = 'unique_tail'
 let g:signify_sign_add               = '+'
 let g:signify_sign_delete            = '-'
 let g:signify_sign_delete_first_line = '-'
