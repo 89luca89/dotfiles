@@ -155,8 +155,6 @@ colorscheme molokai
 set termguicolors
 highlight Normal guibg=#101010 guifg=#FFFFFF
 highlight ColorColumn guibg=#181818
-highlight StatusLineNC guifg=#101010 guibg=#888888
-highlight StatusLine guifg=#007acc guibg=#FFFFFF
 highlight ALEErrorSign guibg=NONE guifg=#FF0000
 highlight ALEWarningSign guibg=NONE guifg=#FFFF00
 highlight ALEWarning guibg=#333300
@@ -171,8 +169,6 @@ function! ToggleTheme()
         colorscheme molokai
         highlight Normal guibg=#101010 guifg=#FFFFFF
         highlight ColorColumn guibg=#181818
-        highlight StatusLineNC guifg=#101010 guibg=#888888
-        highlight StatusLine guifg=#007acc guibg=#FFFFFF
         highlight ALEWarning guibg=#333300
         highlight ALEErrorSign guibg=NONE guifg=#FF0000
         highlight ALEWarningSign guibg=NONE guifg=#FFFF00
@@ -182,7 +178,6 @@ function! ToggleTheme()
     else
         set background=light
         colorscheme github
-        highlight StatusLine guibg=#007acc guifg=#FFFFFF
         highlight ALEWarning guibg=#e4e4e4
         highlight ALEErrorSign guibg=#888888 guifg=#FF0000
         highlight ALEWarningSign guibg=#888888 guifg=#FFFF00
