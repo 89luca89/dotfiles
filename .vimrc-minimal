@@ -20,7 +20,6 @@ syntax on
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
-highlight ColorColumn ctermbg=234
 
 " Toggle Theme
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>

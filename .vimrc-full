@@ -32,10 +32,10 @@ autocmd VimResized * :wincmd =
 let g:airline_extensions = ['tabline']
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
-let g:signify_sign_add               = '+'
+" Git
+let g:signify_sign_add               = '>'
 let g:signify_sign_delete            = '-'
-let g:signify_sign_delete_first_line = '-'
-let g:signify_sign_change            = '!'
+let g:signify_sign_change            = '>'
 " Langs
 let g:python_highlight_all=1
 let g:ansible_yamlKeyName = 'yamlKey'
@@ -44,7 +44,6 @@ let g:ansible_name_highlight = 'd'
 let g:ansible_extra_keywords_highlight = 1
 let g:ansible_normal_keywords_highlight = 'Define'
 let g:ansible_with_keywords_highlight = 'Operator'
-
 " Deoplete
 let g:deoplete#enable_at_startup = 0
 autocmd InsertEnter * call deoplete#enable()
@@ -52,16 +51,14 @@ let g:python3_host_prog = "/usr/bin/python3"
 let g:deoplete#enable_smart_case = 1
 let g:deoplete#auto_completion_start_length = 2
 let g:deoplete#manual_completion_start_length = 1
-
 " ALE linter
-let g:ale_sign_error = '✘'
-let g:ale_sign_warning = '⚠'
+let g:ale_sign_error = '◉'
+let g:ale_sign_warning = '▲'
 let g:ale_enabled = 1
 let g:ale_set_quickfix = 1
 let g:ale_linters_explicit = 1
 let g:ale_set_highlights = 1
 let g:ale_fix_on_save = 1
-let g:ale_completion_enabled = 1
 let g:ale_fixers = {
             \ '*':['remove_trailing_lines', 'trim_whitespace'],
             \ 'sh':['shfmt'],
@@ -79,16 +76,16 @@ let g:ale_linters = {
             \ 'yaml':['yamllint'],
             \ 'ansible':['ansible-lint']
             \}
-
+" FZF fuzzy
 let $FZF_DEFAULT_COMMAND="rg --files --hidden"
 let g:fzf_files_options = "--preview 'if file {1} | grep -i text; then highlight {1} --force -s molokai -O truecolor ; fi'"
 let g:fzf_tags_command = 'ctags -R'
 let g:fzf_action = {'alt-enter':'vsplit' }
 
-""" Ctrl-C copy visual selection to clipboard
+"""     Shortcuts   "
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 nnoremap <C-c> :bp<bar>bd #<CR>
-
+" Leader Shortcuts
 let mapleader = ' '
 " leader y/p to use system clipboard
 map <leader>y "+y
@@ -101,8 +98,8 @@ map <leader>b :Files<CR>
 map <leader>f :Rg<CR>
 map <leader>\ :NERDTreeToggle<CR>
 map <leader>/ :NERDTreeFind<CR>
-map <leader>j :set ft=.jinja2<Left><Left><Left><Left><Left><Left><Left>
 map <leader>l :bufdo ALELint<CR>:bp<CR>:bufdo e<CR>:so ~/.vimrc<CR>
+map <leader>j :set ft=.jinja2<Left><Left><Left><Left><Left><Left><Left>
 " Ctrl+L Format Code
 " if not use the specific implementation
 noremap <C-L> <Esc>:w<CR>:mkview<CR>gg=G<CR>:loadview<CR>
@@ -131,6 +128,7 @@ noremap <S-M-Down> :2winc-<cr>
 noremap <S-M-Left> :2winc<<cr>
 noremap <S-M-Right> :2winc><cr>
 
+" Miscellaneous
 set updatetime=500
 set title nocompatible nowritebackup nobackup                    " required
 set mouse=a                                                       " it's always useful
@@ -150,9 +148,10 @@ let &colorcolumn=join(range(81,999),",")
 syntax on
 " play nicely with modern graphics
 set encoding=utf8
+" Theming
 set background=dark
-colorscheme molokai
 set termguicolors
+colorscheme molokai
 highlight Normal guibg=#101010 guifg=#FFFFFF
 highlight ColorColumn guibg=#181818
 highlight ALEErrorSign guibg=NONE guifg=#FF0000
@@ -179,10 +178,10 @@ function! ToggleTheme()
         set background=light
         colorscheme github
         highlight ALEWarning guibg=#e4e4e4
-        highlight ALEErrorSign guibg=#888888 guifg=#FF0000
-        highlight ALEWarningSign guibg=#888888 guifg=#FFFF00
-        highlight SignifySignAdd    guifg=#00ff00 guibg=#888888
-        highlight SignifySignDelete guifg=#ff0000 guibg=#888888
-        highlight SignifySignChange guifg=#ffff00 guibg=#888888
+        highlight ALEErrorSign guibg=#555555 guifg=#FF0000
+        highlight ALEWarningSign guibg=#555555 guifg=#FFFF00
+        highlight SignifySignAdd    guifg=#00ff00 guibg=#555555
+        highlight SignifySignDelete guifg=#ff0000 guibg=#555555
+        highlight SignifySignChange guifg=#ffff00 guibg=#555555
     endif
 endfunction
