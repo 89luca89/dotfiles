@@ -87,7 +87,7 @@ let g:fzf_action = {'alt-enter':'vsplit' }
 
 """ Ctrl-C copy visual selection to clipboard
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
-nnoremap <C-c> :bp<bar>sp<bar>bn<bar>bd!<CR>
+nnoremap <C-c> :bp<bar>bd #<CR>
 
 let mapleader = ' '
 " leader y/p to use system clipboard
@@ -102,7 +102,7 @@ map <leader>f :Rg<CR>
 map <leader>\ :NERDTreeToggle<CR>
 map <leader>/ :NERDTreeFind<CR>
 map <leader>j :set ft=.jinja2<Left><Left><Left><Left><Left><Left><Left>
-map <leader>l :bufdo ALELint<CR>:bufdo e<CR>:so ~/.vimrc<CR>
+map <leader>l :bufdo ALELint<CR>:bp<CR>:bufdo e<CR>:so ~/.vimrc<CR>
 " Ctrl+L Format Code
 " if not use the specific implementation
 noremap <C-L> <Esc>:w<CR>:mkview<CR>gg=G<CR>:loadview<CR>
