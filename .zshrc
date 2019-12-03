@@ -24,6 +24,12 @@ setopt APPEND_HISTORY                       # adds history
 setopt INC_APPEND_HISTORY SHARE_HISTORY     # adds history incrementally and share it across sessions
 setopt HIST_IGNORE_ALL_DUPS                 # don't record dupes in history
 setopt HIST_REDUCE_BLANKS
+autoload -U up-line-or-beginning-search
+autoload -U down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+bindkey "^[[A" up-line-or-beginning-search # Up
+bindkey "^[[B" down-line-or-beginning-search # Down
 
 # include custom files
 if [ -f $HOME/.localrc ]; then
@@ -58,5 +64,4 @@ zstyle ':vcs_info:git:*' formats '%F{yellow}(%b%f%c%u%F{yellow})'
 zstyle ':vcs_info:git:*' actionformats '%F{yellow}(%b (%a)%f%c%u%F{yellow})'
 setopt PROMPT_PERCENT
 setopt PROMPT_SUBST
-PROMPT='%F{green}%n:%F{blue}%25<..<%~%f%<< $vcs_info_msg_0_%b%b%F{white}
-- $ '
+PROMPT='%F{green}%n:%F{blue}%30<..<%~%f%<< $vcs_info_msg_0_%b%b%F{white}$ '
