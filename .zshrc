@@ -1,31 +1,22 @@
 ZSH_DISABLE_COMPFIX=true
-# Path to your oh-my-zsh installation.
-export ZSH=$HOME/.local/bin/oh-my-zsh
-
-# If we do not have ohmyzsh, install it.
+bindkey "^[[1;5D" backward-word
+bindkey "^[[1;5C" forward-word
+bindkey "\e[H" beginning-of-line
+bindkey "\e[F" end-of-line
+# Auto install plugins if missing
+export ZSH=$HOME/.local/bin/zsh
 if [ ! -d "$ZSH" ]; then
-	git clone https://github.com/robbyrussell/oh-my-zsh $ZSH
-	git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH/custom/plugins/zsh-autosuggestions
-	git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH/custom/plugins/zsh-syntax-highlighting
+    mkdir -p $ZSH/plugins
+	git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH/plugins/zsh-autosuggestions
+	git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH/plugins/zsh-syntax-highlighting
 fi
 if [ ! -d "$HOME/.local/bin/fzf" ]; then
     git clone --depth 1 https://github.com/junegunn/fzf.git "$HOME/.local/bin/fzf"
     "$HOME/.local/bin/fzf/install" --all
 fi
-# Zsh completion
-fpath=(/usr/local/share/zsh-completions $fpath)
-
-ZSH_THEME="gnzh"
-CASE_SENSITIVE="true"
-
-plugins=(zsh-autosuggestions zsh-syntax-highlighting)
-
-source $ZSH/oh-my-zsh.sh
-source $HOME/.aliases
-
-[ -f $HOME/.zsh-history-substring-search.zsh ] && source $HOME/.zsh-history-substring-search.zsh
-
+# Manage history
 SAVEHIST=100000
+HISTFILE=~/.zsh_history
 setopt NO_HIST_VERIFY
 setopt APPEND_HISTORY                       # adds history
 setopt INC_APPEND_HISTORY SHARE_HISTORY     # adds history incrementally and share it across sessions
@@ -36,16 +27,34 @@ setopt HIST_REDUCE_BLANKS
 if [ -f $HOME/.localrc ]; then
     source $HOME/.localrc
 fi
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# use tmux split with FZF
 if [ "${TMUX}" ]; then
     export FZF_TMUX=1
 fi
-
+# Manage the ssh keys
 if [ -z "$SSH_AUTH_SOCK" ] ; then
     eval `ssh-agent -s`
     ssh-add ~/.ssh/id_rsa
     ssh-add ~/.ssh/id_rsa_ext
 fi
+# Zsh completion
+fpath=(/usr/local/share/zsh-completions $fpath)
+source $ZSH/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $ZSH/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source $HOME/.aliases
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+# PROMPT
+autoload -Uz vcs_info
+precmd_vcs_info() { vcs_info }
+precmd_functions+=( precmd_vcs_info )
+zstyle ':vcs_info:*' enable git
+zstyle ':vcs_info:*' check-for-changes true
+zstyle ':vcs_info:*' stagedstr '%F{green}*%f'
+zstyle ':vcs_info:*' unstagedstr '%F{red}*%f'
+zstyle ':vcs_info:git:*' formats '%F{yellow}(%b%f%c%u%F{yellow})'
+zstyle ':vcs_info:git:*' actionformats '%F{yellow}(%b (%a)%f%c%u%F{yellow})'
+setopt PROMPT_PERCENT
+setopt PROMPT_SUBST
+PROMPT='%F{green}%n:%F{blue}%25<..<%~%f%<< $vcs_info_msg_0_%b%b%F{white}
+- $ '

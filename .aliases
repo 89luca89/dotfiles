@@ -10,12 +10,6 @@ alias vi='vimx -u ~/dotfiles/.vimrc-minimal'
 alias vim='vimx'
 alias diff="diff --color=always"
 export PATH=$HOME/bin:$PATH
-export VAGRANT_DEFAULT_PROVIDER=virtualbox
-export LC_ALL=en_US.UTF-8
 export GOPATH=$HOME/.local/go
-export PATH=$PATH:$ANDROID_HOME/platform-tools
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 export PATH=$HOME/.local/bin:$PATH
-export NPM_PACKAGES="${HOME}/.npm-packages"
-export PATH="$PATH:$NPM_PACKAGES/bin"
-export JAVA_HOME="/usr/lib/jvm/java"
