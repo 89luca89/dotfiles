@@ -307,20 +307,6 @@
       become: true
       tags: devel
 
-      # Linters
-      # shellcheck
-      # xmllint
-      # jsonlint
-      # ansible-lint
-      # yamllint
-      # pylint
-      # clang/gcc
-      #
-      # Formatters:
-      # jsonlint -> demjson
-      # autopep8,isort
-      # beautysh
-      # clang-format -> clang
     - name: Install Programs (Programming Packages) - pip
       pip:
         name: '{{ item }}'
@@ -328,13 +314,12 @@
         executable: pip3
       with_items:
         - 'python-language-server[all]'
+        - pyls-black
+        - pyls-isort
+        - pyls-mypy
         - setuptools
-        - pylint
-        - jedi
-        - pyflakes
-        - pycodestyle
-        - autopep8
-        - rope
+        - black
+        - mypy
         - beautysh
         - demjson
         - yamllint

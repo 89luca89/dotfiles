@@ -9,16 +9,18 @@ Plug 'scrooloose/nerdtree'
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' } " fuzzy find all the things
 Plug 'junegunn/fzf.vim'                                                     " fuzzy find all the things
 " Lang Packs
-Plug 'sheerun/vim-polyglot'                                     " Lang packs
+Plug 'sheerun/vim-polyglot', { 'do': './build' }                            " Lang packs
 
 " ALE+LSP
 Plug 'dense-analysis/ale'
+Plug 'autozimu/languageclient-neovim', {
+            \ 'branch': 'next',
+            \ 'do': 'bash install.sh',
+            \ }
 " Deoplete
 Plug 'shougo/deoplete.nvim'
-Plug 'deoplete-plugins/deoplete-tag'
-Plug 'deoplete-plugins/deoplete-clang'
-Plug 'deoplete-plugins/deoplete-jedi'
 Plug 'wellle/tmux-complete.vim'
+Plug 'deoplete-plugins/deoplete-tag'
 
 " Theme
 Plug 'flazz/vim-colorschemes'
@@ -29,6 +31,8 @@ call plug#end()                                                 " required
 filetype plugin indent on                                       " required
 autocmd VimResized * :wincmd =
 
+let NERDTreeShowHidden=1
+let NERDTreeHijackNetrw=1
 let g:airline_extensions = ['tabline']
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
@@ -46,13 +50,14 @@ let g:ansible_normal_keywords_highlight = 'Define'
 let g:ansible_with_keywords_highlight = 'Operator'
 " Deoplete
 let g:deoplete#enable_at_startup = 0
+set completeopt-=preview
 autocmd InsertEnter * call deoplete#enable()
 let g:python3_host_prog = "/usr/bin/python3"
 let g:deoplete#enable_smart_case = 1
 let g:deoplete#auto_completion_start_length = 2
 let g:deoplete#manual_completion_start_length = 1
 " ALE linter
-let g:ale_sign_error = '◉'
+let g:ale_sign_error = '⤫'
 let g:ale_sign_warning = '▲'
 let g:ale_enabled = 1
 let g:ale_set_quickfix = 1
@@ -66,9 +71,9 @@ let g:ale_fixers = {
             \ 'python':['yapf','isort']
             \}
 let g:ale_linters = {
-            \ 'asm': ['clangd', 'gcc'],
-            \ 'c': ['clangd', 'gcc'],
-            \ 'cpp': ['clangd', 'gcc'],
+            \ 'asm': ['gcc'],
+            \ 'c': ['gcc'],
+            \ 'cpp': ['gcc'],
             \ 'sh':['shellcheck', 'shell'],
             \ 'python': ['flake8', 'pylint'],
             \ 'xml':['xmllint'],
@@ -76,6 +81,13 @@ let g:ale_linters = {
             \ 'yaml':['yamllint'],
             \ 'ansible':['ansible-lint']
             \}
+let g:LanguageClient_diagnosticsEnable = 0
+let g:LanguageClient_serverCommands = {
+            \ 'c': ['clangd'],
+            \ 'cpp': ['clangd'],
+            \ 'python': ['/usr/local/bin/pyls'],
+            \ 'sh' : ['bash-language-server', 'start'],
+            \ }
 " FZF fuzzy
 let $FZF_DEFAULT_COMMAND="rg --files --hidden"
 let g:fzf_files_options = "--preview 'if file {1} | grep -i text; then highlight {1} --force -s molokai -O truecolor ; fi'"
@@ -91,15 +103,23 @@ let mapleader = ' '
 map <leader>y "+y
 map <leader>p "+p
 " Utility shortcuts with leader:
-map <leader><Tab> :Buffers<CR>
-map <leader>e :<C-u>vert copen<bar>:50wincmd><CR>
-map <leader>t :Tags<CR>
-map <leader>b :Files<CR>
-map <leader>f :Rg<CR>
-map <leader>\ :NERDTreeToggle<CR>
 map <leader>/ :NERDTreeFind<CR>
-map <leader>l :bufdo ALELint<CR>:bp<CR>:bufdo e<CR>:so ~/.vimrc<CR>
+map <leader><Tab> :Buffers<CR>
+map <leader>\ :NERDTreeToggle<CR>
+map <leader>b :Files<CR>
+map <leader>e :<C-u>vert copen<bar>:50wincmd><CR>
+map <leader>f :Rg<CR>
 map <leader>j :set ft=.jinja2<Left><Left><Left><Left><Left><Left><Left>
+map <leader>A :bufdo ALELint<CR>:bp<CR>:bufdo e<CR>:so ~/.vimrc<CR>
+map <leader>t :Tags<CR>
+map <silent> <leader>g :call LanguageClient#textDocument_definition()<cr>
+map <silent> <leader>h :call LanguageClient_textDocument_hover()<cr>
+map <silent> <leader>i :call LanguageClient_textDocument_implementation()<cr>
+map <silent> <leader>l :call LanguageClient#textDocument_formatting()<cr>
+map <silent> <leader>m :call LanguageClient_contextMenu()<cr>
+map <silent> <leader>r :call LanguageClient_textDocument_rename()<cr>
+map <silent> <leader>rf :call LanguageClient#textDocument_references()<cr>
+map <silent> <leader>td :call LanguageClient_textDocument_typeDefinition()<cr>
 " Ctrl+L Format Code
 " if not use the specific implementation
 noremap <C-L> <Esc>:w<CR>:mkview<CR>gg=G<CR>:loadview<CR>
