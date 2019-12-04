@@ -1,6 +1,7 @@
 ZSH_DISABLE_COMPFIX=true
-bindkey "^[[1;5D" backward-word
-bindkey "^[[1;5C" forward-word
+bindkey -e
+bindkey "^[[1;5D" emacs-backward-word
+bindkey "^[[1;5C" emacs-forward-word
 bindkey "\e[H" beginning-of-line
 bindkey "\e[F" end-of-line
 bindkey "\e[1~" beginning-of-line
