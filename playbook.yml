@@ -59,7 +59,7 @@
 
     - name: Install Vim Plugins
       shell: |
-        vim +PlugInstall +PlugUpdate +qall
+        vim +PlugInstall +PlugUpdate! +qall
       tags: dotfiles
 
     - name: Load Gnome Keybindings and Terminal Settings
@@ -83,6 +83,7 @@
         - { key: /org/gnome/desktop/privacy/report-technical-problems, value: 'false' }
         - { key: /org/gnome/desktop/privacy/remove-old-trash-files, value: 'true' }
         - { key: /org/gnome/desktop/privacy/send-software-usage-stats, value: 'false' }
+        - { key: /org/gnome/desktop/interface/icon-theme, value: "'ePapirus'" }
       tags: dotfiles
 
     - name: Update the /etc/hosts file with node name
@@ -134,7 +135,6 @@
         - yelp
         - gfbgraph
         - simple-scan
-        - open-vm-tools
         - virtualbox-guest-additions
         - totem
       become: true
@@ -166,19 +166,12 @@
       tags: rpmfusion
       when: not file_exists.stat.exists
 
-    - name: Install Flathub
-      flatpak_remote:
-        name: flathub
-        state: present
-        flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
-        method: user
-      tags: flathub
-
     - name: Install Programs (Generic Utilities)
       package:
         name: '{{ item }}'
         state: present
       with_items:
+        - papirus-icon-theme
         - etckeeper
         - flatpak
         - highlight
@@ -201,6 +194,14 @@
         - "libvirt-daemon-*"
       become: true
       tags: term_pkg
+
+    - name: Install Flathub
+      flatpak_remote:
+        name: flathub
+        state: present
+        flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
+        method: user
+      tags: flathub
 
       # See: https://github.com/ansible/ansible/issues/54949
     - name: Configure etckeeper.conf
@@ -259,8 +260,7 @@
       with_items:
         - eog
         - evince
-        - evolution
-        - evolution-data-server
+        - geary
         - gnome-tweak-tool
         - mpv
         - libnotify
@@ -325,6 +325,23 @@
         - yamllint
         - ansible-lint
       become: true
+      tags: devel
+
+    - name: Install Programs (Programming Packages) - rust
+      shell: |
+        go get -u github.com/sourcegraph/go-langserver; \
+      environment:
+        GOPATH: "{{ ansible_env.HOME }}/.local/go"
+      tags: devel
+
+    - name: Install Programs (Programming Packages) - rust
+      shell: |
+        curl https://sh.rustup.rs -sSf | sh -s -- -y; \
+        $RUSTUP_HOME/bin/rustup default stable; \
+        $RUSTUP_HOME/bin/rustup component add rls rust-analysis rust-src
+      environment:
+        CARGO_HOME: "{{ ansible_env.HOME }}/.local/rust"
+        RUSTUP_HOME: "{{ ansible_env.HOME }}/.local/rust"
       tags: devel
 
     - name: Ensure {{ ansible_env.HOME }}/Programs Exists

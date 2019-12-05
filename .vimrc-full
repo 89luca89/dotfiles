@@ -67,6 +67,8 @@ let g:ale_fix_on_save = 1
 let g:ale_fixers = {
             \ '*':['remove_trailing_lines', 'trim_whitespace'],
             \ 'sh':['shfmt'],
+            \ 'go':['gofmt'],
+            \ 'rust':['rustfmt'],
             \ 'xml':['xmllint'],
             \ 'python':['yapf','isort']
             \}
@@ -74,18 +76,23 @@ let g:ale_linters = {
             \ 'asm': ['gcc'],
             \ 'c': ['gcc'],
             \ 'cpp': ['gcc'],
-            \ 'sh':['shellcheck', 'shell'],
             \ 'python': ['flake8', 'pylint'],
+            \ 'rust': ['cargo'],
+            \ 'go': ['golint'],
+            \ 'sh':['shellcheck', 'shell'],
             \ 'xml':['xmllint'],
             \ 'json':['jsonlint'],
-            \ 'yaml':['yamllint'],
             \ 'ansible':['ansible-lint']
             \}
+            " \ 'yaml':['yamllint'],
 let g:LanguageClient_diagnosticsEnable = 0
 let g:LanguageClient_serverCommands = {
+            \ 'asm': ['clangd'],
             \ 'c': ['clangd'],
             \ 'cpp': ['clangd'],
             \ 'python': ['/usr/local/bin/pyls'],
+            \ 'rust' : ['rls'],
+            \ 'go' : ['go-langserver', '-gocodecompletion'],
             \ 'sh' : ['bash-language-server', 'start'],
             \ }
 " FZF fuzzy
@@ -128,6 +135,8 @@ augroup autoformat_settings
     autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:!beautysh -f %<CR>:e<CR>:loadview<CR>
     autocmd FileType json noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!jsonlint -f %<CR>:e<CR>:loadview<CR>
     autocmd FileType python noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!yapf %<CR>:w<CR>:!isort %<CR><CR>:e<CR>:loadview<CR>
+    autocmd FileType rust noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!rustfmt %<CR>:w<CR>:e<CR>:loadview<CR>
+    autocmd FileType go noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!gofmt %<CR>:w<CR>:e<CR>:loadview<CR>
 augroup END
 " navigate tabs Tab (fw) S-Tab (prev)
 map <Tab> :bn<CR>
