@@ -327,7 +327,7 @@
       become: true
       tags: devel
 
-    - name: Install Programs (Programming Packages) - rust
+    - name: Install Programs (Programming Packages) - golang
       shell: |
         go get -u github.com/sourcegraph/go-langserver; \
       environment:
