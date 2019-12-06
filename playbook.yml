@@ -16,20 +16,30 @@
         - { src: "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim", dest: '{{ ansible_env.HOME }}/.vim/autoload' }
       tags: dotfiles
 
-    - name: Check if Dotfile folder is present
-      stat:
-        path: '{{ ansible_env.HOME }}/dotfiles'
-      register: file_exists
+    - name: Check if Baseline folder is present
+      file:
+        path: '{{ item }}'
+        state: directory
+      with_items:
+        - '{{ ansible_env.HOME }}/dotfiles'
+        - '{{ ansible_env.HOME }}/.vim'
+        - '{{ ansible_env.HOME }}/.vim/swap'
+        - '{{ ansible_env.HOME }}/.vim/undo'
+        - '{{ ansible_env.HOME }}/.vim/syntax'
+        - '{{ ansible_env.HOME }}/.vim/autoload'
+        - '{{ ansible_env.HOME }}/.local/go'
+        - '{{ ansible_env.HOME }}/.local/rust'
+        - '{{ ansible_env.HOME }}/Programs'
       tags: dotfiles
 
-    - name: Download Dotfiles
-      git:
-        repo: https://gitlab.com/89luca89/dotfiles
-        dest: '{{ ansible_env.HOME }}/dotfiles'
-        version: master
-        update: true
-      when: not file_exists.stat.exists
-      tags: dotfiles
+      #- name: Download Dotfiles
+      #  git:
+      #    repo: https://gitlab.com/89luca89/dotfiles
+      #    dest: '{{ ansible_env.HOME }}/dotfiles'
+      #    version: master
+      #    update: true
+      #  when: not file_exists.stat.exists
+      #  tags: dotfiles
 
     - name: link dotfiles
       file:
@@ -44,17 +54,6 @@
         - { src: "~/dotfiles/.zshrc", dest: "~/.zshrc" }
         - { src: "~/dotfiles/.ctags", dest: "~/.ctags" }
         - { src: "~/dotfiles/libinput-gestures.conf", dest: "~/.config/libinput-gestures.conf" }
-      tags: dotfiles
-
-    - name: Ensure Vim folders Exists
-      file:
-        path: '{{ item }}'
-        state: directory
-      with_items:
-        - '{{ ansible_env.HOME }}/.vim'
-        - '{{ ansible_env.HOME }}/.vim/swap'
-        - '{{ ansible_env.HOME }}/.vim/undo'
-        - '{{ ansible_env.HOME }}/.vim/syntax'
       tags: dotfiles
 
     - name: Install Vim Plugins
@@ -190,18 +189,11 @@
         - zsh
         - openssh-askpass
         - syncthing
+        - libnotify
         - libvirt
         - "libvirt-daemon-*"
       become: true
       tags: term_pkg
-
-    - name: Install Flathub
-      flatpak_remote:
-        name: flathub
-        state: present
-        flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
-        method: user
-      tags: flathub
 
       # See: https://github.com/ansible/ansible/issues/54949
     - name: Configure etckeeper.conf
@@ -260,18 +252,36 @@
       with_items:
         - eog
         - evince
-        - geary
         - gnome-tweak-tool
         - mpv
-        - libnotify
-        - telegram-desktop
-        - keepassxc
         - gparted
-        - gimp
         - syncthing-gtk
         - virt-manager
       become: true
       tags: gui_pkg
+
+    - name: Install Flathub
+      flatpak_remote:
+        name: flathub
+        state: present
+        flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
+        method: user
+      tags: flathub
+
+    - name: Install Programs (Flatpak Programs)
+      flatpak:
+        name: "{{ item }}"
+        state: present
+        method: user
+      with_items:
+        - org.gnome.Evolution
+        - org.telegram.desktop
+        - org.kde.krita
+        - org.darktable.Darktable
+        - org.keepassxc.KeePassXC
+        - com.jgraph.drawio.desktop
+        - de.haeckerfelix.Fragments
+      tags: flathub
 
     - name: install the 'Development tools' package group
       dnf:
@@ -374,14 +384,6 @@
         - libinput-gestures-setup start
       tags: external_pkg
 
-    - name: FSTrim Enable
-      systemd:
-        name: fstrim.timer
-        state: started
-        enabled: true
-      become: true
-      tags: system
-
     - name: Install Power Management (Laptop)
       package:
         name: '{{ item }}'
@@ -468,6 +470,14 @@
 
     - name: Enable discard lvm
       shell: sed -i 's/issue_discards = 0/issue_discards = 1/g' /etc/lvm/lvm.conf
+      become: true
+      tags: system
+
+    - name: Discard Trim Enable
+      systemd:
+        name: fstrim.timer
+        state: started
+        enabled: true
       become: true
       tags: system
 
