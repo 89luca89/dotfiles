@@ -190,6 +190,9 @@
         - openssh-askpass
         - syncthing
         - libnotify
+        - libappindicator
+        - libappindicator-gtk3
+        - libnotify
         - libvirt
         - "libvirt-daemon-*"
       become: true
