@@ -49,4 +49,4 @@ export TERM="xterm-256color"
 BGREEN='\[\033[01;32m\]'
 BBLUE='\[\033[01;34m\]'
 PS_CLEAR='\[\033[0m\]'
-PS1="${BGREEN}\u@\h${BBLUE} \w \$${PS_CLEAR} "
+PS1="${BGREEN}\u@\h${BBLUE} \W \$${PS_CLEAR} "
