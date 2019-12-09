@@ -9,6 +9,7 @@ alias whois="whois -h whois-servers.net"
 alias vi='vimx -u ~/dotfiles/.vimrc-minimal'
 alias vim='vimx'
 alias diff="diff --color=always"
+alias reset_ssh='assh sockets flush; killall ssh; killall stunnel; killall goa-daemon'
 export PATH=$HOME/bin:$PATH
 export GOPATH=$HOME/.local/go
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
