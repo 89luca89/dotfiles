@@ -45,4 +45,8 @@ if [ -z "$SSH_AUTH_SOCK" ]; then
 fi
 
 # setup a simple PROMPT/PS1
-PS1="\[\033[01;32m\]\u@\h\[\033[01;34m\] \w \$\[\033[00m\] "
+export TERM="xterm-256color"
+BGREEN='\[\033[01;32m\]'
+BBLUE='\[\033[01;34m\]'
+PS_CLEAR='\[\033[0m\]'
+PS1="${BGREEN}\u@\h${BBLUE} \w \$${PS_CLEAR} "
