@@ -135,6 +135,7 @@
         - gfbgraph
         - simple-scan
         - virtualbox-guest-additions
+        - httpd
         - totem
       become: true
       tags: bloat
@@ -302,7 +303,6 @@
         state: present
       with_items:
         - clang
-        - checkstyle
         - golang
         - golint
         - ShellCheck
