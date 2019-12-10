@@ -15,8 +15,7 @@ alias diff="diff --color=always"
 alias reset_ssh='assh sockets flush; killall ssh; killall stunnel; killall goa-daemon'
 export PATH=$HOME/bin:$PATH
 export GOPATH=$HOME/.local/go
-export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
-export PATH=$PATH:$HOME/.local/rust/bin
+export PATH=$PATH:$GOPATH/bin
 export PATH=$HOME/.local/bin:$PATH
 export RUSTUP_HOME=$HOME/.local/rust
 export CARGO_HOME=$HOME/.local/rust

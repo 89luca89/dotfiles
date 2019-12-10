@@ -1,14 +1,8 @@
-# Source global definitions
-if [ -f /etc/bashrc ]; then
-    . /etc/bashrc
-fi
 # Path to the bash it configuration
 if [ ! -d "$HOME/.local/bin/fzf" ]; then
     git clone --depth 1 https://github.com/junegunn/fzf.git "$HOME/.local/bin/fzf"
     "$HOME/.local/bin/fzf/install" --all
 fi
-
-source $HOME/.aliases
 
 # HISTORY SIZE
 export HISTCONTROL=ignoredups:erasedups # no duplicate entries
@@ -16,25 +10,21 @@ export HISTSIZE=100000                  # big big history
 export HISTFILESIZE=100000              # big big history
 shopt -s histappend                     # append to history, don't overwrite it
 export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
+bind '"\e[A": history-search-backward'
+bind '"\e[B": history-search-forward'
 
 if [ "$(shopt | grep checkwinsize | awk '{print $2}')" = "off" ]; then
     shopt -s checkwinsize
 fi
 
-# BASH COMPLETION
-source /usr/share/bash-completion/bash_completion
-bind '"\e[A": history-search-backward'
-bind '"\e[B": history-search-forward'
-
 # include custom files
 if [ -f $HOME/.localrc ]; then
     source $HOME/.localrc
 fi
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
-# use tmux split with FZF
-if [ "${TMUX}" ]; then
-    export FZF_TMUX=1
+if [ -f $HOME/.aliases ]; then
+    source $HOME/.aliases
 fi
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 # Manage the ssh keys
 if [ -z "$SSH_AUTH_SOCK" ]; then
     eval $(ssh-agent -s)
