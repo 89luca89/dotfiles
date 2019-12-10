@@ -1,4 +1,7 @@
 # BASIC ALIASES
+function ssht() {
+    ssh -t $@ 'tmux new'
+}
 alias grep='grep --color=auto'
 alias ll='ls -Ahl --group-directories-first --color'
 alias tree='tree -C'
