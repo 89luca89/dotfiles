@@ -1,6 +1,6 @@
 # BASIC ALIASES
-function ssht() {
-    ssh -t $@ 'tmux new'
+function ssh() {
+    /usr/bin/ssh -t $@ 'tmux > /dev/null 2>&1 || eval $SHELL'
 }
 alias grep='grep --color=auto'
 alias ll='ls -Ahl --group-directories-first --color'
