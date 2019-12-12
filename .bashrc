@@ -25,14 +25,6 @@ if [ -f $HOME/.aliases ]; then
     source $HOME/.aliases
 fi
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
-# Manage the ssh keys
-if [ -z "$SSH_AUTH_SOCK" ]; then
-    eval $(ssh-agent -s)
-    for key in $HOME/.ssh/id_*; do
-        echo $key
-        ssh-add $key
-    done
-fi
 
 # setup a simple PROMPT/PS1
 export TERM="xterm-256color"
