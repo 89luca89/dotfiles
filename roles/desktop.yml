@@ -54,6 +54,9 @@
         - { src: "~/dotfiles/.zshrc", dest: "~/.zshrc" }
         - { src: "~/dotfiles/.ctags", dest: "~/.ctags" }
         - { src: "~/dotfiles/libinput-gestures.conf", dest: "~/.config/libinput-gestures.conf" }
+        - { src: "~/dotfiles/mpv.conf", dest: "~/.config/mpv/mpv.conf" }
+        - { src: "~/Syncthing/Conf/keepassxc.ini", dest: "~/.config/keepassxc/keepassxc.ini" }
+        - { src: "~/Syncthing/Conf/assh.yml", dest: "~/.ssh/assh.yml" }
       tags: dotfiles
 
     - name: Install Vim Plugins
@@ -258,6 +261,7 @@
         - evince
         - gnome-tweak-tool
         - mpv
+        - keepassxc
         - gparted
         - syncthing-gtk
         - virt-manager
@@ -280,12 +284,18 @@
       with_items:
         - org.gnome.Evolution
         - org.telegram.desktop
-        - org.kde.krita
+        - org.gimp.GIMP
         - org.darktable.Darktable
-        - org.keepassxc.KeePassXC
         - com.jgraph.drawio.desktop
         - de.haeckerfelix.Fragments
       tags: flathub
+
+      # NON GTK PROGRAMS:
+        # telegram
+        # keepass
+        # darktable
+        # drawio
+        # chromium
 
     - name: install the 'Development tools' package group
       dnf:
