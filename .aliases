@@ -2,8 +2,8 @@
 function ssh() {
     /usr/bin/ssh -t $@ 'tmux > /dev/null 2>&1 || eval $SHELL'
 }
-alias rsyncthingD='rsync -av --progress raspberrypi-2.lan:/usr/local/mnt/usb-pen/Syncthing/ ~/Syncthing/'
-alias rsyncthingS='rsync -av --progress ~/Syncthing/ raspberrypi-2.lan:/usr/local/mnt/usb-pen/Syncthing/'
+alias rsyncthingD='rsync -av --delete --progress raspberrypi-2.lan:/usr/local/mnt/usb-pen/Syncthing/ ~/Syncthing/'
+alias rsyncthingS='rsync -av --delete --progress ~/Syncthing/ raspberrypi-2.lan:/usr/local/mnt/usb-pen/Syncthing/'
 alias grep='grep --color=auto'
 alias ll='ls -Ahl --group-directories-first --color'
 alias tree='tree -C'
