@@ -3,15 +3,15 @@ call plug#begin('~/.vim/plugged')
 " vim tmux navigator
 Plug 'christoomey/vim-tmux-navigator'
 " utilities
-Plug 'vim-airline/vim-airline'
+Plug 'ap/vim-buftabline'
 Plug 'mhinz/vim-signify'
 Plug 'scrooloose/nerdtree'
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' } " fuzzy find all the things
 Plug 'junegunn/fzf.vim'                                                     " fuzzy find all the things
-" Lang Packs
+"" Lang Packs
 Plug 'sheerun/vim-polyglot', { 'do': './build' }                            " Lang packs
-
-" ALE+LSP
+"
+"" ALE+LSP
 Plug 'dense-analysis/ale'
 Plug 'autozimu/languageclient-neovim', {
             \ 'branch': 'next',
@@ -21,21 +21,20 @@ Plug 'autozimu/languageclient-neovim', {
 Plug 'shougo/deoplete.nvim'
 Plug 'wellle/tmux-complete.vim'
 Plug 'deoplete-plugins/deoplete-tag'
-
+"
 " Theme
 Plug 'flazz/vim-colorschemes'
-
+"
 Plug 'roxma/nvim-yarp'
 Plug 'roxma/vim-hug-neovim-rpc'
 call plug#end()                                                 " required
 filetype plugin indent on                                       " required
 autocmd VimResized * :wincmd =
+autocmd InsertEnter asm,c,cpp,sh.go,rust,python,xml,json,ansible :ALEEnable
+autocmd InsertEnter * call deoplete#enable()
 
 let NERDTreeShowHidden=1
 let NERDTreeHijackNetrw=1
-let g:airline_extensions = ['tabline']
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#formatter = 'unique_tail'
 " Git
 let g:signify_sign_add               = '>'
 let g:signify_sign_delete            = '-'
@@ -49,17 +48,16 @@ let g:ansible_extra_keywords_highlight = 1
 let g:ansible_normal_keywords_highlight = 'Define'
 let g:ansible_with_keywords_highlight = 'Operator'
 " Deoplete
-let g:deoplete#enable_at_startup = 0
 set completeopt-=preview
-autocmd InsertEnter * call deoplete#enable()
+let g:deoplete#enable_at_startup = 0   " Start on insert mode
 let g:python3_host_prog = "/usr/bin/python3"
 let g:deoplete#enable_smart_case = 1
 let g:deoplete#auto_completion_start_length = 2
 let g:deoplete#manual_completion_start_length = 1
 " ALE linter
+let g:ale_enabled = 0   " Start on insert mode
 let g:ale_sign_error = '⤫'
 let g:ale_sign_warning = '▲'
-let g:ale_enabled = 1
 let g:ale_set_quickfix = 1
 let g:ale_linters_explicit = 1
 let g:ale_set_highlights = 1
@@ -189,6 +187,8 @@ highlight ALEWarning guibg=#333300
 highlight SignifySignAdd    guifg=#00ff00
 highlight SignifySignDelete guifg=#ff0000
 highlight SignifySignChange guifg=#ffff00
+highlight StatusLine guifg=#303030 guibg=#FFFFFF
+highlight StatusLineNC guifg=#101010 guibg=#888888
 " Toggle Theme
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
@@ -203,6 +203,8 @@ function! ToggleTheme()
         highlight SignifySignAdd    guifg=#00ff00
         highlight SignifySignDelete guifg=#ff0000
         highlight SignifySignChange guifg=#ffff00
+        highlight StatusLine guifg=#303030 guibg=#FFFFFF
+        highlight StatusLineNC guifg=#101010 guibg=#888888
     else
         set background=light
         colorscheme github
