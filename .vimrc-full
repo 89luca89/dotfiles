@@ -30,7 +30,8 @@ Plug 'roxma/vim-hug-neovim-rpc'
 call plug#end()                                                 " required
 filetype plugin indent on                                       " required
 autocmd VimResized * :wincmd =
-autocmd InsertEnter asm,c,cpp,sh.go,rust,python,xml,json,ansible :ALEEnable
+autocmd InsertEnter * :ALEEnable
+autocmd InsertEnter * :LanguageClientStart
 autocmd InsertEnter * call deoplete#enable()
 
 let NERDTreeShowHidden=1
@@ -83,6 +84,7 @@ let g:ale_linters = {
             \ 'ansible':['ansible-lint']
             \}
             " \ 'yaml':['yamllint'],
+let g:LanguageClient_autoStart = 0
 let g:LanguageClient_diagnosticsEnable = 0
 let g:LanguageClient_serverCommands = {
             \ 'asm': ['clangd'],
