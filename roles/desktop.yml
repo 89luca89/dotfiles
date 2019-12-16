@@ -32,15 +32,6 @@
         - '{{ ansible_env.HOME }}/Programs'
       tags: dotfiles
 
-      #- name: Download Dotfiles
-      #  git:
-      #    repo: https://gitlab.com/89luca89/dotfiles
-      #    dest: '{{ ansible_env.HOME }}/dotfiles'
-      #    version: master
-      #    update: true
-      #  when: not file_exists.stat.exists
-      #  tags: dotfiles
-
     - name: link dotfiles
       file:
         src: '{{ item.src }}'
@@ -189,7 +180,7 @@
         - tmux
         - xclip
         - ripgrep
-        - zsh
+        - git
         - openssh-askpass
         - syncthing
         - libnotify
