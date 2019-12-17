@@ -188,7 +188,6 @@
         - libappindicator-gtk3
         - libnotify
         - libvirt
-        - "libvirt-daemon-*"
       become: true
       tags: term_pkg
 
