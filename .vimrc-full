@@ -10,7 +10,6 @@ Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' } " fu
 Plug 'junegunn/fzf.vim'                                                     " fuzzy find all the things
 "" Lang Packs
 Plug 'sheerun/vim-polyglot', { 'do': './build' }                            " Lang packs
-"
 "" ALE+LSP
 Plug 'dense-analysis/ale'
 Plug 'autozimu/languageclient-neovim', {
@@ -21,7 +20,6 @@ Plug 'autozimu/languageclient-neovim', {
 Plug 'shougo/deoplete.nvim'
 Plug 'wellle/tmux-complete.vim'
 Plug 'deoplete-plugins/deoplete-tag'
-"
 " Theme
 Plug 'flazz/vim-colorschemes'
 "
@@ -33,6 +31,8 @@ autocmd VimResized * :wincmd =
 autocmd InsertEnter * :ALEEnable
 autocmd InsertEnter * :LanguageClientStart
 autocmd InsertEnter * call deoplete#enable()
+" Remove trailing whitespaces
+autocmd BufWritePre * %s/\s\+$//e
 
 let NERDTreeShowHidden=1
 let NERDTreeHijackNetrw=1
@@ -53,24 +53,13 @@ set completeopt-=preview
 let g:deoplete#enable_at_startup = 0   " Start on insert mode
 let g:python3_host_prog = "/usr/bin/python3"
 let g:deoplete#enable_smart_case = 1
-let g:deoplete#auto_completion_start_length = 2
-let g:deoplete#manual_completion_start_length = 1
 " ALE linter
 let g:ale_enabled = 0   " Start on insert mode
 let g:ale_sign_error = '⤫'
 let g:ale_sign_warning = '▲'
+let g:ale_set_highlights = 1
 let g:ale_set_quickfix = 1
 let g:ale_linters_explicit = 1
-let g:ale_set_highlights = 1
-let g:ale_fix_on_save = 1
-let g:ale_fixers = {
-            \ '*':['remove_trailing_lines', 'trim_whitespace'],
-            \ 'sh':['shfmt'],
-            \ 'go':['gofmt'],
-            \ 'rust':['rustfmt'],
-            \ 'xml':['xmllint'],
-            \ 'python':['yapf','isort']
-            \}
 let g:ale_linters = {
             \ 'asm': ['gcc'],
             \ 'c': ['gcc'],
@@ -132,9 +121,9 @@ map <silent> <leader>td :call LanguageClient_textDocument_typeDefinition()<cr>
 noremap <C-L> <Esc>:w<CR>:mkview<CR>gg=G<CR>:loadview<CR>
 augroup autoformat_settings
     autocmd FileType c,cpp,java,typescript,javascript noremap <buffer> <C-L><Esc>:w<CR>:mkview<CR>:%!clang-format -style=Google %<CR>:loadview<CR>
-    autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:!beautysh -f %<CR>:e<CR>:loadview<CR>
+    autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!shfmt %<CR>:w<CR>:e<CR>:loadview<CR>
     autocmd FileType json noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!jsonlint -f %<CR>:e<CR>:loadview<CR>
-    autocmd FileType python noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!yapf %<CR>:w<CR>:!isort %<CR><CR>:e<CR>:loadview<CR>
+    autocmd FileType python noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!yapf %<CR>:w<CR>:!isort %<CR><CR>:w<CR>:e<CR>:loadview<CR>
     autocmd FileType rust noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!rustfmt %<CR>:w<CR>:e<CR>:loadview<CR>
     autocmd FileType go noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!gofmt %<CR>:w<CR>:e<CR>:loadview<CR>
 augroup END
@@ -156,9 +145,8 @@ noremap <S-M-Up> :2winc+<cr>
 noremap <S-M-Down> :2winc-<cr>
 noremap <S-M-Left> :2winc<<cr>
 noremap <S-M-Right> :2winc><cr>
-
 " Miscellaneous
-set updatetime=500
+set updatetime=300
 set title nocompatible nowritebackup nobackup                    " required
 set mouse=a                                                       " it's always useful
 set undofile undolevels=1000 undodir=$HOME/.vim/undo              " Undo file and directory
