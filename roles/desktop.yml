@@ -104,32 +104,31 @@
 
     - name: Remove Programs (Unused Programs)
       package:
-        name: '{{ item }}'
         state: removed
-      with_items:
-        - gnome-documents
-        - gnome-dictionary
-        - gnome-photos
-        - gnome-music
-        - gnome-boxes
-        - gnome-getting-started-docs
-        - gnome-initial-setup
-        - gnome-maps
-        - gnome-online-miners
-        - gnome-photos
-        - gnome-user-docs
-        - gnome-user-share
-        - gnome-video-effects
-        - gnome-weather
-        - gnome-logs
-        - gnome-characters
-        - gnome-font-viewer
-        - yelp
-        - gfbgraph
-        - simple-scan
-        - virtualbox-guest-additions
-        - httpd
-        - totem
+        name:
+          - gnome-documents
+          - gnome-dictionary
+          - gnome-photos
+          - gnome-music
+          - gnome-boxes
+          - gnome-getting-started-docs
+          - gnome-initial-setup
+          - gnome-maps
+          - gnome-online-miners
+          - gnome-photos
+          - gnome-user-docs
+          - gnome-user-share
+          - gnome-video-effects
+          - gnome-weather
+          - gnome-logs
+          - gnome-characters
+          - gnome-font-viewer
+          - yelp
+          - gfbgraph
+          - simple-scan
+          - virtualbox-guest-additions
+          - httpd
+          - totem
       become: true
       tags: bloat
 
@@ -147,11 +146,11 @@
         path: /etc/yum.repos.d/rpmfusion-free.repo
       register: file_exists
       tags: rpmfusion
+
     - name: Install the rpmfusion and fonts repo packages
       dnf:
-        name: '{{ item }}'
         state: present
-      with_items:
+        name:
         - http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_facts.distribution_version }}.noarch.rpm
         - http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_facts.distribution_version }}.noarch.rpm
         - https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
@@ -161,33 +160,32 @@
 
     - name: Install Programs (Generic Utilities)
       package:
-        name: '{{ item }}'
         state: present
-      with_items:
-        - papirus-icon-theme
-        - etckeeper
-        - flatpak
-        - highlight
-        - cabextract
-        - lzip
-        - p7zip
-        - p7zip-plugins
-        - xdotool
-        - wmctrl
-        - vim
-        - vim-enhanced
-        - vim-X11
-        - tmux
-        - xclip
-        - ripgrep
-        - git
-        - openssh-askpass
-        - syncthing
-        - libnotify
-        - libappindicator
-        - libappindicator-gtk3
-        - libnotify
-        - libvirt
+        name:
+          - papirus-icon-theme
+          - etckeeper
+          - flatpak
+          - highlight
+          - cabextract
+          - lzip
+          - p7zip
+          - p7zip-plugins
+          - xdotool
+          - wmctrl
+          - vim
+          - vim-enhanced
+          - vim-X11
+          - tmux
+          - xclip
+          - ripgrep
+          - git
+          - openssh-askpass
+          - syncthing
+          - libnotify
+          - libappindicator
+          - libappindicator-gtk3
+          - libnotify
+          - libvirt
       become: true
       tags: term_pkg
 
@@ -199,6 +197,13 @@
       become: true
       tags: term_pkg
 
+    - name: Check if etckeeper is already initialized
+      stat:
+        path: /etc/.git
+      register: file_exists
+      become: true
+      tags: term_pkg
+
     - name: Initialize Etckeeper
       command: '{{ item }}'
       with_items:
@@ -207,52 +212,51 @@
       ignore_errors: true
       become: true
       tags: term_pkg
+      when: not file_exists.stat.exists
 
     - name: Install Programs (Media Utilities)
       package:
-        name: '{{ item }}'
         state: present
-      with_items:
-        - gstreamer1-vaapi
-        - gstreamer1-libav
-        - gstreamer1-plugins-good
-        - gstreamer1-plugins-good-extras
-        - gstreamer1-plugins-ugly
-        - gstreamer1-plugins-ugly-free
-        - gstreamer1-plugins-bad-free
-        - gstreamer1-plugins-bad-freeworld
-        - gstreamer1-plugins-base
-        - gstreamer1-plugins-base-tools
-        - gstreamer1-svt-av1
-        - gstreamer1-svt-vp9
-        - ffmpeg
-        - ffmpeg-libs
-        - libva-devel
-        - intel-media-driver
-        - libva-intel-driver
-        - libva-intel-hybrid-driver
-        - libva-utils
-        - libva-vdpau-driver
-        - libvdpau-va-gl
-        - compat-ffmpeg28
-        - compat-ffmpeg28-devel
-        - gvfs-fuse
+        name:
+          - gstreamer1-vaapi
+          - gstreamer1-libav
+          - gstreamer1-plugins-good
+          - gstreamer1-plugins-good-extras
+          - gstreamer1-plugins-ugly
+          - gstreamer1-plugins-ugly-free
+          - gstreamer1-plugins-bad-free
+          - gstreamer1-plugins-bad-freeworld
+          - gstreamer1-plugins-base
+          - gstreamer1-plugins-base-tools
+          - gstreamer1-svt-av1
+          - gstreamer1-svt-vp9
+          - ffmpeg
+          - ffmpeg-libs
+          - libva-devel
+          - intel-media-driver
+          - libva-intel-driver
+          - libva-intel-hybrid-driver
+          - libva-utils
+          - libva-vdpau-driver
+          - libvdpau-va-gl
+          - compat-ffmpeg28
+          - compat-ffmpeg28-devel
+          - gvfs-fuse
       become: true
       tags: media_pkg
 
     - name: Install Programs (GUI Programs)
       package:
-        name: '{{ item }}'
         state: present
-      with_items:
-        - eog
-        - evince
-        - gnome-tweak-tool
-        - mpv
-        - keepassxc
-        - gparted
-        - syncthing-gtk
-        - virt-manager
+        name:
+          - eog
+          - evince
+          - gnome-tweak-tool
+          - mpv
+          - keepassxc
+          - gparted
+          - syncthing-gtk
+          - virt-manager
       become: true
       tags: gui_pkg
 
@@ -284,37 +288,34 @@
         # darktable
         # drawio
         # chromium
-
     - name: install the 'Development tools' package group
       dnf:
-        name: '{{ item }}'
         state: present
-      with_items:
-        - '@C Development Tools and Libraries'
-        - '@Development tools'
+        name:
+          - '@C Development Tools and Libraries'
+          - '@Development tools'
       become: true
       tags: devel
 
     - name: Install Programs (Programming Packages)
       package:
-        name: '{{ item }}'
         state: present
-      with_items:
-        - clang
-        - golang
-        - golint
-        - ShellCheck
-        - ncurses-compat-libs
-        - boost-devel
-        - python2
-        - python2-devel
-        - python3
-        - python3-devel
-        - cmake
-        - ctags
-        - ctags-etags
-        - global-ctags
-        - libxml2
+        name:
+          - clang
+          - golang
+          - golint
+          - ShellCheck
+          - ncurses-compat-libs
+          - boost-devel
+          - python2
+          - python2-devel
+          - python3
+          - python3-devel
+          - cmake
+          - ctags
+          - ctags-etags
+          - global-ctags
+          - libxml2
       become: true
       tags: devel
 
@@ -340,19 +341,35 @@
 
     - name: Install Programs (Programming Packages) - golang
       command: |
-        go get -u github.com/sourcegraph/go-langserver; \
+        go get -u github.com/sourcegraph/go-langserver
       environment:
         GOPATH: "{{ ansible_env.HOME }}/.local/go"
       tags: devel
 
+    - name: Check if rustup is already installed
+      stat:
+        path: "{{ ansible_env.HOME }}/.local/rust/env"
+      register: file_exists
+      tags: devel
+
+    - name: Install Programs (Programming Packages) - rustup
+      get_url:
+        url: https://sh.rustup.rs
+        dest: /tmp/rustup.sh
+        mode: 0755
+      when: not file_exists.stat.exists
+      tags: devel
+
     - name: Install Programs (Programming Packages) - rust
-      command: |
-        curl https://sh.rustup.rs -sSf | sh -s -- -y; \
-        $RUSTUP_HOME/bin/rustup default stable; \
-        $RUSTUP_HOME/bin/rustup component add rls rust-analysis rust-src
+      command: "{{ item }}"
+      with_items:
+        - /tmp/rustup.sh -y
+        - $RUSTUP_HOME/bin/rustup default stable
+        - $RUSTUP_HOME/bin/rustup component add rls rust-analysis rust-src
       environment:
         CARGO_HOME: "{{ ansible_env.HOME }}/.local/rust"
         RUSTUP_HOME: "{{ ansible_env.HOME }}/.local/rust"
+      when: not file_exists.stat.exists
       tags: devel
 
     - name: Ensure {{ ansible_env.HOME }}/Programs Exists
@@ -367,15 +384,32 @@
         dest: '{{ ansible_env.HOME }}/Programs/libinput-gestures'
         version: master
         update: true
+      register: libinput_gesture_download
       tags: external_pkg
 
-    - name: Libinput Gestures (Group and Dependency)
-      shell: '{{ item }}'
-      with_items:
-        - usermod -a -G input luca-linux
-        - dnf install -y systemd-devel libinput-devel
-        - cd {{ ansible_env.HOME }}/Programs/libinput-gestures; make install
+    - name: Libinput Gestures (Add "{{ lookup('env','USER') }}" to Input Group)
+      user:
+        name: "{{ lookup('env','USER') }}"
+        groups: input
+        append: yes
       become: true
+      tags: external_pkg
+
+    - name: Libinput Gestures (Dependencies)
+      package:
+        state: present
+        name:
+          - systemd-devel
+          - libinput-devel
+      become: true
+      tags: external_pkg
+
+    - name: Libinput Gestures (Compile and Install)
+      make:
+        chdir: "{{ ansible_env.HOME }}/Programs/libinput-gestures"
+        target: install
+      become: true
+      when: libinput_gesture_download.changed
       tags: external_pkg
 
     - name: Libinput Gestures (Start and Autorun)
@@ -383,24 +417,23 @@
       with_items:
         - libinput-gestures-setup autostart
         - libinput-gestures-setup start
+      when: libinput_gesture_download.changed
       tags: external_pkg
 
     - name: Install Power Management (Laptop)
       package:
-        name: '{{ item }}'
         state: present
-      with_items:
-        - powertop
-        - msr-tools
-        - tlp
-        - tlp-rdw
+        name:
+          - powertop
+          - msr-tools
+          - tlp
+          - tlp-rdw
       become: true
       tags: system
 
     - name: Powertop Enable
       systemd:
         name: powertop.service
-        state: started
         enabled: true
       become: true
       tags: system
@@ -561,6 +594,7 @@
         regexp: 'quiet"$'
         replace: 'quiet nmi_watchdog=0 pcie_aspm.policy=powersupersave pcie_aspm=force drm.debug=0 drm.vblankoffdelay=1 scsi_mod.use_blk_mq=1 mmc_mod.use_blk_mq=1 mitigations=off"'
         backup: true
+      register: grub_setup
       become: true
       tags: system
 
@@ -569,6 +603,7 @@
       with_items:
         - grub2-mkconfig -o $(find /boot -name "grub.cfg" -print | head -n 1)
         - dracut --force --regenerate-all -v
+      when: grub_setup.changed
       become: true
       tags: system
 
