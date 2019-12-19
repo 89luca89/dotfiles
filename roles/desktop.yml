@@ -470,7 +470,7 @@
         replace: 'issue_discards = 1'
         backup: true
       become: true
-      tags: system,udev
+      tags: system
 
     - name: Discard Trim Enable
       systemd:
@@ -555,18 +555,13 @@
       become: true
       tags: system
 
-    - name: Check Grub Flags are deployed
-      shell: |
-        grep "nmi_watchdog=0 pcie_aspm.policy=powersupersave pcie_aspm=force drm.debug=0 drm.vblankoffdelay=1 scsi_mod.use_blk_mq=1 mmc_mod.use_blk_mq=1 mitigations=off" /etc/default/grub
-      register: test_grep
-      become: true
-      ignore_errors: true
-      tags: system
     - name: Deploy Grub Flags
-      shell: |
-        sed -i 's/quiet/quiet nmi_watchdog=0 pcie_aspm.policy=powersupersave pcie_aspm=force drm.debug=0 drm.vblankoffdelay=1 scsi_mod.use_blk_mq=1 mmc_mod.use_blk_mq=1 mitigations=off/g' /etc/default/grub
+      replace:
+        path: /etc/default/grub
+        regexp: 'quiet"$'
+        replace: 'quiet nmi_watchdog=0 pcie_aspm.policy=powersupersave pcie_aspm=force drm.debug=0 drm.vblankoffdelay=1 scsi_mod.use_blk_mq=1 mmc_mod.use_blk_mq=1 mitigations=off"'
+        backup: true
       become: true
-      when: test_grep.rc == 1
       tags: system
 
     - name: Update Grub and Initramfs
