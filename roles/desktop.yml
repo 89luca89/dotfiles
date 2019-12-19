@@ -413,7 +413,7 @@
       tags: external_pkg
 
     - name: Libinput Gestures (Start and Autorun)
-      shell: '{{ item }}'
+      command: '{{ item }}'
       with_items:
         - libinput-gestures-setup autostart
         - libinput-gestures-setup start
