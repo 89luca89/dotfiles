@@ -2,8 +2,6 @@
 # ansible-playbook -i localhost, -kK roles/desktop.yml
 
 - name: Playbook to manage My Distro
-  hosts: localhost
-  connection: local
   gather_facts: true
   tasks:
 
@@ -20,20 +18,18 @@
           - gnome-initial-setup
           - gnome-maps
           - gnome-online-miners
-          - gnome-photos
           - gnome-user-docs
           - gnome-user-share
           - gnome-video-effects
-          - gnome-weather
           - gnome-logs
           - gnome-characters
           - gnome-font-viewer
+          - eog
           - yelp
           - gfbgraph
           - simple-scan
           - virtualbox-guest-additions
           - httpd
-          - totem
       become: true
       tags: bloat
 
@@ -56,24 +52,35 @@
       dnf:
         state: present
         name:
-        - http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_facts.distribution_version }}.noarch.rpm
-        - http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_facts.distribution_version }}.noarch.rpm
-        - https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
+          - http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_facts.distribution_version }}.noarch.rpm
+          - http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_facts.distribution_version }}.noarch.rpm
+          - https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
       become: true
       tags: rpmfusion
-      when: not file_exists.stat.exists
+      when:
+        - not file_exists.stat.exists
+        - ansible_distribution == 'Fedora'
+
+    - name: Install EPEL for Centos
+      package:
+        state: present
+        name:
+          - epel-release
+          - https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
+      tags: epel
+      when:
+        - ansible_distribution == 'Centos'
 
     - name: Install Programs (Generic Utilities)
       package:
         state: present
         name:
-          - papirus-icon-theme
           - etckeeper
           - flatpak
           - highlight
           - cabextract
           - lzip
-          - p7zip
+          - p7zg
           - p7zip-plugins
           - xdotool
           - wmctrl
@@ -154,9 +161,10 @@
       package:
         state: present
         name:
-          - eog
-          - evince
+          - moka-icon-theme
+          - rhythmbox-alternative-toolbar
           - gnome-tweak-tool
+          - gthumb
           - mpv
           - keepassxc
           - gparted
@@ -492,6 +500,30 @@
       become: true
       tags: system
 
+    - name: Update the /etc/hosts file with node name
+      lineinfile:
+        path: /etc/hosts
+        regexp: "127.0.0.1\t{{ ansible_hostname }}"
+        line: "127.0.0.1\t{{ ansible_hostname }}"
+        state: present
+        backup: true
+      become: true
+      tags: system
+
+    - name: Update the profiles file with personal variables
+      lineinfile:
+        path: /etc/profile
+        regexp: '{{ item }}'
+        line: '{{ item }}'
+        state: present
+        backup: true
+      with_items:
+        - export MOZ_USE_XINPUT2=1
+        - export MOZ_ACCELLERATED=1
+        - export MOZ_WEBRENDER=1
+      become: true
+      tags: system
+
     - name: Deploy Grub Flags
       replace:
         path: /etc/default/grub
@@ -534,6 +566,26 @@
         - '{{ ansible_env.HOME }}/.local/go'
         - '{{ ansible_env.HOME }}/.local/rust'
         - '{{ ansible_env.HOME }}/Programs'
+      register: firstrun
+      tags: dotfiles
+
+    - name: Prepare to link dotfiles
+      file:
+        path: '{{ item }}'
+        state: absent
+      with_items:
+        - "~/.aliases"
+        - "~/.bashrc"
+        - "~/.tmux.conf"
+        - "~/.vimrc"
+        - "~/.zshrc"
+        - "~/.ctags"
+        - "~/.config/libinput-gestures.conf"
+        - "~/.config/mpv/mpv.conf"
+        - "~/.config/keepassxc/keepassxc.ini"
+        - "~/.ssh/assh.yml"
+        - "~/.local/share/applications"
+      when: firstrun.changed
       tags: dotfiles
 
     - name: link dotfiles
@@ -552,17 +604,21 @@
         - { src: "~/dotfiles/mpv.conf", dest: "~/.config/mpv/mpv.conf" }
         - { src: "~/Syncthing/Conf/keepassxc.ini", dest: "~/.config/keepassxc/keepassxc.ini" }
         - { src: "~/Syncthing/Conf/assh.yml", dest: "~/.ssh/assh.yml" }
+        - { src: "~/Syncthing/Conf/Shortcuts/applications", dest: "~/.local/share/applications" }
       tags: dotfiles
 
     - name: Install Vim Plugins
       command: |
         vim +PlugInstall +PlugUpdate! +qall
+      when: firstrun.changed
       tags: dotfiles
 
     - name: Load Gnome Keybindings (gsettings)
       shell: |
+        gsettings set org.gnome.desktop.app-folders folder-children [""]; \
         gsettings set org.gnome.settings-daemon.plugins.media-keys \
         custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom6/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom7/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom8/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom9/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom10/']"
+      when: firstrun.changed
       tags: dotfiles
 
     - name: Load Gnome Keybindings and Terminal Settings (dconf)
@@ -570,6 +626,7 @@
       with_items:
         - {key: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/, value: '{{ ansible_env.HOME }}/dotfiles/gnome-keybindings.conf'}
         - {key: /org/gnome/terminal/, value: '{{ ansible_env.HOME }}/dotfiles/gnome-terminal.conf'}
+      when: firstrun.changed
       tags: dotfiles
 
     - name: Configure Keyboard and Cursor Options
@@ -586,31 +643,14 @@
         - { key: /org/gnome/desktop/privacy/report-technical-problems, value: 'false' }
         - { key: /org/gnome/desktop/privacy/remove-old-trash-files, value: 'true' }
         - { key: /org/gnome/desktop/privacy/send-software-usage-stats, value: 'false' }
+        - { key: /org/gnome/desktop/interface/icon-theme, value: "'Moka'" }
       tags: dotfiles
 
-    - name: Update the /etc/hosts file with node name
-      lineinfile:
-        path: /etc/hosts
-        regexp: "127.0.0.1\t{{ ansible_hostname }}"
-        line: "127.0.0.1\t{{ ansible_hostname }}"
-        state: present
-        backup: true
-      become: true
-      tags: dotfiles
-
-    - name: Update the profiles file with personal variables
-      lineinfile:
-        path: /etc/profile
-        regexp: '{{ item }}'
-        line: '{{ item }}'
-        state: present
-        backup: true
-      with_items:
-        - export MOZ_USE_XINPUT2=1
-        - export MOZ_ACCELLERATED=1
-        - export MOZ_WEBRENDER=1
-      become: true
-      tags: dotfiles
+      # Extensions
+      # appindicatorsupport@rgcjonas.gmail.com
+      # noannoyance@sindex.com
+      # ProxySwitcher@flannaghan.com
+      # syncthingicon@jay.strict@posteo.de
 
 # echo 'Section "InputClass"
 #         Identifier "libinput pointer catchall"
