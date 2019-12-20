@@ -160,7 +160,6 @@
           - mpv
           - keepassxc
           - gparted
-          - syncthing-gtk
           - virt-manager
       become: true
       tags: gui_pkg
