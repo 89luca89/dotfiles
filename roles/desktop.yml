@@ -504,7 +504,7 @@
       tags: system
 
     - name: Update Grub and Initramfs
-      shell: '{{ item }}'
+      command: '{{ item }}'
       with_items:
         - grub2-mkconfig -o $(find /boot -name "grub.cfg" -print | head -n 1)
         - dracut --force --regenerate-all -v
@@ -556,11 +556,17 @@
       tags: dotfiles
 
     - name: Install Vim Plugins
-      shell: |
+      command: |
         vim +PlugInstall +PlugUpdate! +qall
       tags: dotfiles
 
-    - name: Load Gnome Keybindings and Terminal Settings
+    - name: Load Gnome Keybindings (gsettings)
+      shell: |
+        gsettings set org.gnome.settings-daemon.plugins.media-keys \
+        custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom6/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom7/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom8/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom9/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom10/']"
+      tags: dotfiles
+
+    - name: Load Gnome Keybindings and Terminal Settings (dconf)
       shell: dconf load {{ item.key }} < {{ item.value }}
       with_items:
         - {key: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/, value: '{{ ansible_env.HOME }}/dotfiles/gnome-keybindings.conf'}
