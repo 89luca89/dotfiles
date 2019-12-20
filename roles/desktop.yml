@@ -1,106 +1,11 @@
 # To run
-# ansible-playbook setup.yml --ask-become-pass
+# ansible-playbook -i localhost, -kK roles/desktop.yml
 
 - name: Playbook to manage My Distro
   hosts: localhost
   connection: local
   gather_facts: true
   tasks:
-
-    - name: Install scripts before starting dotfiles
-      get_url:
-        url: '{{ item.src }}'
-        dest: '{{ item.dest }}'
-        mode: 0755
-      with_items:
-        - { src: "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim", dest: '{{ ansible_env.HOME }}/.vim/autoload' }
-      tags: dotfiles
-
-    - name: Check if Baseline folder is present
-      file:
-        path: '{{ item }}'
-        state: directory
-      with_items:
-        - '{{ ansible_env.HOME }}/dotfiles'
-        - '{{ ansible_env.HOME }}/.vim'
-        - '{{ ansible_env.HOME }}/.vim/swap'
-        - '{{ ansible_env.HOME }}/.vim/undo'
-        - '{{ ansible_env.HOME }}/.vim/syntax'
-        - '{{ ansible_env.HOME }}/.vim/autoload'
-        - '{{ ansible_env.HOME }}/.local/go'
-        - '{{ ansible_env.HOME }}/.local/rust'
-        - '{{ ansible_env.HOME }}/Programs'
-      tags: dotfiles
-
-    - name: link dotfiles
-      file:
-        src: '{{ item.src }}'
-        dest: '{{ item.dest }}'
-        state: link
-      with_items:
-        - { src: "~/dotfiles/.aliases", dest: "~/.aliases" }
-        - { src: "~/dotfiles/.bashrc", dest: "~/.bashrc" }
-        - { src: "~/dotfiles/.tmux.conf", dest: "~/.tmux.conf" }
-        - { src: "~/dotfiles/.vimrc-full", dest: "~/.vimrc" }
-        - { src: "~/dotfiles/.zshrc", dest: "~/.zshrc" }
-        - { src: "~/dotfiles/.ctags", dest: "~/.ctags" }
-        - { src: "~/dotfiles/libinput-gestures.conf", dest: "~/.config/libinput-gestures.conf" }
-        - { src: "~/dotfiles/mpv.conf", dest: "~/.config/mpv/mpv.conf" }
-        - { src: "~/Syncthing/Conf/keepassxc.ini", dest: "~/.config/keepassxc/keepassxc.ini" }
-        - { src: "~/Syncthing/Conf/assh.yml", dest: "~/.ssh/assh.yml" }
-      tags: dotfiles
-
-    - name: Install Vim Plugins
-      shell: |
-        vim +PlugInstall +PlugUpdate! +qall
-      tags: dotfiles
-
-    - name: Load Gnome Keybindings and Terminal Settings
-      shell: dconf load {{ item.key }} < {{ item.value }}
-      with_items:
-        - {key: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/, value: '{{ ansible_env.HOME }}/dotfiles/gnome-keybindings.conf'}
-        - {key: /org/gnome/terminal/, value: '{{ ansible_env.HOME }}/dotfiles/gnome-terminal.conf'}
-      tags: dotfiles
-
-    - name: Configure Keyboard and Cursor Options
-      dconf:
-        key: '{{ item.key }}'
-        value: '{{ item.value }}'
-        state: present
-      with_items:
-        - { key: /org/gnome/desktop/interface/cursor-blink, value: 'false' }
-        - { key: /org/gnome/desktop/privacy/disable-microphone, value: 'true' }
-        - { key: /org/gnome/desktop/privacy/recent-files-max-age, value: '7' }
-        - { key: /org/gnome/desktop/privacy/remove-old-temp-files, value: 'true' }
-        - { key: /org/gnome/desktop/privacy/disable-camera, value: 'true' }
-        - { key: /org/gnome/desktop/privacy/report-technical-problems, value: 'false' }
-        - { key: /org/gnome/desktop/privacy/remove-old-trash-files, value: 'true' }
-        - { key: /org/gnome/desktop/privacy/send-software-usage-stats, value: 'false' }
-      tags: dotfiles
-
-    - name: Update the /etc/hosts file with node name
-      lineinfile:
-        path: /etc/hosts
-        regexp: "127.0.0.1\t{{ ansible_hostname }}"
-        line: "127.0.0.1\t{{ ansible_hostname }}"
-        state: present
-        backup: true
-      become: true
-      tags: dotfiles
-
-    - name: Update the profiles file with personal variables
-      lineinfile:
-        path: /etc/profile
-        regexp: '{{ item }}'
-        line: '{{ item }}'
-        state: present
-        backup: true
-      with_items:
-        - export MOZ_USE_XINPUT2=1
-        - export MOZ_ACCELLERATED=1
-        - export MOZ_WEBRENDER=1
-      become: true
-      tags: dotfiles
 
     - name: Remove Programs (Unused Programs)
       package:
@@ -606,6 +511,101 @@
       when: grub_setup.changed
       become: true
       tags: system
+
+    - name: Install scripts before starting dotfiles
+      get_url:
+        url: '{{ item.src }}'
+        dest: '{{ item.dest }}'
+        mode: 0755
+      with_items:
+        - { src: "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim", dest: '{{ ansible_env.HOME }}/.vim/autoload' }
+      tags: dotfiles
+
+    - name: Check if Baseline folder is present
+      file:
+        path: '{{ item }}'
+        state: directory
+      with_items:
+        - '{{ ansible_env.HOME }}/dotfiles'
+        - '{{ ansible_env.HOME }}/.vim'
+        - '{{ ansible_env.HOME }}/.vim/swap'
+        - '{{ ansible_env.HOME }}/.vim/undo'
+        - '{{ ansible_env.HOME }}/.vim/syntax'
+        - '{{ ansible_env.HOME }}/.vim/autoload'
+        - '{{ ansible_env.HOME }}/.local/go'
+        - '{{ ansible_env.HOME }}/.local/rust'
+        - '{{ ansible_env.HOME }}/Programs'
+      tags: dotfiles
+
+    - name: link dotfiles
+      file:
+        src: '{{ item.src }}'
+        dest: '{{ item.dest }}'
+        state: link
+      with_items:
+        - { src: "~/dotfiles/.aliases", dest: "~/.aliases" }
+        - { src: "~/dotfiles/.bashrc", dest: "~/.bashrc" }
+        - { src: "~/dotfiles/.tmux.conf", dest: "~/.tmux.conf" }
+        - { src: "~/dotfiles/.vimrc-full", dest: "~/.vimrc" }
+        - { src: "~/dotfiles/.zshrc", dest: "~/.zshrc" }
+        - { src: "~/dotfiles/.ctags", dest: "~/.ctags" }
+        - { src: "~/dotfiles/libinput-gestures.conf", dest: "~/.config/libinput-gestures.conf" }
+        - { src: "~/dotfiles/mpv.conf", dest: "~/.config/mpv/mpv.conf" }
+        - { src: "~/Syncthing/Conf/keepassxc.ini", dest: "~/.config/keepassxc/keepassxc.ini" }
+        - { src: "~/Syncthing/Conf/assh.yml", dest: "~/.ssh/assh.yml" }
+      tags: dotfiles
+
+    - name: Install Vim Plugins
+      shell: |
+        vim +PlugInstall +PlugUpdate! +qall
+      tags: dotfiles
+
+    - name: Load Gnome Keybindings and Terminal Settings
+      shell: dconf load {{ item.key }} < {{ item.value }}
+      with_items:
+        - {key: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/, value: '{{ ansible_env.HOME }}/dotfiles/gnome-keybindings.conf'}
+        - {key: /org/gnome/terminal/, value: '{{ ansible_env.HOME }}/dotfiles/gnome-terminal.conf'}
+      tags: dotfiles
+
+    - name: Configure Keyboard and Cursor Options
+      dconf:
+        key: '{{ item.key }}'
+        value: '{{ item.value }}'
+        state: present
+      with_items:
+        - { key: /org/gnome/desktop/interface/cursor-blink, value: 'false' }
+        - { key: /org/gnome/desktop/privacy/disable-microphone, value: 'true' }
+        - { key: /org/gnome/desktop/privacy/recent-files-max-age, value: '7' }
+        - { key: /org/gnome/desktop/privacy/remove-old-temp-files, value: 'true' }
+        - { key: /org/gnome/desktop/privacy/disable-camera, value: 'true' }
+        - { key: /org/gnome/desktop/privacy/report-technical-problems, value: 'false' }
+        - { key: /org/gnome/desktop/privacy/remove-old-trash-files, value: 'true' }
+        - { key: /org/gnome/desktop/privacy/send-software-usage-stats, value: 'false' }
+      tags: dotfiles
+
+    - name: Update the /etc/hosts file with node name
+      lineinfile:
+        path: /etc/hosts
+        regexp: "127.0.0.1\t{{ ansible_hostname }}"
+        line: "127.0.0.1\t{{ ansible_hostname }}"
+        state: present
+        backup: true
+      become: true
+      tags: dotfiles
+
+    - name: Update the profiles file with personal variables
+      lineinfile:
+        path: /etc/profile
+        regexp: '{{ item }}'
+        line: '{{ item }}'
+        state: present
+        backup: true
+      with_items:
+        - export MOZ_USE_XINPUT2=1
+        - export MOZ_ACCELLERATED=1
+        - export MOZ_WEBRENDER=1
+      become: true
+      tags: dotfiles
 
 # echo 'Section "InputClass"
 #         Identifier "libinput pointer catchall"
