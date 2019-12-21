@@ -2,6 +2,7 @@
 # ansible-playbook -i localhost, -kK roles/desktop.yml
 
 - name: Playbook to manage My Distro
+  hosts: all
   gather_facts: true
   tasks:
 
@@ -45,8 +46,9 @@
     - name: Check if rpmfusion exists
       stat:
         path: /etc/yum.repos.d/rpmfusion-free.repo
-      register: file_exists
+      register: rpmfusion_exists
       tags: rpmfusion
+      when: ansible_distribution == 'Fedora'
 
     - name: Install the rpmfusion and fonts repo packages
       dnf:
@@ -58,11 +60,19 @@
       become: true
       tags: rpmfusion
       when:
-        - not file_exists.stat.exists
         - ansible_distribution == 'Fedora'
+        - rpmfusion_exists is defined
+        - not rpmfusion_exists.stat.exists
+
+    - name: Check if epel exists
+      stat:
+        path: /etc/yum.repos.d/epel.repo
+      register: epel_exists
+      tags: epel
+      when: ansible_distribution == 'Centos'
 
     - name: Install EPEL for Centos
-      package:
+      dnf:
         state: present
         name:
           - epel-release
@@ -70,6 +80,8 @@
       tags: epel
       when:
         - ansible_distribution == 'Centos'
+        - epel_exists is defined
+        - not epel_exists.stat.exists
 
     - name: Install Programs (Generic Utilities)
       package:
@@ -80,7 +92,7 @@
           - highlight
           - cabextract
           - lzip
-          - p7zg
+          - p7zip
           - p7zip-plugins
           - xdotool
           - wmctrl
@@ -121,7 +133,6 @@
       with_items:
         - etckeeper init
         - etckeeper commit "Initial Commit"
-      ignore_errors: true
       become: true
       tags: term_pkg
       when: not file_exists.stat.exists
@@ -233,27 +244,26 @@
 
     - name: Install Programs (Programming Packages) - pip
       pip:
-        name: '{{ item }}'
         state: present
         executable: pip3
-      with_items:
-        - 'python-language-server[all]'
-        - pyls-black
-        - pyls-isort
-        - pyls-mypy
-        - setuptools
-        - black
-        - mypy
-        - beautysh
-        - demjson
-        - yamllint
-        - ansible-lint
+        name:
+          - 'python-language-server[all]'
+          - pyls-black
+          - pyls-isort
+          - pyls-mypy
+          - setuptools
+          - black
+          - mypy
+          - beautysh
+          - demjson
+          - yamllint
+          - ansible-lint
       become: true
       tags: devel
 
     - name: Install Programs (Programming Packages) - golang
       command: |
-        go get -u github.com/sourcegraph/go-langserver
+        go get github.com/sourcegraph/go-langserver
       environment:
         GOPATH: "{{ ansible_env.HOME }}/.local/go"
       tags: devel
@@ -561,6 +571,7 @@
         - '{{ ansible_env.HOME }}/.vim'
         - '{{ ansible_env.HOME }}/.vim/swap'
         - '{{ ansible_env.HOME }}/.vim/undo'
+        - '{{ ansible_env.HOME }}/.vim/view'
         - '{{ ansible_env.HOME }}/.vim/syntax'
         - '{{ ansible_env.HOME }}/.vim/autoload'
         - '{{ ansible_env.HOME }}/.local/go'
@@ -580,6 +591,7 @@
         - "~/.vimrc"
         - "~/.zshrc"
         - "~/.ctags"
+        - "~/.config/user-dirs.dirs"
         - "~/.config/libinput-gestures.conf"
         - "~/.config/mpv/mpv.conf"
         - "~/.config/keepassxc/keepassxc.ini"
@@ -600,6 +612,7 @@
         - { src: "~/dotfiles/.vimrc-full", dest: "~/.vimrc" }
         - { src: "~/dotfiles/.zshrc", dest: "~/.zshrc" }
         - { src: "~/dotfiles/.ctags", dest: "~/.ctags" }
+        - { src: "~/dotfiles/user-dirs.dirs", dest: "~/.config/user-dirs.dirs" }
         - { src: "~/dotfiles/libinput-gestures.conf", dest: "~/.config/libinput-gestures.conf" }
         - { src: "~/dotfiles/mpv.conf", dest: "~/.config/mpv/mpv.conf" }
         - { src: "~/Syncthing/Conf/keepassxc.ini", dest: "~/.config/keepassxc/keepassxc.ini" }
