@@ -585,6 +585,7 @@
         path: '{{ item }}'
         state: absent
       with_items:
+        - "~/.ansible.cfg"
         - "~/.aliases"
         - "~/.bashrc"
         - "~/.tmux.conf"
@@ -606,6 +607,7 @@
         dest: '{{ item.dest }}'
         state: link
       with_items:
+        - { src: "~/dotfiles/.ansible.cfg", dest: "~/.ansible.cfg" }
         - { src: "~/dotfiles/.aliases", dest: "~/.aliases" }
         - { src: "~/dotfiles/.bashrc", dest: "~/.bashrc" }
         - { src: "~/dotfiles/.tmux.conf", dest: "~/.tmux.conf" }
