@@ -172,14 +172,17 @@
       package:
         state: present
         name:
-          - moka-icon-theme
-          - rhythmbox-alternative-toolbar
+          - paper-icon-theme
           - gnome-tweak-tool
-          - gthumb
+          - rhythmbox-alternative-toolbar
           - mpv
+          - gthumb
           - keepassxc
           - gparted
           - virt-manager
+          - evolution
+          - telegram-desktop
+          - gimp
       become: true
       tags: gui_pkg
 
@@ -197,10 +200,7 @@
         state: present
         method: user
       with_items:
-        - org.gnome.Evolution
-        - org.telegram.desktop
-        - org.gimp.GIMP
-        - org.darktable.Darktable
+        - org.onlyoffice.desktopeditors
         - com.jgraph.drawio.desktop
         - de.haeckerfelix.Fragments
       tags: flathub
@@ -208,8 +208,8 @@
       # NON GTK PROGRAMS:
         # telegram
         # keepass
-        # darktable
         # drawio
+        # onlyoffice
         # chromium
     - name: install the 'Development tools' package group
       dnf:
@@ -390,39 +390,12 @@
       become: true
       tags: system
 
-    - name: Enable Discard Crypttab
-      replace:
-        path: /etc/crypttab
-        regexp: 'none$'
-        replace: 'none discard'
-        backup: true
-      become: true
-      tags: system
-
-    - name: Enable Discard Fstab
-      replace:
-        path: /etc/fstab
-        regexp: 'defaults[ \t]'
-        replace: 'defaults,discard'
-        backup: true
-      become: true
-      tags: system
-
     - name: Update fstab file with tmpfs /tmp
       lineinfile:
         path: /etc/fstab
         regexp: tmpfs /tmp tmpfs
         line: tmpfs /tmp tmpfs defaults,lazytime,noatime,nodiratime 0 0
         state: present
-        backup: true
-      become: true
-      tags: system
-
-    - name: Enable discard lvm
-      replace:
-        path: /etc/lvm/lvm.conf
-        regexp: 'issue_discards = 0'
-        replace: 'issue_discards = 1'
         backup: true
       become: true
       tags: system
@@ -658,7 +631,7 @@
         - { key: /org/gnome/desktop/privacy/report-technical-problems, value: 'false' }
         - { key: /org/gnome/desktop/privacy/remove-old-trash-files, value: 'true' }
         - { key: /org/gnome/desktop/privacy/send-software-usage-stats, value: 'false' }
-        - { key: /org/gnome/desktop/interface/icon-theme, value: "'Moka'" }
+        - { key: /org/gnome/desktop/interface/icon-theme, value: "'Paper'" }
       tags: dotfiles
 
       # Extensions
