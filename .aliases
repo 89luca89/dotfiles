@@ -1,6 +1,7 @@
 # BASIC ALIASES
 function ssh() {
-    /usr/bin/ssh -t $@ 'tmux > /dev/null 2>&1 || eval $SHELL'
+    SESSION=$(hostname)
+    /usr/bin/ssh -t $@ "tmux new-session -A -s $SESSION > /dev/null 2>&1 || eval $SHELL"
 }
 alias rsyncthingD='rsync -av --delete --progress raspberrypi-2.lan:/usr/local/mnt/usb-pen/Syncthing/ ~/Syncthing/'
 alias rsyncthingS='rsync -av --delete --progress ~/Syncthing/ raspberrypi-2.lan:/usr/local/mnt/usb-pen/Syncthing/'
