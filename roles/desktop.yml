@@ -181,6 +181,7 @@
           - gparted
           - virt-manager
           - evolution
+          - evolution-ews
           - telegram-desktop
           - gimp
       become: true
@@ -638,7 +639,6 @@
       # appindicatorsupport@rgcjonas.gmail.com
       # noannoyance@sindex.com
       # ProxySwitcher@flannaghan.com
-      # syncthingicon@jay.strict@posteo.de
 
 # echo 'Section "InputClass"
 #         Identifier "libinput pointer catchall"
