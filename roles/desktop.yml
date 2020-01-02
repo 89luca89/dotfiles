@@ -632,7 +632,7 @@
         - { key: /org/gnome/desktop/privacy/report-technical-problems, value: 'false' }
         - { key: /org/gnome/desktop/privacy/remove-old-trash-files, value: 'true' }
         - { key: /org/gnome/desktop/privacy/send-software-usage-stats, value: 'false' }
-        - { key: /org/gnome/desktop/interface/icon-theme, value: "'Papirus-dark'" }
+        - { key: /org/gnome/desktop/interface/icon-theme, value: "'Papirus'" }
       tags: dotfiles
 
       # Extensions
