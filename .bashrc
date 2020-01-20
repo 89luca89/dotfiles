@@ -11,6 +11,10 @@ then
     export HISTSIZE=100000                  # big big history
     export HISTFILESIZE=100000              # big big history
     shopt -s histappend                     # append to history, don't overwrite it
+    shopt -s histreedit
+    shopt -s histverify
+    shopt -s cmdhist
+
     export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
     bind '"\e[A": history-search-backward'
     bind '"\e[B": history-search-forward'
