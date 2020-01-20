@@ -8,6 +8,7 @@ Plug 'mhinz/vim-signify'
 Plug 'scrooloose/nerdtree'
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' } " fuzzy find all the things
 Plug 'junegunn/fzf.vim'                                                     " fuzzy find all the things
+Plug 'vim-airline/vim-airline'
 "" Lang Packs
 Plug 'sheerun/vim-polyglot', { 'do': './build' }                            " Lang packs
 "" ALE+LSP
@@ -34,6 +35,8 @@ autocmd InsertEnter * call deoplete#enable()
 " Remove trailing whitespaces
 autocmd BufWritePre * %s/\s\+$//e
 
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#formatter = 'unique_tail'
 let NERDTreeShowHidden=1
 let NERDTreeHijackNetrw=1
 " Git
@@ -86,7 +89,7 @@ let g:LanguageClient_serverCommands = {
             \ }
 " FZF fuzzy
 let $FZF_DEFAULT_COMMAND="rg --files --hidden"
-let g:fzf_files_options = "--preview 'if file {1} | grep -i text; then highlight {1} --force -s molokai -O truecolor ; fi'"
+let g:fzf_files_options = "--preview 'if file {1} | grep -Ei \"text|JSON\"; then cat {1} ; fi'"
 let g:fzf_tags_command = 'ctags -R'
 let g:fzf_action = {'alt-enter':'vsplit' }
 
@@ -169,36 +172,37 @@ set encoding=utf8
 set background=dark
 set termguicolors
 colorscheme molokai
-highlight Normal guibg=#101010 guifg=#FFFFFF
-highlight ColorColumn guibg=#181818
+highlight Normal guibg=#000000 guifg=#FFFFFF
+highlight ColorColumn guibg=#101010
 highlight ALEErrorSign guibg=NONE guifg=#FF0000
 highlight ALEWarningSign guibg=NONE guifg=#FFFF00
 highlight ALEWarning guibg=#333300
+highlight LineNr guibg=#000000
 highlight SignifySignAdd    guifg=#00ff00
 highlight SignifySignDelete guifg=#ff0000
 highlight SignifySignChange guifg=#ffff00
-highlight StatusLine guifg=#303030 guibg=#FFFFFF
-highlight StatusLineNC guifg=#101010 guibg=#888888
+highlight SignColumn guibg=#000000
 " Toggle Theme
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
         colorscheme molokai
-        highlight Normal guibg=#101010 guifg=#FFFFFF
-        highlight ColorColumn guibg=#181818
-        highlight ALEWarning guibg=#333300
+        highlight Normal guibg=#000000 guifg=#FFFFFF
+        highlight ColorColumn guibg=#101010
         highlight ALEErrorSign guibg=NONE guifg=#FF0000
         highlight ALEWarningSign guibg=NONE guifg=#FFFF00
+        highlight ALEWarning guibg=#333300
+        highlight LineNr guibg=#000000
         highlight SignifySignAdd    guifg=#00ff00
         highlight SignifySignDelete guifg=#ff0000
         highlight SignifySignChange guifg=#ffff00
-        highlight StatusLine guifg=#303030 guibg=#FFFFFF
-        highlight StatusLineNC guifg=#101010 guibg=#888888
+        highlight SignColumn guibg=#000000
     else
         set background=light
         colorscheme github
         highlight ALEWarning guibg=#e4e4e4
+        highlight ColorColumn guibg=#f0f0f0
         highlight ALEErrorSign guibg=#555555 guifg=#FF0000
         highlight ALEWarningSign guibg=#555555 guifg=#FFFF00
         highlight SignifySignAdd    guifg=#00ff00 guibg=#555555
