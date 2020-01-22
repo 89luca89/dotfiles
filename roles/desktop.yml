@@ -25,12 +25,24 @@
           - gnome-logs
           - gnome-characters
           - gnome-font-viewer
-          - eog
+          - gnome-software
+          - gnome-abrt
+          - gnome-weather
+          - gnome-clocks
           - yelp
+          - orca
           - gfbgraph
           - simple-scan
           - virtualbox-guest-additions
           - httpd
+      become: true
+      tags: bloat
+
+    - name: Disable packagekitd
+      systemd:
+        name: packagekit.service
+        enabled: false
+        state: stopped
       become: true
       tags: bloat
 
@@ -175,7 +187,6 @@
           - gnome-tweak-tool
           - rhythmbox-alternative-toolbar
           - mpv
-          - gthumb
           - keepassxc
           - gparted
           - virt-manager
@@ -526,15 +537,6 @@
       become: true
       tags: system
 
-    - name: Install scripts before starting dotfiles
-      get_url:
-        url: '{{ item.src }}'
-        dest: '{{ item.dest }}'
-        mode: 0755
-      with_items:
-        - { src: "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim", dest: '{{ ansible_env.HOME }}/.vim/autoload' }
-      tags: dotfiles
-
     - name: Check if Baseline folder is present
       file:
         path: '{{ item }}'
@@ -549,8 +551,19 @@
         - '{{ ansible_env.HOME }}/.vim/autoload'
         - '{{ ansible_env.HOME }}/.local/go'
         - '{{ ansible_env.HOME }}/.local/rust'
+        - '{{ ansible_env.HOME }}/.config/mpv'
+        - '{{ ansible_env.HOME }}/.config/keepassxc'
         - '{{ ansible_env.HOME }}/Programs'
       register: firstrun
+      tags: dotfiles
+
+    - name: Install scripts before starting dotfiles
+      get_url:
+        url: '{{ item.src }}'
+        dest: '{{ item.dest }}'
+        mode: 0755
+      with_items:
+        - { src: "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim", dest: '{{ ansible_env.HOME }}/.vim/autoload' }
       tags: dotfiles
 
     - name: Prepare to link dotfiles
@@ -604,13 +617,14 @@
     - name: Load Gnome Keybindings (gsettings)
       shell: |
         gsettings set org.gnome.desktop.app-folders folder-children [""]; \
-        gsettings set org.gnome.settings-daemon.plugins.media-keys \
-        custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom6/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom7/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom8/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom9/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom10/']"
+        gsettings set org.gnome.desktop.input-sources xkb-options "['caps:ctrl_modifier']";
+        gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom6/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom7/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom8/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom9/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom10/']"
       when: firstrun.changed
       tags: dotfiles
 
     - name: Load Gnome Keybindings and Terminal Settings (dconf)
-      shell: dconf load {{ item.key }} < {{ item.value }}
+      shell: |
+        dconf load {{ item.key }} < {{ item.value }}
       with_items:
         - {key: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/, value: '{{ ansible_env.HOME }}/dotfiles/gnome-keybindings.conf'}
         - {key: /org/gnome/terminal/, value: '{{ ansible_env.HOME }}/dotfiles/gnome-terminal.conf'}
@@ -632,11 +646,6 @@
         - { key: /org/gnome/desktop/privacy/remove-old-trash-files, value: 'true' }
         - { key: /org/gnome/desktop/privacy/send-software-usage-stats, value: 'false' }
       tags: dotfiles
-
-      # Extensions
-      # appindicatorsupport@rgcjonas.gmail.com
-      # noannoyance@sindex.com
-      # ProxySwitcher@flannaghan.com
 
 # echo 'Section "InputClass"
 #         Identifier "libinput pointer catchall"
