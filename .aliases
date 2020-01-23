@@ -5,7 +5,7 @@ function ssh() {
 }
 alias rsyncthingD='pushd ~/Syncthing; rsync -av --delete --progress -e "ssh -J thinkpad-w540.lan" root@fileserver.lan:/usr/local/mnt/Vault/Syncthing/ ~/Syncthing/; popd'
 alias rsyncthingS='pushd ~/Syncthing; rsync -av --delete --progress -e "ssh -J thinkpad-w540.lan" --exclude=".stversions" ~/Syncthing/ root@fileserver.lan:/usr/local/mnt/Vault/Syncthing/; popd'
-alias firefoxSync='tar cfzv ~/Syncthing/Browsers/Firefox/profile.tar.gz .mozilla/'
+alias firefoxSync='find ~/.mozilla/ -iname "*cache*" | xargs rm -rf; tar cfzv ~/Syncthing/Browsers/Firefox/profile.tar.gz ~/.mozilla/'
 alias firefoxSyncRestore='rm -rf ~/.mozilla; tar xfz ~/Syncthing/Browsers/Firefox/profile.tar.gz -C ~/'
 alias grep='grep --color=auto'
 alias ll='ls -Ahl --group-directories-first --color'
