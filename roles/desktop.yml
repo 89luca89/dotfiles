@@ -616,8 +616,6 @@
 
     - name: Load Gnome Keybindings (gsettings)
       shell: |
-        gsettings set org.gnome.desktop.app-folders folder-children [""]; \
-        gsettings set org.gnome.desktop.input-sources xkb-options "['caps:ctrl_modifier']";
         gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom6/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom7/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom8/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom9/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom10/']"
       when: firstrun.changed
       tags: dotfiles
@@ -631,12 +629,14 @@
       when: firstrun.changed
       tags: dotfiles
 
-    - name: Configure Keyboard and Cursor Options
+    - name: Configure Dconf Options
       dconf:
         key: '{{ item.key }}'
         value: '{{ item.value }}'
         state: present
       with_items:
+        - { key: /org/gnome/desktop/app-folders/folder-children, value: '[""]' }
+        - { key: /org/gnome/desktop/input-sources/xkb-options, value: "['caps:ctrl_modifier']" }
         - { key: /org/gnome/desktop/interface/cursor-blink, value: 'false' }
         - { key: /org/gnome/desktop/privacy/disable-microphone, value: 'true' }
         - { key: /org/gnome/desktop/privacy/recent-files-max-age, value: '7' }
@@ -645,6 +645,10 @@
         - { key: /org/gnome/desktop/privacy/report-technical-problems, value: 'false' }
         - { key: /org/gnome/desktop/privacy/remove-old-trash-files, value: 'true' }
         - { key: /org/gnome/desktop/privacy/send-software-usage-stats, value: 'false' }
+        - { key: /org/gnome/nautilus/preferences/show-create-link, value: 'true' }
+        - { key: /org/gnome/nautilus/preferences/show-delete-permanently, value: 'true' }
+        - { key: /org/gnome/nautilus/preferences/default-folder-viewer, value: "'list-view'" }
+        - { key: /org/gnome/nautilus/list-view/default-visible-columns, value: "['name', 'size', 'type', 'owner', 'group', 'permissions', 'date_modified', 'starred', 'detailed_type']" }
       tags: dotfiles
 
 # echo 'Section "InputClass"
