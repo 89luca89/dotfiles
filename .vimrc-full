@@ -170,43 +170,40 @@ syntax on
 set encoding=utf8
 " Theming
 set background=dark
-set termguicolors
-colorscheme molokai
-highlight Normal guibg=#000000 guifg=#FFFFFF
-highlight ColorColumn guibg=#101010
-highlight ALEErrorSign guibg=NONE guifg=#FF0000
-highlight ALEWarningSign guibg=NONE guifg=#FFFF00
-highlight ALEWarning guibg=#333300
-highlight LineNr guibg=#000000
-highlight SignifySignAdd    guifg=#00ff00
-highlight SignifySignDelete guifg=#ff0000
-highlight SignifySignChange guifg=#ffff00
-highlight SignColumn guibg=#000000
+let g:onedark_termcolors = 256
+colorscheme onedark
+highlight ALEErrorSign ctermbg=NONE ctermfg=red
+highlight ALEWarningSign ctermbg=NONE ctermfg=yellow
+highlight ALEWarning ctermbg=NONE ctermfg=yellow
+highlight ALEError ctermbg=NONE ctermfg=red
+highlight SignifySignAdd    ctermfg=green
+highlight SignifySignDelete ctermfg=red
+highlight SignifySignChange ctermfg=yellow
+highlight TabLineSel ctermbg=darkgrey ctermfg=white
 " Toggle Theme
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        colorscheme molokai
-        highlight Normal guibg=#000000 guifg=#FFFFFF
-        highlight ColorColumn guibg=#101010
-        highlight ALEErrorSign guibg=NONE guifg=#FF0000
-        highlight ALEWarningSign guibg=NONE guifg=#FFFF00
-        highlight ALEWarning guibg=#333300
-        highlight LineNr guibg=#000000
-        highlight SignifySignAdd    guifg=#00ff00
-        highlight SignifySignDelete guifg=#ff0000
-        highlight SignifySignChange guifg=#ffff00
-        highlight SignColumn guibg=#000000
+        colorscheme onedark
+        highlight ALEErrorSign ctermbg=NONE ctermfg=red
+        highlight ALEWarningSign ctermbg=NONE ctermfg=yellow
+        highlight ALEWarning ctermbg=NONE ctermfg=yellow
+        highlight ALEError ctermbg=NONE ctermfg=red
+        highlight SignifySignAdd    ctermfg=green
+        highlight SignifySignDelete ctermfg=red
+        highlight SignifySignChange ctermfg=yellow
+        highlight TabLineSel ctermbg=darkgrey ctermfg=white
     else
         set background=light
         colorscheme github
-        highlight ALEWarning guibg=#e4e4e4
-        highlight ColorColumn guibg=#f0f0f0
-        highlight ALEErrorSign guibg=#555555 guifg=#FF0000
-        highlight ALEWarningSign guibg=#555555 guifg=#FFFF00
-        highlight SignifySignAdd    guifg=#00ff00 guibg=#555555
-        highlight SignifySignDelete guifg=#ff0000 guibg=#555555
-        highlight SignifySignChange guifg=#ffff00 guibg=#555555
+        highlight ColorColumn ctermbg=lightgray
+        highlight ALEWarning ctermbg=yellow
+        highlight ALEError ctermbg=red
+        highlight ALEErrorSign ctermbg=grey ctermfg=red
+        highlight ALEWarningSign ctermbg=grey ctermfg=yellow
+        highlight SignifySignAdd    ctermfg=green ctermbg=grey
+        highlight SignifySignDelete ctermfg=red ctermbg=grey
+        highlight SignifySignChange ctermfg=yellow ctermbg=grey
     endif
 endfunction
