@@ -3,8 +3,8 @@ function ssh() {
     SESSION=$(hostname)
     /usr/bin/ssh -t $@ "tmux new-session -A -s $SESSION > /dev/null 2>&1 || eval $SHELL"
 }
-alias rsyncthingD='rsync -av --delete --progress raspberrypi-2.lan:/usr/local/mnt/usb-pen/Syncthing/ ~/Syncthing/'
-alias rsyncthingS='rsync -av --delete --progress ~/Syncthing/ raspberrypi-2.lan:/usr/local/mnt/usb-pen/Syncthing/'
+alias rsyncthingD='pushd ~/Syncthing; rsync -av --delete --progress -e "ssh -J thinkpad-w540.lan" root@fileserver.lan:/usr/local/mnt/Vault/Syncthing/ ~/Syncthing/; popd'
+alias rsyncthingS='pushd ~/Syncthing; rsync -av --delete --progress -e "ssh -J thinkpad-w540.lan" --exclude=".stversions" ~/Syncthing/ root@fileserver.lan:/usr/local/mnt/Vault/Syncthing/; popd'
 alias firefoxSync='tar cfzv ~/Syncthing/Browsers/Firefox/profile.tar.gz .mozilla/'
 alias firefoxSyncRestore='rm -rf ~/.mozilla; tar xfz ~/Syncthing/Browsers/Firefox/profile.tar.gz -C ~/'
 alias grep='grep --color=auto'
