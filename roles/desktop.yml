@@ -610,7 +610,7 @@
 
     - name: Install Vim Plugins
       command: |
-        vim +PlugInstall +PlugUpdate! +qall
+        vim +PlugInstall +qall
       when: firstrun.changed
       tags: dotfiles
 
