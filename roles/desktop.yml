@@ -430,7 +430,7 @@
       lineinfile:
         path: /etc/modprobe.d/i915.conf
         create: true
-        line: 'options i915 disable_power_well=0 enable_dc=2 enable_psr=3 enable_rc6=7 enable_fbc=1 powersave=1 semaphores=1'
+        line: 'options i915 disable_power_well=0 enable_dc=2 enable_psr=1 enable_rc6=7 enable_fbc=1 powersave=1'
       become: true
       tags: system
 
@@ -536,6 +536,51 @@
       when: grub_setup.changed
       become: true
       tags: system
+
+    - name: Set Thinkpad Fan driver options
+      lineinfile:
+        path: /etc/modprobe.d/thinkpad_acpi.conf
+        create: true
+        line: 'options thinkpad_acpi fan_control=1'
+      become: true
+      tags: [ never, thinkpad ]
+
+    - name: Set Fan daemon timer
+      blockinfile:
+        path: /etc/systemd/system/fan_daemon.service
+        create: true
+        block: |
+            [Unit]
+            Description=FanDaemon
+            [Service]
+            Type=simple
+            ExecStart=/bin/bash /home/luca-linux/bin/fan_daemon
+      become: true
+      tags: [ never, thinkpad ]
+
+    - name: Set Fan daemon timer
+      blockinfile:
+        path: /etc/systemd/system/fan_daemon.timer
+        create: true
+        block: |
+            [Unit]
+            Description=Runs FanDaemon every 20s
+            [Timer]
+            OnBootSec=10
+            OnUnitActiveSec=10
+            Unit=fan_daemon.service
+            [Install]
+            WantedBy=multi-user.target
+      become: true
+      tags: [ never, thinkpad ]
+
+    - name: Fan daemon timer enable
+      systemd:
+        name: fan_daemon.timer
+        state: started
+        enabled: true
+      become: true
+      tags: [ never, thinkpad ]
 
     - name: Check if Baseline folder is present
       file:
