@@ -353,6 +353,14 @@
       when: libinput_gesture_download.changed
       tags: external_pkg
 
+    - name: zRam Swap Enable
+      systemd:
+        name: zram-swap
+        state: started
+        enabled: true
+      become: true
+      tags: system
+
     - name: Install Power Management (Laptop)
       package:
         state: present
