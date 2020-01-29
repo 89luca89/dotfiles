@@ -3,6 +3,10 @@ function ssh() {
     SESSION=$(hostname)
     /usr/bin/ssh -t $@ "tmux new-session -A -s $SESSION > /dev/null 2>&1 || eval $SHELL"
 }
+alias :q="exit"
+alias :wq="exit"
+alias :qa="exit"
+alias :wqa="exit"
 alias rsyncthingD='pushd ~/Syncthing; rsync -av --delete --progress -e "ssh -J thinkpad-w540.lan" root@fileserver.lan:/usr/local/mnt/Vault/Syncthing/ ~/Syncthing/; popd'
 alias rsyncthingS='pushd ~/Syncthing; rsync -av --delete --progress -e "ssh -J thinkpad-w540.lan" --exclude=".stversions" ~/Syncthing/ root@fileserver.lan:/usr/local/mnt/Vault/Syncthing/; popd'
 alias firefoxSync='find ~/.mozilla/ -iname "*cache*" | xargs rm -rf; pushd ~ ; tar cfzv ~/Syncthing/Browsers/Firefox/profile.tar.gz .mozilla/; popd'
