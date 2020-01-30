@@ -171,7 +171,10 @@ set encoding=utf8
 " Theming
 set background=dark
 set termguicolors
-colorscheme molokai
+colorscheme onedark
+highlight Normal guibg=NONE
+highlight ColorColumn guibg=NONE
+highlight TabLineSel guibg=#555555
 highlight ALEErrorSign guibg=NONE guifg=#FF0000
 highlight ALEWarningSign guibg=NONE guifg=#FFFF00
 highlight ALEWarning guibg=#333300
@@ -183,7 +186,10 @@ map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        colorscheme molokai
+        colorscheme onedark
+        highlight Normal guibg=NONE
+        highlight ColorColumn guibg=NONE
+        highlight TabLineSel guibg=#555555
         highlight ALEErrorSign guibg=NONE guifg=#FF0000
         highlight ALEWarningSign guibg=NONE guifg=#FFFF00
         highlight ALEWarning guibg=#333300
