@@ -677,7 +677,6 @@
         value: '{{ item.value }}'
         state: present
       with_items:
-        - { key: /org/gnome/desktop/app-folders/folder-children, value: '[""]' }
         - { key: /org/gnome/desktop/input-sources/xkb-options, value: "['caps:ctrl_modifier']" }
         - { key: /org/gnome/desktop/interface/cursor-blink, value: 'false' }
         - { key: /org/gnome/desktop/privacy/disable-microphone, value: 'true' }
