@@ -7,9 +7,9 @@
   tasks:
 
     - name: Remove Programs (Unused Programs)
-      package:
-        state: removed
-        name:
+      command: |
+          dnf remove -y {{ item }}
+      with_items:
           - gnome-documents
           - gnome-dictionary
           - gnome-photos
@@ -35,14 +35,8 @@
           - simple-scan
           - virtualbox-guest-additions
           - httpd
-      become: true
-      tags: bloat
-
-    - name: Disable packagekitd
-      systemd:
-        name: packagekit.service
-        enabled: false
-        state: stopped
+          - 'libreoffice-*'
+          - 'PackageKit-*'
       become: true
       tags: bloat
 
@@ -211,17 +205,10 @@
         state: present
         method: user
       with_items:
-        - org.onlyoffice.desktopeditors
+        - org.libreoffice.LibreOffice
         - com.jgraph.drawio.desktop
-        - de.haeckerfelix.Fragments
       tags: flathub
 
-      # NON GTK PROGRAMS:
-        # telegram
-        # keepass
-        # drawio
-        # onlyoffice
-        # chromium
     - name: install the 'Development tools' package group
       dnf:
         state: present
