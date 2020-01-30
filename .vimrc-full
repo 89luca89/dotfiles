@@ -3,7 +3,6 @@ call plug#begin('~/.vim/plugged')
 " vim tmux navigator
 Plug 'christoomey/vim-tmux-navigator'
 " utilities
-Plug 'ap/vim-buftabline'
 Plug 'mhinz/vim-signify'
 Plug 'scrooloose/nerdtree'
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' } " fuzzy find all the things
@@ -28,21 +27,22 @@ Plug 'roxma/nvim-yarp'
 Plug 'roxma/vim-hug-neovim-rpc'
 call plug#end()                                                 " required
 filetype plugin indent on                                       " required
+syntax on
 autocmd VimResized * :wincmd =
 autocmd InsertEnter * :ALEEnable
 autocmd InsertEnter * :LanguageClientStart
 autocmd InsertEnter * call deoplete#enable()
+autocmd Syntax,InsertEnter * syntax match myObject /\.[[:alpha:][:digit:]-_.]*/
+" autocmd Syntax * syntax match myFunction /\v[[:alpha:]_.]+\ze\./
 " Remove trailing whitespaces
 autocmd BufWritePre * %s/\s\+$//e
 
-let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#formatter = 'unique_tail'
-let NERDTreeShowHidden=1
-let NERDTreeHijackNetrw=1
+let g:airline_extensions = ['tabline']
 " Git
-let g:signify_sign_add               = '>'
-let g:signify_sign_delete            = '-'
-let g:signify_sign_change            = '>'
+let g:signify_sign_add    = '>'
+let g:signify_sign_delete = '-'
+let g:signify_sign_change = '>'
 " Langs
 let g:python_highlight_all=1
 let g:ansible_yamlKeyName = 'yamlKey'
@@ -57,12 +57,12 @@ let g:deoplete#enable_at_startup = 0   " Start on insert mode
 let g:python3_host_prog = "/usr/bin/python3"
 let g:deoplete#enable_smart_case = 1
 " ALE linter
-let g:ale_enabled = 0   " Start on insert mode
-let g:ale_sign_error = '⤫'
-let g:ale_sign_warning = '▲'
-let g:ale_set_highlights = 1
-let g:ale_set_quickfix = 1
-let g:ale_linters_explicit = 1
+let g:ale_enabled           = 0   " Start on insert mode
+let g:ale_sign_error        = '⤫'
+let g:ale_sign_warning      = '▲'
+let g:ale_set_highlights    = 1
+let g:ale_set_quickfix      = 1
+let g:ale_linters_explicit  = 1
 let g:ale_linters = {
             \ 'asm': ['gcc'],
             \ 'c': ['gcc'],
@@ -75,7 +75,6 @@ let g:ale_linters = {
             \ 'json':['jsonlint'],
             \ 'ansible':['ansible-lint']
             \}
-            " \ 'yaml':['yamllint'],
 let g:LanguageClient_autoStart = 0
 let g:LanguageClient_diagnosticsEnable = 0
 let g:LanguageClient_serverCommands = {
@@ -161,23 +160,17 @@ set splitright splitbelow                                         " Open new spl
 set autoindent smartindent copyindent                             " always set autoindenting on
 set smarttab expandtab shiftwidth=4 tabstop=4 softtabstop=4       " Four spaces for tabs everywhere
 set hlsearch incsearch ignorecase smartcase                       " Highlight search results, ignore case if search is all lowercase
-set nowrap number                                                 " play nicely with long lines
-set nomodeline                                                    " protect against https://github.com/numirias/security/blob/master/doc/2019-06-04_ace-vim-neovim.md
+set nowrap number nomodeline
 set laststatus=2
 let &colorcolumn=join(range(81,999),",")
-syntax on
-" play nicely with modern graphics
-set encoding=utf8
 " Theming
 set background=dark
 set termguicolors
-colorscheme onedark
-highlight Normal guibg=NONE
-highlight ColorColumn guibg=NONE
-highlight TabLineSel guibg=#555555
-highlight ALEErrorSign guibg=NONE guifg=#FF0000
-highlight ALEWarningSign guibg=NONE guifg=#FFFF00
-highlight ALEWarning guibg=#333300
+colorscheme molokai
+highlight myObject          guifg=#61AFEF
+highlight ALEErrorSign      guifg=#FF0000
+highlight ALEWarningSign    guifg=#FFFF00
+highlight ALEWarning        guibg=#333300
 highlight SignifySignAdd    guifg=#00ff00
 highlight SignifySignDelete guifg=#ff0000
 highlight SignifySignChange guifg=#ffff00
@@ -186,22 +179,21 @@ map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        colorscheme onedark
-        highlight Normal guibg=NONE
-        highlight ColorColumn guibg=NONE
-        highlight TabLineSel guibg=#555555
-        highlight ALEErrorSign guibg=NONE guifg=#FF0000
-        highlight ALEWarningSign guibg=NONE guifg=#FFFF00
-        highlight ALEWarning guibg=#333300
+        colorscheme molokai
+        highlight myObject          guifg=#61AFEF
+        highlight ALEErrorSign      guifg=#FF0000
+        highlight ALEWarningSign    guifg=#FFFF00
+        highlight ALEWarning        guibg=#333300
         highlight SignifySignAdd    guifg=#00ff00
         highlight SignifySignDelete guifg=#ff0000
         highlight SignifySignChange guifg=#ffff00
     else
         set background=light
         colorscheme github
-        highlight ALEWarning guibg=#e4e4e4
-        highlight ALEErrorSign guibg=#555555 guifg=#FF0000
-        highlight ALEWarningSign guibg=#555555 guifg=#FFFF00
+        highlight myObject          guifg=#9E5010
+        highlight ALEWarning        guibg=#e4e4e4
+        highlight ALEErrorSign      guibg=#555555 guifg=#FF0000
+        highlight ALEWarningSign    guibg=#555555 guifg=#FFFF00
         highlight SignifySignAdd    guifg=#00ff00 guibg=#555555
         highlight SignifySignDelete guifg=#ff0000 guibg=#555555
         highlight SignifySignChange guifg=#ffff00 guibg=#555555
