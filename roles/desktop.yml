@@ -187,7 +187,7 @@
           - evolution
           - evolution-ews
           - telegram-desktop
-          - krita
+          - gimp
       become: true
       tags: gui_pkg
 
@@ -667,6 +667,7 @@
       with_items:
         - {key: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/, value: '{{ ansible_env.HOME }}/dotfiles/gnome-keybindings.conf'}
         - {key: /org/gnome/terminal/, value: '{{ ansible_env.HOME }}/dotfiles/gnome-terminal.conf'}
+        - {key: /org/gnome/desktop/app-folders/, value: '{{ ansible_env.HOME }}/dotfiles/gnome-folders.conf'}
       when: firstrun.changed
       tags: dotfiles
 
