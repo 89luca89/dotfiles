@@ -646,6 +646,7 @@
         - { src: "~/Syncthing/Conf/keepassxc.ini", dest: "~/.config/keepassxc/keepassxc.ini" }
         - { src: "~/Syncthing/Conf/assh.yml", dest: "~/.ssh/assh.yml" }
         - { src: "~/Syncthing/Conf/Shortcuts/applications", dest: "~/.local/share/applications" }
+      when: firstrun.changed
       tags: dotfiles
 
     - name: Install Vim Plugins
@@ -689,7 +690,7 @@
         - { key: /org/gnome/nautilus/preferences/show-delete-permanently, value: 'true' }
         - { key: /org/gnome/nautilus/preferences/default-folder-viewer, value: "'list-view'" }
         - { key: /org/gnome/nautilus/list-view/default-visible-columns, value: "['name', 'size', 'type', 'owner', 'group', 'permissions', 'date_modified', 'starred', 'detailed_type']" }
-        - { key: /org/gnome/desktop/wm/preferences/action-middle-click-titlebar, value: "minimize" }
+        - { key: /org/gnome/desktop/wm/preferences/action-middle-click-titlebar, value: "'minimize'" }
       tags: dotfiles
 
 # echo 'Section "InputClass"
