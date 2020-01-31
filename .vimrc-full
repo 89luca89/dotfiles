@@ -33,6 +33,7 @@ autocmd InsertEnter * :ALEEnable
 autocmd InsertEnter * :LanguageClientStart
 autocmd InsertEnter * call deoplete#enable()
 autocmd Syntax,InsertEnter * syntax match myObject /\.[[:alpha:][:digit:]-_.]*/
+highlight link myObject     Special
 " autocmd Syntax * syntax match myFunction /\v[[:alpha:]_.]+\ze\./
 " Remove trailing whitespaces
 autocmd BufWritePre * %s/\s\+$//e
@@ -167,7 +168,7 @@ let &colorcolumn=join(range(81,999),",")
 set background=dark
 set termguicolors
 colorscheme molokai
-highlight myObject          guifg=#61AFEF
+" guifg=#61AFEF
 highlight ALEErrorSign      guifg=#FF0000
 highlight ALEWarningSign    guifg=#FFFF00
 highlight ALEWarning        guibg=#333300
@@ -180,7 +181,6 @@ function! ToggleTheme()
     if &background == 'light'
         set background=dark
         colorscheme molokai
-        highlight myObject          guifg=#61AFEF
         highlight ALEErrorSign      guifg=#FF0000
         highlight ALEWarningSign    guifg=#FFFF00
         highlight ALEWarning        guibg=#333300
@@ -190,7 +190,6 @@ function! ToggleTheme()
     else
         set background=light
         colorscheme github
-        highlight myObject          guifg=#9E5010
         highlight ALEWarning        guibg=#e4e4e4
         highlight ALEErrorSign      guibg=#555555 guifg=#FF0000
         highlight ALEWarningSign    guibg=#555555 guifg=#FFFF00
