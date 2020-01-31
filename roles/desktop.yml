@@ -188,6 +188,7 @@
           - evolution-ews
           - telegram-desktop
           - gimp
+          - marker
       become: true
       tags: gui_pkg
 
