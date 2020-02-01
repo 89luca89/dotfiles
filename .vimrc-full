@@ -1,15 +1,16 @@
-filetype off                  " required
+filetype off                                        " required
 call plug#begin('~/.vim/plugged')
 " vim tmux navigator
 Plug 'christoomey/vim-tmux-navigator'
 " utilities
-Plug 'mhinz/vim-signify'
-Plug 'scrooloose/nerdtree'
-Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' } " fuzzy find all the things
-Plug 'junegunn/fzf.vim'                                                     " fuzzy find all the things
+Plug 'junegunn/fzf.vim'                             " fuzzy find all the things
+Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'flazz/vim-colorschemes'
+Plug 'mhinz/vim-signify'
 "" Lang Packs
-Plug 'sheerun/vim-polyglot', { 'do': './build' }                            " Lang packs
+Plug 'sheerun/vim-polyglot', { 'do': './build' }    " Lang packs
 "" ALE+LSP
 Plug 'dense-analysis/ale'
 Plug 'autozimu/languageclient-neovim', {
@@ -18,26 +19,23 @@ Plug 'autozimu/languageclient-neovim', {
             \ }
 " Deoplete
 Plug 'shougo/deoplete.nvim'
-Plug 'wellle/tmux-complete.vim'
 Plug 'deoplete-plugins/deoplete-tag'
-" Theme
-Plug 'flazz/vim-colorschemes'
+Plug 'wellle/tmux-complete.vim'
 "
 Plug 'roxma/nvim-yarp'
 Plug 'roxma/vim-hug-neovim-rpc'
-call plug#end()                                                 " required
-filetype plugin indent on                                       " required
+call plug#end()                                     " required
+filetype plugin indent on                           " required
 syntax on
 autocmd VimResized * :wincmd =
 autocmd InsertEnter * :ALEEnable
 autocmd InsertEnter * :LanguageClientStart
 autocmd InsertEnter * call deoplete#enable()
+autocmd BufWritePre * %s/\s\+$//e
+" autocmd Syntax * syntax match myFunction /\v[[:alpha:]_.]+\ze\./
 autocmd Syntax,InsertEnter * syntax match myObject /\.[[:alpha:][:digit:]-_.]*/
 highlight link myObject     Special
-" autocmd Syntax * syntax match myFunction /\v[[:alpha:]_.]+\ze\./
-" Remove trailing whitespaces
-autocmd BufWritePre * %s/\s\+$//e
-
+"
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 let g:airline_extensions = ['tabline']
 " Git
@@ -48,17 +46,13 @@ let g:signify_sign_change = '>'
 let g:python_highlight_all=1
 let g:ansible_yamlKeyName = 'yamlKey'
 let g:ansible_attribute_highlight = 'ab'
-let g:ansible_name_highlight = 'd'
-let g:ansible_extra_keywords_highlight = 1
-let g:ansible_normal_keywords_highlight = 'Define'
-let g:ansible_with_keywords_highlight = 'Operator'
 " Deoplete
 set completeopt-=preview
-let g:deoplete#enable_at_startup = 0   " Start on insert mode
+let g:deoplete#enable_at_startup = 0                " Start on insert mode
 let g:python3_host_prog = "/usr/bin/python3"
 let g:deoplete#enable_smart_case = 1
 " ALE linter
-let g:ale_enabled           = 0   " Start on insert mode
+let g:ale_enabled           = 0                     " Start on insert mode
 let g:ale_sign_error        = '⤫'
 let g:ale_sign_warning      = '▲'
 let g:ale_set_highlights    = 1
@@ -74,6 +68,7 @@ let g:ale_linters = {
             \ 'sh':['shellcheck', 'shell'],
             \ 'xml':['xmllint'],
             \ 'json':['jsonlint'],
+            \ 'yaml':['yamllint'],
             \ 'ansible':['ansible-lint']
             \}
 let g:LanguageClient_autoStart = 0
@@ -102,9 +97,7 @@ let mapleader = ' '
 map <leader>y "+y
 map <leader>p "+p
 " Utility shortcuts with leader:
-map <leader>/ :NERDTreeFind<CR>
 map <leader><Tab> :Buffers<CR>
-map <leader>\ :NERDTreeToggle<CR>
 map <leader>b :Files<CR>
 map <leader>e :<C-u>vert copen<bar>:50wincmd><CR>
 map <leader>f :Rg<CR>
@@ -150,7 +143,7 @@ noremap <S-M-Left> :2winc<<cr>
 noremap <S-M-Right> :2winc><cr>
 " Miscellaneous
 set updatetime=300
-set title nocompatible nowritebackup nobackup                    " required
+set title nocompatible nowritebackup nobackup                     " required
 set mouse=a                                                       " it's always useful
 set undofile undolevels=1000 undodir=$HOME/.vim/undo              " Undo file and directory
 set directory=$HOME/.vim/swap                                     " Custom swapfile directory
@@ -163,12 +156,11 @@ set smarttab expandtab shiftwidth=4 tabstop=4 softtabstop=4       " Four spaces 
 set hlsearch incsearch ignorecase smartcase                       " Highlight search results, ignore case if search is all lowercase
 set nowrap number nomodeline
 set laststatus=2
-let &colorcolumn=join(range(81,999),",")
+let &colorcolumn=join(range(81,250),",")
 " Theming
 set background=dark
 set termguicolors
 colorscheme molokai
-" guifg=#61AFEF
 highlight ALEErrorSign      guifg=#FF0000
 highlight ALEWarningSign    guifg=#FFFF00
 highlight ALEWarning        guibg=#333300
@@ -189,7 +181,7 @@ function! ToggleTheme()
         highlight SignifySignChange guifg=#ffff00
     else
         set background=light
-        colorscheme github
+        colorscheme xcode
         highlight ALEWarning        guibg=#e4e4e4
         highlight ALEErrorSign      guibg=#555555 guifg=#FF0000
         highlight ALEWarningSign    guibg=#555555 guifg=#FFFF00
