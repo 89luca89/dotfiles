@@ -62,7 +62,7 @@
         name:
           - http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_facts.distribution_version }}.noarch.rpm
           - http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_facts.distribution_version }}.noarch.rpm
-          - https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
+          - http://li.nux.ro/download/nux/dextop/el7/x86_64//msttcore-fonts-installer-2.6-1.noarch.rpm
       become: true
       tags: rpmfusion
       when:
@@ -257,6 +257,7 @@
           - demjson
           - yamllint
           - ansible-lint
+          - psutil
       become: true
       tags: devel
 
