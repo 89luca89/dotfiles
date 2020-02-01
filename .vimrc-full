@@ -179,6 +179,7 @@ function! ToggleTheme()
         highlight SignifySignAdd    guifg=#00ff00
         highlight SignifySignDelete guifg=#ff0000
         highlight SignifySignChange guifg=#ffff00
+        :silent !gsettings set org.gnome.Terminal.Legacy.Settings theme-variant "dark"
     else
         set background=light
         colorscheme xcode
@@ -188,5 +189,6 @@ function! ToggleTheme()
         highlight SignifySignAdd    guifg=#00ff00 guibg=#555555
         highlight SignifySignDelete guifg=#ff0000 guibg=#555555
         highlight SignifySignChange guifg=#ffff00 guibg=#555555
+        :silent !gsettings set org.gnome.Terminal.Legacy.Settings theme-variant "light"
     endif
 endfunction
