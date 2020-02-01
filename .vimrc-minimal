@@ -3,19 +3,20 @@ filetype off                  " required
 filetype plugin indent on     " required
 """ Ctrl-C copy visual selection to clipboard
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
-set title nocompatible nowritebackup nobackup                    " required
+set updatetime=300
+set title nocompatible nowritebackup nobackup                     " required
 set mouse=a                                                       " it's always useful
 set undofile undolevels=1000 undodir=$HOME/.vim/undo              " Undo file and directory
 set directory=$HOME/.vim/swap                                     " Custom swapfile directory
 set path+=** wildmenu                                             " Recursive path Tab autocomplete
-set lazyredraw ttyfast ttimeoutlen=20                             " Faster redraw
 set hidden                                                        " change buffer without saving
 set backspace=indent,eol,start                                    " http://vi.stackexchange.com/a/2163
+set splitright splitbelow                                         " Open new splits to the right and bottom
 set autoindent smartindent copyindent                             " always set autoindenting on
 set smarttab expandtab shiftwidth=4 tabstop=4 softtabstop=4       " Four spaces for tabs everywhere
 set hlsearch incsearch ignorecase smartcase                       " Highlight search results, ignore case if search is all lowercase
-set nowrap number                                                 " play nicely with long lines
-set colorcolumn=80
+set nowrap number nomodeline
+set laststatus=2
 syntax on
 " play nicely with modern graphics
 set encoding=utf8
