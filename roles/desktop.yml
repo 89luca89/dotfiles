@@ -35,6 +35,10 @@
           - simple-scan
           - virtualbox-guest-additions
           - httpd
+          - ibus-typing-booster
+          - ibus-libpinyin
+          - ibus-kkc
+          - ibus-libzhuyin
           - 'libreoffice-*'
           - 'PackageKit-*'
       become: true
@@ -258,6 +262,7 @@
           - yamllint
           - ansible-lint
           - psutil
+          - neovim
       become: true
       tags: devel
 
