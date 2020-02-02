@@ -372,6 +372,30 @@
       become: true
       tags: system
 
+    - name: Set Powertop daemon timer
+      blockinfile:
+        path: /etc/systemd/system/powertop.timer
+        create: true
+        block: |
+            [Unit]
+            Description=Runs Powertop every 120s
+            [Timer]
+            OnBootSec=120
+            OnUnitActiveSec=120
+            Unit=powertop.service
+            [Install]
+            WantedBy=multi-user.target
+      become: true
+      tags: system
+
+    - name: Powertop daemon timer enable
+      systemd:
+        name: powertop.timer
+        state: started
+        enabled: true
+      become: true
+      tags: system
+
     - name: Set sysctl variables
       sysctl:
         name: '{{ item.name }}'
@@ -538,7 +562,7 @@
       become: true
       tags: [ never, thinkpad ]
 
-    - name: Set Fan daemon timer
+    - name: Set Fan daemon service
       blockinfile:
         path: /etc/systemd/system/fan_daemon.service
         create: true
