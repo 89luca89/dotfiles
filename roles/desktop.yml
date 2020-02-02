@@ -361,22 +361,13 @@
         name:
           - powertop
           - msr-tools
-          - tlp
-          - tlp-rdw
+          - hdparm
       become: true
       tags: system
 
     - name: Powertop Enable
       systemd:
         name: powertop.service
-        enabled: true
-      become: true
-      tags: system
-
-    - name: Tlp Enable
-      systemd:
-        name: tlp.service
-        state: started
         enabled: true
       become: true
       tags: system
