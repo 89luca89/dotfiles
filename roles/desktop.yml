@@ -648,6 +648,7 @@
         - "~/.vimrc"
         - "~/.zshrc"
         - "~/.ctags"
+        - "~/.gitconfig"
         - "~/.config/user-dirs.dirs"
         - "~/.config/libinput-gestures.conf"
         - "~/.config/mpv/mpv.conf"
@@ -676,6 +677,7 @@
         - { src: "~/Syncthing/Conf/keepassxc.ini", dest: "~/.config/keepassxc/keepassxc.ini" }
         - { src: "~/Syncthing/Conf/assh.yml", dest: "~/.ssh/assh.yml" }
         - { src: "~/Syncthing/Conf/Shortcuts/applications", dest: "~/.local/share/applications" }
+        - { src: "~/Syncthing/Conf/.gitconfig", dest: "~/.gitconfig" }
       when: firstrun.changed
       tags: dotfiles
 
