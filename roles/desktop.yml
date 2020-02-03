@@ -39,6 +39,8 @@
           - ibus-libpinyin
           - ibus-kkc
           - ibus-libzhuyin
+          - evolution
+          - evolution-ews
           - 'libreoffice-*'
           - 'PackageKit-*'
       become: true
@@ -188,8 +190,7 @@
           - keepassxc
           - gparted
           - virt-manager
-          - evolution
-          - evolution-ews
+          - thunderbird
           - telegram-desktop
           - gimp
           - marker
@@ -245,7 +246,7 @@
       become: true
       tags: devel
 
-    - name: Install Programs (Programming Packages) - pip
+    - name: Install Programs (PIP Packages) - pip
       pip:
         state: present
         executable: pip3
@@ -263,6 +264,7 @@
           - ansible-lint
           - psutil
           - neovim
+          - youtube-dl
       become: true
       tags: devel
 
@@ -353,6 +355,12 @@
         state: started
         enabled: true
       become: true
+      tags: system
+
+    - name: Disable User unit evolution
+      shell: |
+        systemctl --user mask evolution-addressbook-factory.service evolution-calendar-factory.service evolution-source-registry.service
+        systemctl --user stop evolution-addressbook-factory.service evolution-calendar-factory.service evolution-source-registry.service
       tags: system
 
     - name: Install Power Management (Laptop)

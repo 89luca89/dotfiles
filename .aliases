@@ -11,6 +11,8 @@ alias rsyncthingD='pushd ~/Syncthing; rsync -av --delete --progress -e "ssh -J t
 alias rsyncthingS='pushd ~/Syncthing; rsync -av --delete --progress -e "ssh -J thinkpad-w540.lan" --exclude=".stversions" ~/Syncthing/ root@fileserver.lan:/usr/local/mnt/Vault/Syncthing/; popd'
 alias firefoxSync='find ~/.mozilla/ -iname "*cache*" | xargs rm -rf; pushd ~ ; tar cfzv ~/Syncthing/Browsers/Firefox/profile.tar.gz .mozilla/; popd'
 alias firefoxSyncRestore='rm -rf ~/.mozilla; tar xfz ~/Syncthing/Browsers/Firefox/profile.tar.gz -C ~/'
+alias thunderSync='find ~/.thunderbird/ -iname "*cache*" | xargs rm -rf; pushd ~ ; tar cfzv ~/Syncthing/Browsers/Firefox/thunderbird-profile.tar.gz --exclude=.thunderbird/*-default/ImapMail --exclude=.thunderbird/*-default/ExQuilla .thunderbird/; popd'
+alias thunderSyncRestore='rm -rf ~/.thunderbird; tar xfz ~/Syncthing/Browsers/Firefox/thunderbird-profile.tar.gz -C ~/'
 alias grep='grep --color=auto'
 alias ll='ls -Ahl --group-directories-first --color'
 alias tree='tree -C'
