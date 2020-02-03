@@ -10,25 +10,22 @@
       command: |
           dnf remove -y {{ item }}
       with_items:
-          - gnome-documents
           - gnome-dictionary
           - gnome-photos
           - gnome-music
           - gnome-boxes
-          - gnome-getting-started-docs
+          - gnome-characters
+          - gnome-font-viewer
+          - gnome-documents
           - gnome-initial-setup
-          - gnome-maps
+          - gnome-getting-started-docs
           - gnome-online-miners
           - gnome-user-docs
           - gnome-user-share
           - gnome-video-effects
           - gnome-logs
-          - gnome-characters
-          - gnome-font-viewer
-          - gnome-software
           - gnome-abrt
-          - gnome-weather
-          - gnome-clocks
+          - gnome-software
           - yelp
           - orca
           - gfbgraph
