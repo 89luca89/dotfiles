@@ -182,7 +182,8 @@ function! ToggleTheme()
         :silent !gsettings set org.gnome.Terminal.Legacy.Settings theme-variant "dark"
     else
         set background=light
-        colorscheme xcode
+        colorscheme github
+        AirlineTheme base16
         highlight ALEWarning        guibg=#e4e4e4
         highlight ALEErrorSign      guibg=#555555 guifg=#FF0000
         highlight ALEWarningSign    guibg=#555555 guifg=#FFFF00
