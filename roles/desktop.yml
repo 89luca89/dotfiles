@@ -269,6 +269,7 @@
     - name: Install Programs (Programming Packages) - golang
       command: |
         go get github.com/sourcegraph/go-langserver
+        go get mvdan.cc/sh/cmd/shfmt
       environment:
         GOPATH: "{{ ansible_env.HOME }}/.local/go"
       tags: devel
@@ -524,20 +525,6 @@
         line: "127.0.0.1\t{{ ansible_hostname }}"
         state: present
         backup: true
-      become: true
-      tags: system
-
-    - name: Update the profiles file with personal variables
-      lineinfile:
-        path: /etc/profile
-        regexp: '{{ item }}'
-        line: '{{ item }}'
-        state: present
-        backup: true
-      with_items:
-        - export MOZ_USE_XINPUT2=1
-        - export MOZ_ACCELLERATED=1
-        - export MOZ_WEBRENDER=1
       become: true
       tags: system
 
