@@ -56,4 +56,4 @@ zstyle ':vcs_info:git:*' formats '%F{yellow}(%b%f%c%u%F{yellow})'
 zstyle ':vcs_info:git:*' actionformats '%F{yellow}(%b (%a)%f%c%u%F{yellow})'
 setopt PROMPT_PERCENT
 setopt PROMPT_SUBST
-PROMPT='%F{green}%n:%F{blue}%30<..<%~%f%<< $vcs_info_msg_0_%b%b%F{white}$ '
+PROMPT='%B%F{green}%n@%m:%F{blue}%30<..<%~%f%<< %b$vcs_info_msg_0_%b%b%F{white}$ '
