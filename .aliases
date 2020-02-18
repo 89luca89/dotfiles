@@ -7,10 +7,10 @@ tail() {
     /usr/bin/tail $@ | ccze -A
 }
 ccat() {
-    /usr/bin/cat $@ | ccze -A
+    /usr/bin/cat $@ | ccze -A -o nolookups
 }
 make() {
-    /usr/bin/make $@ | ccze -A
+    /usr/bin/make $@ | ccze -A -o nolookups
 }
 alias :q="exit"
 alias :wq="exit"
@@ -23,7 +23,7 @@ alias firefoxRestore='rm -rf ~/.mozilla; xz -dc  ~/Syncthing/Browsers/firefox-pr
 alias mailSync='pushd ~ ; tar cfv - .config/geary .local/share/geary/ | xz -4e > ~/Syncthing/Browsers/geary-profile.tar.xz; popd'
 alias mailRestore='rm -rf .config/geary/ .local/share/geary/; xz -dc ~/Syncthing/Browsers/geary-profile.tar.xz | tar -x -C ~/'
 alias grep='grep --color=auto'
-alias ll='ls -Ahl --group-directories-first --color'
+alias ll='ls -Ahl --group-directories-first --color | ccze -A -o nolookups'
 alias tree='tree -C'
 alias top='top -o %CPU'
 alias open='xdg-open'

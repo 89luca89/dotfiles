@@ -225,6 +225,7 @@
       package:
         state: present
         name:
+          - ccze
           - clang
           - golang
           - golint
