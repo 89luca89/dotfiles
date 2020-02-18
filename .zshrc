@@ -6,19 +6,17 @@ bindkey "\e[H" beginning-of-line
 bindkey "\e[F" end-of-line
 bindkey "\e[1~" beginning-of-line
 bindkey "\e[4~" end-of-line
-autoload -U up-line-or-beginning-search
-autoload -U down-line-or-beginning-search
-zle -N up-line-or-beginning-search
-zle -N down-line-or-beginning-search
-bindkey "^[[A" up-line-or-beginning-search # Up
-bindkey "^[[B" down-line-or-beginning-search # Down
 # Auto install plugins if missing
 export ZSH=$HOME/.local/bin/zsh
+if [ ! -d "$ZSH" ]; then
+    mkdir -p $ZSH/plugins
+	git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH/plugins/zsh-autosuggestions
+	git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH/plugins/zsh-syntax-highlighting
+fi
 if [ ! -d "$HOME/.local/bin/fzf" ]; then
     git clone --depth 1 https://github.com/junegunn/fzf.git "$HOME/.local/bin/fzf"
     "$HOME/.local/bin/fzf/install" --all
 fi
-source $HOME/.aliases
 # Manage history
 SAVEHIST=100000
 HISTFILE=~/.zsh_history
@@ -27,6 +25,12 @@ setopt APPEND_HISTORY                       # adds history
 setopt INC_APPEND_HISTORY SHARE_HISTORY     # adds history incrementally and share it across sessions
 setopt HIST_IGNORE_ALL_DUPS                 # don't record dupes in history
 setopt HIST_REDUCE_BLANKS
+autoload -U up-line-or-beginning-search
+autoload -U down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+bindkey "^[[A" up-line-or-beginning-search # Up
+bindkey "^[[B" down-line-or-beginning-search # Down
 
 # include custom files
 if [ -f $HOME/.localrc ]; then
@@ -43,6 +47,11 @@ if [ -z "$SSH_AUTH_SOCK" ] ; then
     ssh-add ~/.ssh/id_rsa
     ssh-add ~/.ssh/id_rsa_ext
 fi
+# Zsh completion
+fpath=(/usr/local/share/zsh-completions $fpath)
+source $ZSH/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+source $ZSH/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source $HOME/.aliases
 
 # PROMPT
 autoload -Uz vcs_info
