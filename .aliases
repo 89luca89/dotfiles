@@ -3,6 +3,15 @@ function ssh() {
     SESSION=$(hostname)
     /usr/bin/ssh -t $@ "tmux new-session -A -s $SESSION > /dev/null 2>&1 || eval $SHELL"
 }
+tail() {
+    /usr/bin/tail $@ | ccze -A
+}
+ccat() {
+    /usr/bin/cat $@ | ccze -A
+}
+make() {
+    /usr/bin/make $@ | ccze -A
+}
 alias :q="exit"
 alias :wq="exit"
 alias :qa="exit"
