@@ -6,10 +6,10 @@ Plug 'christoomey/vim-tmux-navigator'
 Plug 'junegunn/fzf.vim'                             " fuzzy find all the things
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
 Plug 'flazz/vim-colorschemes'
 Plug 'mhinz/vim-signify'
 "" Lang Packs
+Plug 'fatih/vim-go'
 Plug 'sheerun/vim-polyglot', { 'do': './build' }    " Lang packs
 "" ALE+LSP
 Plug 'dense-analysis/ale'
@@ -19,7 +19,6 @@ Plug 'autozimu/languageclient-neovim', {
             \ }
 " Deoplete
 Plug 'shougo/deoplete.nvim'
-Plug 'deoplete-plugins/deoplete-tag'
 Plug 'wellle/tmux-complete.vim'
 "
 Plug 'roxma/nvim-yarp'
@@ -46,6 +45,7 @@ let g:signify_sign_change = '>'
 let g:python_highlight_all=1
 let g:ansible_yamlKeyName = 'yamlKey'
 let g:ansible_attribute_highlight = 'ab'
+let g:go_auto_type_info = 1
 " Deoplete
 set completeopt-=preview
 let g:deoplete#enable_at_startup = 0                " Start on insert mode
@@ -79,7 +79,7 @@ let g:LanguageClient_serverCommands = {
             \ 'cpp': ['clangd'],
             \ 'python': ['/usr/local/bin/pyls'],
             \ 'rust' : ['rls'],
-            \ 'go' : ['go-langserver', '-gocodecompletion'],
+            \ 'go' : ['gopls'],
             \ 'sh' : ['bash-language-server', 'start'],
             \ }
 " FZF fuzzy
@@ -183,7 +183,6 @@ function! ToggleTheme()
     else
         set background=light
         colorscheme github
-        AirlineTheme base16
         highlight ALEWarning        guibg=#e4e4e4
         highlight ALEErrorSign      guibg=#555555 guifg=#FF0000
         highlight ALEWarningSign    guibg=#555555 guifg=#FFFF00
