@@ -268,12 +268,17 @@
       tags: devel
 
     - name: Install Programs (Programming Packages) - golang
-      command: |
-        go get github.com/sourcegraph/go-langserver
-        go get mvdan.cc/sh/cmd/shfmt
+      command: "{{ item }}"
+      with_items:
+        - "go get -u github.com/go-delve/delve/cmd/dlv"
+        - "go get -u golang.org/x/tools/cmd/goimports"
+        - "go get -u golang.org/x/lint/golint"
+        - "go get -u golang.org/x/tools/gopls"
+        - "go get -u github.com/sourcegraph/go-langserver"
+        - "go get -u mvdan.cc/sh/cmd/shfmt"
       environment:
         GOPATH: "{{ ansible_env.HOME }}/.local/go"
-      tags: devel
+      tags: devel,golang
 
     - name: Check if rustup is already installed
       stat:
