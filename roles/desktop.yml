@@ -187,7 +187,6 @@
           - keepassxc
           - gparted
           - virt-manager
-          - telegram-desktop
           - gimp
           - marker
           - geary
@@ -228,7 +227,6 @@
           - ccze
           - clang
           - golang
-          - golint
           - ShellCheck
           - ncurses-compat-libs
           - boost-devel
@@ -284,26 +282,6 @@
       stat:
         path: "{{ ansible_env.HOME }}/.local/rust/env"
       register: file_exists
-      tags: devel
-
-    - name: Install Programs (Programming Packages) - rustup
-      get_url:
-        url: https://sh.rustup.rs
-        dest: /tmp/rustup.sh
-        mode: 0755
-      when: not file_exists.stat.exists
-      tags: devel
-
-    - name: Install Programs (Programming Packages) - rust
-      command: "{{ item }}"
-      with_items:
-        - /tmp/rustup.sh -y
-        - $RUSTUP_HOME/bin/rustup default stable
-        - $RUSTUP_HOME/bin/rustup component add rls rust-analysis rust-src
-      environment:
-        CARGO_HOME: "{{ ansible_env.HOME }}/.local/rust"
-        RUSTUP_HOME: "{{ ansible_env.HOME }}/.local/rust"
-      when: not file_exists.stat.exists
       tags: devel
 
     - name: Ensure {{ ansible_env.HOME }}/Programs Exists
