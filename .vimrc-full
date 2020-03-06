@@ -53,7 +53,9 @@ let g:go_highlight_structs = 1
 let g:go_highlight_operators = 1
 let g:go_highlight_build_constraints = 1
 " Deoplete
-set completeopt-=preview
+"set completeopt-=preview
+set completeopt=menu,longest,popup
+set completepopup=align:menu,border:off,highlight:Pmenu
 let g:deoplete#enable_at_startup = 0                " Start on insert mode
 let g:python3_host_prog = "/usr/bin/python3"
 let g:deoplete#enable_smart_case = 1
@@ -86,15 +88,16 @@ let g:ale_linters = {
             \ 'ansible':['ansible-lint']
             \}
 let g:LanguageClient_autoStart = 0
-let g:LanguageClient_diagnosticsEnable = 0
+let g:LanguageClient_diagnosticsEnable = 1
 let g:LanguageClient_loggingFile = "/tmp/lang.log"
 let g:LanguageClient_serverCommands = {
             \ 'asm': ['clangd'],
             \ 'c': ['clangd'],
             \ 'cpp': ['clangd'],
             \ 'python': ['pyls'],
-            \ 'go' : ['go-langserver', "-diagnostics", '-gocodecompletion', "-lint-tool=golint", "-format-tool=goimports"]
+            \ 'go' : ['gopls'],
             \ }
+            "\ 'go' : ['go-langserver', "-diagnostics", '-gocodecompletion', "-lint-tool=golint", "-format-tool=goimports"]
 " FZF fuzzy
 let $FZF_DEFAULT_COMMAND="rg --files --hidden"
 let g:fzf_files_options = "--preview 'if file {1} | grep -Ei \"text|JSON\"; then cat {1} ; fi'"
