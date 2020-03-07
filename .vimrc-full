@@ -20,9 +20,8 @@ Plug 'autozimu/languageclient-neovim', {
 Plug 'shougo/deoplete.nvim'
 Plug 'roxma/nvim-yarp'
 Plug 'roxma/vim-hug-neovim-rpc'
-
 call plug#end()                                     " required
-
+"
 filetype plugin indent on                           " required
 syntax on
 autocmd VimResized * :wincmd =
@@ -50,15 +49,11 @@ let g:go_highlight_fields = 1
 let g:go_highlight_functions = 1
 let g:go_highlight_operators = 1
 let g:go_highlight_build_constraints = 1
-
 " Deoplete
-" Deoplete
-"set completeopt-=preview
 set completeopt=menu,longest,popup
 set completepopup=align:menu,border:off,highlight:Pmenu
 let g:deoplete#enable_at_startup = 0                " Start on insert mode
 let g:python3_host_prog = "/usr/bin/python3"
-
 " ALE linter
 let g:ale_enabled           = 0                     " Start on insert mode
 let g:ale_sign_error        = '⤫'
@@ -114,7 +109,7 @@ map <leader>e :<C-u>vert copen<bar>:50wincmd><CR>
 map <leader>f :Rg<CR>
 map <leader>t :Tags<CR>
 map <leader>j :set ft=.jinja2<Left><Left><Left><Left><Left><Left><Left>
-map <leader>A :bufdo ALELint<CR>:bp<CR>:bufdo e<CR>:so ~/.vimrc<CR>
+nnoremap <leader>om :!~/bin/serve_pdf.sh "%" &<CR><CR>
 " LSP
 nnoremap <leader>d :call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<CR>
 nnoremap <leader>r :call LanguageClient#textDocument_rename()<CR>
@@ -126,7 +121,6 @@ nnoremap <leader>c :call LanguageClient#textDocument_completion()<CR>
 nnoremap <leader>h :call LanguageClient#textDocument_hover()<CR>
 nnoremap <leader>s :call LanguageClient_textDocument_documentSymbol()<CR>
 nnoremap <leader>m :call LanguageClient_contextMenu()<CR>
-nnoremap <leader>om :!~/bin/serve_pdf.sh "%" &<CR><CR>
 
 " Ctrl+L Format Code
 " if not use the specific implementation
