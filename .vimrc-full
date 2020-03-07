@@ -18,17 +18,17 @@ Plug 'autozimu/languageclient-neovim', {
             \ }
 " Deoplete
 Plug 'shougo/deoplete.nvim'
-Plug 'wellle/tmux-complete.vim'
-"
 Plug 'roxma/nvim-yarp'
 Plug 'roxma/vim-hug-neovim-rpc'
+
 call plug#end()                                     " required
+
 filetype plugin indent on                           " required
 syntax on
 autocmd VimResized * :wincmd =
+autocmd InsertEnter * call deoplete#enable()
 autocmd InsertEnter * :ALEEnable
 autocmd InsertEnter * :LanguageClientStart
-autocmd InsertEnter * call deoplete#enable()
 autocmd BufWritePre * %s/\s\+$//e
 " autocmd Syntax * syntax match myFunction /\v[[:alpha:]_.]+\ze\./
 autocmd Syntax,InsertEnter * syntax match myObject /\.[[:alpha:][:digit:]-_.]*/
@@ -44,21 +44,21 @@ let g:signify_sign_change = '>'
 let g:python_highlight_all=1
 let g:ansible_yamlKeyName = 'yamlKey'
 let g:ansible_attribute_highlight = 'ab'
-let g:go_auto_type_info = 1
+let g:go_highlight_extra_types = 1
 let g:go_highlight_types = 1
 let g:go_highlight_fields = 1
 let g:go_highlight_functions = 1
-let g:go_highlight_methods = 1
-let g:go_highlight_structs = 1
 let g:go_highlight_operators = 1
 let g:go_highlight_build_constraints = 1
+
+" Deoplete
 " Deoplete
 "set completeopt-=preview
 set completeopt=menu,longest,popup
 set completepopup=align:menu,border:off,highlight:Pmenu
 let g:deoplete#enable_at_startup = 0                " Start on insert mode
 let g:python3_host_prog = "/usr/bin/python3"
-let g:deoplete#enable_smart_case = 1
+
 " ALE linter
 let g:ale_enabled           = 0                     " Start on insert mode
 let g:ale_sign_error        = '⤫'
@@ -76,11 +76,6 @@ let g:ale_fixers = {
             \ 'cpp': ['clang-format'],
             \ }
 let g:ale_linters = {
-            \ 'asm': ['gcc'],
-            \ 'c': ['gcc'],
-            \ 'cpp': ['gcc'],
-            \ 'python': ['flake8', 'pylint'],
-            \ 'go': ['golint'],
             \ 'sh':['shellcheck', 'shell'],
             \ 'xml':['xmllint'],
             \ 'json':['jsonlint'],
@@ -88,8 +83,10 @@ let g:ale_linters = {
             \ 'ansible':['ansible-lint']
             \}
 let g:LanguageClient_autoStart = 0
+let g:LanguageClient_completionPreferTextEdit = 1
+let g:LanguageClient_hoverPreview = "Always"
 let g:LanguageClient_diagnosticsEnable = 1
-let g:LanguageClient_loggingFile = "/tmp/lang.log"
+let g:LanguageClient_diagnosticsList = "Quickfix"
 let g:LanguageClient_serverCommands = {
             \ 'asm': ['clangd'],
             \ 'c': ['clangd'],
