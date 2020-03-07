@@ -94,9 +94,7 @@ let g:LanguageClient_serverCommands = {
             \ 'python': ['pyls'],
             \ 'go' : ['gopls'],
             \ }
-            "\ 'go' : ['go-langserver', "-diagnostics", '-gocodecompletion', "-lint-tool=golint", "-format-tool=goimports"]
 " FZF fuzzy
-let $FZF_DEFAULT_COMMAND="rg --files --hidden"
 let g:fzf_files_options = "--preview 'if file {1} | grep -Ei \"text|JSON\"; then cat {1} ; fi'"
 let g:fzf_tags_command = 'ctags -R'
 let g:fzf_action = {'alt-enter':'vsplit' }
@@ -172,7 +170,8 @@ let &colorcolumn=join(range(81,250),",")
 " Theming
 set background=dark
 set termguicolors
-colorscheme molokai
+colorscheme jellybeans
+highlight Special           guifg=#66D9EF
 highlight ALEErrorSign      guifg=#FF0000
 highlight ALEWarningSign    guifg=#FFFF00
 highlight ALEWarning        guibg=#333300
@@ -184,7 +183,8 @@ map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        colorscheme molokai
+        colorscheme jellybeans
+        highlight Special           guifg=#66D9EF
         highlight ALEErrorSign      guifg=#FF0000
         highlight ALEWarningSign    guifg=#FFFF00
         highlight ALEWarning        guibg=#333300
