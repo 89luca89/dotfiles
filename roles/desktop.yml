@@ -25,7 +25,6 @@
           - gnome-video-effects
           - gnome-logs
           - gnome-abrt
-          - gnome-software
           - yelp
           - orca
           - gfbgraph
@@ -36,10 +35,7 @@
           - ibus-libpinyin
           - ibus-kkc
           - ibus-libzhuyin
-          - evolution
-          - evolution-ews
           - 'libreoffice-*'
-          - 'PackageKit-*'
       become: true
       tags: bloat
 
@@ -189,7 +185,6 @@
           - virt-manager
           - gimp
           - marker
-          - geary
       become: true
       tags: gui_pkg
 
@@ -338,12 +333,6 @@
         state: started
         enabled: true
       become: true
-      tags: system
-
-    - name: Disable User unit evolution
-      shell: |
-        systemctl --user mask evolution-addressbook-factory.service evolution-calendar-factory.service evolution-source-registry.service
-        systemctl --user stop evolution-addressbook-factory.service evolution-calendar-factory.service evolution-source-registry.service
       tags: system
 
     - name: Install Power Management (Laptop)
@@ -692,8 +681,6 @@
         - { key: /org/gnome/nautilus/preferences/default-folder-viewer, value: "'list-view'" }
         - { key: /org/gnome/nautilus/list-view/default-visible-columns, value: "['name', 'size', 'type', 'owner', 'group', 'permissions', 'date_modified', 'starred', 'detailed_type']" }
         - { key: /org/gnome/desktop/wm/preferences/action-middle-click-titlebar, value: "'minimize'" }
-        - { key: /org/gnome/Geary/compose-as-html, value: 'false' }
-        - { key: /org/gnome/Geary/startup-notifications, value: 'true' }
       tags: dotfiles
 
 # echo 'Section "InputClass"
