@@ -32,7 +32,6 @@ autocmd InsertEnter * :LanguageClientStart
 autocmd BufWritePre * %s/\s\+$//e
 " autocmd Syntax * syntax match myFunction /\v[[:alpha:]_.]+\ze\./
 autocmd Syntax,InsertEnter * syntax match myObject /\.[[:alpha:][:digit:]-_.]*/
-highlight link myObject     Special
 "
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 let g:airline_extensions = ['tabline']
@@ -171,7 +170,8 @@ let &colorcolumn=join(range(81,250),",")
 set background=dark
 set termguicolors
 colorscheme jellybeans
-highlight Special           guifg=#66D9EF
+" highlight link myObject     Special
+highlight myObject          guifg=#66D9EF
 highlight ALEErrorSign      guifg=#FF0000
 highlight ALEWarningSign    guifg=#FFFF00
 highlight ALEWarning        guibg=#333300
@@ -184,7 +184,7 @@ function! ToggleTheme()
     if &background == 'light'
         set background=dark
         colorscheme jellybeans
-        highlight Special           guifg=#66D9EF
+        highlight myObject          guifg=#66D9EF
         highlight ALEErrorSign      guifg=#FF0000
         highlight ALEWarningSign    guifg=#FFFF00
         highlight ALEWarning        guibg=#333300
@@ -194,8 +194,9 @@ function! ToggleTheme()
     else
         set background=light
         colorscheme github
-        highlight Normal guibg=#ffffff
-        highlight ColorColumn guibg=#eeeeee
+        highlight myObject          guifg=#159828
+        highlight Normal            guibg=#ffffff
+        highlight ColorColumn       guibg=#eeeeee
         highlight ALEWarning        guibg=#e4e4e4
         highlight ALEErrorSign      guibg=#555555 guifg=#FF0000
         highlight ALEWarningSign    guibg=#555555 guifg=#FFFF00
