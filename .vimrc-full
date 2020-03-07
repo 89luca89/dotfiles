@@ -32,6 +32,7 @@ autocmd InsertEnter * :LanguageClientStart
 autocmd BufWritePre * %s/\s\+$//e
 " autocmd Syntax * syntax match myFunction /\v[[:alpha:]_.]+\ze\./
 autocmd Syntax,InsertEnter * syntax match myObject /\.[[:alpha:][:digit:]-_.]*/
+highlight link myObject     Special
 "
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 let g:airline_extensions = ['tabline']
@@ -68,11 +69,12 @@ let g:ale_linters_explicit  = 1
 let g:ale_fix_on_save       = 1
 let g:ale_fixers = {
             \ '*':['remove_trailing_lines', 'trim_whitespace'],
-            \ 'python':['isort', 'autopep8'],
-            \ 'go':['goimports', 'gofmt'],
-            \ 'sh':['shfmt'],
             \ 'c': ['clang-format'],
             \ 'cpp': ['clang-format'],
+            \ 'python':['isort', 'autopep8', 'yapf'],
+            \ 'go':['goimports', 'gofmt'],
+            \ 'sh':['shfmt'],
+            \ 'xml':['xmllint'],
             \ }
 let g:ale_linters = {
             \ 'sh':['shellcheck', 'shell'],
@@ -87,7 +89,6 @@ let g:LanguageClient_hoverPreview = "Always"
 let g:LanguageClient_diagnosticsEnable = 1
 let g:LanguageClient_diagnosticsList = "Quickfix"
 let g:LanguageClient_serverCommands = {
-            \ 'asm': ['clangd'],
             \ 'c': ['clangd'],
             \ 'cpp': ['clangd'],
             \ 'python': ['pyls'],
@@ -111,17 +112,22 @@ map <leader><Tab> :Buffers<CR>
 map <leader>b :Files<CR>
 map <leader>e :<C-u>vert copen<bar>:50wincmd><CR>
 map <leader>f :Rg<CR>
+map <leader>t :Tags<CR>
 map <leader>j :set ft=.jinja2<Left><Left><Left><Left><Left><Left><Left>
 map <leader>A :bufdo ALELint<CR>:bp<CR>:bufdo e<CR>:so ~/.vimrc<CR>
-map <leader>t :Tags<CR>
-map <silent> <leader>g :call LanguageClient#textDocument_definition()<cr>
-map <silent> <leader>h :call LanguageClient_textDocument_hover()<cr>
-map <silent> <leader>i :call LanguageClient_textDocument_implementation()<cr>
-map <silent> <leader>l :call LanguageClient#textDocument_formatting()<cr>
-map <silent> <leader>m :call LanguageClient_contextMenu()<cr>
-map <silent> <leader>r :call LanguageClient_textDocument_rename()<cr>
-map <silent> <leader>rf :call LanguageClient#textDocument_references()<cr>
-map <silent> <leader>td :call LanguageClient_textDocument_typeDefinition()<cr>
+" LSP
+nnoremap <leader>d :call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<CR>
+nnoremap <leader>r :call LanguageClient#textDocument_rename()<CR>
+nnoremap <leader>l :call LanguageClient#textDocument_formatting()<CR>
+nnoremap <leader>td :call LanguageClient#textDocument_typeDefinition()<CR>
+nnoremap <leader>x :call LanguageClient#textDocument_references()<CR>
+nnoremap <leader>a :call LanguageClient_workspace_applyEdit()<CR>
+nnoremap <leader>c :call LanguageClient#textDocument_completion()<CR>
+nnoremap <leader>h :call LanguageClient#textDocument_hover()<CR>
+nnoremap <leader>s :call LanguageClient_textDocument_documentSymbol()<CR>
+nnoremap <leader>m :call LanguageClient_contextMenu()<CR>
+nnoremap <leader>om :!~/bin/serve_pdf.sh "%" &<CR><CR>
+
 " Ctrl+L Format Code
 " if not use the specific implementation
 noremap <C-L> <Esc>:w<CR>:mkview<CR>gg=G<CR>:loadview<CR>
@@ -169,9 +175,7 @@ let &colorcolumn=join(range(81,250),",")
 " Theming
 set background=dark
 set termguicolors
-colorscheme jellybeans
-" highlight link myObject     Special
-highlight myObject          guifg=#66D9EF
+colorscheme molokai
 highlight ALEErrorSign      guifg=#FF0000
 highlight ALEWarningSign    guifg=#FFFF00
 highlight ALEWarning        guibg=#333300
@@ -183,8 +187,7 @@ map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        colorscheme jellybeans
-        highlight myObject          guifg=#66D9EF
+        colorscheme molokai
         highlight ALEErrorSign      guifg=#FF0000
         highlight ALEWarningSign    guifg=#FFFF00
         highlight ALEWarning        guibg=#333300
@@ -194,9 +197,8 @@ function! ToggleTheme()
     else
         set background=light
         colorscheme github
-        highlight myObject          guifg=#159828
-        highlight Normal            guibg=#ffffff
-        highlight ColorColumn       guibg=#eeeeee
+        highlight Normal guibg=#ffffff
+        highlight ColorColumn guibg=#eeeeee
         highlight ALEWarning        guibg=#e4e4e4
         highlight ALEErrorSign      guibg=#555555 guifg=#FF0000
         highlight ALEWarningSign    guibg=#555555 guifg=#FFFF00
