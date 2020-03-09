@@ -62,6 +62,7 @@ let g:ale_set_highlights    = 1
 let g:ale_set_quickfix      = 1
 let g:ale_linters_explicit  = 1
 let g:ale_fix_on_save       = 1
+let g:ale_go_golangci_lint_package = 1
 let g:ale_fixers = {
             \ '*':['remove_trailing_lines', 'trim_whitespace'],
             \ 'c': ['clang-format'],
@@ -76,7 +77,8 @@ let g:ale_linters = {
             \ 'xml':['xmllint'],
             \ 'json':['jsonlint'],
             \ 'yaml':['yamllint'],
-            \ 'ansible':['ansible-lint']
+            \ 'ansible':['ansible-lint'],
+            \ 'go' : ['golangci-lint']
             \}
 let g:LanguageClient_autoStart = 0
 let g:LanguageClient_completionPreferTextEdit = 1

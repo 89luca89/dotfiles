@@ -1,6 +1,8 @@
 # To run
 # ansible-playbook -i localhost, -kK roles/desktop.yml
 
+---
+
 - name: Playbook to manage My Distro
   hosts: all
   gather_facts: true
@@ -10,32 +12,32 @@
       command: |
           dnf remove -y {{ item }}
       with_items:
-          - gnome-dictionary
-          - gnome-photos
-          - gnome-music
-          - gnome-boxes
-          - gnome-characters
-          - gnome-font-viewer
-          - gnome-documents
-          - gnome-initial-setup
-          - gnome-getting-started-docs
-          - gnome-online-miners
-          - gnome-user-docs
-          - gnome-user-share
-          - gnome-video-effects
-          - gnome-logs
-          - gnome-abrt
-          - yelp
-          - orca
-          - gfbgraph
-          - simple-scan
-          - virtualbox-guest-additions
-          - httpd
-          - ibus-typing-booster
-          - ibus-libpinyin
-          - ibus-kkc
-          - ibus-libzhuyin
-          - 'libreoffice-*'
+        - gnome-dictionary
+        - gnome-photos
+        - gnome-music
+        - gnome-boxes
+        - gnome-characters
+        - gnome-font-viewer
+        - gnome-documents
+        - gnome-initial-setup
+        - gnome-getting-started-docs
+        - gnome-online-miners
+        - gnome-user-docs
+        - gnome-user-share
+        - gnome-video-effects
+        - gnome-logs
+        - gnome-abrt
+        - yelp
+        - orca
+        - gfbgraph
+        - simple-scan
+        - virtualbox-guest-additions
+        - httpd
+        - ibus-typing-booster
+        - ibus-libpinyin
+        - ibus-kkc
+        - ibus-libzhuyin
+        - 'libreoffice-*'
       become: true
       tags: bloat
 
@@ -263,6 +265,7 @@
     - name: Install Programs (Programming Packages) - golang
       command: "{{ item }}"
       with_items:
+        - "curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.23.8"
         - "go get -u github.com/go-delve/delve/cmd/dlv"
         - "go get -u golang.org/x/tools/cmd/goimports"
         - "go get -u golang.org/x/lint/golint"
@@ -272,12 +275,6 @@
       environment:
         GOPATH: "{{ ansible_env.HOME }}/.local/go"
       tags: devel,golang
-
-    - name: Check if rustup is already installed
-      stat:
-        path: "{{ ansible_env.HOME }}/.local/rust/env"
-      register: file_exists
-      tags: devel
 
     - name: Ensure {{ ansible_env.HOME }}/Programs Exists
       file:
@@ -622,20 +619,20 @@
         dest: '{{ item.dest }}'
         state: link
       with_items:
-        - { src: "~/dotfiles/.ansible.cfg", dest: "~/.ansible.cfg" }
-        - { src: "~/dotfiles/.aliases", dest: "~/.aliases" }
-        - { src: "~/dotfiles/.bashrc", dest: "~/.bashrc" }
-        - { src: "~/dotfiles/.tmux.conf", dest: "~/.tmux.conf" }
-        - { src: "~/dotfiles/.vimrc-full", dest: "~/.vimrc" }
-        - { src: "~/dotfiles/.zshrc", dest: "~/.zshrc" }
-        - { src: "~/dotfiles/.ctags", dest: "~/.ctags" }
-        - { src: "~/dotfiles/user-dirs.dirs", dest: "~/.config/user-dirs.dirs" }
-        - { src: "~/dotfiles/libinput-gestures.conf", dest: "~/.config/libinput-gestures.conf" }
-        - { src: "~/dotfiles/mpv.conf", dest: "~/.config/mpv/mpv.conf" }
-        - { src: "~/Syncthing/Conf/keepassxc.ini", dest: "~/.config/keepassxc/keepassxc.ini" }
-        - { src: "~/Syncthing/Conf/assh.yml", dest: "~/.ssh/assh.yml" }
-        - { src: "~/Syncthing/Conf/Shortcuts/applications", dest: "~/.local/share/applications" }
-        - { src: "~/Syncthing/Conf/.gitconfig", dest: "~/.gitconfig" }
+        - {src: "~/dotfiles/.ansible.cfg", dest: "~/.ansible.cfg"}
+        - {src: "~/dotfiles/.aliases", dest: "~/.aliases"}
+        - {src: "~/dotfiles/.bashrc", dest: "~/.bashrc"}
+        - {src: "~/dotfiles/.tmux.conf", dest: "~/.tmux.conf"}
+        - {src: "~/dotfiles/.vimrc-full", dest: "~/.vimrc"}
+        - {src: "~/dotfiles/.zshrc", dest: "~/.zshrc"}
+        - {src: "~/dotfiles/.ctags", dest: "~/.ctags"}
+        - {src: "~/dotfiles/user-dirs.dirs", dest: "~/.config/user-dirs.dirs"}
+        - {src: "~/dotfiles/libinput-gestures.conf", dest: "~/.config/libinput-gestures.conf"}
+        - {src: "~/dotfiles/mpv.conf", dest: "~/.config/mpv/mpv.conf"}
+        - {src: "~/Syncthing/Conf/keepassxc.ini", dest: "~/.config/keepassxc/keepassxc.ini"}
+        - {src: "~/Syncthing/Conf/assh.yml", dest: "~/.ssh/assh.yml"}
+        - {src: "~/Syncthing/Conf/Shortcuts/applications", dest: "~/.local/share/applications"}
+        - {src: "~/Syncthing/Conf/.gitconfig", dest: "~/.gitconfig"}
       when: firstrun.changed
       tags: dotfiles
 
@@ -667,20 +664,20 @@
         value: '{{ item.value }}'
         state: present
       with_items:
-        - { key: /org/gnome/desktop/input-sources/xkb-options, value: "['caps:ctrl_modifier']" }
-        - { key: /org/gnome/desktop/interface/cursor-blink, value: 'false' }
-        - { key: /org/gnome/desktop/privacy/disable-microphone, value: 'true' }
-        - { key: /org/gnome/desktop/privacy/recent-files-max-age, value: '7' }
-        - { key: /org/gnome/desktop/privacy/remove-old-temp-files, value: 'true' }
-        - { key: /org/gnome/desktop/privacy/disable-camera, value: 'true' }
-        - { key: /org/gnome/desktop/privacy/report-technical-problems, value: 'false' }
-        - { key: /org/gnome/desktop/privacy/remove-old-trash-files, value: 'true' }
-        - { key: /org/gnome/desktop/privacy/send-software-usage-stats, value: 'false' }
-        - { key: /org/gnome/nautilus/preferences/show-create-link, value: 'true' }
-        - { key: /org/gnome/nautilus/preferences/show-delete-permanently, value: 'true' }
-        - { key: /org/gnome/nautilus/preferences/default-folder-viewer, value: "'list-view'" }
-        - { key: /org/gnome/nautilus/list-view/default-visible-columns, value: "['name', 'size', 'type', 'owner', 'group', 'permissions', 'date_modified', 'starred', 'detailed_type']" }
-        - { key: /org/gnome/desktop/wm/preferences/action-middle-click-titlebar, value: "'minimize'" }
+        - {key: /org/gnome/desktop/input-sources/xkb-options, value: "['caps:ctrl_modifier']"}
+        - {key: /org/gnome/desktop/interface/cursor-blink, value: 'false'}
+        - {key: /org/gnome/desktop/privacy/disable-microphone, value: 'true'}
+        - {key: /org/gnome/desktop/privacy/recent-files-max-age, value: '7'}
+        - {key: /org/gnome/desktop/privacy/remove-old-temp-files, value: 'true'}
+        - {key: /org/gnome/desktop/privacy/disable-camera, value: 'true'}
+        - {key: /org/gnome/desktop/privacy/report-technical-problems, value: 'false'}
+        - {key: /org/gnome/desktop/privacy/remove-old-trash-files, value: 'true'}
+        - {key: /org/gnome/desktop/privacy/send-software-usage-stats, value: 'false'}
+        - {key: /org/gnome/nautilus/preferences/show-create-link, value: 'true'}
+        - {key: /org/gnome/nautilus/preferences/show-delete-permanently, value: 'true'}
+        - {key: /org/gnome/nautilus/preferences/default-folder-viewer, value: "'list-view'"}
+        - {key: /org/gnome/nautilus/list-view/default-visible-columns, value: "['name', 'size', 'type', 'owner', 'group', 'permissions', 'date_modified', 'starred', 'detailed_type']"}
+        - {key: /org/gnome/desktop/wm/preferences/action-middle-click-titlebar, value: "'minimize'"}
       tags: dotfiles
 
 # echo 'Section "InputClass"
