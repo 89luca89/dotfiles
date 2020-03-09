@@ -79,6 +79,9 @@ let g:ale_linters = {
             \ 'json':['jsonlint'],
             \ 'yaml':['yamllint'],
             \ 'ansible':['ansible-lint'],
+            \ 'c': ['gcc'],
+            \ 'cpp': ['gcc'],
+            \ 'python': ['flake8', 'pylint'],
             \ 'go' : ['golangci-lint']
             \}
 let g:LanguageClient_autoStart = 0
@@ -112,6 +115,7 @@ map <leader>e :<C-u>vert copen<bar>:50wincmd><CR>
 map <leader>f :Rg<CR>
 map <leader>t :Tags<CR>
 map <leader>j :set ft=.jinja2<Left><Left><Left><Left><Left><Left><Left>
+nnoremap <leader>A :bufdo ALELint<CR>:bp<CR>:bufdo e<CR>:so ~/.vimrc<CR>
 nnoremap <leader>om :!~/bin/serve_pdf.sh "%" &<CR><CR>
 " LSP
 nnoremap <leader>d :call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<CR>
