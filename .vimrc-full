@@ -7,6 +7,7 @@ Plug 'mhinz/vim-signify'
 Plug 'junegunn/fzf.vim'                             " fuzzy find all the things
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 Plug 'vim-airline/vim-airline'
+Plug 'yggdroot/indentLine'
 "" Lang Packs
 Plug 'sheerun/vim-polyglot', { 'do': './build' }    " Lang packs
 "" ALE+LSP
@@ -39,7 +40,12 @@ autocmd BufWritePre * %s/\s\+$//e
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 let g:airline_extensions = ['tabline']
 let g:airline_theme = 'dark'
-
+" indentline
+let g:indentLine_setConceal = 1
+let g:indentLine_concealcursor = ''
+let g:intendLine_faser = 1
+let g:indentLine_char = '┆'
+:set list lcs=tab:\|\  " here is a space
 " Git
 let g:signify_sign_add    = '>'
 let g:signify_sign_delete = '-'
@@ -170,6 +176,7 @@ noremap <S-M-Right> :2winc><cr>
 
 " Miscellaneous
 set updatetime=300
+set cursorline relativenumber
 set title nocompatible nowritebackup nobackup                     " required
 set mouse=a                                                       " it's always useful
 set undofile undolevels=1000 undodir=$HOME/.vim/undo              " Undo file and directory
