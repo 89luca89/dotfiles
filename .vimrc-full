@@ -45,17 +45,17 @@ let g:signify_sign_add    = '>'
 let g:signify_sign_delete = '-'
 let g:signify_sign_change = '>'
 " Langs
-let g:python_highlight_all=1
-let g:ansible_yamlKeyName = 'yamlKey'
-let g:ansible_attribute_highlight = 'ab'
-let g:go_highlight_build_constraints = 1
-let g:go_highlight_extra_types = 1
-let g:go_highlight_fields = 1
-let g:go_highlight_functions = 1
-let g:go_highlight_methods = 1
-let g:go_highlight_operators = 1
-let g:go_highlight_structs = 1
-let g:go_highlight_types = 1
+let g:python_highlight_all  = 1
+let g:ansible_yamlKeyName   = 'yamlKey'
+let g:ansible_attribute_highlight   = 'ab'
+let g:go_highlight_build_constraints    = 1
+let g:go_highlight_extra_types  = 1
+let g:go_highlight_fields       = 1
+let g:go_highlight_functions    = 1
+let g:go_highlight_methods      = 1
+let g:go_highlight_operators    = 1
+let g:go_highlight_structs      = 1
+let g:go_highlight_types        = 1
 
 " Deoplete
 set completeopt=menu,longest,popup
@@ -77,16 +77,17 @@ let g:ale_set_highlights    = 1
 let g:ale_set_quickfix      = 1
 let g:ale_linters_explicit  = 1
 let g:ale_fix_on_save       = 1
-let g:ale_go_golangci_lint_package = 1
-let g:ale_go_golangci_lint_options = '--enable-all -D funlen,gomnd,gochecknoglobals'
+let g:ale_go_golangci_lint_package  = 1
+let g:ale_go_golangci_lint_options  = '--enable-all -D funlen,gomnd,gochecknoglobals'
+let g:ale_yaml_yamllint_options     = '-d relaxed'
 let g:ale_fixers = {
             \ '*':['remove_trailing_lines', 'trim_whitespace'],
+            \ 'sh':['shfmt'],
+            \ 'xml':['xmllint'],
             \ 'c': ['clang-format'],
             \ 'cpp': ['clang-format'],
             \ 'python':['isort', 'autopep8', 'yapf'],
             \ 'go':['goimports', 'gofmt'],
-            \ 'sh':['shfmt'],
-            \ 'xml':['xmllint'],
             \ }
 let g:ale_linters = {
             \ 'sh':['shellcheck', 'shell'],
@@ -100,12 +101,12 @@ let g:ale_linters = {
             \ 'go' : ['golangci-lint']
             \}
 " LSP Language Client
-let g:LanguageClient_autoStart = 1
-let g:LanguageClient_completionPreferTextEdit = 1
-let g:LanguageClient_hoverPreview = "Always"
-let g:LanguageClient_diagnosticsEnable = 1
-let g:LanguageClient_diagnosticsList = "Quickfix"
-let g:LanguageClient_serverCommands = {
+let g:LanguageClient_autoStart  = 1
+let g:LanguageClient_completionPreferTextEdit   = 1
+let g:LanguageClient_hoverPreview       = "Always"
+let g:LanguageClient_diagnosticsEnable  = 1
+let g:LanguageClient_diagnosticsList    = "Quickfix"
+let g:LanguageClient_serverCommands     = {
             \ 'c': ['clangd'],
             \ 'cpp': ['clangd'],
             \ 'python': ['pyls'],
@@ -131,19 +132,19 @@ map <leader>e :<C-u>vert copen<bar>:50wincmd><CR>
 map <leader>f :Rg<CR>
 map <leader>t :Tags<CR>
 map <leader>j :set ft=.jinja2<Left><Left><Left><Left><Left><Left><Left>
-nnoremap <leader>A :bufdo ALELint<CR>:bp<CR>:bufdo e<CR>:so ~/.vimrc<CR>
+nnoremap <leader>A  :bufdo ALELint<CR>:bp<CR>:bufdo e<CR>:so ~/.vimrc<CR>
 nnoremap <leader>om :!~/bin/serve_pdf.sh "%" &<CR><CR>
 " LSP
-nnoremap <leader>d :call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<CR>
-nnoremap <leader>r :call LanguageClient#textDocument_rename()<CR>
-nnoremap <leader>l :call LanguageClient#textDocument_formatting()<CR>
+nnoremap <leader>d  :call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<CR>
+nnoremap <leader>r  :call LanguageClient#textDocument_rename()<CR>
+nnoremap <leader>l  :call LanguageClient#textDocument_formatting()<CR>
 nnoremap <leader>td :call LanguageClient#textDocument_typeDefinition()<CR>
-nnoremap <leader>x :call LanguageClient#textDocument_references()<CR>
-nnoremap <leader>a :call LanguageClient_workspace_applyEdit()<CR>
-nnoremap <leader>c :call LanguageClient#textDocument_completion()<CR>
-nnoremap <leader>h :call LanguageClient#textDocument_hover()<CR>
-nnoremap <leader>s :call LanguageClient_textDocument_documentSymbol()<CR>
-nnoremap <leader>m :call LanguageClient_contextMenu()<CR>
+nnoremap <leader>x  :call LanguageClient#textDocument_references()<CR>
+nnoremap <leader>a  :call LanguageClient_workspace_applyEdit()<CR>
+nnoremap <leader>c  :call LanguageClient#textDocument_completion()<CR>
+nnoremap <leader>h  :call LanguageClient#textDocument_hover()<CR>
+nnoremap <leader>s  :call LanguageClient_textDocument_documentSymbol()<CR>
+nnoremap <leader>m  :call LanguageClient_contextMenu()<CR>
 " Normal format code
 noremap <C-L> <Esc>:w<CR>:mkview<CR>gg=G<CR>:loadview<CR>
 " vim-tmux-navigator shortcuts
@@ -157,14 +158,14 @@ inoremap <silent> <M-Down> <Esc>:TmuxNavigateDown<cr>
 inoremap <silent> <M-Up> <Esc>:TmuxNavigateUp<cr>
 inoremap <silent> <M-Right> <Esc>:TmuxNavigateRight<cr>
 " navigate tabs Tab (fw) S-Tab (prev)
-map <Tab> :bn<CR>
+map <Tab>   :bn<CR>
 map <S-Tab> :bp<CR>
 " C-c close buffer
 nnoremap <C-c> :bp<bar>bd #<CR>
 " " Resize split window horizontally and vertically
-noremap <S-M-Up> :2winc+<cr>
-noremap <S-M-Down> :2winc-<cr>
-noremap <S-M-Left> :2winc<<cr>
+noremap <S-M-Up>    :2winc+<cr>
+noremap <S-M-Down>  :2winc-<cr>
+noremap <S-M-Left>  :2winc<<cr>
 noremap <S-M-Right> :2winc><cr>
 
 " Miscellaneous
@@ -191,8 +192,7 @@ let g:one_allow_italics = 1
 colorscheme one
 autocmd Syntax,InsertEnter * syntax match myFunction /\<\K\k*\ze\s*(/
 highlight myTest guifg=#FF0000
-highlight link myFunction     Function
-highlight link Symbo     Function
+highlight link myFunction   Function
 highlight Function          cterm=italic gui=italic
 highlight Normal            guibg=#262626 guifg=#b9b9b9
 highlight ColorColumn       guibg=#222222
@@ -222,8 +222,8 @@ function! ToggleTheme()
     else
         set background=light
         highlight Function          cterm=italic gui=italic
-        highlight Normal guibg=#ffffff
-        highlight ColorColumn guibg=#f0f0f0
+        highlight Normal            guibg=#ffffff
+        highlight ColorColumn       guibg=#f0f0f0
         highlight ALEWarning        guibg=#e4e4e4
         highlight ALEErrorSign      guibg=#555555 guifg=#FF0000
         highlight ALEWarningSign    guibg=#555555 guifg=#FFFF00
