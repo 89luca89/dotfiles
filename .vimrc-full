@@ -3,11 +3,10 @@ call plug#begin('~/.vim/plugged')
 " vim tmux navigator
 Plug 'christoomey/vim-tmux-navigator'
 " utilities
+Plug 'mhinz/vim-signify'
 Plug 'junegunn/fzf.vim'                             " fuzzy find all the things
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 Plug 'vim-airline/vim-airline'
-Plug 'flazz/vim-colorschemes'
-Plug 'mhinz/vim-signify'
 "" Lang Packs
 Plug 'sheerun/vim-polyglot', { 'do': './build' }    " Lang packs
 "" ALE+LSP
@@ -18,8 +17,16 @@ Plug 'autozimu/languageclient-neovim', {
             \ }
 " Deoplete
 Plug 'shougo/deoplete.nvim'
+" Snippets + Extras
+Plug 'shougo/neosnippet'
+Plug 'shougo/neosnippet-snippets'
+Plug 'honza/vim-snippets'
+" Dependencies
 Plug 'roxma/nvim-yarp'
 Plug 'roxma/vim-hug-neovim-rpc'
+" Colorscheme
+Plug 'rakr/vim-one'
+
 call plug#end()                                     " required
 "
 filetype plugin indent on                           " required
@@ -29,12 +36,10 @@ autocmd InsertEnter * call deoplete#enable()
 autocmd InsertEnter * :ALEEnable
 autocmd InsertEnter * :LanguageClientStart
 autocmd BufWritePre * %s/\s\+$//e
-" autocmd Syntax * syntax match myFunction /\v[[:alpha:]_.]+\ze\./
-autocmd Syntax,InsertEnter * syntax match myObject /\.[[:alpha:][:digit:]-_.]*/
-highlight link myObject     Special
 "
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 let g:airline_extensions = ['tabline']
+
 " Git
 let g:signify_sign_add    = '>'
 let g:signify_sign_delete = '-'
@@ -43,17 +48,27 @@ let g:signify_sign_change = '>'
 let g:python_highlight_all=1
 let g:ansible_yamlKeyName = 'yamlKey'
 let g:ansible_attribute_highlight = 'ab'
+let g:go_highlight_build_constraints = 1
 let g:go_highlight_extra_types = 1
-let g:go_highlight_types = 1
 let g:go_highlight_fields = 1
 let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
 let g:go_highlight_operators = 1
-let g:go_highlight_build_constraints = 1
+let g:go_highlight_structs = 1
+let g:go_highlight_types = 1
+
 " Deoplete
 set completeopt=menu,longest,popup
 set completepopup=align:menu,border:off,highlight:Pmenu
 let g:deoplete#enable_at_startup = 0                " Start on insert mode
-let g:python3_host_prog = "/usr/bin/python3"
+let g:python_host_prog = '/usr/bin/python2'
+let g:python3_host_prog = '/usr/bin/python3'
+let g:neosnippet#enable_snipmate_compatibility = 1
+let g:neosnippet#snippets_directory='~/.vim/plugged/vim-snippets/snippets'
+imap <C-k>     <Plug>(neosnippet_expand_or_jump)
+smap <C-k>     <Plug>(neosnippet_expand_or_jump)
+xmap <C-k>     <Plug>(neosnippet_expand_target)
+
 " ALE linter
 let g:ale_enabled           = 0                     " Start on insert mode
 let g:ale_sign_error        = '⤫'
@@ -84,6 +99,7 @@ let g:ale_linters = {
             \ 'python': ['flake8', 'pylint'],
             \ 'go' : ['golangci-lint']
             \}
+" LSP Language Client
 let g:LanguageClient_autoStart = 0
 let g:LanguageClient_completionPreferTextEdit = 1
 let g:LanguageClient_hoverPreview = "Always"
@@ -95,6 +111,7 @@ let g:LanguageClient_serverCommands = {
             \ 'python': ['pyls'],
             \ 'go' : ['gopls'],
             \ }
+
 " FZF fuzzy
 let g:fzf_files_options = "--preview 'if file {1} | grep -Ei \"text|JSON\"; then cat {1} ; fi'"
 let g:fzf_tags_command = 'ctags -R'
@@ -102,12 +119,11 @@ let g:fzf_action = {'alt-enter':'vsplit' }
 
 """     Shortcuts   "
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
-nnoremap <C-c> :bp<bar>bd #<CR>
-" Leader Shortcuts
-let mapleader = ' '
 " leader y/p to use system clipboard
 map <leader>y "+y
 map <leader>p "+p
+" Leader Shortcuts
+let mapleader = ' '
 " Utility shortcuts with leader:
 map <leader><Tab> :Buffers<CR>
 map <leader>b :Files<CR>
@@ -128,20 +144,8 @@ nnoremap <leader>c :call LanguageClient#textDocument_completion()<CR>
 nnoremap <leader>h :call LanguageClient#textDocument_hover()<CR>
 nnoremap <leader>s :call LanguageClient_textDocument_documentSymbol()<CR>
 nnoremap <leader>m :call LanguageClient_contextMenu()<CR>
-
-" Ctrl+L Format Code
-" if not use the specific implementation
+" Normal format code
 noremap <C-L> <Esc>:w<CR>:mkview<CR>gg=G<CR>:loadview<CR>
-augroup autoformat_settings
-    autocmd FileType c,cpp,java,typescript,javascript noremap <buffer> <C-L><Esc>:w<CR>:mkview<CR>:%!clang-format -style=Google %<CR>:loadview<CR>
-    autocmd FileType sh noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!shfmt %<CR>:w<CR>:e<CR>:loadview<CR>
-    autocmd FileType json noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!jsonlint -f %<CR>:e<CR>:loadview<CR>
-    autocmd FileType python noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!yapf %<CR>:w<CR>:!isort %<CR><CR>:w<CR>:e<CR>:loadview<CR>
-    autocmd FileType go noremap <buffer> <C-L> <Esc>:w<CR>:mkview<CR>:%!goimports %<CR>:w<CR>:e<CR>:loadview<CR>
-augroup END
-" navigate tabs Tab (fw) S-Tab (prev)
-map <Tab> :bn<CR>
-map <S-Tab> :bp<CR>
 " vim-tmux-navigator shortcuts
 let g:tmux_navigator_no_mappings = 1
 nnoremap <silent> <M-Left> :TmuxNavigateLeft<cr>
@@ -152,11 +156,17 @@ inoremap <silent> <M-Left> <Esc>:TmuxNavigateLeft<cr>
 inoremap <silent> <M-Down> <Esc>:TmuxNavigateDown<cr>
 inoremap <silent> <M-Up> <Esc>:TmuxNavigateUp<cr>
 inoremap <silent> <M-Right> <Esc>:TmuxNavigateRight<cr>
+" navigate tabs Tab (fw) S-Tab (prev)
+map <Tab> :bn<CR>
+map <S-Tab> :bp<CR>
+" C-c close buffer
+nnoremap <C-c> :bp<bar>bd #<CR>
 " " Resize split window horizontally and vertically
 noremap <S-M-Up> :2winc+<cr>
 noremap <S-M-Down> :2winc-<cr>
 noremap <S-M-Left> :2winc<<cr>
 noremap <S-M-Right> :2winc><cr>
+
 " Miscellaneous
 set updatetime=300
 set title nocompatible nowritebackup nobackup                     " required
@@ -173,22 +183,33 @@ set hlsearch incsearch ignorecase smartcase                       " Highlight se
 set nowrap number nomodeline
 set laststatus=2
 let &colorcolumn=join(range(81,250),",")
+
 " Theming
 set background=dark
 set termguicolors
-colorscheme molokai
+let g:one_allow_italics = 1
+colorscheme one
+autocmd Syntax,InsertEnter * syntax match myFunction /\<\K\k*\ze\s*(/
+highlight myTest guifg=#FF0000
+highlight link myFunction     Function
+highlight Function          cterm=italic gui=italic
+highlight Normal            guibg=#262626 guifg=#b9b9b9
+highlight ColorColumn       guibg=#222222
 highlight ALEErrorSign      guifg=#FF0000
 highlight ALEWarningSign    guifg=#FFFF00
 highlight ALEWarning        guibg=#333300
 highlight SignifySignAdd    guifg=#00ff00
 highlight SignifySignDelete guifg=#ff0000
 highlight SignifySignChange guifg=#ffff00
+
 " Toggle Theme
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        colorscheme molokai
+        highlight Function          cterm=italic gui=italic
+        highlight Normal            guibg=#262626 guifg=#b9b9b9
+        highlight ColorColumn       guibg=#222222
         highlight ALEErrorSign      guifg=#FF0000
         highlight ALEWarningSign    guifg=#FFFF00
         highlight ALEWarning        guibg=#333300
@@ -197,9 +218,9 @@ function! ToggleTheme()
         highlight SignifySignChange guifg=#ffff00
     else
         set background=light
-        colorscheme github
+        highlight Function          cterm=italic gui=italic
         highlight Normal guibg=#ffffff
-        highlight ColorColumn guibg=#eeeeee
+        highlight ColorColumn guibg=#f0f0f0
         highlight ALEWarning        guibg=#e4e4e4
         highlight ALEErrorSign      guibg=#555555 guifg=#FF0000
         highlight ALEWarningSign    guibg=#555555 guifg=#FFFF00
