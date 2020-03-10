@@ -37,6 +37,10 @@ autocmd InsertEnter * call deoplete#enable()
 autocmd InsertEnter * :ALEEnable
 autocmd BufWritePre * %s/\s\+$//e
 "
+let g:netrw_banner = 0
+let g:netrw_liststyle = 3
+let g:netrw_browse_split = 4
+let g:netrw_winsize = -28
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 let g:airline_extensions = ['tabline']
 let g:airline_theme = 'dark'
@@ -125,12 +129,14 @@ let g:fzf_tags_command = 'ctags -R'
 let g:fzf_action = {'alt-enter':'vsplit' }
 
 """     Shortcuts   "
+" Leader Shortcuts
+let mapleader = ' '
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
+" toggle file explorer
+nnoremap <C-n> :Lexplore<CR>
 " leader y/p to use system clipboard
 map <leader>y "+y
 map <leader>p "+p
-" Leader Shortcuts
-let mapleader = ' '
 " Utility shortcuts with leader:
 map <leader><Tab> :Buffers<CR>
 map <leader>b :Files<CR>
@@ -164,10 +170,10 @@ inoremap <silent> <M-Down> <Esc>:TmuxNavigateDown<cr>
 inoremap <silent> <M-Up> <Esc>:TmuxNavigateUp<cr>
 inoremap <silent> <M-Right> <Esc>:TmuxNavigateRight<cr>
 " navigate tabs Tab (fw) S-Tab (prev)
-map <Tab>   :bn<CR>
-map <S-Tab> :bp<CR>
+map <Tab>   :bn!<CR>
+map <S-Tab> :bp!<CR>
 " C-c close buffer
-nnoremap <C-c> :bp<bar>bd #<CR>
+nnoremap <C-c> :bp<bar>sp<bar>bn<bar>bd<CR>
 " " Resize split window horizontally and vertically
 noremap <S-M-Up>    :2winc+<cr>
 noremap <S-M-Down>  :2winc-<cr>
@@ -182,7 +188,6 @@ set mouse=a                                                       " it's always 
 set undofile undolevels=1000 undodir=$HOME/.vim/undo              " Undo file and directory
 set directory=$HOME/.vim/swap                                     " Custom swapfile directory
 set path+=** wildmenu                                             " Recursive path Tab autocomplete
-set hidden                                                        " change buffer without saving
 set backspace=indent,eol,start                                    " http://vi.stackexchange.com/a/2163
 set splitright splitbelow                                         " Open new splits to the right and bottom
 set autoindent smartindent copyindent                             " always set autoindenting on
