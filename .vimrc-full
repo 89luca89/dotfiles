@@ -16,13 +16,8 @@ Plug 'autozimu/languageclient-neovim', {
             \ 'branch': 'next',
             \ 'do': 'bash install.sh',
             \ }
-" Deoplete
+" Deoplete + Dependencies
 Plug 'shougo/deoplete.nvim'
-" Snippets + Extras
-Plug 'shougo/neosnippet'
-Plug 'shougo/neosnippet-snippets'
-Plug 'honza/vim-snippets'
-" Dependencies
 Plug 'roxma/nvim-yarp'
 Plug 'roxma/vim-hug-neovim-rpc'
 " Colorscheme
@@ -33,14 +28,24 @@ call plug#end()                                     " required
 filetype plugin indent on                           " required
 syntax on
 autocmd VimResized * :wincmd =
+" Async enable ALE and Deoplete for better performances
 autocmd InsertEnter * call deoplete#enable()
 autocmd InsertEnter * :ALEEnable
-autocmd BufWritePre * %s/\s\+$//e
+" Set cursorline ONLY on active buffer
+augroup CursorLine
+    au!
+    au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
+    au WinLeave * setlocal nocursorline
+augroup END
 "
+let g:python_host_prog = '/usr/bin/python2'
+let g:python3_host_prog = '/usr/bin/python3'
+" Netrw
 let g:netrw_banner = 0
 let g:netrw_liststyle = 3
 let g:netrw_browse_split = 4
 let g:netrw_winsize = -28
+" Airline
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 let g:airline_extensions = ['tabline']
 let g:airline_theme = 'dark'
@@ -66,27 +71,21 @@ let g:go_highlight_methods      = 1
 let g:go_highlight_operators    = 1
 let g:go_highlight_structs      = 1
 let g:go_highlight_types        = 1
-
 " Deoplete
 set completeopt=menu,longest,popup
 set completepopup=align:menu,border:off,highlight:Pmenu
 let g:deoplete#enable_at_startup = 0                " Start on insert mode
-let g:python_host_prog = '/usr/bin/python2'
-let g:python3_host_prog = '/usr/bin/python3'
-let g:neosnippet#enable_snipmate_compatibility = 1
-let g:neosnippet#snippets_directory='~/.vim/plugged/vim-snippets/snippets'
-imap <C-k>     <Plug>(neosnippet_expand_or_jump)
-smap <C-k>     <Plug>(neosnippet_expand_or_jump)
-xmap <C-k>     <Plug>(neosnippet_expand_target)
-
 " ALE linter
 let g:ale_enabled           = 0                     " Start on insert mode
-let g:ale_sign_error        = '⤫'
-let g:ale_sign_warning      = '▲'
+let g:ale_fix_on_save       = 1
+let g:ale_lint_on_enter     = 0
+let g:ale_lint_on_save      = 1
+let g:ale_lint_on_text_changed = 0
+let g:ale_linters_explicit  = 1
 let g:ale_set_highlights    = 1
 let g:ale_set_quickfix      = 1
-let g:ale_linters_explicit  = 1
-let g:ale_fix_on_save       = 1
+let g:ale_sign_error        = '⤫'
+let g:ale_sign_warning      = '▲'
 let g:ale_go_golangci_lint_package  = 1
 let g:ale_go_golangci_lint_options  = '--enable-all -D funlen,gomnd,gochecknoglobals'
 let g:ale_yaml_yamllint_options     = '-d relaxed'
@@ -127,16 +126,16 @@ let g:LanguageClient_serverCommands     = {
 let g:fzf_files_options = "--preview 'if file {1} | grep -Ei \"text|JSON\"; then cat {1} ; fi'"
 let g:fzf_tags_command = 'ctags -R'
 let g:fzf_action = {'alt-enter':'vsplit' }
-
+"""""""""""""""""""""
 """     Shortcuts   "
-" Leader Shortcuts
+" Leader map
 let mapleader = ' '
-vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 " toggle file explorer
 nnoremap <C-n> :Lexplore<CR>
-" leader y/p to use system clipboard
+" leader y/p to use system clipboard, C-c in vmode for xclip
 map <leader>y "+y
 map <leader>p "+p
+vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 " Utility shortcuts with leader:
 map <leader><Tab> :Buffers<CR>
 map <leader>b :Files<CR>
@@ -196,7 +195,7 @@ set hlsearch incsearch ignorecase smartcase                       " Highlight se
 set nowrap number nomodeline
 set laststatus=2
 let &colorcolumn=join(range(81,250),",")
-
+"""""""""
 " Theming
 set background=dark
 set termguicolors
@@ -215,7 +214,6 @@ highlight SignColumn        guibg=#262626
 highlight SignifySignAdd    guifg=#00ff00
 highlight SignifySignDelete guifg=#ff0000
 highlight SignifySignChange guifg=#ffff00
-
 " Toggle Theme
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
