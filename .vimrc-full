@@ -197,7 +197,7 @@ set background=dark
 set termguicolors
 let g:one_allow_italics = 1
 colorscheme one
-autocmd Syntax,InsertEnter * syntax match myFunction /\<\K\k*\ze\s*(/
+autocmd Syntax,InsertEnter * syntax match myFunction /\<\k\+\ze(/
 highlight myTest guifg=#FF0000
 highlight link myFunction   Function
 highlight Function          cterm=italic gui=italic
