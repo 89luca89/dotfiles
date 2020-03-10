@@ -29,11 +29,13 @@ if [ ! -d "$HOME/.local/bin/fzf" ]; then
     "$HOME/.local/bin/fzf/install" --all
 fi
 # Manage history
+unsetopt EXTENDEDHISTORY
 SAVEHIST=100000
-HISTFILE=~/.zsh_history
+HISTFILE=~/.histfile
 setopt NO_HIST_VERIFY
 setopt APPEND_HISTORY                       # adds history
-setopt INC_APPEND_HISTORY SHARE_HISTORY     # adds history incrementally and share it across sessions
+setopt INC_APPEND_HISTORY
+setopt SHARE_HISTORY     # adds history incrementally and share it across sessions
 setopt HIST_IGNORE_ALL_DUPS                 # don't record dupes in history
 setopt HIST_REDUCE_BLANKS
 autoload -U up-line-or-beginning-search

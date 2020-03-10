@@ -1,5 +1,4 @@
-if [[ $- == *i* ]]
-then
+if [[ $- == *i* ]]; then
     # Path to the bash it configuration
     if [ ! -d "$HOME/.local/bin/fzf" ]; then
         git clone --depth 1 https://github.com/junegunn/fzf.git "$HOME/.local/bin/fzf"
@@ -7,6 +6,7 @@ then
     fi
 
     # HISTORY SIZE
+    export HISTFILE=~/.histfile
     export HISTCONTROL=ignoredups:erasedups # no duplicate entries
     export HISTSIZE=100000                  # big big history
     export HISTFILESIZE=100000              # big big history
