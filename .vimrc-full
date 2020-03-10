@@ -201,7 +201,7 @@ autocmd Syntax,InsertEnter * syntax match myFunction /\<\K\k*\ze\s*(/
 highlight myTest guifg=#FF0000
 highlight link myFunction   Function
 highlight Function          cterm=italic gui=italic
-highlight Normal            guibg=#262626 guifg=#b9b9b9
+highlight Normal            guibg=#262626 guifg=#c9c9c9
 highlight ColorColumn       guibg=#222222
 highlight ALEErrorSign      guifg=#FF0000
 highlight ALEWarningSign    guifg=#FFFF00
@@ -217,7 +217,7 @@ function! ToggleTheme()
     if &background == 'light'
         set background=dark
         highlight Function          cterm=italic gui=italic
-        highlight Normal            guibg=#262626 guifg=#b9b9b9
+        highlight Normal            guibg=#262626 guifg=#c9c9c9
         highlight ColorColumn       guibg=#222222
         highlight ALEErrorSign      guifg=#FF0000
         highlight ALEWarningSign    guifg=#FFFF00
