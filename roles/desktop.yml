@@ -196,6 +196,7 @@
         - com.github.fabiocolacio.marker
         - org.libreoffice.LibreOffice
         - com.jgraph.drawio.desktop
+        - com.skype.Client
       tags: flathub
 
     - name: install the 'Development tools' package group
@@ -602,6 +603,7 @@
         - "~/.ansible.cfg"
         - "~/.aliases"
         - "~/.bashrc"
+        - "~/.histfile"
         - "~/.tmux.conf"
         - "~/.vimrc"
         - "~/.zshrc"
@@ -611,6 +613,7 @@
         - "~/.config/libinput-gestures.conf"
         - "~/.config/mpv/mpv.conf"
         - "~/.config/keepassxc/keepassxc.ini"
+        - "~/.config/systemd/user"
         - "~/.ssh/assh.yml"
         - "~/.local/share/applications"
       when: firstrun.changed
@@ -632,6 +635,7 @@
         - {src: "~/dotfiles/user-dirs.dirs", dest: "~/.config/user-dirs.dirs"}
         - {src: "~/dotfiles/libinput-gestures.conf", dest: "~/.config/libinput-gestures.conf"}
         - {src: "~/dotfiles/mpv.conf", dest: "~/.config/mpv/mpv.conf"}
+        - {src: "~/dotfiles/systemd", dest: "~/.config/systemd/user"}
         - {src: "~/Syncthing/Conf/keepassxc.ini", dest: "~/.config/keepassxc/keepassxc.ini"}
         - {src: "~/Syncthing/Conf/assh.yml", dest: "~/.ssh/assh.yml"}
         - {src: "~/Syncthing/Conf/Shortcuts/applications", dest: "~/.local/share/applications"}

@@ -31,12 +31,13 @@ fi
 # Manage history
 unsetopt EXTENDEDHISTORY
 SAVEHIST=100000
-HISTFILE=~/.histfile
+HISTFILE=~/Syncthing/Conf/.histfile
 setopt NO_HIST_VERIFY
 setopt APPEND_HISTORY                       # adds history
 setopt INC_APPEND_HISTORY
 setopt SHARE_HISTORY     # adds history incrementally and share it across sessions
 setopt HIST_IGNORE_ALL_DUPS                 # don't record dupes in history
+setopt HIST_IGNORE_SPACE
 setopt HIST_REDUCE_BLANKS
 autoload -U up-line-or-beginning-search
 autoload -U down-line-or-beginning-search
