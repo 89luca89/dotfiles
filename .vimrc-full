@@ -29,6 +29,7 @@ call plug#end()                                     " required
 filetype plugin indent on                           " required
 syntax on
 " Dynamic split resize
+set sessionoptions-=blank
 let g:session_name = "/tmp/" . str2nr(matchstr(reltimestr(reltime()), '\v\.@<=\d+')[1:])
 autocmd InsertEnter	* execute "mksession!" g:session_name
 autocmd InsertLeave	* execute "mksession!" g:session_name
@@ -172,7 +173,7 @@ nnoremap <leader>f :Rg<CR>
 nnoremap <leader>j :set ft=.jinja2<Left><Left><Left><Left><Left><Left><Left>
 nnoremap <leader>om :!~/bin/serve_pdf.sh "%" &<CR><CR>
 " ALE Keybindings
-nnoremap <leader>e :<C-u>vert copen<bar>:50wincmd><CR>
+nnoremap <leader>e :copen<CR>
 nnoremap <leader>A  :bufdo ALELint<CR>:bp<CR>:bufdo e<CR>:so ~/.vimrc<CR>
 " Default IDE-Style keybindings
 nnoremap <leader>d  :Rg <c-r>=expand("<cword>")<cr> (<CR>
