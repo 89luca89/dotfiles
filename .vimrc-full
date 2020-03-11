@@ -3,6 +3,7 @@ call plug#begin('~/.vim/plugged')
 " vim tmux navigator
 Plug 'christoomey/vim-tmux-navigator'
 " utilities
+Plug 'tpope/vim-sensible'
 Plug 'mhinz/vim-signify'
 Plug 'junegunn/fzf.vim'                             " fuzzy find all the things
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
@@ -48,12 +49,11 @@ let g:netrw_winsize = -28
 " Airline
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 let g:airline_extensions = ['tabline']
-let g:airline_theme = 'dark'
 " indentline
 let g:indentLine_setConceal = 1
 let g:indentLine_concealcursor = ''
 let g:intendLine_faser = 1
-let g:indentLine_char = '┆'
+let g:indentLine_char = '|'
 :set list lcs=tab:\|\  " here is a space
 " Git
 let g:signify_sign_add    = '>'
@@ -72,8 +72,7 @@ let g:go_highlight_operators    = 1
 let g:go_highlight_structs      = 1
 let g:go_highlight_types        = 1
 " Deoplete
-set completeopt=menu,longest,popup
-set completepopup=align:menu,border:off,highlight:Pmenu
+set completeopt-=preview
 let g:deoplete#enable_at_startup = 0                " Start on insert mode
 " ALE linter
 let g:ale_enabled           = 0                     " Start on insert mode
@@ -92,18 +91,17 @@ let g:ale_yaml_yamllint_options     = '-d relaxed'
 let g:ale_fixers = {
             \ '*':['remove_trailing_lines', 'trim_whitespace'],
             \ 'sh':['shfmt'],
-            \ 'xml':['xmllint'],
             \ 'c': ['clang-format'],
             \ 'cpp': ['clang-format'],
             \ 'python':['isort', 'autopep8', 'yapf'],
-            \ 'go':['goimports', 'gofmt'],
+            \ 'go':['goimports'],
             \ }
 let g:ale_linters = {
-            \ 'sh':['shellcheck', 'shell'],
             \ 'xml':['xmllint'],
             \ 'json':['jsonlint'],
             \ 'yaml':['yamllint'],
             \ 'ansible':['ansible-lint'],
+            \ 'sh':['shellcheck'],
             \ 'c': ['gcc'],
             \ 'cpp': ['gcc'],
             \ 'python': ['flake8', 'pylint'],
@@ -116,16 +114,22 @@ let g:LanguageClient_hoverPreview       = "Always"
 let g:LanguageClient_diagnosticsEnable  = 1
 let g:LanguageClient_diagnosticsList    = "Quickfix"
 let g:LanguageClient_serverCommands     = {
+            \ 'sh': ['bash-language-server', 'start'],
             \ 'c': ['clangd'],
             \ 'cpp': ['clangd'],
             \ 'python': ['pyls'],
-            \ 'go' : ['gopls'],
+            \ 'go' : ['go-langserver',
+                \"-diagnostics",
+                \'-gocodecompletion',
+                \"-lint-tool=golint",]
             \ }
-
+            "\ 'go': ['gopls'],
+            "\}
 " FZF fuzzy
 let g:fzf_files_options = "--preview 'if file {1} | grep -Ei \"text|JSON\"; then cat {1} ; fi'"
 let g:fzf_tags_command = 'ctags -R'
 let g:fzf_action = {'alt-enter':'vsplit' }
+
 """""""""""""""""""""
 """     Shortcuts   "
 " Leader map
@@ -136,28 +140,6 @@ nnoremap <C-n> :Lexplore<CR>
 map <leader>y "+y
 map <leader>p "+p
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
-" Utility shortcuts with leader:
-map <leader><Tab> :Buffers<CR>
-map <leader>b :Files<CR>
-map <leader>e :<C-u>vert copen<bar>:50wincmd><CR>
-map <leader>f :Rg<CR>
-map <leader>t :Tags<CR>
-map <leader>j :set ft=.jinja2<Left><Left><Left><Left><Left><Left><Left>
-nnoremap <leader>A  :bufdo ALELint<CR>:bp<CR>:bufdo e<CR>:so ~/.vimrc<CR>
-nnoremap <leader>om :!~/bin/serve_pdf.sh "%" &<CR><CR>
-" LSP
-nnoremap <leader>d  :call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<CR>
-nnoremap <leader>r  :call LanguageClient#textDocument_rename()<CR>
-nnoremap <leader>l  :call LanguageClient#textDocument_formatting()<CR>
-nnoremap <leader>td :call LanguageClient#textDocument_typeDefinition()<CR>
-nnoremap <leader>x  :call LanguageClient#textDocument_references()<CR>
-nnoremap <leader>a  :call LanguageClient_workspace_applyEdit()<CR>
-nnoremap <leader>c  :call LanguageClient#textDocument_completion()<CR>
-nnoremap <leader>h  :call LanguageClient#textDocument_hover()<CR>
-nnoremap <leader>s  :call LanguageClient_textDocument_documentSymbol()<CR>
-nnoremap <leader>m  :call LanguageClient_contextMenu()<CR>
-" Normal format code
-noremap <C-L> <Esc>:w<CR>:mkview<CR>gg=G<CR>:loadview<CR>
 " vim-tmux-navigator shortcuts
 let g:tmux_navigator_no_mappings = 1
 nnoremap <silent> <M-Left> :TmuxNavigateLeft<cr>
@@ -178,22 +160,56 @@ noremap <S-M-Up>    :2winc+<cr>
 noremap <S-M-Down>  :2winc-<cr>
 noremap <S-M-Left>  :2winc<<cr>
 noremap <S-M-Right> :2winc><cr>
-
+" Utility shortcuts with leader:
+nnoremap <leader><Tab> :Buffers<CR>
+nnoremap <leader>b :Files<CR>
+nnoremap <leader>f :Rg<CR>
+" Utility for Markdown and Ansible
+nnoremap <leader>j :set ft=.jinja2<Left><Left><Left><Left><Left><Left><Left>
+nnoremap <leader>om :!~/bin/serve_pdf.sh "%" &<CR><CR>
+" ALE Keybindings
+nnoremap <leader>e :<C-u>vert copen<bar>:50wincmd><CR>
+nnoremap <leader>A  :bufdo ALELint<CR>:bp<CR>:bufdo e<CR>:so ~/.vimrc<CR>
+" Default IDE-Style keybindings
+nnoremap <leader>d  :Rg <c-r>=expand("<cword>")<cr> (<CR>
+nnoremap <leader>l  :mkview<CR>ggVG=:<C-u>loadview<CR>
+nnoremap <leader>r  :!grep -rl <c-r>=expand("<cword>")<cr><bar>xargs sed -i 's/<c-r>=expand("<cword>")<cr>//g'<Left><Left><Left>
+nnoremap <leader>t  :Tags<CR>
+nnoremap <leader>x  :Tags <c-r>=expand("<cword>")<cr><CR>
+" LSP keybindings overriding the previous
+augroup lspbindings
+    autocmd! lspbindings
+    " auto-hover
+    autocmd CursorHold *.sh,*.c,*.cpp,*.py,*.go silent! call ShowHover()
+    autocmd CursorHoldI *.sh,*.c,*.cpp,*.py,*.go silent! call ShowHover()
+    " IDE-like keybindings
+    autocmd Filetype sh,c,cpp,python,go nnoremap <leader>td :call LanguageClient#textDocument_typeDefinition()<CR>
+    autocmd Filetype sh,c,cpp,python,go nnoremap <leader>a  :call LanguageClient#workspace_applyEdit()<CR>
+    autocmd Filetype sh,c,cpp,python,go nnoremap <leader>c  :call LanguageClient#textDocument_completion()<CR>
+    autocmd Filetype sh,c,cpp,python,go nnoremap <leader>h  :call LanguageClient#textDocument_hover()<CR>
+    autocmd Filetype sh,c,cpp,python,go nnoremap <leader>m  :call LanguageClient#contextMenu()<CR>
+    autocmd Filetype sh,c,cpp,python,go nnoremap <leader>d  :call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<CR>
+    autocmd Filetype sh,c,cpp,python,go nnoremap <leader>l  :call LanguageClient#textDocument_formatting()<CR>
+    autocmd Filetype sh,c,cpp,python,go nnoremap <leader>r  :call LanguageClient#textDocument_rename()<CR>
+    autocmd Filetype sh,c,cpp,python,go nnoremap <leader>t  :call LanguageClient#textDocument_documentSymbol()<CR>
+    autocmd Filetype sh,c,cpp,python,go nnoremap <leader>x  :call LanguageClient#textDocument_references()<CR>
+augroup end
+" when stopping on something, show hover
+function! ShowHover()
+        call popup_clear()
+        call LanguageClient#textDocument_hover()
+endfunction
 " Miscellaneous
-set updatetime=300
-set cursorline relativenumber
+set updatetime=1000 ttyfast lazyredraw
 set title nocompatible nowritebackup nobackup                     " required
 set mouse=a                                                       " it's always useful
 set undofile undolevels=1000 undodir=$HOME/.vim/undo              " Undo file and directory
 set directory=$HOME/.vim/swap                                     " Custom swapfile directory
-set path+=** wildmenu                                             " Recursive path Tab autocomplete
-set backspace=indent,eol,start                                    " http://vi.stackexchange.com/a/2163
+set path+=**                                             " Recursive path Tab autocomplete
 set splitright splitbelow                                         " Open new splits to the right and bottom
-set autoindent smartindent copyindent                             " always set autoindenting on
-set smarttab expandtab shiftwidth=4 tabstop=4 softtabstop=4       " Four spaces for tabs everywhere
-set hlsearch incsearch ignorecase smartcase                       " Highlight search results, ignore case if search is all lowercase
-set nowrap number nomodeline
-set laststatus=2
+set smartindent copyindent                             " always set autoindenting on
+set expandtab shiftwidth=4 tabstop=4 softtabstop=4       " Four spaces for tabs everywhere
+set nowrap number nomodeline cursorline
 let &colorcolumn=join(range(81,250),",")
 """""""""
 " Theming
@@ -204,13 +220,9 @@ colorscheme one
 autocmd Syntax,InsertEnter * syntax match myFunction /\<\k\+\ze(/
 highlight myTest guifg=#FF0000
 highlight link myFunction   Function
-highlight Function          cterm=italic gui=italic
-highlight Normal            guibg=#262626 guifg=#c9c9c9
-highlight ColorColumn       guibg=#222222
 highlight ALEErrorSign      guifg=#FF0000
 highlight ALEWarningSign    guifg=#FFFF00
 highlight ALEWarning        guibg=#333300
-highlight SignColumn        guibg=#262626
 highlight SignifySignAdd    guifg=#00ff00
 highlight SignifySignDelete guifg=#ff0000
 highlight SignifySignChange guifg=#ffff00
@@ -219,25 +231,17 @@ map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        highlight Function          cterm=italic gui=italic
-        highlight Normal            guibg=#262626 guifg=#c9c9c9
-        highlight ColorColumn       guibg=#222222
         highlight ALEErrorSign      guifg=#FF0000
         highlight ALEWarningSign    guifg=#FFFF00
         highlight ALEWarning        guibg=#333300
-        highlight SignColumn        guibg=#262626
         highlight SignifySignAdd    guifg=#00ff00
         highlight SignifySignDelete guifg=#ff0000
         highlight SignifySignChange guifg=#ffff00
     else
         set background=light
-        highlight Function          cterm=italic gui=italic
-        highlight Normal            guibg=#ffffff
-        highlight ColorColumn       guibg=#f0f0f0
         highlight ALEWarning        guibg=#e4e4e4
         highlight ALEErrorSign      guibg=#555555 guifg=#FF0000
         highlight ALEWarningSign    guibg=#555555 guifg=#FFFF00
-        highlight SignColumn        guibg=#e4e4e4
         highlight SignifySignAdd    guifg=#00ff00 guibg=#555555
         highlight SignifySignDelete guifg=#ff0000 guibg=#555555
         highlight SignifySignChange guifg=#ffff00 guibg=#555555
