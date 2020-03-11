@@ -28,7 +28,9 @@ call plug#end()                                     " required
 "
 filetype plugin indent on                           " required
 syntax on
-autocmd VimResized * :wincmd =
+let g:session_name = "/tmp/" . str2nr(matchstr(reltimestr(reltime()), '\v\.@<=\d+')[1:])
+autocmd InsertLeave	* execute "mksession!" g:session_name
+autocmd VimResized * execute "so" g:session_name
 " Async enable ALE and Deoplete for better performances
 autocmd InsertEnter * call deoplete#enable()
 autocmd InsertEnter * :ALEEnable
