@@ -110,9 +110,9 @@ let g:ale_linters = {
 " LSP Language Client
 let g:LanguageClient_autoStart  = 1
 let g:LanguageClient_completionPreferTextEdit   = 1
-let g:LanguageClient_hoverPreview       = "Always"
 let g:LanguageClient_diagnosticsEnable  = 1
-let g:LanguageClient_diagnosticsList    = "Quickfix"
+let g:LanguageClient_diagnosticsList    = "Disabled"
+let g:LanguageClient_hoverPreview       = "Always"
 let g:LanguageClient_serverCommands     = {
             \ 'sh': ['bash-language-server', 'start'],
             \ 'c': ['clangd'],
