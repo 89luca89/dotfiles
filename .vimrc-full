@@ -3,10 +3,10 @@ call plug#begin('~/.vim/plugged')
 " vim tmux navigator
 Plug 'christoomey/vim-tmux-navigator'
 " utilities
-Plug 'tpope/vim-sensible'
-Plug 'mhinz/vim-signify'
-Plug 'junegunn/fzf.vim'                             " fuzzy find all the things
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'                             " fuzzy find all the things
+Plug 'mhinz/vim-signify'
+Plug 'tpope/vim-sensible'
 Plug 'vim-airline/vim-airline'
 Plug 'yggdroot/indentLine'
 "" Lang Packs
@@ -18,9 +18,9 @@ Plug 'autozimu/languageclient-neovim', {
             \ 'do': 'bash install.sh',
             \ }
 " Deoplete + Dependencies
-Plug 'shougo/deoplete.nvim'
 Plug 'roxma/nvim-yarp'
 Plug 'roxma/vim-hug-neovim-rpc'
+Plug 'shougo/deoplete.nvim'
 " Colorscheme
 Plug 'rakr/vim-one'
 
@@ -42,27 +42,26 @@ augroup END
 let g:python_host_prog = '/usr/bin/python2'
 let g:python3_host_prog = '/usr/bin/python3'
 " Netrw
-let g:netrw_banner = 0
-let g:netrw_liststyle = 3
-let g:netrw_browse_split = 4
-let g:netrw_winsize = -28
+let g:netrw_banner          = 0
+let g:netrw_browse_split    = 4
+let g:netrw_liststyle       = 3
+let g:netrw_winsize         = -28
 " Airline
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 let g:airline_extensions = ['tabline']
 " indentline
-let g:indentLine_setConceal = 1
-let g:indentLine_concealcursor = ''
-let g:intendLine_faser = 1
 let g:indentLine_char = '|'
-:set list lcs=tab:\|\  " here is a space
+let g:indentLine_concealcursor = ''
+let g:indentLine_setConceal = 1
+let g:intendLine_faser = 1
+set list lcs=tab:\|\  " here is a space
 " Git
 let g:signify_sign_add    = '>'
-let g:signify_sign_delete = '-'
 let g:signify_sign_change = '>'
+let g:signify_sign_delete = '-'
 " Langs
-let g:python_highlight_all  = 1
-let g:ansible_yamlKeyName   = 'yamlKey'
 let g:ansible_attribute_highlight   = 'ab'
+let g:ansible_yamlKeyName   = 'yamlKey'
 let g:go_highlight_build_constraints    = 1
 let g:go_highlight_extra_types  = 1
 let g:go_highlight_fields       = 1
@@ -71,6 +70,7 @@ let g:go_highlight_methods      = 1
 let g:go_highlight_operators    = 1
 let g:go_highlight_structs      = 1
 let g:go_highlight_types        = 1
+let g:python_highlight_all  = 1
 " Deoplete
 set completeopt-=preview
 let g:deoplete#enable_at_startup = 0                " Start on insert mode
@@ -126,9 +126,9 @@ let g:LanguageClient_serverCommands     = {
             "\ 'go': ['gopls'],
             "\}
 " FZF fuzzy
+let g:fzf_action = {'alt-enter':'vsplit' }
 let g:fzf_files_options = "--preview 'if file {1} | grep -Ei \"text|JSON\"; then cat {1} ; fi'"
 let g:fzf_tags_command = 'ctags -R'
-let g:fzf_action = {'alt-enter':'vsplit' }
 
 """""""""""""""""""""
 """     Shortcuts   "
@@ -142,24 +142,24 @@ map <leader>p "+p
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 " vim-tmux-navigator shortcuts
 let g:tmux_navigator_no_mappings = 1
-nnoremap <silent> <M-Left> :TmuxNavigateLeft<cr>
-nnoremap <silent> <M-Down> :TmuxNavigateDown<cr>
-nnoremap <silent> <M-Up> :TmuxNavigateUp<cr>
-nnoremap <silent> <M-Right> :TmuxNavigateRight<cr>
-inoremap <silent> <M-Left> <Esc>:TmuxNavigateLeft<cr>
 inoremap <silent> <M-Down> <Esc>:TmuxNavigateDown<cr>
-inoremap <silent> <M-Up> <Esc>:TmuxNavigateUp<cr>
+inoremap <silent> <M-Left> <Esc>:TmuxNavigateLeft<cr>
 inoremap <silent> <M-Right> <Esc>:TmuxNavigateRight<cr>
+inoremap <silent> <M-Up> <Esc>:TmuxNavigateUp<cr>
+nnoremap <silent> <M-Down> :TmuxNavigateDown<cr>
+nnoremap <silent> <M-Left> :TmuxNavigateLeft<cr>
+nnoremap <silent> <M-Right> :TmuxNavigateRight<cr>
+nnoremap <silent> <M-Up> :TmuxNavigateUp<cr>
 " navigate tabs Tab (fw) S-Tab (prev)
 map <Tab>   :bn!<CR>
 map <S-Tab> :bp!<CR>
 " C-c close buffer
 nnoremap <C-c> :bp<bar>sp<bar>bn<bar>bd<CR>
 " " Resize split window horizontally and vertically
-noremap <S-M-Up>    :2winc+<cr>
 noremap <S-M-Down>  :2winc-<cr>
 noremap <S-M-Left>  :2winc<<cr>
 noremap <S-M-Right> :2winc><cr>
+noremap <S-M-Up>    :2winc+<cr>
 " Utility shortcuts with leader:
 nnoremap <leader><Tab> :Buffers<CR>
 nnoremap <leader>b :Files<CR>
@@ -183,11 +183,11 @@ augroup lspbindings
     autocmd CursorHold *.sh,*.c,*.cpp,*.py,*.go silent! call ShowHover()
     autocmd CursorHoldI *.sh,*.c,*.cpp,*.py,*.go silent! call ShowHover()
     " IDE-like keybindings
-    autocmd Filetype sh,c,cpp,python,go nnoremap <leader>td :call LanguageClient#textDocument_typeDefinition()<CR>
     autocmd Filetype sh,c,cpp,python,go nnoremap <leader>a  :call LanguageClient#workspace_applyEdit()<CR>
     autocmd Filetype sh,c,cpp,python,go nnoremap <leader>c  :call LanguageClient#textDocument_completion()<CR>
     autocmd Filetype sh,c,cpp,python,go nnoremap <leader>h  :call LanguageClient#textDocument_hover()<CR>
     autocmd Filetype sh,c,cpp,python,go nnoremap <leader>m  :call LanguageClient#contextMenu()<CR>
+    autocmd Filetype sh,c,cpp,python,go nnoremap <leader>td :call LanguageClient#textDocument_typeDefinition()<CR>
     autocmd Filetype sh,c,cpp,python,go nnoremap <leader>d  :call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<CR>
     autocmd Filetype sh,c,cpp,python,go nnoremap <leader>l  :call LanguageClient#textDocument_formatting()<CR>
     autocmd Filetype sh,c,cpp,python,go nnoremap <leader>r  :call LanguageClient#textDocument_rename()<CR>
@@ -200,16 +200,16 @@ function! ShowHover()
         call LanguageClient#textDocument_hover()
 endfunction
 " Miscellaneous
-set updatetime=1000 ttyfast lazyredraw
-set title nocompatible nowritebackup nobackup                     " required
-set mouse=a                                                       " it's always useful
-set undofile undolevels=1000 undodir=$HOME/.vim/undo              " Undo file and directory
 set directory=$HOME/.vim/swap                                     " Custom swapfile directory
-set path+=**                                             " Recursive path Tab autocomplete
-set splitright splitbelow                                         " Open new splits to the right and bottom
-set smartindent copyindent                             " always set autoindenting on
 set expandtab shiftwidth=4 tabstop=4 softtabstop=4       " Four spaces for tabs everywhere
+set mouse=a                                                       " it's always useful
 set nowrap number nomodeline cursorline
+set path+=**                                             " Recursive path Tab autocomplete
+set smartindent copyindent                             " always set autoindenting on
+set splitright splitbelow                                         " Open new splits to the right and bottom
+set title nocompatible nowritebackup nobackup                     " required
+set undofile undolevels=1000 undodir=$HOME/.vim/undo              " Undo file and directory
+set updatetime=1000 ttyfast lazyredraw
 let &colorcolumn=join(range(81,250),",")
 """""""""
 " Theming
@@ -221,29 +221,29 @@ autocmd Syntax,InsertEnter * syntax match myFunction /\<\k\+\ze(/
 highlight myTest guifg=#FF0000
 highlight link myFunction   Function
 highlight ALEErrorSign      guifg=#FF0000
-highlight ALEWarningSign    guifg=#FFFF00
 highlight ALEWarning        guibg=#333300
+highlight ALEWarningSign    guifg=#FFFF00
 highlight SignifySignAdd    guifg=#00ff00
-highlight SignifySignDelete guifg=#ff0000
 highlight SignifySignChange guifg=#ffff00
+highlight SignifySignDelete guifg=#ff0000
 " Toggle Theme
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
         highlight ALEErrorSign      guifg=#FF0000
-        highlight ALEWarningSign    guifg=#FFFF00
         highlight ALEWarning        guibg=#333300
+        highlight ALEWarningSign    guifg=#FFFF00
         highlight SignifySignAdd    guifg=#00ff00
-        highlight SignifySignDelete guifg=#ff0000
         highlight SignifySignChange guifg=#ffff00
+        highlight SignifySignDelete guifg=#ff0000
     else
         set background=light
-        highlight ALEWarning        guibg=#e4e4e4
         highlight ALEErrorSign      guibg=#555555 guifg=#FF0000
+        highlight ALEWarning        guibg=#e4e4e4
         highlight ALEWarningSign    guibg=#555555 guifg=#FFFF00
         highlight SignifySignAdd    guifg=#00ff00 guibg=#555555
-        highlight SignifySignDelete guifg=#ff0000 guibg=#555555
         highlight SignifySignChange guifg=#ffff00 guibg=#555555
+        highlight SignifySignDelete guifg=#ff0000 guibg=#555555
     endif
 endfunction
