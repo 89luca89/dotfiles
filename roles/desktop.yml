@@ -229,7 +229,7 @@
           - python3
           - python3-devel
       become: true
-      tags: devel
+      tags: devel,python
 
     - name: Install Programs (PIP Packages) - pip
       pip:
@@ -250,7 +250,16 @@
           - setuptools
           - yamllint
       become: true
-      tags: devel
+      tags: devel,python
+
+    - name: Install Programs (npm Packages) - npm
+      npm:
+        name: "{{ item }}"
+        global: yes
+      with_items:
+        - bash-language-server
+        - dockerfile-language-server-nodejs
+      tags: devel,npm
 
     - name: Install Programs (Programming Packages) - golang
       command: "{{ item }}"
