@@ -29,20 +29,10 @@ call plug#end()                                     " required
 filetype plugin indent on                           " required
 syntax on
 " Dynamic split resize
-set sessionoptions-=blank
-let g:session_name = "/tmp/" . str2nr(matchstr(reltimestr(reltime()), '\v\.@<=\d+')[1:])
-autocmd InsertEnter	* execute "mksession!" g:session_name
-autocmd InsertLeave	* execute "mksession!" g:session_name
-autocmd VimResized * execute "so" g:session_name
+autocmd VimResized * :wincmd =
 " Async enable ALE and Deoplete for better performances
 autocmd InsertEnter * call deoplete#enable()
 autocmd InsertEnter * :ALEEnable
-" Set cursorline ONLY on active buffer
-augroup CursorLine
-    au!
-    au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
-    au WinLeave * setlocal nocursorline
-augroup END
 "
 let g:python_host_prog = '/usr/bin/python2'
 let g:python3_host_prog = '/usr/bin/python3'
@@ -99,14 +89,14 @@ let g:ale_fixers = {
             \ 'c': ['clang-format'],
             \ 'cpp': ['clang-format'],
             \ 'python':['isort', 'autopep8', 'yapf'],
-            \ 'go':['goimports'],
+            \ 'go':['goimports', 'gofmt'],
             \ }
 let g:ale_linters = {
             \ 'xml':['xmllint'],
             \ 'json':['jsonlint'],
             \ 'yaml':['yamllint'],
             \ 'ansible':['ansible-lint'],
-            \ 'sh':['shellcheck'],
+            \ 'sh':['shellcheck', 'shell'],
             \ 'c': ['gcc'],
             \ 'cpp': ['gcc'],
             \ 'python': ['flake8', 'pylint'],
@@ -119,17 +109,16 @@ let g:LanguageClient_diagnosticsEnable  = 1
 let g:LanguageClient_diagnosticsList    = "Disabled"
 let g:LanguageClient_hoverPreview       = "Always"
 let g:LanguageClient_serverCommands     = {
-            \ 'sh': ['bash-language-server', 'start'],
             \ 'c': ['clangd'],
             \ 'cpp': ['clangd'],
             \ 'python': ['pyls'],
-            \ 'go' : ['go-langserver',
-                \"-diagnostics",
-                \'-gocodecompletion',
-                \"-lint-tool=golint",]
-            \ }
-            "\ 'go': ['gopls'],
-            "\}
+            \ 'go': ['gopls'],
+            \}
+            " \ 'go' : ['go-langserver',
+            "     \"-diagnostics",
+            "     \'-gocodecompletion',
+            "     \"-lint-tool=golint",]
+            " \ }
 " FZF fuzzy
 let g:fzf_action = {'alt-enter':'vsplit' }
 let g:fzf_files_options = "--preview 'if file {1} | grep -Ei \"text|JSON\"; then cat {1} ; fi'"
@@ -174,7 +163,9 @@ nnoremap <leader>j :set ft=.jinja2<Left><Left><Left><Left><Left><Left><Left>
 nnoremap <leader>om :!~/bin/serve_pdf.sh "%" &<CR><CR>
 " ALE Keybindings
 nnoremap <leader>e :copen<CR>
+nnoremap <leader>E :<C-u>vert copen<bar>:50wincmd><CR>
 nnoremap <leader>A  :bufdo ALELint<CR>:bp<CR>:bufdo e<CR>:so ~/.vimrc<CR>
+nnoremap <C-l>  :ALEFix<CR>
 " Default IDE-Style keybindings
 nnoremap <leader>d  :Rg <c-r>=expand("<cword>")<cr> (<CR>
 nnoremap <leader>l  :mkview<CR>ggVG=:<C-u>loadview<CR>
@@ -185,19 +176,21 @@ nnoremap <leader>x  :Tags <c-r>=expand("<cword>")<cr><CR>
 augroup lspbindings
     autocmd! lspbindings
     " auto-hover
-    autocmd CursorHold *.sh,*.c,*.cpp,*.py,*.go silent! call ShowHover()
-    autocmd CursorHoldI *.sh,*.c,*.cpp,*.py,*.go silent! call ShowHover()
+    autocmd CursorHold *.c,*.cpp,*.py,*.go silent! call ShowHover()
+    autocmd CursorHoldI *.c,*.cpp,*.py,*.go silent! call ShowHover()
+    " Override MAN Page mapping
+    autocmd Filetype c,cpp,python,go nnoremap K  :call LanguageClient#textDocument_hover()<CR>
     " IDE-like keybindings
-    autocmd Filetype sh,c,cpp,python,go nnoremap <leader>a  :call LanguageClient#workspace_applyEdit()<CR>
-    autocmd Filetype sh,c,cpp,python,go nnoremap <leader>c  :call LanguageClient#textDocument_completion()<CR>
-    autocmd Filetype sh,c,cpp,python,go nnoremap <leader>h  :call LanguageClient#textDocument_hover()<CR>
-    autocmd Filetype sh,c,cpp,python,go nnoremap <leader>m  :call LanguageClient#contextMenu()<CR>
-    autocmd Filetype sh,c,cpp,python,go nnoremap <leader>td :call LanguageClient#textDocument_typeDefinition()<CR>
-    autocmd Filetype sh,c,cpp,python,go nnoremap <leader>d  :call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<CR>
-    autocmd Filetype sh,c,cpp,python,go nnoremap <leader>l  :call LanguageClient#textDocument_formatting()<CR>
-    autocmd Filetype sh,c,cpp,python,go nnoremap <leader>r  :call LanguageClient#textDocument_rename()<CR>
-    autocmd Filetype sh,c,cpp,python,go nnoremap <leader>t  :call LanguageClient#textDocument_documentSymbol()<CR>
-    autocmd Filetype sh,c,cpp,python,go nnoremap <leader>x  :call LanguageClient#textDocument_references()<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <leader>a  :call LanguageClient#workspace_applyEdit()<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <leader>c  :call LanguageClient#textDocument_completion()<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <leader>h  :call LanguageClient#textDocument_hover()<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <leader>m  :call LanguageClient#contextMenu()<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <leader>td :call LanguageClient#textDocument_typeDefinition()<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <leader>d  :call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <leader>l  :call LanguageClient#textDocument_formatting()<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <leader>r  :call LanguageClient#textDocument_rename()<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <leader>t  :call LanguageClient#textDocument_documentSymbol()<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <leader>x  :call LanguageClient#textDocument_references()<CR>
 augroup end
 " when stopping on something, show hover
 function! ShowHover()
@@ -208,7 +201,7 @@ endfunction
 set directory=$HOME/.vim/swap                                     " Custom swapfile directory
 set expandtab shiftwidth=4 tabstop=4 softtabstop=4       " Four spaces for tabs everywhere
 set mouse=a                                                       " it's always useful
-set nowrap number nomodeline cursorline
+set nowrap number nomodeline " cursorline
 set path+=**                                             " Recursive path Tab autocomplete
 set smartindent copyindent                             " always set autoindenting on
 set splitright splitbelow                                         " Open new splits to the right and bottom
