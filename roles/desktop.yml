@@ -29,8 +29,6 @@
         - gnome-user-docs
         - gnome-user-share
         - gnome-video-effects
-        - gnome-weather
-        - rhythmbox
         - httpd
         - ibus-kkc
         - ibus-libpinyin
@@ -175,6 +173,9 @@
           - gparted
           - keepassxc
           - mpv
+          - kitty
+          - rhythmbox
+          - rhythmbox-alternative-toolbar
           - virt-manager
       become: true
       tags: gui_pkg
@@ -590,6 +591,7 @@
         - '{{ ansible_env.HOME }}/.local/go'
         - '{{ ansible_env.HOME }}/.local/rust'
         - '{{ ansible_env.HOME }}/.config/mpv'
+        - '{{ ansible_env.HOME }}/.config/kitty'
         - '{{ ansible_env.HOME }}/.config/keepassxc'
         - '{{ ansible_env.HOME }}/Programs'
       register: firstrun
@@ -621,6 +623,7 @@
         - "~/.config/user-dirs.dirs"
         - "~/.config/libinput-gestures.conf"
         - "~/.config/mpv/mpv.conf"
+        - "~/.config/kitty/kitty.conf"
         - "~/.config/keepassxc/keepassxc.ini"
         - "~/.config/systemd/user"
         - "~/.ssh/assh.yml"
@@ -644,6 +647,7 @@
         - {src: "~/dotfiles/user-dirs.dirs", dest: "~/.config/user-dirs.dirs"}
         - {src: "~/dotfiles/libinput-gestures.conf", dest: "~/.config/libinput-gestures.conf"}
         - {src: "~/dotfiles/mpv.conf", dest: "~/.config/mpv/mpv.conf"}
+        - {src: "~/dotfiles/kitty.conf", dest: "~/.config/kitty/kitty.conf"}
         - {src: "~/dotfiles/systemd", dest: "~/.config/systemd/user"}
         - {src: "~/Syncthing/Conf/keepassxc.ini", dest: "~/.config/keepassxc/keepassxc.ini"}
         - {src: "~/Syncthing/Conf/assh.yml", dest: "~/.ssh/assh.yml"}
@@ -659,9 +663,20 @@
       when: firstrun.changed
       tags: dotfiles
 
+    - name: Install Kitty Themes
+      git:
+        repo: https://github.com/dexpota/kitty-themes.git
+        dest: '{{ ansible_env.HOME }}/.config/kitty/kitty-themes'
+        version: master
+        depth: 1
+        update: true
+      when: firstrun.changed
+      tags: dotfiles,kitty
+
     - name: Load Gnome Keybindings (gsettings)
       shell: |
-        gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom6/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom7/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom8/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom9/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom10/']"
+        dconf reset -f /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/;
+        gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/'";
       when: firstrun.changed
       tags: dotfiles
 
@@ -669,6 +684,7 @@
       shell: |
         dconf load {{ item.key }} < {{ item.value }}
       with_items:
+        - {key: /org/gnome/desktop/wm/keybindings/, value: '{{ ansible_env.HOME }}/dotfiles/gnome-shell-keybindings.conf'}
         - {key: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/, value: '{{ ansible_env.HOME }}/dotfiles/gnome-keybindings.conf'}
         - {key: /org/gnome/terminal/, value: '{{ ansible_env.HOME }}/dotfiles/gnome-terminal.conf'}
         - {key: /org/gnome/desktop/app-folders/, value: '{{ ansible_env.HOME }}/dotfiles/gnome-folders.conf'}
