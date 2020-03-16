@@ -27,10 +27,7 @@
 --langdef=YAML
 --langmap=YAML:.yml.yaml
 --regex-YAML=/^[ \t]*(.*):/\1/k,key,keys/
-
---langdef=Ansible
---langmap=Ansible:.yml.yaml
---regex-Ansible=/^[ \t]*-[ \t]*name:[ \t]*(.+)/\1/k,tasks/
+--regex-YAML=/^[ \t]*-[ \t]*name:[ \t]*(.+)/\1/k,tasks/
 
 --langdef=Dockerfile
 --langmap=Dockerfile:+(Dockerfile)
