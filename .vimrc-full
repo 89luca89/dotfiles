@@ -5,22 +5,23 @@ Plug 'christoomey/vim-tmux-navigator'
 " utilities
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'                             " fuzzy find all the things
+" Git
 Plug 'airblade/vim-gitgutter'
-Plug 'vim-airline/vim-airline'
+Plug 'tpope/vim-fugitive'
 "" Lang Packs
 Plug 'sheerun/vim-polyglot', { 'do': './build' }    " Lang packs
 "" CTags +  ALE + LSP
+Plug 'autozimu/languageclient-neovim', { 'branch': 'next', 'do': 'bash install.sh', }
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'dense-analysis/ale'
-Plug 'autozimu/languageclient-neovim', { 'branch': 'next', 'do': 'bash install.sh', }
 " Deoplete + Dependencies
 Plug 'roxma/nvim-yarp'
 Plug 'roxma/vim-hug-neovim-rpc'
-Plug 'deoplete-plugins/deoplete-tag'
-Plug 'wellle/tmux-complete.vim'
 Plug 'shougo/deoplete.nvim'
-" Colorscheme
+Plug 'deoplete-plugins/deoplete-tag'
+" Aestetics
 Plug 'rakr/vim-one'
+Plug 'vim-airline/vim-airline'
 
 call plug#end()                                     " required
 "
@@ -55,6 +56,10 @@ let g:airline#extensions#tabline#formatter = 'unique_tail'
 let g:airline_extensions = ['tabline']
 " Langs
 let g:ansible_attribute_highlight   = 'ab'
+let g:ansible_extra_keywords_highlight = 1
+let g:ansible_name_highlight = 'd'
+let g:ansible_normal_keywords_highlight = 'Define'
+let g:ansible_with_keywords_highlight = 'Operator'
 let g:ansible_yamlKeyName   = 'yamlKey'
 let g:go_highlight_build_constraints    = 1
 let g:go_highlight_extra_types  = 1
@@ -68,6 +73,7 @@ let g:python_highlight_all  = 1
 " ALE linter
 let g:ale_enabled           = 0                     " Start on insert mode
 let g:ale_set_quickfix      = 1
+let g:ale_linters_explicit  = 1
 let g:ale_sign_error        = '⤫'
 let g:ale_sign_warning      = '▲'
 let g:ale_yaml_yamllint_options     = '-d relaxed'
@@ -82,8 +88,8 @@ let g:ale_linters = {
             \}
 " LSP Language Client
 let g:LanguageClient_autoStart  = 1
-let g:LanguageClient_completionPreferTextEdit   = 1
 let g:LanguageClient_diagnosticsEnable  = 1
+let g:LanguageClient_diagnosticsList = "Quickfix"
 let g:LanguageClient_serverCommands     = {
             \ 'c': ['clangd'],
             \ 'cpp': ['clangd'],
@@ -149,7 +155,6 @@ augroup lspbindings
     autocmd! lspbindings
     " auto-hover
     autocmd CursorHold *.c,*.cpp,*.py,*.go silent! call ShowHover()
-    autocmd CursorHoldI *.c,*.cpp,*.py,*.go silent! call ShowHover()
     " auto-beautify
     autocmd BufWritePre *.c,*.cpp,*.py,*.go silent! call LanguageClient#textDocument_formatting()
     " IDE-like keybindings
