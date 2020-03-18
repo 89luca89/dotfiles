@@ -33,6 +33,7 @@ alias vi='vimx -u ~/dotfiles/.vimrc-minimal'
 alias vim='vimx'
 alias diff="diff --color=always"
 alias reset_ssh='assh sockets flush; killall ssh; killall stunnel'
+alias gnome-reload='xdotool key Alt+F2; sleep 1; xdotool key r; xdotool key Return'
 export PATH=$HOME/bin:$PATH
 export GOPATH=$HOME/.local/go
 export PATH=$PATH:$GOPATH/bin
