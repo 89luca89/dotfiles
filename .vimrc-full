@@ -5,24 +5,20 @@ Plug 'christoomey/vim-tmux-navigator'
 " utilities
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'                             " fuzzy find all the things
-Plug 'mhinz/vim-signify'
-Plug 'yggdroot/indentLine'
+Plug 'airblade/vim-gitgutter'
 Plug 'vim-airline/vim-airline'
 "" Lang Packs
 Plug 'sheerun/vim-polyglot', { 'do': './build' }    " Lang packs
-"" CTags
+"" CTags +  ALE + LSP
 Plug 'ludovicchabant/vim-gutentags'
-"" ALE+LSP
 Plug 'dense-analysis/ale'
-Plug 'autozimu/languageclient-neovim', {
-            \ 'branch': 'next',
-            \ 'do': 'bash install.sh',
-            \ }
+Plug 'autozimu/languageclient-neovim', { 'branch': 'next', 'do': 'bash install.sh', }
 " Deoplete + Dependencies
 Plug 'roxma/nvim-yarp'
 Plug 'roxma/vim-hug-neovim-rpc'
-Plug 'shougo/deoplete.nvim'
 Plug 'deoplete-plugins/deoplete-tag'
+Plug 'wellle/tmux-complete.vim'
+Plug 'shougo/deoplete.nvim'
 " Colorscheme
 Plug 'rakr/vim-one'
 
@@ -51,19 +47,12 @@ let g:netrw_banner          = 0
 let g:netrw_browse_split    = 4
 let g:netrw_liststyle       = 3
 let g:netrw_winsize         = -28
+" Deoplete
+set completeopt-=preview
+let g:deoplete#enable_at_startup = 0                " Start on insert mode
 " Airline
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 let g:airline_extensions = ['tabline']
-" indentline
-let g:indentLine_char = '|'
-let g:indentLine_concealcursor = ''
-let g:indentLine_setConceal = 1
-let g:intendLine_faser = 1
-set list lcs=tab:\|\  " here is a space
-" Git
-let g:signify_sign_add    = '>'
-let g:signify_sign_change = '>'
-let g:signify_sign_delete = '-'
 " Langs
 let g:ansible_attribute_highlight   = 'ab'
 let g:ansible_yamlKeyName   = 'yamlKey'
@@ -76,48 +65,25 @@ let g:go_highlight_operators    = 1
 let g:go_highlight_structs      = 1
 let g:go_highlight_types        = 1
 let g:python_highlight_all  = 1
-" Deoplete
-set completeopt-=preview
-let g:deoplete#enable_at_startup = 0                " Start on insert mode
 " ALE linter
 let g:ale_enabled           = 0                     " Start on insert mode
-let g:ale_fix_on_save       = 1
-let g:ale_lint_on_enter     = 0
-let g:ale_lint_on_save      = 1
-let g:ale_lint_on_text_changed = 0
-let g:ale_linters_explicit  = 1
-let g:ale_set_highlights    = 1
 let g:ale_set_quickfix      = 1
 let g:ale_sign_error        = '⤫'
 let g:ale_sign_warning      = '▲'
-let g:ale_go_golangci_lint_package  = 1
-let g:ale_go_golangci_lint_options  = '--enable-all -D funlen,gomnd,gochecknoglobals'
 let g:ale_yaml_yamllint_options     = '-d relaxed'
 let g:ale_fixers = {
             \ '*':['remove_trailing_lines', 'trim_whitespace'],
             \ 'sh':['shfmt'],
-            \ 'c': ['clang-format'],
-            \ 'cpp': ['clang-format'],
-            \ 'python':['isort', 'autopep8', 'yapf'],
-            \ 'go':['goimports', 'gofmt'],
             \ }
 let g:ale_linters = {
-            \ 'xml':['xmllint'],
-            \ 'json':['jsonlint'],
+            \ 'sh':['shellcheck'],
             \ 'yaml':['yamllint'],
             \ 'ansible':['ansible-lint'],
-            \ 'sh':['shellcheck', 'shell'],
-            \ 'c': ['gcc'],
-            \ 'cpp': ['gcc'],
-            \ 'python': ['flake8', 'pylint'],
-            \ 'go' : ['golangci-lint']
             \}
 " LSP Language Client
 let g:LanguageClient_autoStart  = 1
 let g:LanguageClient_completionPreferTextEdit   = 1
 let g:LanguageClient_diagnosticsEnable  = 1
-let g:LanguageClient_diagnosticsList    = "Disabled"
-let g:LanguageClient_hoverPreview       = "Always"
 let g:LanguageClient_serverCommands     = {
             \ 'c': ['clangd'],
             \ 'cpp': ['clangd'],
@@ -127,8 +93,6 @@ let g:LanguageClient_serverCommands     = {
 " FZF fuzzy
 let g:fzf_action = {'alt-enter':'vsplit' }
 let g:fzf_files_options = "--preview 'if file {1} | grep -Ei \"text|JSON\"; then cat {1} ; fi'"
-let g:fzf_tags_command = 'ctags -R'
-
 """""""""""""""""""""
 """     Shortcuts   "
 " Leader map
@@ -141,10 +105,10 @@ map <leader>p "+p
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 " vim-tmux-navigator shortcuts
 let g:tmux_navigator_no_mappings = 1
-inoremap <silent> <M-Down> <Esc>:TmuxNavigateDown<cr>
-inoremap <silent> <M-Left> <Esc>:TmuxNavigateLeft<cr>
+inoremap <silent> <M-Down>  <Esc>:TmuxNavigateDown<cr>
+inoremap <silent> <M-Left>  <Esc>:TmuxNavigateLeft<cr>
 inoremap <silent> <M-Right> <Esc>:TmuxNavigateRight<cr>
-inoremap <silent> <M-Up> <Esc>:TmuxNavigateUp<cr>
+inoremap <silent> <M-Up>    <Esc>:TmuxNavigateUp<cr>
 nnoremap <silent> <M-Down> :TmuxNavigateDown<cr>
 nnoremap <silent> <M-Left> :TmuxNavigateLeft<cr>
 nnoremap <silent> <M-Right> :TmuxNavigateRight<cr>
@@ -167,38 +131,40 @@ nnoremap <leader>f :Rg<CR>
 nnoremap <leader>j :set ft=.jinja2<Left><Left><Left><Left><Left><Left><Left>
 nnoremap <leader>om :!(mdpdf > /dev/null "%" && mv $(echo "%" <bar> sed 's/md/pdf/g') /tmp/ ) &<CR><CR>
 " ALE Keybindings
+nnoremap <leader>A  :bufdo ALELint<CR>:bp<CR>:bufdo e<CR>:so ~/.vimrc<CR>
 nnoremap <leader>e :copen<CR>
 nnoremap <leader>E :<C-u>vert copen<bar>:50wincmd><CR>
-nnoremap <leader>A  :bufdo ALELint<CR>:bp<CR>:bufdo e<CR>:so ~/.vimrc<CR>
-nnoremap <C-l>  :ALEFix<CR>
 " Default IDE-Style keybindings
-nnoremap <leader>d  :Rg <c-r>=expand("<cword>")<cr> (<CR>
-nnoremap <leader>l  :mkview<CR>ggVG=:<C-u>loadview<CR>
-nnoremap <leader>r  :!grep -rl <c-r>=expand("<cword>")<cr><bar>xargs sed -i 's/<c-r>=expand("<cword>")<cr>//g'<Left><Left><Left>
+nnoremap <leader>gd :GitGutterPreviewHunk<CR>
+nnoremap <leader>gu :GitGutterUndoHunk<CR>
+nnoremap <leader>gs :GFiles?<CR>
+nnoremap <leader>gg :GitGutterLineHighlightsToggle<CR>
 nnoremap <leader>t  :Tags<CR>
 nnoremap <leader>x  :Rg <c-r>=expand("<cword>")<cr><CR>
+nnoremap <leader>d  :stag <c-r>=expand("<cword>")<CR><CR>
+nnoremap <leader>l  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>:ALEFix<CR>
+nnoremap <leader>r  :!grep -rl <c-r>=expand("<cword>")<cr><bar>xargs sed -i 's/<c-r>=expand("<cword>")<cr>//g'<Left><Left><Left>
 " LSP keybindings overriding the previous
 augroup lspbindings
     autocmd! lspbindings
     " auto-hover
     autocmd CursorHold *.c,*.cpp,*.py,*.go silent! call ShowHover()
     autocmd CursorHoldI *.c,*.cpp,*.py,*.go silent! call ShowHover()
-    " Override MAN Page mapping
-    autocmd Filetype c,cpp,python,go nnoremap K  :call LanguageClient#textDocument_hover()<CR>
+    " auto-beautify
+    autocmd BufWritePre *.c,*.cpp,*.py,*.go silent! call LanguageClient#textDocument_formatting()
     " IDE-like keybindings
     autocmd Filetype c,cpp,python,go nnoremap <leader>a  :call LanguageClient#workspace_applyEdit()<CR>
     autocmd Filetype c,cpp,python,go nnoremap <leader>c  :call LanguageClient#textDocument_completion()<CR>
     autocmd Filetype c,cpp,python,go nnoremap <leader>h  :call LanguageClient#textDocument_hover()<CR>
     autocmd Filetype c,cpp,python,go nnoremap <leader>m  :call LanguageClient_contextMenu()<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <leader>td :call LanguageClient#textDocument_typeDefinition()<CR>
     autocmd Filetype c,cpp,python,go nnoremap <leader>d  :call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<CR>
     autocmd Filetype c,cpp,python,go nnoremap <leader>l  :call LanguageClient#textDocument_formatting()<CR>
     autocmd Filetype c,cpp,python,go nnoremap <leader>r  :call LanguageClient#textDocument_rename()<CR>
 augroup end
 " when stopping on something, show hover
 function! ShowHover()
-        call popup_clear()
-        call LanguageClient#textDocument_hover()
+    call popup_clear()
+    call LanguageClient#textDocument_hover()
 endfunction
 " Miscellaneous
 set directory=$HOME/.vim/swap                                     " Custom swapfile directory
@@ -212,7 +178,7 @@ set title nocompatible nowritebackup nobackup                     " required
 set undofile undolevels=1000 undodir=$HOME/.vim/undo              " Undo file and directory
 set updatetime=1000 ttyfast lazyredraw t_Co=16
 set showfulltag
-set autoindent  backspace=indent,eol,start
+set autoindent  backspace=indent,eol,start formatoptions+=j
 set smarttab incsearch sessionoptions-=options viewoptions-=options
 let &colorcolumn=join(range(81,250),",")
 """""""""
@@ -227,9 +193,6 @@ highlight link myFunction   Function
 highlight ALEErrorSign      guifg=#FF0000
 highlight ALEWarning        guibg=#333300
 highlight ALEWarningSign    guifg=#FFFF00
-highlight SignifySignAdd    guifg=#00ff00
-highlight SignifySignChange guifg=#ffff00
-highlight SignifySignDelete guifg=#ff0000
 " Toggle Theme
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
@@ -238,16 +201,10 @@ function! ToggleTheme()
         highlight ALEErrorSign      guifg=#FF0000
         highlight ALEWarning        guibg=#333300
         highlight ALEWarningSign    guifg=#FFFF00
-        highlight SignifySignAdd    guifg=#00ff00
-        highlight SignifySignChange guifg=#ffff00
-        highlight SignifySignDelete guifg=#ff0000
     else
         set background=light
         highlight ALEErrorSign      guibg=#555555 guifg=#FF0000
         highlight ALEWarning        guibg=#e4e4e4
         highlight ALEWarningSign    guibg=#555555 guifg=#FFFF00
-        highlight SignifySignAdd    guifg=#00ff00 guibg=#555555
-        highlight SignifySignChange guifg=#ffff00 guibg=#555555
-        highlight SignifySignDelete guifg=#ff0000 guibg=#555555
     endif
 endfunction
