@@ -29,6 +29,12 @@
         - gnome-user-docs
         - gnome-user-share
         - gnome-video-effects
+        - gnome-shell-extension-apps-menu
+        - gnome-shell-extension-background-logo
+        - gnome-shell-extension-horizontal-workspaces
+        - gnome-shell-extension-launch-new-instance
+        - gnome-shell-extension-places-menu
+        - gnome-shell-extension-window-list
         - httpd
         - ibus-kkc
         - ibus-libpinyin
@@ -223,7 +229,6 @@
           - ctags-etags
           - global-ctags
           - golang
-          - libxml2
           - ncurses-compat-libs
           - python2
           - python2-devel
@@ -239,15 +244,8 @@
         name:
           - 'python-language-server[all]'
           - ansible-lint
-          - beautysh
-          - black
-          - demjson
-          - mypy
           - neovim
           - psutil
-          - pyls-black
-          - pyls-isort
-          - pyls-mypy
           - setuptools
           - yamllint
       become: true
@@ -258,8 +256,8 @@
         name: "{{ item }}"
         global: yes
       with_items:
-        - bash-language-server
-        - dockerfile-language-server-nodejs
+        - markdown-cli
+        - mdpdf
       tags: devel,npm
 
     - name: Install Programs (Programming Packages) - golang
@@ -269,11 +267,11 @@
         - "go get -u golang.org/x/tools/cmd/goimports"
         - "go get -u golang.org/x/lint/golint"
         - "go get -u golang.org/x/tools/gopls"
-        - "go get -u github.com/sourcegraph/go-langserver"
         - "go get -u mvdan.cc/sh/cmd/shfmt"
       environment:
         GOPATH: "{{ ansible_env.HOME }}/.local/go"
       tags: devel,golang
+        # - "go get -u github.com/sourcegraph/go-langserver"
 
     - name: Download golangci install file to tmp dir
       get_url:
