@@ -10,15 +10,17 @@ Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 "" Lang Packs
 Plug 'sheerun/vim-polyglot', { 'do': './build' }    " Lang packs
-"" CTags +  ALE + LSP
-Plug 'autozimu/languageclient-neovim', { 'branch': 'next', 'do': 'bash install.sh', }
+"" CTags +  ALE (for non-lsp langs)
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'dense-analysis/ale'
-" Deoplete + Dependencies
-Plug 'roxma/nvim-yarp'
-Plug 'roxma/vim-hug-neovim-rpc'
-Plug 'shougo/deoplete.nvim'
-Plug 'deoplete-plugins/deoplete-tag'
+" vim-lsp + asyncomplete
+Plug 'prabirshrestha/async.vim'
+Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'prabirshrestha/asyncomplete-buffer.vim'
+Plug 'prabirshrestha/asyncomplete-file.vim'
+Plug 'prabirshrestha/asyncomplete-tags.vim'
+Plug 'prabirshrestha/asyncomplete-lsp.vim'
+Plug 'prabirshrestha/vim-lsp'
 " Aestetics
 Plug 'rakr/vim-one'
 Plug 'vim-airline/vim-airline'
@@ -30,7 +32,6 @@ syntax on
 " Dynamic split resize
 autocmd VimResized * :wincmd =
 " Async enable ALE and Deoplete for better performances
-autocmd InsertEnter * call deoplete#enable()
 autocmd InsertEnter * :ALEEnable
 " Tags
 "let g:gutentags_project_root = ['package.json', '.git', 'Makefile', '.project']
@@ -48,15 +49,12 @@ let g:netrw_banner          = 0
 let g:netrw_browse_split    = 4
 let g:netrw_liststyle       = 3
 let g:netrw_winsize         = -28
-" Deoplete
-set completeopt-=preview
-let g:deoplete#enable_at_startup = 0                " Start on insert mode
 " Airline
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 let g:airline_extensions = ['tabline']
 " Langs
 let g:ansible_attribute_highlight   = 'ab'
-let g:ansible_extra_keywords_highlight = 1
+let g:ansible_extra_keywords_highlight  = 1
 let g:ansible_name_highlight = 'd'
 let g:ansible_normal_keywords_highlight = 'Define'
 let g:ansible_with_keywords_highlight = 'Operator'
@@ -72,10 +70,8 @@ let g:go_highlight_types        = 1
 let g:python_highlight_all  = 1
 " ALE linter
 let g:ale_enabled           = 0                     " Start on insert mode
-let g:ale_set_quickfix      = 1
+let g:ale_set_loclist       = 1
 let g:ale_linters_explicit  = 1
-let g:ale_sign_error        = '⤫'
-let g:ale_sign_warning      = '▲'
 let g:ale_yaml_yamllint_options     = '-d relaxed'
 let g:ale_fixers = {
             \ '*':['remove_trailing_lines', 'trim_whitespace'],
@@ -86,16 +82,47 @@ let g:ale_linters = {
             \ 'yaml':['yamllint'],
             \ 'ansible':['ansible-lint'],
             \}
-" LSP Language Client
-let g:LanguageClient_autoStart  = 1
-let g:LanguageClient_diagnosticsEnable  = 1
-let g:LanguageClient_diagnosticsList = "Quickfix"
-let g:LanguageClient_serverCommands     = {
-            \ 'c': ['clangd'],
-            \ 'cpp': ['clangd'],
-            \ 'python': ['pyls'],
-            \ 'go': ['gopls'],
-            \}
+"
+set completeopt=menu,longest,popup
+set completepopup=align:menu,border:off,highlight:Pmenu
+let g:lsp_diagnostics_echo_cursor   = 1
+let g:lsp_diagnostics_enabled       = 1
+let g:lsp_highlight_references_enabled = 1
+let g:lsp_highlights_enabled        = 1
+let g:lsp_log_file  = expand('/dev/null')
+let g:lsp_log_verbose               = 0
+let g:lsp_signs_enabled             = 1
+call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
+            \ 'name': 'buffer',
+            \ 'whitelist': ['*'],
+            \ 'completor': function('asyncomplete#sources#buffer#completor'),
+            \ }))
+call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
+            \ 'name': 'file',
+            \ 'whitelist': ['*'],
+            \ 'completor': function('asyncomplete#sources#file#completor')
+            \ }))
+call asyncomplete#register_source(asyncomplete#sources#tags#get_source_options({
+            \ 'name': 'tags',
+            \ 'whitelist': ['*'],
+            \ 'blacklist': ['c', 'cpp', 'go', 'python'],
+            \ 'completor': function('asyncomplete#sources#tags#completor'),
+            \ }))
+call lsp#register_server({
+            \ 'name': 'clangd',
+            \ 'whitelist': ['c', 'cpp', 'objc', 'objcpp'],
+            \ 'cmd': {server_info->['clangd', '-background-index']},
+            \ })
+call lsp#register_server({
+            \ 'name': 'gopls',
+            \ 'whitelist': ['go'],
+            \ 'cmd': {server_info->['gopls']},
+            \ })
+call lsp#register_server({
+            \ 'name': 'pyls',
+            \ 'whitelist': ['python'],
+            \ 'cmd': {server_info->['pyls']},
+            \ })
 " FZF fuzzy
 let g:fzf_action = {'alt-enter':'vsplit' }
 let g:fzf_files_options = "--preview 'if file {1} | grep -Ei \"text|JSON\"; then cat {1} ; fi'"
@@ -110,15 +137,15 @@ map <leader>y "+y
 map <leader>p "+p
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 " vim-tmux-navigator shortcuts
-let g:tmux_navigator_no_mappings = 1
+let g:tmux_navigator_no_mappings    = 1
 inoremap <silent> <M-Down>  <Esc>:TmuxNavigateDown<cr>
 inoremap <silent> <M-Left>  <Esc>:TmuxNavigateLeft<cr>
 inoremap <silent> <M-Right> <Esc>:TmuxNavigateRight<cr>
 inoremap <silent> <M-Up>    <Esc>:TmuxNavigateUp<cr>
-nnoremap <silent> <M-Down> :TmuxNavigateDown<cr>
-nnoremap <silent> <M-Left> :TmuxNavigateLeft<cr>
+nnoremap <silent> <M-Down>  :TmuxNavigateDown<cr>
+nnoremap <silent> <M-Left>  :TmuxNavigateLeft<cr>
 nnoremap <silent> <M-Right> :TmuxNavigateRight<cr>
-nnoremap <silent> <M-Up> :TmuxNavigateUp<cr>
+nnoremap <silent> <M-Up>    :TmuxNavigateUp<cr>
 " navigate tabs Tab (fw) S-Tab (prev)
 map <Tab>   :bn!<CR>
 map <S-Tab> :bp!<CR>
@@ -130,16 +157,15 @@ noremap <S-M-Left>  :2winc<<cr>
 noremap <S-M-Right> :2winc><cr>
 noremap <S-M-Up>    :2winc+<cr>
 " Utility shortcuts with leader:
-nnoremap <leader><Tab> :Buffers<CR>
-nnoremap <leader>b :Files<CR>
-nnoremap <leader>f :Rg<CR>
+nnoremap <leader><Tab>  :Buffers<CR>
+nnoremap <leader>b      :Files<CR>
+nnoremap <leader>f      :Rg<CR>
 " Utility for Markdown and Ansible
-nnoremap <leader>j :set ft=.jinja2<Left><Left><Left><Left><Left><Left><Left>
+nnoremap <leader>j  :set ft=.jinja2<Left><Left><Left><Left><Left><Left><Left>
 nnoremap <leader>om :!(mdpdf > /dev/null "%" && mv $(echo "%" <bar> sed 's/md/pdf/g') /tmp/ ) &<CR><CR>
 " ALE Keybindings
 nnoremap <leader>A  :bufdo ALELint<CR>:bp<CR>:bufdo e<CR>:so ~/.vimrc<CR>
-nnoremap <leader>e :copen<CR>
-nnoremap <leader>E :<C-u>vert copen<bar>:50wincmd><CR>
+nnoremap <leader>e  :lopen<CR>
 " Default IDE-Style keybindings
 nnoremap <leader>gd :GitGutterPreviewHunk<CR>
 nnoremap <leader>gu :GitGutterUndoHunk<CR>
@@ -153,22 +179,16 @@ nnoremap <leader>r  :!grep -rl <c-r>=expand("<cword>")<cr><bar>xargs sed -i 's/<
 " LSP keybindings overriding the previous
 augroup lspbindings
     autocmd! lspbindings
-    " auto-hover
-    autocmd CursorHold *.c,*.cpp,*.py,*.go silent! call ShowHover()
     " auto-beautify
-    autocmd BufWritePre *.c,*.cpp,*.py,*.go silent! call LanguageClient#textDocument_formatting()
+    autocmd BufWritePre *.c,*.cpp,*.py,*.go silent! LspDocumentFormatSync
     " IDE-like keybindings
-    autocmd Filetype c,cpp,python,go nnoremap K  :call LanguageClient#textDocument_hover()<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <leader>m  :call LanguageClient_contextMenu()<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <leader>d  :call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <leader>l  :call LanguageClient#textDocument_formatting()<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <leader>r  :call LanguageClient#textDocument_rename()<CR>
+    autocmd Filetype c,cpp,python,go nnoremap K  :LspHover<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <leader>e :LspDocumentDiagnostics<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <leader>h :LspPeekDefinition<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <leader>d :LspDefinition<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <leader>l :LspDocumentFormatSync<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <leader>r :LspRename<CR>
 augroup end
-" when stopping on something, show hover
-function! ShowHover()
-    call popup_clear()
-    call LanguageClient#textDocument_hover()
-endfunction
 " Miscellaneous
 set directory=$HOME/.vim/swap                                     " Custom swapfile directory
 set expandtab shiftwidth=4 tabstop=4 softtabstop=4       " Four spaces for tabs everywhere
@@ -191,11 +211,10 @@ set termguicolors
 let g:one_allow_italics = 1
 colorscheme one
 autocmd Syntax,InsertEnter * syntax match myFunction /\<\k\+\ze(/
-highlight myTest guifg=#FF0000
-highlight link myFunction   Function
 highlight ALEErrorSign      guifg=#FF0000
 highlight ALEWarning        guibg=#333300
 highlight ALEWarningSign    guifg=#FFFF00
+highlight link myFunction   Function
 " Toggle Theme
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
