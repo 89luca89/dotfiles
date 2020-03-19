@@ -173,7 +173,8 @@ nnoremap <leader>gs :GFiles?<CR>
 nnoremap <leader>gg :GitGutterLineHighlightsToggle<CR>
 nnoremap <leader>t  :Tags<CR>
 nnoremap <leader>x  :Rg <c-r>=expand("<cword>")<cr><CR>
-nnoremap <leader>d  :stag <c-r>=expand("<cword>")<CR><CR>
+nnoremap <leader>D  <C-T>
+nnoremap <leader>d  <C-]>
 nnoremap <leader>l  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>:ALEFix<CR>
 nnoremap <leader>r  :!grep -rl <c-r>=expand("<cword>")<cr><bar>xargs sed -i 's/<c-r>=expand("<cword>")<cr>//g'<Left><Left><Left>
 " LSP keybindings overriding the previous
