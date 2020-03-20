@@ -33,6 +33,9 @@ syntax on
 autocmd VimResized * :wincmd =
 autocmd InsertEnter * call lsp#activate()
 autocmd InsertEnter * :<C-u>ALEEnable
+" Remove trailing whitespaces and lines
+autocmd BufWritePre * silent! :%s/\s\+$//e
+autocmd BufWritePre * silent! :%s/\($\n\s*\)\+\%$//e
 " Set cursorline ONLY on active buffer
 augroup CursorLine
     au!
@@ -78,12 +81,7 @@ let g:python_highlight_all  = 1
 let g:ale_enabled           = 0
 let g:ale_set_loclist       = 1
 let g:ale_linters_explicit  = 1
-let g:ale_fix_on_save       = 1
 let g:ale_yaml_yamllint_options     = '-d relaxed'
-let g:ale_fixers = {
-            \ '*':['remove_trailing_lines', 'trim_whitespace'],
-            \ 'sh':['shfmt'],
-            \ }
 let g:ale_linters = {
             \ 'sh':['shellcheck'],
             \ 'yaml':['yamllint'],
@@ -189,20 +187,18 @@ nnoremap <leader>t  :<C-u>Tags<CR>
 nnoremap <leader>x  :<C-u>Rg <c-r>=expand("<cword>")<cr><CR>
 nnoremap <leader>D  <C-T>
 nnoremap <leader>d  <C-]>
-nnoremap <leader>l  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>:ALEFix<CR>
 nnoremap <leader>r  :<C-u>!grep -rl <c-r>=expand("<cword>")<cr><bar>xargs sed -i 's/<c-r>=expand("<cword>")<cr>//g'<Left><Left><Left>
+nnoremap <leader>l  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>
 " LSP keybindings overriding the previous
 augroup lspbindings
     autocmd! lspbindings
-    " auto-beautify
-    autocmd BufWritePre *.c,*.cpp,*.py,*.go silent! LspDocumentFormatSync
     " IDE-like keybindings
     autocmd Filetype c,cpp,python,go nnoremap K  :<C-u>call popup_clear()<bar>LspHover<CR>
     autocmd Filetype c,cpp,python,go nnoremap <leader>e :<C-u>LspDocumentDiagnostics<CR>
     autocmd Filetype c,cpp,python,go nnoremap <leader>h :<C-u>call popup_clear()<bar>LspPeekDefinition<CR>
     autocmd Filetype c,cpp,python,go nnoremap <leader>d :<C-u>LspDefinition<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <leader>l :<C-u>LspDocumentFormatSync<CR>
     autocmd Filetype c,cpp,python,go nnoremap <leader>r :<C-u>LspRename<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <leader>l :<C-u>LspDocumentFormatSync<CR>
 augroup end
 " Miscellaneous
 let &colorcolumn=join(range(81,250),",")
