@@ -11,8 +11,8 @@ Plug 'tpope/vim-fugitive'
 "" Lang Packs
 Plug 'sheerun/vim-polyglot', { 'do': './build' }    " Lang packs
 "" CTags +  ALE (for non-lsp langs)
-Plug 'ludovicchabant/vim-gutentags'
 Plug 'dense-analysis/ale'
+Plug 'ludovicchabant/vim-gutentags'
 " vim-lsp + asyncomplete
 Plug 'prabirshrestha/async.vim'
 Plug 'prabirshrestha/asyncomplete.vim'
@@ -22,8 +22,8 @@ Plug 'prabirshrestha/asyncomplete-tags.vim'
 Plug 'prabirshrestha/asyncomplete-lsp.vim'
 Plug 'prabirshrestha/vim-lsp'
 " Aestetics
-Plug 'rakr/vim-one'
 Plug 'vim-airline/vim-airline'
+Plug 'rakr/vim-one'
 
 call plug#end()                                     " required
 "
@@ -31,18 +31,16 @@ filetype plugin indent on                           " required
 syntax on
 " Dynamic split resize
 autocmd VimResized * :wincmd =
-" Async enable ALE and Deoplete for better performances
-autocmd InsertEnter * :ALEEnable
 " Tags
 "let g:gutentags_project_root = ['package.json', '.git', 'Makefile', '.project']
 let g:gutentags_project_root = ['Makefile', '.project', '.git', '.hg', '.svn', '.bzr', '_darcs', '_darcs', '_FOSSIL_', '.fslckout' ]
 let g:gutentags_cache_dir = expand('~/.cache/vim/ctags/')
-let g:gutentags_generate_on_new = 1
+let g:gutentags_generate_on_new     = 1
 let g:gutentags_generate_on_missing = 1
-let g:gutentags_generate_on_write = 1
+let g:gutentags_generate_on_write   = 1
 let g:gutentags_generate_on_empty_buffer = 0
 "
-let g:python_host_prog = '/usr/bin/python2'
+let g:python_host_prog  = '/usr/bin/python2'
 let g:python3_host_prog = '/usr/bin/python3'
 " Netrw
 let g:netrw_banner          = 0
@@ -69,7 +67,7 @@ let g:go_highlight_structs      = 1
 let g:go_highlight_types        = 1
 let g:python_highlight_all  = 1
 " ALE linter
-let g:ale_enabled           = 0                     " Start on insert mode
+let g:ale_enabled           = 1
 let g:ale_set_loclist       = 1
 let g:ale_linters_explicit  = 1
 let g:ale_fix_on_save       = 1
@@ -83,19 +81,23 @@ let g:ale_linters = {
             \ 'yaml':['yamllint'],
             \ 'ansible':['ansible-lint'],
             \}
-"
-set completeopt=menuone,longest
-let g:lsp_diagnostics_echo_cursor   = 1
-let g:lsp_diagnostics_enabled       = 1
+" Asyncomplete + LSP
+set completeopt=noinsert,noselect,menu,popup
+set completepopup=align:menu,border:off,highlight:Pmenu
+let g:asyncomplete_auto_completeopt  = 0
+let g:asyncomplete_remove_duplicates = 1
+let g:asyncomplete_smart_completion  = 1
+let g:lsp_diagnostics_echo_cursor    = 1
+let g:lsp_diagnostics_enabled        = 1
 let g:lsp_highlight_references_enabled = 1
-let g:lsp_highlights_enabled        = 1
+let g:lsp_highlights_enabled         = 1
 let g:lsp_log_file  = expand('/dev/null')
-let g:lsp_log_verbose               = 0
-let g:lsp_preview_max_height        = 20
-let g:lsp_preview_max_width         = 100
-let g:lsp_semantic_enabled          = 1
-let g:lsp_signs_enabled             = 1
-let g:lsp_virtual_text_enabled      = 1
+let g:lsp_log_verbose          = 0
+let g:lsp_preview_max_height   = 20
+let g:lsp_preview_max_width    = 100
+let g:lsp_semantic_enabled     = 1
+let g:lsp_signs_enabled        = 1
+let g:lsp_virtual_text_enabled = 1
 call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
             \ 'name': 'buffer',
             \ 'whitelist': ['*'],
@@ -142,70 +144,69 @@ map <leader>p "+p
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 " vim-tmux-navigator shortcuts
 let g:tmux_navigator_no_mappings    = 1
-inoremap <silent> <M-Down>  <Esc>:TmuxNavigateDown<cr>
-inoremap <silent> <M-Left>  <Esc>:TmuxNavigateLeft<cr>
-inoremap <silent> <M-Right> <Esc>:TmuxNavigateRight<cr>
-inoremap <silent> <M-Up>    <Esc>:TmuxNavigateUp<cr>
-nnoremap <silent> <M-Down>  :TmuxNavigateDown<cr>
-nnoremap <silent> <M-Left>  :TmuxNavigateLeft<cr>
-nnoremap <silent> <M-Right> :TmuxNavigateRight<cr>
-nnoremap <silent> <M-Up>    :TmuxNavigateUp<cr>
+inoremap <silent> <M-Down>  <Esc>:<C-u>TmuxNavigateDown<cr>
+inoremap <silent> <M-Left>  <Esc>:<C-u>TmuxNavigateLeft<cr>
+inoremap <silent> <M-Right> <Esc>:<C-u>TmuxNavigateRight<cr>
+inoremap <silent> <M-Up>    <Esc>:<C-u>TmuxNavigateUp<cr>
+nnoremap <silent> <M-Down>  :<C-u>TmuxNavigateDown<cr>
+nnoremap <silent> <M-Left>  :<C-u>TmuxNavigateLeft<cr>
+nnoremap <silent> <M-Right> :<C-u>TmuxNavigateRight<cr>
+nnoremap <silent> <M-Up>    :<C-u>TmuxNavigateUp<cr>
 " navigate tabs Tab (fw) S-Tab (prev)
-map <Tab>   :bn!<CR>
-map <S-Tab> :bp!<CR>
+map <Tab>   :<C-u>bn!<CR>
+map <S-Tab> :<C-u>bp!<CR>
 " C-c close buffer
-nnoremap <C-c> :bp<bar>sp<bar>bn<bar>bd<CR>
+nnoremap <C-c> :<C-u>bp<bar>sp<bar>bn<bar>bd<CR>
 " " Resize split window horizontally and vertically
-noremap <S-M-Down>  :2winc-<cr>
-noremap <S-M-Left>  :2winc<<cr>
-noremap <S-M-Right> :2winc><cr>
-noremap <S-M-Up>    :2winc+<cr>
+noremap <S-M-Down>  :<C-u>2winc-<CR>
+noremap <S-M-Left>  :<C-u>2winc<<CR>
+noremap <S-M-Right> :<C-u>2winc><CR>
+noremap <S-M-Up>    :<C-u>2winc+<CR>
 " Utility shortcuts with leader:
-nnoremap <leader><Tab>  :Buffers<CR>
-nnoremap <leader>b      :Files<CR>
-nnoremap <leader>f      :Rg<CR>
+nnoremap <leader><Tab>  :<C-u>Buffers<CR>
+nnoremap <leader>b      :<C-u>Files<CR>
+nnoremap <leader>f      :<C-u>Rg<CR>
 " Utility for Markdown and Ansible
-nnoremap <leader>j  :set ft=.jinja2<Left><Left><Left><Left><Left><Left><Left>
+nnoremap <leader>j  :<C-u>set ft=.jinja2<Left><Left><Left><Left><Left><Left><Left>
 " ALE Keybindings
-nnoremap <leader>A  :bufdo ALELint<CR>:bp<CR>:bufdo e<CR>:so ~/.vimrc<CR>
-nnoremap <leader>e  :lopen<CR>
+nnoremap <leader>A  :<C-u>bufdo ALELint<CR>:bp<CR>:bufdo e<CR>:so ~/.vimrc<CR>
+nnoremap <leader>e  :<C-u>lopen<CR>
 " Default IDE-Style keybindings
-nnoremap <leader>gd :GitGutterPreviewHunk<CR>
-nnoremap <leader>gu :GitGutterUndoHunk<CR>
-nnoremap <leader>gs :GFiles?<CR>
-nnoremap <leader>gg :GitGutterLineHighlightsToggle<CR>
-nnoremap <leader>t  :Tags<CR>
-nnoremap <leader>x  :Rg <c-r>=expand("<cword>")<cr><CR>
+nnoremap <leader>gd :<C-u>GitGutterPreviewHunk<CR>
+nnoremap <leader>gu :<C-u>GitGutterUndoHunk<CR>
+nnoremap <leader>gs :<C-u>GFiles?<CR>
+nnoremap <leader>gg :<C-u>GitGutterLineHighlightsToggle<CR>
+nnoremap <leader>t  :<C-u>Tags<CR>
+nnoremap <leader>x  :<C-u>Rg <c-r>=expand("<cword>")<cr><CR>
 nnoremap <leader>D  <C-T>
 nnoremap <leader>d  <C-]>
 nnoremap <leader>l  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>:ALEFix<CR>
-nnoremap <leader>r  :!grep -rl <c-r>=expand("<cword>")<cr><bar>xargs sed -i 's/<c-r>=expand("<cword>")<cr>//g'<Left><Left><Left>
+nnoremap <leader>r  :<C-u>!grep -rl <c-r>=expand("<cword>")<cr><bar>xargs sed -i 's/<c-r>=expand("<cword>")<cr>//g'<Left><Left><Left>
 " LSP keybindings overriding the previous
 augroup lspbindings
     autocmd! lspbindings
     " auto-beautify
     autocmd BufWritePre *.c,*.cpp,*.py,*.go silent! LspDocumentFormatSync
     " IDE-like keybindings
-    autocmd Filetype c,cpp,python,go nnoremap K  :LspHover<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <leader>e :LspDocumentDiagnostics<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <leader>h :LspPeekDefinition<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <leader>d :LspDefinition<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <leader>l :LspDocumentFormatSync<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <leader>r :LspRename<CR>
+    autocmd Filetype c,cpp,python,go nnoremap K  :<C-u>call popup_clear()<bar>LspHover<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <leader>e :<C-u>LspDocumentDiagnostics<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <leader>h :<C-u>call popup_clear()<bar>LspPeekDefinition<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <leader>d :<C-u>LspDefinition<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <leader>l :<C-u>LspDocumentFormatSync<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <leader>r :<C-u>LspRename<CR>
 augroup end
 " Miscellaneous
 set directory=$HOME/.vim/swap                                     " Custom swapfile directory
-set expandtab shiftwidth=4 tabstop=4 softtabstop=4       " Four spaces for tabs everywhere
+set expandtab shiftwidth=4 tabstop=4 softtabstop=4                " Four spaces for tabs everywhere
 set mouse=a                                                       " it's always useful
 set nowrap number nomodeline " cursorline
-set path+=**                                             " Recursive path Tab autocomplete
-set smartindent copyindent                             " always set autoindenting on
+set path+=**                                                      " Recursive path Tab autocomplete
+set smartindent copyindent                                        " always set autoindenting on
 set splitright splitbelow                                         " Open new splits to the right and bottom
 set title nocompatible nowritebackup nobackup                     " required
 set undofile undolevels=1000 undodir=$HOME/.vim/undo              " Undo file and directory
 set updatetime=1000 ttyfast lazyredraw t_Co=16
-set showfulltag
-set autoindent  backspace=indent,eol,start formatoptions+=j
+set showfulltag autoindent backspace=indent,eol,start formatoptions+=j
 set smarttab incsearch sessionoptions-=options viewoptions-=options
 let &colorcolumn=join(range(81,250),",")
 """""""""
