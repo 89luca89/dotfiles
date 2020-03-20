@@ -31,6 +31,14 @@ filetype plugin indent on                           " required
 syntax on
 " Dynamic split resize
 autocmd VimResized * :wincmd =
+autocmd InsertEnter * call lsp#activate()
+autocmd InsertEnter * :<C-u>ALEEnable
+" Set cursorline ONLY on active buffer
+augroup CursorLine
+    au!
+    au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
+    au WinLeave * setlocal nocursorline
+augroup END
 " Tags
 "let g:gutentags_project_root = ['package.json', '.git', 'Makefile', '.project']
 let g:gutentags_project_root = ['Makefile', '.project', '.git', '.hg', '.svn', '.bzr', '_darcs', '_darcs', '_FOSSIL_', '.fslckout' ]
@@ -67,7 +75,7 @@ let g:go_highlight_structs      = 1
 let g:go_highlight_types        = 1
 let g:python_highlight_all  = 1
 " ALE linter
-let g:ale_enabled           = 1
+let g:ale_enabled           = 0
 let g:ale_set_loclist       = 1
 let g:ale_linters_explicit  = 1
 let g:ale_fix_on_save       = 1
@@ -87,6 +95,7 @@ set completepopup=align:menu,border:off,highlight:Pmenu
 let g:asyncomplete_auto_completeopt  = 0
 let g:asyncomplete_remove_duplicates = 1
 let g:asyncomplete_smart_completion  = 1
+let g:lsp_auto_enable   = 0
 let g:lsp_diagnostics_echo_cursor    = 1
 let g:lsp_diagnostics_enabled        = 1
 let g:lsp_highlight_references_enabled = 1
@@ -196,19 +205,19 @@ augroup lspbindings
     autocmd Filetype c,cpp,python,go nnoremap <leader>r :<C-u>LspRename<CR>
 augroup end
 " Miscellaneous
+let &colorcolumn=join(range(81,250),",")
+set autoindent backspace=indent,eol,start
 set directory=$HOME/.vim/swap                                     " Custom swapfile directory
 set expandtab shiftwidth=4 tabstop=4 softtabstop=4                " Four spaces for tabs everywhere
 set mouse=a                                                       " it's always useful
-set nowrap number nomodeline " cursorline
+set nowrap number nomodeline cursorline relativenumber
 set path+=**                                                      " Recursive path Tab autocomplete
 set smartindent copyindent                                        " always set autoindenting on
+set smarttab incsearch sessionoptions-=options viewoptions-=options
 set splitright splitbelow                                         " Open new splits to the right and bottom
-set title nocompatible nowritebackup nobackup                     " required
+set title nocompatible nowritebackup nobackup
 set undofile undolevels=1000 undodir=$HOME/.vim/undo              " Undo file and directory
 set updatetime=1000 ttyfast lazyredraw t_Co=16
-set showfulltag autoindent backspace=indent,eol,start formatoptions+=j
-set smarttab incsearch sessionoptions-=options viewoptions-=options
-let &colorcolumn=join(range(81,250),",")
 """""""""
 " Theming
 set background=dark
