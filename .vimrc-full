@@ -162,7 +162,6 @@ nnoremap <leader>b      :Files<CR>
 nnoremap <leader>f      :Rg<CR>
 " Utility for Markdown and Ansible
 nnoremap <leader>j  :set ft=.jinja2<Left><Left><Left><Left><Left><Left><Left>
-nnoremap <leader>om :!(mdpdf > /dev/null "%" && mv $(echo "%" <bar> sed 's/md/pdf/g') /tmp/ ) &<CR><CR>
 " ALE Keybindings
 nnoremap <leader>A  :bufdo ALELint<CR>:bp<CR>:bufdo e<CR>:so ~/.vimrc<CR>
 nnoremap <leader>e  :lopen<CR>

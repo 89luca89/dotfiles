@@ -78,25 +78,23 @@
         - rpmfusion_exists is defined
         - not rpmfusion_exists.stat.exists
 
+    - name: Install Programs (Virtualization)
+      package:
+        state: present
+        name:
+          - libvirt
+          - virt-manager
+      become: true
+      tags: virtualization
+
     - name: Install Programs (Generic Utilities)
       package:
         state: present
         name:
+          - acpi
           - etckeeper
           - flatpak
-          - git
-          - highlight
-          - libappindicator
-          - libappindicator-gtk3
-          - libnotify
-          - libvirt
           - openssh-askpass
-          - ripgrep
-          - syncthing
-          - tmux
-          - vim
-          - vim-X11
-          - vim-enhanced
           - wmctrl
           - xclip
           - xdotool
@@ -167,6 +165,7 @@
           - libva-vdpau-driver
           - libvdpau-va-gl
           - youtube-dl
+          - mpv
       become: true
       tags: media_pkg
 
@@ -174,15 +173,15 @@
       package:
         state: present
         name:
+          - evolution
+          - evolution-ews
           - gimp
           - gnome-tweak-tool
-          - gparted
           - keepassxc
-          - mpv
           - kitty
           - rhythmbox
           - rhythmbox-alternative-toolbar
-          - virt-manager
+          - syncthing
       become: true
       tags: gui_pkg
 
@@ -205,34 +204,29 @@
         - com.skype.Client
       tags: flathub
 
-    - name: install the 'Development tools' package group
-      dnf:
-        state: present
-        name:
-          - '@C Development Tools and Libraries'
-          - '@Development tools'
-      become: true
-      tags: devel
-
     - name: Install Programs (Programming Packages)
       package:
         state: present
         name:
           - ShellCheck
-          - boost-devel
           - ccze
           - clang
           - clang-tools-extra
-          - cmake
           - ctags
           - ctags-etags
-          - global-ctags
+          - git
           - golang
+          - make
           - ncurses-compat-libs
           - python2
           - python2-devel
           - python3
           - python3-devel
+          - ripgrep
+          - tmux
+          - vim
+          - vim-X11
+          - vim-enhanced
       become: true
       tags: devel,python
 
@@ -242,35 +236,25 @@
         executable: pip3
         name:
           - 'python-language-server[all]'
+          - yamllint
           - ansible-lint
           - neovim
           - psutil
           - setuptools
-          - yamllint
       become: true
       tags: devel,python
-
-    - name: Install Programs (npm Packages) - npm
-      npm:
-        name: "{{ item }}"
-        global: yes
-      with_items:
-        - markdown-cli
-        - mdpdf
-      tags: devel,npm
 
     - name: Install Programs (Programming Packages) - golang
       command: "{{ item }}"
       with_items:
         - "go get -u github.com/go-delve/delve/cmd/dlv"
-        - "go get -u golang.org/x/tools/cmd/goimports"
         - "go get -u golang.org/x/lint/golint"
+        - "go get -u golang.org/x/tools/cmd/goimports"
         - "go get -u golang.org/x/tools/gopls"
         - "go get -u mvdan.cc/sh/cmd/shfmt"
       environment:
         GOPATH: "{{ ansible_env.HOME }}/.local/go"
       tags: devel,golang
-        # - "go get -u github.com/sourcegraph/go-langserver"
 
     - name: Ensure {{ ansible_env.HOME }}/Programs Exists
       file:
@@ -575,6 +559,7 @@
         - '{{ ansible_env.HOME }}/.config/mpv'
         - '{{ ansible_env.HOME }}/.config/kitty'
         - '{{ ansible_env.HOME }}/.config/keepassxc'
+        - '{{ ansible_env.HOME }}/.config/systemd'
         - '{{ ansible_env.HOME }}/Programs'
       register: firstrun
       tags: dotfiles
@@ -593,23 +578,23 @@
         path: '{{ item }}'
         state: absent
       with_items:
-        - "~/.ansible.cfg"
-        - "~/.aliases"
-        - "~/.bashrc"
-        - "~/.histfile"
-        - "~/.tmux.conf"
-        - "~/.vimrc"
-        - "~/.zshrc"
-        - "~/.ctags"
-        - "~/.gitconfig"
-        - "~/.config/user-dirs.dirs"
-        - "~/.config/libinput-gestures.conf"
-        - "~/.config/mpv/mpv.conf"
-        - "~/.config/kitty/kitty.conf"
-        - "~/.config/keepassxc/keepassxc.ini"
-        - "~/.config/systemd/user"
-        - "~/.ssh/assh.yml"
-        - "~/.local/share/applications"
+        - '{{ ansible_env.HOME }}/.ansible.cfg'
+        - '{{ ansible_env.HOME }}/.aliases'
+        - '{{ ansible_env.HOME }}/.bashrc'
+        - '{{ ansible_env.HOME }}/.histfile'
+        - '{{ ansible_env.HOME }}/.tmux.conf'
+        - '{{ ansible_env.HOME }}/.vimrc'
+        - '{{ ansible_env.HOME }}/.zshrc'
+        - '{{ ansible_env.HOME }}/.ctags'
+        - '{{ ansible_env.HOME }}/.gitconfig'
+        - '{{ ansible_env.HOME }}/.config/user-dirs.dirs'
+        - '{{ ansible_env.HOME }}/.config/libinput-gestures.conf'
+        - '{{ ansible_env.HOME }}/.config/mpv/mpv.conf'
+        - '{{ ansible_env.HOME }}/.config/kitty/kitty.conf'
+        - '{{ ansible_env.HOME }}/.config/keepassxc/keepassxc.ini'
+        - '{{ ansible_env.HOME }}/.config/systemd/user'
+        - '{{ ansible_env.HOME }}/.ssh/assh.yml'
+        - '{{ ansible_env.HOME }}/.local/share/applications'
       when: firstrun.changed
       tags: dotfiles
 
@@ -619,29 +604,23 @@
         dest: '{{ item.dest }}'
         state: link
       with_items:
-        - {src: "~/dotfiles/.ansible.cfg", dest: "~/.ansible.cfg"}
-        - {src: "~/dotfiles/.aliases", dest: "~/.aliases"}
-        - {src: "~/dotfiles/.bashrc", dest: "~/.bashrc"}
-        - {src: "~/dotfiles/.tmux.conf", dest: "~/.tmux.conf"}
-        - {src: "~/dotfiles/.vimrc-full", dest: "~/.vimrc"}
-        - {src: "~/dotfiles/.zshrc", dest: "~/.zshrc"}
-        - {src: "~/dotfiles/.ctags", dest: "~/.ctags"}
-        - {src: "~/dotfiles/user-dirs.dirs", dest: "~/.config/user-dirs.dirs"}
-        - {src: "~/dotfiles/libinput-gestures.conf", dest: "~/.config/libinput-gestures.conf"}
-        - {src: "~/dotfiles/mpv.conf", dest: "~/.config/mpv/mpv.conf"}
-        - {src: "~/dotfiles/kitty.conf", dest: "~/.config/kitty/kitty.conf"}
-        - {src: "~/dotfiles/systemd", dest: "~/.config/systemd/user"}
-        - {src: "~/Syncthing/Conf/keepassxc.ini", dest: "~/.config/keepassxc/keepassxc.ini"}
-        - {src: "~/Syncthing/Conf/assh.yml", dest: "~/.ssh/assh.yml"}
-        - {src: "~/Syncthing/Conf/Shortcuts/applications", dest: "~/.local/share/applications"}
-        - {src: "~/Syncthing/Conf/.gitconfig", dest: "~/.gitconfig"}
-        - {src: "~/Syncthing/Conf/.histfile", dest: "~/.histfile"}
-      when: firstrun.changed
-      tags: dotfiles
-
-    - name: Install Vim Plugins
-      command: |
-        vim +PlugInstall +qall
+        - {src: '{{ ansible_env.HOME }}/dotfiles/.ansible.cfg', dest: '{{ ansible_env.HOME }}/.ansible.cfg'}
+        - {src: '{{ ansible_env.HOME }}/dotfiles/.aliases', dest: '{{ ansible_env.HOME }}/.aliases'}
+        - {src: '{{ ansible_env.HOME }}/dotfiles/.bashrc', dest: '{{ ansible_env.HOME }}/.bashrc'}
+        - {src: '{{ ansible_env.HOME }}/dotfiles/.tmux.conf', dest: '{{ ansible_env.HOME }}/.tmux.conf'}
+        - {src: '{{ ansible_env.HOME }}/dotfiles/.vimrc-full', dest: '{{ ansible_env.HOME }}/.vimrc'}
+        - {src: '{{ ansible_env.HOME }}/dotfiles/.zshrc', dest: '{{ ansible_env.HOME }}/.zshrc'}
+        - {src: '{{ ansible_env.HOME }}/dotfiles/.ctags', dest: '{{ ansible_env.HOME }}/.ctags'}
+        - {src: '{{ ansible_env.HOME }}/dotfiles/user-dirs.dirs', dest: '{{ ansible_env.HOME }}/.config/user-dirs.dirs'}
+        - {src: '{{ ansible_env.HOME }}/dotfiles/libinput-gestures.conf', dest: '{{ ansible_env.HOME }}/.config/libinput-gestures.conf'}
+        - {src: '{{ ansible_env.HOME }}/dotfiles/mpv.conf', dest: '{{ ansible_env.HOME }}/.config/mpv/mpv.conf'}
+        - {src: '{{ ansible_env.HOME }}/dotfiles/kitty.conf', dest: '{{ ansible_env.HOME }}/.config/kitty/kitty.conf'}
+        - {src: '{{ ansible_env.HOME }}/dotfiles/systemd', dest: '{{ ansible_env.HOME }}/.config/systemd/user'}
+        - {src: '{{ ansible_env.HOME }}/Syncthing/Conf/keepassxc.ini', dest: '{{ ansible_env.HOME }}/.config/keepassxc/keepassxc.ini'}
+        - {src: '{{ ansible_env.HOME }}/Syncthing/Conf/assh.yml', dest: '{{ ansible_env.HOME }}/.ssh/assh.yml'}
+        - {src: '{{ ansible_env.HOME }}/Syncthing/Conf/Shortcuts/applications', dest: '{{ ansible_env.HOME }}/.local/share/applications'}
+        - {src: '{{ ansible_env.HOME }}/Syncthing/Conf/.gitconfig', dest: '{{ ansible_env.HOME }}/.gitconfig'}
+        - {src: '{{ ansible_env.HOME }}/Syncthing/Conf/.histfile', dest: '{{ ansible_env.HOME }}/.histfile'}
       when: firstrun.changed
       tags: dotfiles
 
@@ -658,7 +637,7 @@
     - name: Load Gnome Keybindings (gsettings)
       shell: |
         dconf reset -f /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/;
-        gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/'";
+        gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/']";
       when: firstrun.changed
       tags: dotfiles
 
