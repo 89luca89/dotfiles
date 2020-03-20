@@ -32,7 +32,7 @@ syntax on
 " Dynamic split resize
 autocmd VimResized * :wincmd =
 autocmd InsertEnter * call lsp#activate()
-autocmd InsertEnter * :<C-u>ALEEnable
+autocmd InsertEnter * :ALEEnable
 " Remove trailing whitespaces and lines
 autocmd BufWritePre * silent! :%s/\s\+$//e
 autocmd BufWritePre * silent! :%s/\($\n\s*\)\+\%$//e
@@ -151,19 +151,19 @@ map <leader>p "+p
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 " vim-tmux-navigator shortcuts
 let g:tmux_navigator_no_mappings    = 1
-inoremap <silent> <M-Down>  <Esc>:<C-u>TmuxNavigateDown<cr>
-inoremap <silent> <M-Left>  <Esc>:<C-u>TmuxNavigateLeft<cr>
-inoremap <silent> <M-Right> <Esc>:<C-u>TmuxNavigateRight<cr>
-inoremap <silent> <M-Up>    <Esc>:<C-u>TmuxNavigateUp<cr>
-nnoremap <silent> <M-Down>  :<C-u>TmuxNavigateDown<cr>
-nnoremap <silent> <M-Left>  :<C-u>TmuxNavigateLeft<cr>
-nnoremap <silent> <M-Right> :<C-u>TmuxNavigateRight<cr>
-nnoremap <silent> <M-Up>    :<C-u>TmuxNavigateUp<cr>
+inoremap <silent> <M-Down>  <Esc>:<C-u>TmuxNavigateDown<CR>
+inoremap <silent> <M-Left>  <Esc>:<C-u>TmuxNavigateLeft<CR>
+inoremap <silent> <M-Right> <Esc>:<C-u>TmuxNavigateRight<CR>
+inoremap <silent> <M-Up>    <Esc>:<C-u>TmuxNavigateUp<CR>
+nnoremap <silent> <M-Down>  :<C-u>TmuxNavigateDown<CR>
+nnoremap <silent> <M-Left>  :<C-u>TmuxNavigateLeft<CR>
+nnoremap <silent> <M-Right> :<C-u>TmuxNavigateRight<CR>
+nnoremap <silent> <M-Up>    :<C-u>TmuxNavigateUp<CR>
 " navigate tabs Tab (fw) S-Tab (prev)
 map <Tab>   :<C-u>bn!<CR>
 map <S-Tab> :<C-u>bp!<CR>
 " C-c close buffer
-nnoremap <C-c> :<C-u>bp<bar>sp<bar>bn<bar>bd<CR>
+nnoremap <C-c> :<C-u>bp<BAR>sp<BAR>bn<BAR>bd<CR>
 " " Resize split window horizontally and vertically
 noremap <S-M-Down>  :<C-u>2winc-<CR>
 noremap <S-M-Left>  :<C-u>2winc<<CR>
@@ -174,31 +174,32 @@ nnoremap <leader><Tab>  :<C-u>Buffers<CR>
 nnoremap <leader>b      :<C-u>Files<CR>
 nnoremap <leader>f      :<C-u>Rg<CR>
 " Utility for Markdown and Ansible
-nnoremap <leader>j  :<C-u>set ft=.jinja2<Left><Left><Left><Left><Left><Left><Left>
-" ALE Keybindings
-nnoremap <leader>A  :<C-u>bufdo ALELint<CR>:bp<CR>:bufdo e<CR>:so ~/.vimrc<CR>
-nnoremap <leader>e  :<C-u>lopen<CR>
+nnoremap <leader>j  :<C-u>set ft=
 " Default IDE-Style keybindings
 nnoremap <leader>gd :<C-u>GitGutterPreviewHunk<CR>
 nnoremap <leader>gu :<C-u>GitGutterUndoHunk<CR>
 nnoremap <leader>gs :<C-u>GFiles?<CR>
 nnoremap <leader>gg :<C-u>GitGutterLineHighlightsToggle<CR>
 nnoremap <leader>t  :<C-u>Tags<CR>
-nnoremap <leader>x  :<C-u>Rg <c-r>=expand("<cword>")<cr><CR>
+nnoremap <leader>x  :<C-u>Rg <c-r>=expand("<cword>")<CR><CR>
+nnoremap <leader>e  :<C-u>lopen<CR>
 nnoremap <leader>D  <C-T>
 nnoremap <leader>d  <C-]>
-nnoremap <leader>r  :<C-u>!grep -rl <c-r>=expand("<cword>")<cr><bar>xargs sed -i 's/<c-r>=expand("<cword>")<cr>//g'<Left><Left><Left>
+nnoremap <leader>r  :<C-u>!grep -rl <c-r>=expand("<cword>")<CR><BAR>xargs sed -i 's/<c-r>=expand("<cword>")<CR>//g'<Left><Left><Left>
 nnoremap <leader>l  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>
+vnoremap <leader>l  =
 " LSP keybindings overriding the previous
 augroup lspbindings
     autocmd! lspbindings
     " IDE-like keybindings
-    autocmd Filetype c,cpp,python,go nnoremap K  :<C-u>call popup_clear()<bar>LspHover<CR>
+    autocmd Filetype c,cpp,python,go nnoremap K  :<C-u>call popup_clear()<BAR>LspHover<CR>
     autocmd Filetype c,cpp,python,go nnoremap <leader>e :<C-u>LspDocumentDiagnostics<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <leader>h :<C-u>call popup_clear()<bar>LspPeekDefinition<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <leader>h :<C-u>call popup_clear()<BAR>LspPeekDefinition<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <leader>td :<C-u>call popup_clear()<BAR>LspPeekTypeDefinition<CR>
     autocmd Filetype c,cpp,python,go nnoremap <leader>d :<C-u>LspDefinition<CR>
     autocmd Filetype c,cpp,python,go nnoremap <leader>r :<C-u>LspRename<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <leader>l :<C-u>LspDocumentFormatSync<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <leader>l :<C-u>LspDocumentFormat<CR>
+    autocmd Filetype c,cpp,python,go vnoremap <leader>l :<C-u>LspDocumentRangeFormat<CR>
 augroup end
 " Miscellaneous
 let &colorcolumn=join(range(81,250),",")
