@@ -9,42 +9,46 @@
   tasks:
 
     - name: Remove Programs (Unused Programs)
-      command: |
-          dnf remove -y {{ item }}
-      with_items:
-        - gfbgraph
-        - gnome-abrt
-        - gnome-boxes
-        - gnome-characters
-        - gnome-dictionary
-        - gnome-documents
-        - gnome-font-viewer
-        - gnome-getting-started-docs
-        - gnome-initial-setup
-        - gnome-logs
-        - gnome-maps
-        - gnome-music
-        - gnome-online-miners
-        - gnome-photos
-        - gnome-user-docs
-        - gnome-user-share
-        - gnome-video-effects
-        - gnome-shell-extension-apps-menu
-        - gnome-shell-extension-background-logo
-        - gnome-shell-extension-horizontal-workspaces
-        - gnome-shell-extension-launch-new-instance
-        - gnome-shell-extension-places-menu
-        - gnome-shell-extension-window-list
-        - httpd
-        - ibus-kkc
-        - ibus-libpinyin
-        - ibus-libzhuyin
-        - ibus-typing-booster
-        - orca
-        - simple-scan
-        - virtualbox-guest-additions
-        - yelp
-        - 'libreoffice-*'
+      package:
+        name:
+          - gnome-abrt
+          - gnome-boxes
+          - gnome-characters
+          - gnome-dictionary
+          - gnome-documents
+          - gnome-font-viewer
+          - gnome-getting-started-docs
+          - gnome-initial-setup
+          - gnome-logs
+          - gnome-maps
+          - gnome-music
+          - gnome-online-miners
+          - gnome-photos
+          - gnome-shell-extension-apps-menu
+          - gnome-shell-extension-background-logo
+          - gnome-shell-extension-horizontal-workspaces
+          - gnome-shell-extension-launch-new-instance
+          - gnome-shell-extension-places-menu
+          - gnome-shell-extension-window-list
+          - gnome-user-docs
+          - gnome-user-share
+          - gnome-video-effects
+          - httpd
+          - ibus-kkc
+          - ibus-libpinyin
+          - ibus-libzhuyin
+          - ibus-typing-booster
+          - libreoffice
+          - libreoffice-calc
+          - libreoffice-draw
+          - libreoffice-impress
+          - libreoffice-math
+          - libreoffice-writer
+          - orca
+          - simple-scan
+          - virtualbox-guest-additions
+          - yelp
+        state: absent
       become: true
       tags: bloat
 
@@ -244,6 +248,12 @@
       become: true
       tags: devel,python
 
+    - name: Check that golang exists
+      stat:
+        path: "{{ ansible_env.HOME }}/.local/go/bin/gopls"
+      register: golang
+      tags: devel,golang
+
     - name: Install Programs (Programming Packages) - golang
       command: "{{ item }}"
       with_items:
@@ -254,7 +264,33 @@
         - "go get -u mvdan.cc/sh/cmd/shfmt"
       environment:
         GOPATH: "{{ ansible_env.HOME }}/.local/go"
+      when: not golang.stat.exists
       tags: devel,golang
+
+    - name: Check that rustup exists
+      stat:
+        path: "{{ ansible_env.HOME }}/.local/rust/bin/rustup"
+      register: rustup
+      tags: devel,rust
+
+    - name: Install Programs (Programming Packages) - rustup/rust
+      shell: "curl https://sh.rustup.rs -sSf | sh -s -- -y"
+      when: not rustup.stat.exists
+      tags: devel,rust
+
+    - name: Install Programs (Programming Packages) - rust/deps
+      shell: |
+        "{{ ansible_env.HOME }}"/.local/rust/bin/rustup run stable cargo install "{{ item }}"
+      with_items:
+        - parallel
+        - racer
+        - rls
+        - rls
+        - rust-analysis
+        - rust-src
+        - rustfmt
+      when: not rustup.stat.exists
+      tags: devel,rust
 
     - name: Ensure {{ ansible_env.HOME }}/Programs Exists
       file:
@@ -491,8 +527,8 @@
     - name: Update Grub and Initramfs
       command: '{{ item }}'
       with_items:
-        - grub2-mkconfig -o $(find /boot -name "grub.cfg" -print | head -n 1)
-        - dracut --force --regenerate-all -v
+        - 'grub2-mkconfig -o $(find /boot -name "grub.cfg" -print | head -n 1)'
+        - 'dracut --force --regenerate-all -v'
       when: grub_setup.changed
       become: true
       tags: system
