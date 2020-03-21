@@ -180,6 +180,7 @@ nnoremap <leader>gd :<C-u>GitGutterPreviewHunk<CR>
 nnoremap <leader>gu :<C-u>GitGutterUndoHunk<CR>
 nnoremap <leader>gs :<C-u>GFiles?<CR>
 nnoremap <leader>gg :<C-u>GitGutterLineHighlightsToggle<CR>
+nnoremap <leader>m  :<C-u>Commands<CR>
 nnoremap <leader>t  :<C-u>Tags<CR>
 nnoremap <leader>x  :<C-u>Rg <c-r>=expand("<cword>")<CR><CR>
 nnoremap <leader>e  :<C-u>lopen<CR>
