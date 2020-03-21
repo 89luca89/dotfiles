@@ -9,42 +9,46 @@
   tasks:
 
     - name: Remove Programs (Unused Programs)
-      command: |
-          dnf remove -y {{ item }}
-      with_items:
-        - gfbgraph
-        - gnome-abrt
-        - gnome-boxes
-        - gnome-characters
-        - gnome-dictionary
-        - gnome-documents
-        - gnome-font-viewer
-        - gnome-getting-started-docs
-        - gnome-initial-setup
-        - gnome-logs
-        - gnome-maps
-        - gnome-music
-        - gnome-online-miners
-        - gnome-photos
-        - gnome-user-docs
-        - gnome-user-share
-        - gnome-video-effects
-        - gnome-shell-extension-apps-menu
-        - gnome-shell-extension-background-logo
-        - gnome-shell-extension-horizontal-workspaces
-        - gnome-shell-extension-launch-new-instance
-        - gnome-shell-extension-places-menu
-        - gnome-shell-extension-window-list
-        - httpd
-        - ibus-kkc
-        - ibus-libpinyin
-        - ibus-libzhuyin
-        - ibus-typing-booster
-        - orca
-        - simple-scan
-        - virtualbox-guest-additions
-        - yelp
-        - 'libreoffice-*'
+      package:
+        name:
+          - gnome-abrt
+          - gnome-boxes
+          - gnome-characters
+          - gnome-dictionary
+          - gnome-documents
+          - gnome-font-viewer
+          - gnome-getting-started-docs
+          - gnome-initial-setup
+          - gnome-logs
+          - gnome-maps
+          - gnome-music
+          - gnome-online-miners
+          - gnome-photos
+          - gnome-shell-extension-apps-menu
+          - gnome-shell-extension-background-logo
+          - gnome-shell-extension-horizontal-workspaces
+          - gnome-shell-extension-launch-new-instance
+          - gnome-shell-extension-places-menu
+          - gnome-shell-extension-window-list
+          - gnome-user-docs
+          - gnome-user-share
+          - gnome-video-effects
+          - httpd
+          - ibus-kkc
+          - ibus-libpinyin
+          - ibus-libzhuyin
+          - ibus-typing-booster
+          - libreoffice
+          - libreoffice-calc
+          - libreoffice-draw
+          - libreoffice-impress
+          - libreoffice-math
+          - libreoffice-writer
+          - orca
+          - simple-scan
+          - virtualbox-guest-additions
+          - yelp
+        state: absent
       become: true
       tags: bloat
 
@@ -491,8 +495,8 @@
     - name: Update Grub and Initramfs
       command: '{{ item }}'
       with_items:
-        - grub2-mkconfig -o $(find /boot -name "grub.cfg" -print | head -n 1)
-        - dracut --force --regenerate-all -v
+        - 'grub2-mkconfig -o $(find /boot -name "grub.cfg" -print | head -n 1)'
+        - 'dracut --force --regenerate-all -v'
       when: grub_setup.changed
       become: true
       tags: system
