@@ -184,7 +184,7 @@ nnoremap <leader>t  :<C-u>Tags<CR>
 nnoremap <leader>x  :<C-u>Rg <c-r>=expand("<cword>")<CR><CR>
 nnoremap <leader>e  :<C-u>lopen<CR>
 nnoremap <leader>D  <C-T>
-nnoremap <leader>d  <C-]>
+nnoremap <leader>d  :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
 nnoremap <leader>r  :<C-u>!grep -rl <c-r>=expand("<cword>")<CR><BAR>xargs sed -i 's/<c-r>=expand("<cword>")<CR>//g'<Left><Left><Left>
 nnoremap <leader>l  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>
 vnoremap <leader>l  =
