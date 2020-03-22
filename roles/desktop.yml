@@ -95,6 +95,7 @@
       package:
         state: present
         name:
+          - htop
           - acpi
           - etckeeper
           - flatpak
@@ -258,8 +259,11 @@
       command: "{{ item }}"
       with_items:
         - "go get -u github.com/go-delve/delve/cmd/dlv"
+        - "go get -u github.com/golangci/golangci-lint/cmd/golangci-lint"
         - "go get -u golang.org/x/lint/golint"
         - "go get -u golang.org/x/tools/cmd/goimports"
+        - "go get -u golang.org/x/tools/cmd/gorename"
+        - "go get -u golang.org/x/tools/cmd/guru"
         - "go get -u golang.org/x/tools/gopls"
         - "go get -u mvdan.cc/sh/cmd/shfmt"
       environment:
