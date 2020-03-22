@@ -136,11 +136,6 @@ call lsp#register_server({
             \ 'whitelist': ['python'],
             \ 'cmd': {server_info->['pyls']},
             \ })
-call lsp#register_server({
-            \ 'name': 'rls',
-            \ 'cmd': {server_info->['rustup', 'run', 'stable', 'rls']},
-            \ 'whitelist': ['rust'],
-            \ })
 " FZF fuzzy
 let g:fzf_action = {'alt-enter':'vsplit' }
 let g:fzf_files_options = "--preview 'if file {1} | grep -Ei \"text|JSON\"; then cat {1} ; fi'"

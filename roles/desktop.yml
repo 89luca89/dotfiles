@@ -267,30 +267,38 @@
       when: not golang.stat.exists
       tags: devel,golang
 
-    - name: Check that rustup exists
-      stat:
-        path: "{{ ansible_env.HOME }}/.local/rust/bin/rustup"
-      register: rustup
-      tags: devel,rust
+      # - name: Check that rustup exists
+      #   stat:
+      #     path: "{{ ansible_env.HOME }}/.local/rust/bin/rustup"
+      #   register: rustup
+      #   tags: devel,rust
 
-    - name: Install Programs (Programming Packages) - rustup/rust
-      shell: "curl https://sh.rustup.rs -sSf | sh -s -- -y"
-      when: not rustup.stat.exists
-      tags: devel,rust
+      # - name: Install Programs (Programming Packages) - rustup/rust
+      #   shell: "curl https://sh.rustup.rs -sSf | sh -s -- -y"
+      #   when: not rustup.stat.exists
+      #   tags: devel,rust
 
-    - name: Install Programs (Programming Packages) - rust/deps
-      shell: |
-        "{{ ansible_env.HOME }}"/.local/rust/bin/rustup run stable cargo install "{{ item }}"
-      with_items:
-        - parallel
-        - racer
-        - rls
-        - rls
-        - rust-analysis
-        - rust-src
-        - rustfmt
-      when: not rustup.stat.exists
-      tags: devel,rust
+      # - name: Install Programs (Programming Packages) - rust/deps
+      #   shell: |
+      #     {{ ansible_env.HOME }}/.local/rust/bin/rustup component add {{ item }}
+      #   with_items:
+      #     - rls --toolchain stable-x86_64-unknown-linux-gnu
+      #   when: not rustup.stat.exists
+      #   tags: devel,rust
+
+      # - name: Install Programs (Programming Packages) - rust/deps
+      #   shell: |
+      #     {{ ansible_env.HOME }}/.local/rust/bin/rustup run stable cargo install {{ item }}
+      #   with_items:
+      #     - parallel
+      #     - racer
+      #     - rls
+      #     - rls
+      #     - rust-analysis
+      #     - rust-src
+      #     - rustfmt
+      #   when: not rustup.stat.exists
+      #   tags: devel,rust
 
     - name: Ensure {{ ansible_env.HOME }}/Programs Exists
       file:
