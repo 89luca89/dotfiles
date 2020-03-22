@@ -22,7 +22,7 @@ Plug 'prabirshrestha/asyncomplete-tags.vim'
 Plug 'prabirshrestha/asyncomplete-lsp.vim'
 Plug 'prabirshrestha/vim-lsp'
 " Aestetics
-Plug 'vim-airline/vim-airline'
+Plug 'ap/vim-buftabline'
 Plug 'rakr/vim-one'
 
 call plug#end()                                     " required
@@ -42,6 +42,9 @@ augroup CursorLine
     au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
     au WinLeave * setlocal nocursorline
 augroup END
+let g:buftabline_indicators = 1
+let g:buftabline_separators = 1
+let g:buftabline_plug_max   = 0
 " Tags
 "let g:gutentags_project_root = ['package.json', '.git', 'Makefile', '.project']
 let g:gutentags_project_root = ['Makefile', '.project', '.git', '.hg', '.svn', '.bzr', '_darcs', '_darcs', '_FOSSIL_', '.fslckout' ]
@@ -58,9 +61,6 @@ let g:netrw_banner          = 0
 let g:netrw_browse_split    = 4
 let g:netrw_liststyle       = 3
 let g:netrw_winsize         = -28
-" Airline
-let g:airline#extensions#tabline#formatter = 'unique_tail'
-let g:airline_extensions = ['tabline']
 " Langs
 let g:ansible_attribute_highlight   = 'ab'
 let g:ansible_extra_keywords_highlight  = 1
@@ -193,14 +193,14 @@ vnoremap <leader>l  =
 augroup lspbindings
     autocmd! lspbindings
     " IDE-like keybindings
-    autocmd Filetype c,cpp,python,go nnoremap K  :<C-u>call popup_clear()<BAR>LspHover<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <leader>e :<C-u>LspDocumentDiagnostics<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <leader>h :<C-u>call popup_clear()<BAR>LspPeekDefinition<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <leader>td :<C-u>call popup_clear()<BAR>LspPeekTypeDefinition<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <leader>d :<C-u>LspDefinition<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <leader>r :<C-u>LspRename<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <leader>l :<C-u>LspDocumentFormat<CR>
-    autocmd Filetype c,cpp,python,go vnoremap <leader>l :<C-u>LspDocumentRangeFormat<CR>
+    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap K  :<C-u>call popup_clear()<BAR>LspHover<CR>
+    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap <leader>e :<C-u>LspDocumentDiagnostics<CR>
+    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap <leader>h :<C-u>call popup_clear()<BAR>LspPeekDefinition<CR>
+    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap <leader>td :<C-u>call popup_clear()<BAR>LspPeekTypeDefinition<CR>
+    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap <leader>d :<C-u>LspDefinition<CR>
+    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap <leader>r :<C-u>LspRename<CR>
+    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap <leader>l :<C-u>LspDocumentFormat<CR>
+    autocmd Filetype c,cpp,objc,objcpp,python,go vnoremap <leader>l :<C-u>LspDocumentRangeFormat<CR>
 augroup end
 " Miscellaneous
 let &colorcolumn=join(range(81,250),",")
@@ -223,10 +223,12 @@ set termguicolors
 let g:one_allow_italics = 1
 colorscheme one
 autocmd Syntax,InsertEnter * syntax match myFunction /\<\k\+\ze(/
+highlight link myFunction   Function
 highlight ALEErrorSign      guifg=#FF0000
 highlight ALEWarning        guibg=#333300
 highlight ALEWarningSign    guifg=#FFFF00
-highlight link myFunction   Function
+highlight StatusLine guifg=white guibg=#555555
+highlight StatusLineNC guibg=white guifg=#282c34
 " Toggle Theme
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
@@ -235,6 +237,8 @@ function! ToggleTheme()
         highlight ALEErrorSign      guifg=#FF0000
         highlight ALEWarning        guibg=#333300
         highlight ALEWarningSign    guifg=#FFFF00
+        highlight StatusLine guifg=white guibg=#555555
+        highlight StatusLineNC guibg=white guifg=#282c34
     else
         set background=light
         highlight ALEErrorSign      guibg=#555555 guifg=#FF0000
