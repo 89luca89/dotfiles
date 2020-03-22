@@ -117,17 +117,26 @@ call lsp#register_server({
             \ 'cmd': {server_info->['gopls']},
             \ })
 call lsp#register_server({
+            \ 'name': 'golangci-lint-langserver',
+            \ 'whitelist': ['go'],
+            \ 'cmd': {server_info->['golangci-lint-langserver']},
+            \ 'initialization_options': {'command': ['golangci-lint', 'run',
+            \'--fast', '--enable-all',
+            \'--disable', 'funlen,gomnd,gochecknoglobals', '--out-format', 'json']},
+            \ })
+call lsp#register_server({
             \ 'name': 'pyls',
             \ 'whitelist': ['python'],
             \ 'cmd': {server_info->['pyls']},
             \ })
 call lsp#register_server({
             \ 'name': 'efm-langserver',
-            \ 'whitelist': ['sh',
-            \'yaml',
-            \'yaml.ansible',
+            \ 'whitelist': [
             \'json',
             \'xml',
+            \'yaml',
+            \'yaml.ansible',
+            \'sh',
             \'python',
             \'go'],
             \ 'cmd': {server_info->['efm-langserver', '-c=/home/luca-linux/dotfiles/efm-config.yml']},
@@ -189,14 +198,14 @@ vnoremap <leader>l  =
 augroup lspbindings
     autocmd! lspbindings
     " IDE-like keybindings
-    autocmd Filetype sh,yaml,yaml.ansible,c,cpp,python,go,json,xml nnoremap K  :<C-u>call popup_clear()<BAR>LspHover<CR>
-    autocmd Filetype sh,yaml,yaml.ansible,c,cpp,python,go,json,xml nnoremap <leader>e :<C-u>LspDocumentDiagnostics<CR>
-    autocmd Filetype sh,yaml,yaml.ansible,c,cpp,python,go,json,xml nnoremap <leader>h :<C-u>call popup_clear()<BAR>LspPeekDefinition<CR>
-    autocmd Filetype sh,yaml,yaml.ansible,c,cpp,python,go,json,xml nnoremap <leader>td :<C-u>call popup_clear()<BAR>LspPeekTypeDefinition<CR>
-    autocmd Filetype sh,yaml,yaml.ansible,c,cpp,python,go,json,xml nnoremap <leader>d :<C-u>LspDefinition<CR>
-    autocmd Filetype sh,yaml,yaml.ansible,c,cpp,python,go,json,xml nnoremap <leader>r :<C-u>LspRename<CR>
-    autocmd Filetype sh,yaml,yaml.ansible,c,cpp,python,go,json,xml nnoremap <leader>l :<C-u>LspDocumentFormat<CR>
-    autocmd Filetype sh,yaml,yaml.ansible,c,cpp,python,go,json,xml vnoremap <leader>l :<C-u>LspDocumentRangeFormat<CR>
+    autocmd Filetype yaml,yaml.ansible,sh,c,cpp,python,go,json,xml nnoremap K  :<C-u>call popup_clear()<BAR>LspHover<CR>
+    autocmd Filetype yaml,yaml.ansible,sh,c,cpp,python,go,json,xml nnoremap <leader>e :<C-u>LspDocumentDiagnostics<CR>
+    autocmd Filetype yaml,yaml.ansible,sh,c,cpp,python,go,json,xml nnoremap <leader>h :<C-u>call popup_clear()<BAR>LspPeekDefinition<CR>
+    autocmd Filetype yaml,yaml.ansible,sh,c,cpp,python,go,json,xml nnoremap <leader>td :<C-u>call popup_clear()<BAR>LspPeekTypeDefinition<CR>
+    autocmd Filetype yaml,yaml.ansible,sh,c,cpp,python,go,json,xml nnoremap <leader>d :<C-u>LspDefinition<CR>
+    autocmd Filetype yaml,yaml.ansible,sh,c,cpp,python,go,json,xml nnoremap <leader>r :<C-u>LspRename<CR>
+    autocmd Filetype yaml,yaml.ansible,sh,c,cpp,python,go,json,xml nnoremap <leader>l :<C-u>LspDocumentFormat<CR>
+    autocmd Filetype yaml,yaml.ansible,sh,c,cpp,python,go,json,xml vnoremap <leader>l :<C-u>LspDocumentRangeFormat<CR>
 augroup end
 " Miscellaneous
 let &colorcolumn=join(range(81,250),",")

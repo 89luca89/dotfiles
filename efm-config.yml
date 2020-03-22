@@ -55,11 +55,11 @@ tools:
     env:
       - 'PYTHONIOENCODING=UTF-8'
 
-  golangci-lint: &golangci-lint
-    lint-command: 'golangci-lint run --enable-all --disable funlen,gomnd,gochecknoglobals --out-format line-number ${INPUT}'
-    lint-stdin: false
-    lint-formats:
-      - '%f:%l:%c: %m'
+        # golangci-lint: &golangci-lint
+        #   lint-command: 'cd $(dirname ${INPUT}); golangci-lint run --fast --color never --enable-all --disable funlen,gomnd,gochecknoglobals .'
+        #   lint-stdin: false
+        #   lint-formats:
+        #     - '%f:%l:%c: %m'
 
   goimports: &goimports
     format-command: 'goimports'
@@ -99,7 +99,6 @@ languages:
     - <<: *pylint-lint
 
   go:
-    - <<: *golangci-lint
     - <<: *goimports
 
   json:
