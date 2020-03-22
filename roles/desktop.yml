@@ -246,6 +246,7 @@
           - neovim
           - psutil
           - setuptools
+          - demjson
       become: true
       tags: devel,python
 
@@ -256,53 +257,62 @@
       tags: devel,golang
 
     - name: Install Programs (Programming Packages) - golang
-      command: "{{ item }}"
+      command: "go get -u {{ item }}"
       with_items:
-        - "go get -u github.com/go-delve/delve/cmd/dlv"
-        - "go get -u github.com/golangci/golangci-lint/cmd/golangci-lint"
-        - "go get -u golang.org/x/lint/golint"
-        - "go get -u golang.org/x/tools/cmd/goimports"
-        - "go get -u golang.org/x/tools/cmd/gorename"
-        - "go get -u golang.org/x/tools/cmd/guru"
-        - "go get -u golang.org/x/tools/gopls"
-        - "go get -u mvdan.cc/sh/cmd/shfmt"
+        - github.com/go-delve/delve/cmd/dlv
+        - github.com/golangci/golangci-lint/cmd/golangci-lint
+        - golang.org/x/lint/golint
+        - golang.org/x/tools/cmd/goimports
+        - golang.org/x/tools/cmd/gorename
+        - golang.org/x/tools/cmd/guru
+        - golang.org/x/tools/gopls
       environment:
         GOPATH: "{{ ansible_env.HOME }}/.local/go"
       when: not golang.stat.exists
       tags: devel,golang
 
-      # - name: Check that rustup exists
-      #   stat:
-      #     path: "{{ ansible_env.HOME }}/.local/rust/bin/rustup"
-      #   register: rustup
-      #   tags: devel,rust
+    #- name: Install Programs (npm Packages) - npm
+    #  npm:
+    #    name: "{{ item }}"
+    #    global: yes
+    #  with_items:
+    #    - bash-language-server
+    #    - yaml-language-server
+    #    - dockerfile-language-server-nodejs
+    #  tags: devel,npm
 
-      # - name: Install Programs (Programming Packages) - rustup/rust
-      #   shell: "curl https://sh.rustup.rs -sSf | sh -s -- -y"
-      #   when: not rustup.stat.exists
-      #   tags: devel,rust
+    # - name: Check that rustup exists
+    #   stat:
+    #     path: "{{ ansible_env.HOME }}/.local/rust/bin/rustup"
+    #   register: rustup
+    #   tags: devel,rust
 
-      # - name: Install Programs (Programming Packages) - rust/deps
-      #   shell: |
-      #     {{ ansible_env.HOME }}/.local/rust/bin/rustup component add {{ item }}
-      #   with_items:
-      #     - rls --toolchain stable-x86_64-unknown-linux-gnu
-      #   when: not rustup.stat.exists
-      #   tags: devel,rust
+    # - name: Install Programs (Programming Packages) - rustup/rust
+    #   shell: "curl https://sh.rustup.rs -sSf | sh -s -- -y"
+    #   when: not rustup.stat.exists
+    #   tags: devel,rust
 
-      # - name: Install Programs (Programming Packages) - rust/deps
-      #   shell: |
-      #     {{ ansible_env.HOME }}/.local/rust/bin/rustup run stable cargo install {{ item }}
-      #   with_items:
-      #     - parallel
-      #     - racer
-      #     - rls
-      #     - rls
-      #     - rust-analysis
-      #     - rust-src
-      #     - rustfmt
-      #   when: not rustup.stat.exists
-      #   tags: devel,rust
+    # - name: Install Programs (Programming Packages) - rust/deps
+    #   shell: |
+    #     {{ ansible_env.HOME }}/.local/rust/bin/rustup component add {{ item }}
+    #   with_items:
+    #     - rls --toolchain stable-x86_64-unknown-linux-gnu
+    #   when: not rustup.stat.exists
+    #   tags: devel,rust
+
+    # - name: Install Programs (Programming Packages) - rust/deps
+    #   shell: |
+    #     {{ ansible_env.HOME }}/.local/rust/bin/rustup run stable cargo install {{ item }}
+    #   with_items:
+    #     - parallel
+    #     - racer
+    #     - rls
+    #     - rls
+    #     - rust-analysis
+    #     - rust-src
+    #     - rustfmt
+    #   when: not rustup.stat.exists
+    #   tags: devel,rust
 
     - name: Ensure {{ ansible_env.HOME }}/Programs Exists
       file:
