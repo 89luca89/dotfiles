@@ -5,13 +5,13 @@ Plug 'christoomey/vim-tmux-navigator'
 " utilities
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'                             " fuzzy find all the things
+Plug 'ap/vim-buftabline'
 " Git
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 "" Lang Packs
 Plug 'sheerun/vim-polyglot', { 'do': './build' }    " Lang packs
-"" CTags +  ALE (for non-lsp langs)
-Plug 'dense-analysis/ale'
+"" CTags (for non-lsp langs)
 Plug 'ludovicchabant/vim-gutentags'
 " vim-lsp + asyncomplete
 Plug 'prabirshrestha/async.vim'
@@ -22,7 +22,6 @@ Plug 'prabirshrestha/asyncomplete-tags.vim'
 Plug 'prabirshrestha/asyncomplete-lsp.vim'
 Plug 'prabirshrestha/vim-lsp'
 " Aestetics
-Plug 'ap/vim-buftabline'
 Plug 'rakr/vim-one'
 
 call plug#end()                                     " required
@@ -31,8 +30,6 @@ filetype plugin indent on                           " required
 syntax on
 " Dynamic split resize
 autocmd VimResized * :wincmd =
-autocmd InsertEnter * call lsp#activate()
-autocmd InsertEnter * :ALEEnable
 " Remove trailing whitespaces and lines
 autocmd BufWritePre * silent! :%s/\s\+$//e
 autocmd BufWritePre * silent! :%s/\($\n\s*\)\+\%$//e
@@ -77,30 +74,19 @@ let g:go_highlight_operators    = 1
 let g:go_highlight_structs      = 1
 let g:go_highlight_types        = 1
 let g:python_highlight_all  = 1
-" ALE linter
-let g:ale_enabled           = 0
-let g:ale_set_loclist       = 1
-let g:ale_linters_explicit  = 1
-let g:ale_yaml_yamllint_options     = '-d relaxed'
-let g:ale_linters = {
-            \ 'sh':['shellcheck'],
-            \ 'yaml':['yamllint'],
-            \ 'ansible':['ansible-lint'],
-            \}
 " Asyncomplete + LSP
 set completeopt=noinsert,noselect,menu,popup
 set completepopup=align:menu,border:off,highlight:Pmenu
 let g:asyncomplete_auto_completeopt  = 0
 let g:asyncomplete_remove_duplicates = 1
 let g:asyncomplete_smart_completion  = 1
-let g:lsp_auto_enable   = 0
+let g:lsp_auto_enable   = 1
 let g:lsp_diagnostics_echo_cursor    = 1
 let g:lsp_diagnostics_enabled        = 1
 let g:lsp_highlight_references_enabled = 1
 let g:lsp_highlights_enabled         = 1
 let g:lsp_log_file  = expand('/dev/null')
 let g:lsp_log_verbose          = 0
-let g:lsp_preview_max_height   = 20
 let g:lsp_preview_max_width    = 100
 let g:lsp_semantic_enabled     = 1
 let g:lsp_signs_enabled        = 1
@@ -118,12 +104,11 @@ call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
 call asyncomplete#register_source(asyncomplete#sources#tags#get_source_options({
             \ 'name': 'tags',
             \ 'whitelist': ['*'],
-            \ 'blacklist': ['c', 'cpp', 'go', 'python'],
             \ 'completor': function('asyncomplete#sources#tags#completor'),
             \ }))
 call lsp#register_server({
             \ 'name': 'clangd',
-            \ 'whitelist': ['c', 'cpp', 'objc', 'objcpp'],
+            \ 'whitelist': ['c', 'cpp'],
             \ 'cmd': {server_info->['clangd', '-background-index']},
             \ })
 call lsp#register_server({
@@ -135,6 +120,17 @@ call lsp#register_server({
             \ 'name': 'pyls',
             \ 'whitelist': ['python'],
             \ 'cmd': {server_info->['pyls']},
+            \ })
+call lsp#register_server({
+            \ 'name': 'efm-langserver',
+            \ 'whitelist': ['sh',
+            \'yaml',
+            \'yaml.ansible',
+            \'json',
+            \'xml',
+            \'python',
+            \'go'],
+            \ 'cmd': {server_info->['efm-langserver', '-c=/home/luca-linux/dotfiles/efm-config.yml']},
             \ })
 " FZF fuzzy
 let g:fzf_action = {'alt-enter':'vsplit' }
@@ -193,14 +189,14 @@ vnoremap <leader>l  =
 augroup lspbindings
     autocmd! lspbindings
     " IDE-like keybindings
-    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap K  :<C-u>call popup_clear()<BAR>LspHover<CR>
-    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap <leader>e :<C-u>LspDocumentDiagnostics<CR>
-    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap <leader>h :<C-u>call popup_clear()<BAR>LspPeekDefinition<CR>
-    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap <leader>td :<C-u>call popup_clear()<BAR>LspPeekTypeDefinition<CR>
-    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap <leader>d :<C-u>LspDefinition<CR>
-    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap <leader>r :<C-u>LspRename<CR>
-    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap <leader>l :<C-u>LspDocumentFormat<CR>
-    autocmd Filetype c,cpp,objc,objcpp,python,go vnoremap <leader>l :<C-u>LspDocumentRangeFormat<CR>
+    autocmd Filetype sh,yaml,yaml.ansible,c,cpp,python,go,json,xml nnoremap K  :<C-u>call popup_clear()<BAR>LspHover<CR>
+    autocmd Filetype sh,yaml,yaml.ansible,c,cpp,python,go,json,xml nnoremap <leader>e :<C-u>LspDocumentDiagnostics<CR>
+    autocmd Filetype sh,yaml,yaml.ansible,c,cpp,python,go,json,xml nnoremap <leader>h :<C-u>call popup_clear()<BAR>LspPeekDefinition<CR>
+    autocmd Filetype sh,yaml,yaml.ansible,c,cpp,python,go,json,xml nnoremap <leader>td :<C-u>call popup_clear()<BAR>LspPeekTypeDefinition<CR>
+    autocmd Filetype sh,yaml,yaml.ansible,c,cpp,python,go,json,xml nnoremap <leader>d :<C-u>LspDefinition<CR>
+    autocmd Filetype sh,yaml,yaml.ansible,c,cpp,python,go,json,xml nnoremap <leader>r :<C-u>LspRename<CR>
+    autocmd Filetype sh,yaml,yaml.ansible,c,cpp,python,go,json,xml nnoremap <leader>l :<C-u>LspDocumentFormat<CR>
+    autocmd Filetype sh,yaml,yaml.ansible,c,cpp,python,go,json,xml vnoremap <leader>l :<C-u>LspDocumentRangeFormat<CR>
 augroup end
 " Miscellaneous
 let &colorcolumn=join(range(81,250),",")
@@ -224,9 +220,6 @@ let g:one_allow_italics = 1
 colorscheme one
 autocmd Syntax,InsertEnter * syntax match myFunction /\<\k\+\ze(/
 highlight link myFunction   Function
-highlight ALEErrorSign      guifg=#FF0000
-highlight ALEWarning        guibg=#333300
-highlight ALEWarningSign    guifg=#FFFF00
 highlight StatusLine guifg=white guibg=#555555
 highlight StatusLineNC guibg=white guifg=#282c34
 " Toggle Theme
@@ -234,15 +227,9 @@ map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        highlight ALEErrorSign      guifg=#FF0000
-        highlight ALEWarning        guibg=#333300
-        highlight ALEWarningSign    guifg=#FFFF00
         highlight StatusLine guifg=white guibg=#555555
         highlight StatusLineNC guibg=white guifg=#282c34
     else
         set background=light
-        highlight ALEErrorSign      guibg=#555555 guifg=#FF0000
-        highlight ALEWarning        guibg=#e4e4e4
-        highlight ALEWarningSign    guibg=#555555 guifg=#FFFF00
     endif
 endfunction
