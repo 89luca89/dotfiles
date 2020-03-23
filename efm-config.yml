@@ -20,6 +20,10 @@ tools:
     format-command: 'shfmt -ln bash -kp'
     format-stdin: true
 
+  man: &man
+    hover-command: 'man ${INPUT}'
+    hover-stdin: false
+
   pylint-lint: &pylint-lint
     lint-command: 'pylint ${INPUT} -'
     lint-ignore-exit-code: true
@@ -53,16 +57,13 @@ tools:
     lint-formats:
       - '%f:%l:%c %m'
 
-  goimports: &goimports
-    format-command: 'gopls imports'
-    format-stdin: true
-
 # languages setting
 languages:
 
   sh:
     - <<: *sh-shellcheck
     - <<: *shfmt-format
+    - <<: *man
 
   yaml:
     - <<: *yamllint-lint
@@ -76,5 +77,4 @@ languages:
 
   go:
     - <<: *golangci-lint
-    - <<: *goimports
 ...

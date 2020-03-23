@@ -107,21 +107,6 @@ call asyncomplete#register_source(asyncomplete#sources#tags#get_source_options({
             \ 'completor': function('asyncomplete#sources#tags#completor'),
             \ }))
 call lsp#register_server({
-            \ 'name': 'clangd',
-            \ 'whitelist': ['c', 'cpp'],
-            \ 'cmd': {server_info->['clangd', '-background-index']},
-            \ })
-call lsp#register_server({
-            \ 'name': 'gopls',
-            \ 'whitelist': ['go'],
-            \ 'cmd': {server_info->['gopls']},
-            \ })
-call lsp#register_server({
-            \ 'name': 'pyls',
-            \ 'whitelist': ['python'],
-            \ 'cmd': {server_info->['pyls']},
-            \ })
-call lsp#register_server({
             \ 'name': 'efm-langserver',
             \ 'whitelist': [
             \'yaml',
@@ -132,6 +117,27 @@ call lsp#register_server({
             \ 'cmd': {server_info->['efm-langserver', '-c=/home/luca-linux/dotfiles/efm-config.yml',
             \'-logfile=/tmp/lsp.log', '-loglevel=5']},
             \ })
+call lsp#register_server({
+            \ 'name': 'clangd',
+            \ 'whitelist': ['c', 'cpp'],
+            \ 'cmd': {server_info->['clangd', '-background-index']},
+            \ })
+call lsp#register_server({
+            \ 'name': 'gopls',
+            \ 'whitelist': ['go'],
+            \ 'cmd': {server_info->['gopls']},
+            \ 'workspace_config': {'gopls' : { 'usePlaceholders' : v:true, 'staticcheck': v:true,
+            \                               "deepCompletion": v:true, "completeUnimported": v:true}},
+            \ })
+call lsp#register_server({
+            \ 'name': 'pyls',
+            \ 'whitelist': ['python'],
+            \ 'cmd': {server_info->['pyls']},
+            \ 'workspace_config': {'pyls' : {'plugins':
+            \		{'pydocstyle': {'enabled': v:true}}}},
+            \ })
+"
+"	'workspace_config': {},
 " FZF fuzzy
 let g:fzf_action = {'alt-enter':'vsplit' }
 let g:fzf_files_options = "--preview 'if file {1} | grep -Ei \"text|JSON\"; then cat {1} ; fi'"
