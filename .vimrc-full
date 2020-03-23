@@ -103,6 +103,7 @@ call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
 call asyncomplete#register_source(asyncomplete#sources#tags#get_source_options({
             \ 'name': 'tags',
             \ 'whitelist': ['*'],
+            \ 'blacklist': ['c', 'cpp', 'go', 'python'],
             \ 'completor': function('asyncomplete#sources#tags#completor'),
             \ }))
 call lsp#register_server({
