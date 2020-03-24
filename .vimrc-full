@@ -117,9 +117,10 @@ call lsp#register_server({
             \       'yaml.ansible',
             \       'sh',
             \       'python',
-            \       'go'],
+            \       'go'
+            \ ],
             \ 'cmd': {server_info->['efm-langserver', '-c=/home/luca-linux/dotfiles/efm-config.yml',
-            \'-logfile=/tmp/lsp.log', '-loglevel=5']},
+            \ '-logfile=/tmp/lsp.log', '-loglevel=5']},
             \ })
 call lsp#register_server({
             \ 'name': 'clangd',
@@ -130,30 +131,31 @@ call lsp#register_server({
             \ 'name': 'gopls',
             \ 'whitelist': ['go'],
             \ 'cmd': {server_info->['gopls']},
-            \ 'workspace_config':
-            \                   { 'gopls' :
-            \                           { 'usePlaceholders' : v:true,
-            \                               'staticcheck': v:true,
-            \                               "deepCompletion": v:true,
-            \                               "completeUnimported": v:true
-            \                           }
-            \                   },
+            \ 'workspace_config': {
+            \  'gopls' : {
+            \       'usePlaceholders' : v:true,
+            \       'staticcheck': v:true,
+            \       "deepCompletion": v:true,
+            \       "completeUnimported": v:true
+            \     }
+            \ },
             \ })
 call lsp#register_server({
             \ 'name': 'pyls',
             \ 'whitelist': ['python'],
             \ 'cmd': {server_info->['pyls']},
-            \ 'workspace_config':
-            \                   { 'pyls' :
-            \                           { 'plugins':
-            \		                        { 'pydocstyle':
-            \                                   { 'enabled': v:true}
-            \                               }
-            \                           }
-            \                   },
+            \ 'workspace_config': {
+            \   'pyls' : {
+            \      'plugins': {
+            \         'pydocstyle': {
+            \            'enabled': v:true
+            \            }
+            \        }
+            \    }
+            \ },
             \ })
 "
-"	'workspace_config': {},
+"    'workspace_config': {},
 " FZF fuzzy
 let g:fzf_action = {'alt-enter':'vsplit' }
 let g:fzf_files_options = "--preview 'if file {1} | grep -Ei \"text|JSON\"; then cat {1} ; fi'"
@@ -206,7 +208,6 @@ nnoremap <leader>D  <C-T>
 nnoremap <leader>d  :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
 nnoremap <leader>r  :<C-u>!grep -rl <c-r>=expand("<cword>")<CR><BAR>xargs sed -i 's/<c-r>=expand("<cword>")<CR>//g'<Left><Left><Left>
 nnoremap <leader>l  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>
-vnoremap <leader>l  =
 " LSP keybindings overriding the previous
 augroup lspbindings
     autocmd! lspbindings
@@ -220,7 +221,6 @@ augroup lspbindings
     autocmd Filetype yaml,yaml.ansible,sh,c,cpp,python,go nnoremap <leader>d :<C-u>LspDefinition<CR>
     autocmd Filetype yaml,yaml.ansible,sh,c,cpp,python,go nnoremap <leader>r :<C-u>LspRename<CR>
     autocmd Filetype yaml,yaml.ansible,sh,c,cpp,python,go nnoremap <leader>l :<C-u>LspDocumentFormat<CR>
-    autocmd Filetype yaml,yaml.ansible,sh,c,cpp,python,go vnoremap <leader>l :<C-u>LspDocumentRangeFormat<CR>
 augroup end
 " Miscellaneous
 let &colorcolumn=join(range(81,250),",")

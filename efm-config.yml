@@ -20,7 +20,7 @@ tools:
     format-command: 'shfmt -ln bash -kp'
     format-stdin: true
 
-  man: &man
+  man-hover: &man-hover
     hover-command: 'man ${INPUT}'
     hover-stdin: false
 
@@ -63,7 +63,7 @@ languages:
   sh:
     - <<: *sh-shellcheck
     - <<: *shfmt-format
-    - <<: *man
+    - <<: *man-hover
 
   yaml:
     - <<: *yamllint-lint
