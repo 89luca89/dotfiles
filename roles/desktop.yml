@@ -220,6 +220,7 @@
           - ctags
           - ctags-etags
           - git
+          - git-credential-libsecret
           - golang
           - make
           - ncurses-compat-libs

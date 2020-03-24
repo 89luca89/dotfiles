@@ -1,16 +1,16 @@
-filetype off                                        " required
+filetype off
 call plug#begin('~/.vim/plugged')
 " vim tmux navigator
 Plug 'christoomey/vim-tmux-navigator'
 " utilities
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
-Plug 'junegunn/fzf.vim'                             " fuzzy find all the things
+Plug 'junegunn/fzf.vim'
 Plug 'ap/vim-buftabline'
 " Git
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 "" Lang Packs
-Plug 'sheerun/vim-polyglot', { 'do': './build' }    " Lang packs
+Plug 'sheerun/vim-polyglot', { 'do': './build' }
 "" CTags (for non-lsp langs)
 Plug 'ludovicchabant/vim-gutentags'
 " vim-lsp + asyncomplete
@@ -24,9 +24,9 @@ Plug 'prabirshrestha/vim-lsp'
 " Aestetics
 Plug 'rakr/vim-one'
 
-call plug#end()                                     " required
+call plug#end()
 "
-filetype plugin indent on                           " required
+filetype plugin indent on
 syntax on
 " Dynamic split resize
 autocmd VimResized * :wincmd =
@@ -103,17 +103,21 @@ call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
 call asyncomplete#register_source(asyncomplete#sources#tags#get_source_options({
             \ 'name': 'tags',
             \ 'whitelist': ['*'],
-            \ 'blacklist': ['c', 'cpp', 'go', 'python'],
+            \ 'blacklist': [
+            \        'c',
+            \        'cpp',
+            \        'go',
+            \        'python'],
             \ 'completor': function('asyncomplete#sources#tags#completor'),
             \ }))
 call lsp#register_server({
             \ 'name': 'efm-langserver',
             \ 'whitelist': [
-            \'yaml',
-            \'yaml.ansible',
-            \'sh',
-            \'python',
-            \'go'],
+            \       'yaml',
+            \       'yaml.ansible',
+            \       'sh',
+            \       'python',
+            \       'go'],
             \ 'cmd': {server_info->['efm-langserver', '-c=/home/luca-linux/dotfiles/efm-config.yml',
             \'-logfile=/tmp/lsp.log', '-loglevel=5']},
             \ })
@@ -126,15 +130,27 @@ call lsp#register_server({
             \ 'name': 'gopls',
             \ 'whitelist': ['go'],
             \ 'cmd': {server_info->['gopls']},
-            \ 'workspace_config': {'gopls' : { 'usePlaceholders' : v:true, 'staticcheck': v:true,
-            \                               "deepCompletion": v:true, "completeUnimported": v:true}},
+            \ 'workspace_config':
+            \                   { 'gopls' :
+            \                           { 'usePlaceholders' : v:true,
+            \                               'staticcheck': v:true,
+            \                               "deepCompletion": v:true,
+            \                               "completeUnimported": v:true
+            \                           }
+            \                   },
             \ })
 call lsp#register_server({
             \ 'name': 'pyls',
             \ 'whitelist': ['python'],
             \ 'cmd': {server_info->['pyls']},
-            \ 'workspace_config': {'pyls' : {'plugins':
-            \		{'pydocstyle': {'enabled': v:true}}}},
+            \ 'workspace_config':
+            \                   { 'pyls' :
+            \                           { 'plugins':
+            \		                        { 'pydocstyle':
+            \                                   { 'enabled': v:true}
+            \                               }
+            \                           }
+            \                   },
             \ })
 "
 "	'workspace_config': {},
