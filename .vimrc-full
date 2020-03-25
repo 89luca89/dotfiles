@@ -6,6 +6,7 @@ Plug 'christoomey/vim-tmux-navigator'
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'ap/vim-buftabline'
+Plug 'yggdroot/indentLine'
 " Git
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
@@ -39,6 +40,13 @@ augroup CursorLine
     au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
     au WinLeave * setlocal nocursorline
 augroup END
+" indentline
+let g:indentLine_char = '|'
+let g:indentLine_concealcursor = ''
+let g:indentLine_setConceal = 1
+let g:intendLine_faser = 1
+set list lcs=tab:\|\  " here is a space
+" tabline
 let g:buftabline_indicators = 1
 let g:buftabline_separators = 1
 let g:buftabline_plug_max   = 0
