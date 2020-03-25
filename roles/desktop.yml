@@ -204,6 +204,7 @@
         state: present
         method: user
       with_items:
+        - com.github.tchx84.Flatseal
         - org.libreoffice.LibreOffice
         - com.jgraph.drawio.desktop
         - com.skype.Client

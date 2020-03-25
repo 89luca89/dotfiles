@@ -17,7 +17,7 @@ tools:
       - '%f:%l:%c: %tote: %m'
 
   shfmt-format: &shfmt-format
-    format-command: 'shfmt -ln bash -kp'
+    format-command: 'shfm'
     format-stdin: true
 
   man-hover: &man-hover
