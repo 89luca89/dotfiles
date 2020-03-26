@@ -247,7 +247,7 @@ set undofile undolevels=1000 undodir=$HOME/.vim/undo              " Undo file an
 set updatetime=1000 ttyfast lazyredraw t_Co=16
 """""""""
 " Theming
-set laststatus=0
+set noshowmode noruler noshowcmd laststatus=0                     " hide statusline
 set guioptions=d
 set background=dark
 set termguicolors
