@@ -5,8 +5,8 @@ Plug 'christoomey/vim-tmux-navigator'
 " utilities
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
-Plug 'ap/vim-buftabline'
 Plug 'yggdroot/indentLine'
+Plug 'ap/vim-buftabline'
 " Git
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
@@ -221,14 +221,14 @@ augroup lspbindings
     autocmd! lspbindings
     " autocmd Filetype yaml,yaml.ansible,sh,c,cpp,python,go autocmd BufWritePre <buffer> silent! :LspDocumentFormat
     " IDE-like keybindings
-    autocmd Filetype yaml,yaml.ansible,sh,c,cpp,python,go nnoremap K  :<C-u>call popup_clear()<BAR>LspHover<CR>
-    autocmd Filetype yaml,yaml.ansible,sh,c,cpp,python,go nnoremap <leader>m :<C-u>LspCodeAction<CR>
-    autocmd Filetype yaml,yaml.ansible,sh,c,cpp,python,go nnoremap <leader>h :<C-u>call popup_clear()<BAR>LspPeekDefinition<CR>
-    autocmd Filetype yaml,yaml.ansible,sh,c,cpp,python,go nnoremap <leader>td :<C-u>call popup_clear()<BAR>LspPeekTypeDefinition<CR>
-    autocmd Filetype yaml,yaml.ansible,sh,c,cpp,python,go nnoremap <leader>e :<C-u>LspDocumentDiagnostics<CR>
-    autocmd Filetype yaml,yaml.ansible,sh,c,cpp,python,go nnoremap <leader>d :<C-u>LspDefinition<CR>
-    autocmd Filetype yaml,yaml.ansible,sh,c,cpp,python,go nnoremap <leader>r :<C-u>LspRename<CR>
-    autocmd Filetype yaml,yaml.ansible,sh,c,cpp,python,go nnoremap <leader>l :<C-u>LspDocumentFormat<CR>
+    autocmd Filetype yaml,yaml.ansible,sh,c,cpp,python,go nnoremap <buffer> K  :<C-u>call popup_clear()<BAR>LspHover<CR>
+    autocmd Filetype yaml,yaml.ansible,sh,c,cpp,python,go nnoremap <buffer> <leader>m :<C-u>LspCodeAction<CR>
+    autocmd Filetype yaml,yaml.ansible,sh,c,cpp,python,go nnoremap <buffer> <leader>h :<C-u>call popup_clear()<BAR>LspPeekDefinition<CR>
+    autocmd Filetype yaml,yaml.ansible,sh,c,cpp,python,go nnoremap <buffer> <leader>td :<C-u>call popup_clear()<BAR>LspPeekTypeDefinition<CR>
+    autocmd Filetype yaml,yaml.ansible,sh,c,cpp,python,go nnoremap <buffer> <leader>e :<C-u>LspDocumentDiagnostics<CR>
+    autocmd Filetype yaml,yaml.ansible,sh,c,cpp,python,go nnoremap <buffer> <leader>d :<C-u>LspDefinition<CR>
+    autocmd Filetype yaml,yaml.ansible,sh,c,cpp,python,go nnoremap <buffer> <leader>r :<C-u>LspRename<CR>
+    autocmd Filetype yaml,yaml.ansible,sh,c,cpp,python,go nnoremap <buffer> <leader>l :<C-u>LspDocumentFormat<CR>
 augroup end
 " Miscellaneous
 let &colorcolumn=join(range(81,250),",")
@@ -246,22 +246,40 @@ set undofile undolevels=1000 undodir=$HOME/.vim/undo              " Undo file an
 set updatetime=1000 ttyfast lazyredraw t_Co=16
 """""""""
 " Theming
+set laststatus=2
+set statusline=
+set statusline+=%0*\[%n]\ %m%r%w                            "buffernr
+set statusline+=%0*\ %<%f\                                  "File+path
+set statusline+=%1*\ %=\ %{''.(&fenc!=''?&fenc:&enc).''}    "Encoding
+set statusline+=%1*\ %y\                                    "FileType
+set statusline+=%1*\ %{(&bomb?\",BOM\":\"\")}\              "Encoding2
+set statusline+=%1*\ position:%l/%c\                        "Rownumber/total (%)
+set statusline+=%0*\ \ %P\ \                                "Modified? Readonly? Top/bot.
+set guioptions=d
 set background=dark
 set termguicolors
 let g:one_allow_italics = 1
 colorscheme one
 autocmd Syntax,InsertEnter * syntax match myFunction /\<\k\+\ze(/
 highlight link myFunction   Function
-highlight StatusLine guifg=white guibg=#555555
-highlight StatusLineNC guibg=white guifg=#282c34
+highlight StatusLine guifg=#262626 guibg=#8a8a8a
+highlight StatusLineNC guibg=#abb2bf  guifg=#282c34
+highlight TabLine guifg=#abb2bf  guibg=#282c34
+highlight TabLineSel guifg=#262626 guibg=#8a8a8a
 " Toggle Theme
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        highlight StatusLine guifg=white guibg=#555555
-        highlight StatusLineNC guibg=white guifg=#282c34
+        highlight StatusLine guifg=#262626 guibg=#8a8a8a
+        highlight StatusLineNC guibg=#abb2bf  guifg=#282c34
+        highlight TabLine guifg=#abb2bf  guibg=#282c34
+        highlight TabLineSel guifg=#262626 guibg=#8a8a8a
     else
         set background=light
+        highlight StatusLine guifg=#262626 guibg=#8a8a8a
+        highlight StatusLineNC guibg=#494b53 guifg=#fafafa
+        highlight TabLine guifg=#494b53 guibg=#fafafa
+        highlight TabLineSel guifg=#262626 guibg=#8a8a8a
     endif
 endfunction
