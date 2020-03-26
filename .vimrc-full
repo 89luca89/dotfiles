@@ -220,7 +220,7 @@ nnoremap <leader>l  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>
 augroup lspbindings
     autocmd! lspbindings
     " Lang specific keybindings
-    autocmd Filetype sh nnoremap <buffer> <leader>l :<C-u>mkview<CR>:%!shfmt %<CR>:loadview<CR><CR>
+    autocmd Filetype sh nnoremap <buffer> <leader>l :<C-u>mkview<CR>:%!shfmt -f <CR><CR>:loadview<CR>
     " IDE-like keybindings
     autocmd Filetype c,cpp,python,go nnoremap <buffer> K  :<C-u>call popup_clear()<BAR>LspHover<CR>
     autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>m :<C-u>LspCodeAction<CR>
@@ -247,7 +247,6 @@ set undofile undolevels=1000 undodir=$HOME/.vim/undo              " Undo file an
 set updatetime=1000 ttyfast lazyredraw t_Co=16
 """""""""
 " Theming
-set laststatus=2
 set statusline=
 set statusline+=%0*\[%n]\ %m%r%w                            "buffernr
 set statusline+=%0*\ %<%f\                                  "File+path
