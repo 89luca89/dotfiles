@@ -24,7 +24,6 @@ Plug 'prabirshrestha/asyncomplete-lsp.vim'
 Plug 'prabirshrestha/vim-lsp'
 " Aestetics
 Plug 'rakr/vim-one'
-
 call plug#end()
 "
 filetype plugin indent on
@@ -32,16 +31,7 @@ syntax on
 " Dynamic split resize
 autocmd VimResized * :wincmd =
 " Remove trailing whitespaces and lines
-autocmd BufWritePre * silent! :%s/\($\n\s*\)\+\%$//e
-fun! StripTrailingWhiteSpace()
-  " don't strip on these filetypes
-  if &ft =~ 'markdown'
-    return
-  endif
-  %s/\s\+$//e
-endfun
-autocmd BufWritePre * :call StripTrailingWhiteSpace()
-
+autocmd BufWritePre * silent! :call StripTrailingWhiteSpace()
 " Set cursorline ONLY on active buffer
 augroup CursorLine
     au!
@@ -59,7 +49,8 @@ let g:buftabline_indicators = 1
 let g:buftabline_separators = 1
 let g:buftabline_plug_max   = 0
 " Tags
-let g:gutentags_project_root = ['Makefile', '.project', '.git', '.hg', '.svn', '.bzr', '_darcs', '_darcs', '_FOSSIL_', '.fslckout' ]
+let g:gutentags_project_root = ['Makefile', '.project', '.git', '.hg', '.svn',
+            \           '.bzr', '_darcs', '_darcs', '_FOSSIL_', '.fslckout' ]
 let g:gutentags_cache_dir = expand('~/.cache/vim/ctags/')
 let g:gutentags_generate_on_new     = 1
 let g:gutentags_generate_on_missing = 1
@@ -135,8 +126,9 @@ call lsp#register_server({
             \       'python',
             \       'go'
             \ ],
-            \ 'cmd': {server_info->['efm-langserver', '-c=/home/luca-linux/dotfiles/efm-config.yml',
-            \ '-logfile=/tmp/lsp.log', '-loglevel=5']},
+            \ 'cmd': {server_info->['efm-langserver',
+            \       '-c=/home/luca-linux/dotfiles/efm-config.yml',
+            \       '-logfile=/tmp/lsp.log', '-loglevel=5']},
             \ })
 call lsp#register_server({
             \ 'name': 'clangd',
@@ -175,7 +167,6 @@ call lsp#register_server({
 " FZF fuzzy
 let g:fzf_action = {'alt-enter':'vsplit' }
 let g:fzf_files_options = "--preview 'if file {1} | grep -Ei \"text|JSON\"; then cat {1} ; fi'"
-"""""""""""""""""""""
 """     Shortcuts   "
 " Leader map
 let mapleader = ' '
@@ -200,6 +191,8 @@ map <Tab>   :<C-u>bn!<CR>
 map <S-Tab> :<C-u>bp!<CR>
 " C-c close buffer
 nnoremap <C-c> :<C-u>bp<BAR>sp<BAR>bn<BAR>bd<CR>
+" C-g add filetype
+nnoremap <silent> <C-g> :file<Bar>echon ' ' &filetype<CR>
 " " Resize split window horizontally and vertically
 noremap <S-M-Down>  :<C-u>2winc-<CR>
 noremap <S-M-Left>  :<C-u>2winc<<CR>
@@ -253,7 +246,6 @@ set splitright splitbelow                                         " Open new spl
 set title nocompatible nowritebackup nobackup
 set undofile undolevels=1000 undodir=$HOME/.vim/undo              " Undo file and directory
 set updatetime=1000 ttyfast lazyredraw t_Co=16
-"""""""""
 " Theming
 set noshowmode noruler noshowcmd laststatus=0                     " hide statusline
 set guioptions=d
@@ -275,3 +267,12 @@ function! ToggleTheme()
         highlight TabLineSel guifg=#262626 guibg=#8a8a8a
     endif
 endfunction
+" Remove Trailing Spaces and empty lines
+function! StripTrailingWhiteSpace()
+  " don't strip on these filetypes
+  if &ft =~ 'markdown'
+    return
+  endif
+  %s/\s\+$//e
+  %s/\($\n\s*\)\+\%$//e
+endfun
