@@ -5,7 +5,6 @@ Plug 'christoomey/vim-tmux-navigator'
 " utilities
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
-Plug 'yggdroot/indentLine'
 Plug 'ap/vim-buftabline'
 " Git
 Plug 'airblade/vim-gitgutter'
@@ -24,7 +23,7 @@ Plug 'prabirshrestha/asyncomplete-lsp.vim'
 Plug 'prabirshrestha/vim-lsp'
 " Aestetics
 Plug 'tomasiser/vim-code-dark'
-Plug 'cormacrelf/vim-colors-github'
+Plug 'acarapetis/vim-colors-github'
 call plug#end()
 "
 filetype plugin indent on
@@ -39,12 +38,6 @@ augroup CursorLine
     au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
     au WinLeave * setlocal nocursorline
 augroup END
-" indentline
-let g:indentLine_char = '|'
-let g:indentLine_concealcursor = ''
-let g:indentLine_setConceal = 1
-let g:intendLine_faser = 1
-set list lcs=tab:\|\  " here is a space
 " tabline
 let g:buftabline_indicators = 1
 let g:buftabline_separators = 1
@@ -191,8 +184,6 @@ map <Tab>   :<C-u>bn!<CR>
 map <S-Tab> :<C-u>bp!<CR>
 " C-c close buffer
 nnoremap <C-c> :<C-u>bp<BAR>sp<BAR>bn<BAR>bd<CR>
-" C-g add filetype
-nnoremap <silent> <C-g> :file<Bar>echon ' ' &filetype<CR>
 " " Resize split window horizontally and vertically
 noremap <S-M-Down>  :<C-u>2winc-<CR>
 noremap <S-M-Left>  :<C-u>2winc<<CR>
@@ -275,6 +266,8 @@ function! ToggleTheme()
     else
         set background=light
         colorscheme github
+        highlight ColorColumn guibg=#EFEFEF
+        highlight Normal guibg=#FFFFFF
         highlight TabLineSel guifg=#262626 guibg=#8a8a8a
     endif
 endfunction
