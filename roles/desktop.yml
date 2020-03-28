@@ -380,6 +380,7 @@
           - powertop
           - msr-tools
           - hdparm
+          - lm_sensors
       become: true
       tags: system
 
