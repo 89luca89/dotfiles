@@ -23,7 +23,8 @@ Plug 'prabirshrestha/asyncomplete-tags.vim'
 Plug 'prabirshrestha/asyncomplete-lsp.vim'
 Plug 'prabirshrestha/vim-lsp'
 " Aestetics
-Plug 'rakr/vim-one'
+Plug 'tomasiser/vim-code-dark'
+Plug 'cormacrelf/vim-colors-github'
 call plug#end()
 "
 filetype plugin indent on
@@ -69,7 +70,6 @@ let g:ansible_attribute_highlight   = 'ab'
 let g:ansible_extra_keywords_highlight  = 1
 let g:ansible_name_highlight = 'd'
 let g:ansible_normal_keywords_highlight = 'Define'
-let g:ansible_with_keywords_highlight = 'Operator'
 let g:ansible_yamlKeyName   = 'yamlKey'
 let g:go_highlight_build_constraints    = 1
 let g:go_highlight_extra_types  = 1
@@ -247,23 +247,34 @@ set title nocompatible nowritebackup nobackup
 set undofile undolevels=1000 undodir=$HOME/.vim/undo              " Undo file and directory
 set updatetime=1000 ttyfast lazyredraw t_Co=16
 " Theming
-set noshowmode noruler noshowcmd laststatus=0                     " hide statusline
+set noshowmode noruler noshowcmd laststatus=0 ruler               " hide statusline
+set rulerformat=%25(%m%r%w\ %y\ %l/%c%)\                          "Modified+FileType+Ruler
+set fillchars+=vert:│
 set guioptions=d
 set background=dark
 set termguicolors
-let g:one_allow_italics = 1
-colorscheme one
 autocmd Syntax,InsertEnter * syntax match myFunction /\<\k\+\ze(/
+autocmd Syntax,InsertEnter * syntax match myDeclaration_1 /\<\k\+\ze\s*:=[a-zA-Z0-9 $:.\/\\(]/
+autocmd Syntax,InsertEnter * syntax match myDeclaration_2 /\<\k\+\ze\s*=[a-zA-Z0-9 $:.\/\\(]/
 highlight link myFunction   Function
+highlight link myDeclaration_1   Identifier
+highlight link myDeclaration_2   Identifier
+colorscheme codedark
+highlight TabLine guibg=#1E1E1E guifg=#D3D7CF
+highlight TabLineFill guibg=#1E1E1E guifg=#D3D7CF
 highlight TabLineSel guifg=#262626 guibg=#8a8a8a
 " Toggle Theme
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
+        colorscheme codedark
+        highlight TabLine guibg=#1E1E1E guifg=#D3D7CF
+        highlight TabLineFill guibg=#1E1E1E guifg=#D3D7CF
         highlight TabLineSel guifg=#262626 guibg=#8a8a8a
     else
         set background=light
+        colorscheme github
         highlight TabLineSel guifg=#262626 guibg=#8a8a8a
     endif
 endfunction
