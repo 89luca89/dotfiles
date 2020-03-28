@@ -652,7 +652,7 @@
         - '{{ ansible_env.HOME }}/.config/user-dirs.dirs'
         - '{{ ansible_env.HOME }}/.config/libinput-gestures.conf'
         - '{{ ansible_env.HOME }}/.config/mpv/mpv.conf'
-        - '{{ ansible_env.HOME }}/.config/kitty/kitty.conf'
+        - '{{ ansible_env.HOME }}/.config/kitty'
         - '{{ ansible_env.HOME }}/.config/keepassxc/keepassxc.ini'
         - '{{ ansible_env.HOME }}/.config/systemd/user'
         - '{{ ansible_env.HOME }}/.ssh/assh.yml'
@@ -676,7 +676,7 @@
         - {src: '{{ ansible_env.HOME }}/dotfiles/user-dirs.dirs', dest: '{{ ansible_env.HOME }}/.config/user-dirs.dirs'}
         - {src: '{{ ansible_env.HOME }}/dotfiles/libinput-gestures.conf', dest: '{{ ansible_env.HOME }}/.config/libinput-gestures.conf'}
         - {src: '{{ ansible_env.HOME }}/dotfiles/mpv.conf', dest: '{{ ansible_env.HOME }}/.config/mpv/mpv.conf'}
-        - {src: '{{ ansible_env.HOME }}/dotfiles/kitty.conf', dest: '{{ ansible_env.HOME }}/.config/kitty/kitty.conf'}
+        - {src: '{{ ansible_env.HOME }}/dotfiles/kitty', dest: '{{ ansible_env.HOME }}/.config/kitty'}
         - {src: '{{ ansible_env.HOME }}/dotfiles/systemd', dest: '{{ ansible_env.HOME }}/.config/systemd/user'}
         - {src: '{{ ansible_env.HOME }}/Syncthing/Conf/keepassxc.ini', dest: '{{ ansible_env.HOME }}/.config/keepassxc/keepassxc.ini'}
         - {src: '{{ ansible_env.HOME }}/Syncthing/Conf/assh.yml', dest: '{{ ansible_env.HOME }}/.ssh/assh.yml'}
@@ -685,16 +685,6 @@
         - {src: '{{ ansible_env.HOME }}/Syncthing/Conf/.histfile', dest: '{{ ansible_env.HOME }}/.histfile'}
       when: firstrun.changed
       tags: dotfiles
-
-    - name: Install Kitty Themes
-      git:
-        repo: https://github.com/dexpota/kitty-themes.git
-        dest: '{{ ansible_env.HOME }}/.config/kitty/kitty-themes'
-        version: master
-        depth: 1
-        update: true
-      when: firstrun.changed
-      tags: dotfiles,kitty
 
     - name: Load Gnome Keybindings (gsettings)
       shell: |
