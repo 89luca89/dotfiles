@@ -245,8 +245,8 @@ set guioptions=d
 set background=dark
 set termguicolors
 autocmd Syntax,InsertEnter * syntax match myFunction /\<\k\+\ze(/
-autocmd Syntax,InsertEnter * syntax match myDeclaration_1 /\<\k\+\ze\s*:=[a-zA-Z0-9 $:.\/\\(]/
-autocmd Syntax,InsertEnter * syntax match myDeclaration_2 /\<\k\+\ze\s*=[a-zA-Z0-9 $:.\/\\(]/
+autocmd Syntax,InsertEnter * syntax match myDeclaration_1 /\<.*\k\+\ze\s*=[a-zA-Z0-9 $:.\/\\]/
+autocmd Syntax,InsertEnter * syntax match myDeclaration_2 /\<.*\k\+\ze\s*:=[a-zA-Z0-9 $:.\/\\]/
 highlight link myFunction   Function
 highlight link myDeclaration_1   Identifier
 highlight link myDeclaration_2   Identifier
