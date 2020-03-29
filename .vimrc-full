@@ -269,9 +269,10 @@ function! ToggleTheme()
     else
         set background=light
         colorscheme github
-        highlight ColorColumn   guibg=#EFEFEF
+        highlight ColorColumn   guibg=#F5F5F5
         highlight Normal        guibg=#FFFFFF
         highlight TabLineSel    guifg=#262626 guibg=#8a8a8a
+        highlight Pmenu         guifg=#000000 guibg=#EEEEEE
     endif
 endfunction
 " Remove Trailing Spaces and empty lines
