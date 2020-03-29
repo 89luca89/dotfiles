@@ -22,7 +22,7 @@ Plug 'prabirshrestha/asyncomplete-tags.vim'
 Plug 'prabirshrestha/asyncomplete-lsp.vim'
 Plug 'prabirshrestha/vim-lsp'
 " Aestetics
-Plug 'tomasiser/vim-code-dark'
+Plug '89luca89/vim-code-dark'
 Plug 'acarapetis/vim-colors-github'
 call plug#end()
 "
@@ -247,13 +247,9 @@ set termguicolors
 autocmd Syntax,InsertEnter * syntax match myFunction /\<\k\+\ze(/
 autocmd Syntax,InsertEnter * syntax match myDeclaration_1 /\<\k\+\ze\s*=[a-zA-Z0-9 $:.\/\\]/
 autocmd Syntax,InsertEnter * syntax match myDeclaration_2 /\<.*\k\+\ze\s*:=[a-zA-Z0-9 $:.\/\\]/
-autocmd Syntax,InsertEnter * syntax match shVar /\$\k\+/
 highlight link myFunction   Function
 highlight link myDeclaration_1   Identifier
 highlight link myDeclaration_2   Identifier
-highlight link shDeref           Identifier
-highlight link shVar             Identifier
-highlight link shVariable        Identifier
 colorscheme codedark
 highlight TabLine       guibg=#1E1E1E guifg=#D3D7CF
 highlight TabLineFill   guibg=#1E1E1E guifg=#D3D7CF
