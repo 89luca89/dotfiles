@@ -378,6 +378,7 @@
         state: present
         name:
           - powertop
+          - tlp
           - msr-tools
           - hdparm
           - lm_sensors
@@ -410,6 +411,14 @@
     - name: Powertop daemon timer enable
       systemd:
         name: powertop.timer
+        state: started
+        enabled: true
+      become: true
+      tags: system
+
+    - name: TLP daemon enable
+      systemd:
+        name: tlp.service
         state: started
         enabled: true
       become: true
