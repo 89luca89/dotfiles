@@ -254,9 +254,6 @@ colorscheme codedark
 highlight TabLine       guibg=#1E1E1E guifg=#D3D7CF
 highlight TabLineFill   guibg=#1E1E1E guifg=#D3D7CF
 highlight TabLineSel    guifg=#262626 guibg=#8a8a8a
-"highlight Identifier cterm=NONE gui=NONE guifg=#e98e62
-"highlight CursorLine term=NONE cterm=NONE
-"highlight ColorColumn guibg=#1E1E1E
 " Toggle Theme
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
