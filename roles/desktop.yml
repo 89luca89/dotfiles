@@ -568,6 +568,17 @@
       become: true
       tags: system
 
+    - name: Gnome performance-tweaks
+      capabilities:
+        path: "{{ item }}"
+        capability: cap_sys_nice=+ep
+        state: present
+      with_items:
+        - /usr/bin/mutter
+        - /usr/bin/gnome-shell
+      become: true
+      tags: system,perftweaks
+
     - name: Set Thinkpad Fan driver options
       lineinfile:
         path: /etc/modprobe.d/thinkpad_acpi.conf
@@ -719,6 +730,7 @@
         value: '{{ item.value }}'
         state: present
       with_items:
+        - {key: /org/gnome/mutter/experimental-features, value: "['rt-scheduler']"}
         - {key: /org/gnome/desktop/input-sources/xkb-options, value: "['caps:ctrl_modifier']"}
         - {key: /org/gnome/desktop/interface/cursor-blink, value: 'false'}
         - {key: /org/gnome/desktop/privacy/disable-microphone, value: 'true'}

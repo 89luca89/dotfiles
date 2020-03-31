@@ -69,7 +69,7 @@ languages:
 
   yaml.ansible:
   - <<: *yamllint-lint
-  - <<: *ansible-lint
+    #  - <<: *ansible-lint
 
   python:
   - <<: *pylint-lint
