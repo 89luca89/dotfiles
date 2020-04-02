@@ -5,6 +5,7 @@ Plug 'christoomey/vim-tmux-navigator'
 " utilities
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
+Plug 'yggdroot/indentLine'
 Plug 'ap/vim-buftabline'
 " Git
 Plug 'airblade/vim-gitgutter'
@@ -42,6 +43,12 @@ augroup END
 let g:buftabline_indicators = 1
 let g:buftabline_separators = 1
 let g:buftabline_plug_max   = 0
+" indentline
+let g:indentLine_char = '|'
+let g:indentLine_concealcursor = ''
+let g:indentLine_setConceal = 1
+let g:intendLine_faser = 1
+set list lcs=tab:\|\  " here is a space
 " Tags
 let g:gutentags_project_root = ['Makefile', '.project', '.git', '.hg', '.svn',
             \           '.bzr', '_darcs', '_darcs', '_FOSSIL_', '.fslckout' ]
@@ -254,6 +261,7 @@ colorscheme codedark
 highlight TabLine       guibg=#1E1E1E guifg=#D3D7CF
 highlight TabLineFill   guibg=#1E1E1E guifg=#D3D7CF
 highlight TabLineSel    guifg=#262626 guibg=#8a8a8a
+highlight SpecialKey    guifg=#505050
 " Toggle Theme
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
@@ -263,6 +271,7 @@ function! ToggleTheme()
         highlight TabLine       guibg=#1E1E1E guifg=#D3D7CF
         highlight TabLineFill   guibg=#1E1E1E guifg=#D3D7CF
         highlight TabLineSel    guifg=#262626 guibg=#8a8a8a
+        highlight SpecialKey    guifg=#505050
     else
         set background=light
         colorscheme github
@@ -270,6 +279,7 @@ function! ToggleTheme()
         highlight Normal        guibg=#FFFFFF
         highlight TabLineSel    guifg=#262626 guibg=#8a8a8a
         highlight Pmenu         guifg=#000000 guibg=#EEEEEE
+        highlight SpecialKey    guibg=#FFFFFF guifg=#9a9a9a
     endif
 endfunction
 " Remove Trailing Spaces and empty lines
