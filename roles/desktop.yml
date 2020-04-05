@@ -579,6 +579,33 @@
       become: true
       tags: system,perftweaks
 
+    - name: Install i7z package
+      dnf:
+        state: present
+        name:
+          - https://download.copr.fedorainfracloud.org/results/scx/i7z/fedora-rawhide-x86_64/00769928-i7z/i7z-0.27.2-21.20150629gitec09c4f.fc29.x86_64.rpm
+      become: true
+      tags: system,undervolt
+      when:
+        - ansible_distribution == 'Fedora'
+
+    - name: Intel-undervolt-tool (Clone)
+      git:
+        repo: https://github.com/hedgepigdaniel/linux-intel-undervolt-tool/
+        dest: '{{ ansible_env.HOME }}/Programs/linux-undervolt-tool'
+        version: master
+        update: true
+      register: intel_undervolt_download
+      tags: system,undervolt
+
+    - name: Intel-undervolt-tool (Clone)
+      shell: |
+        cd {{ ansible_env.HOME }}/Programs/linux-undervolt-tool;
+        ./install.sh
+      when: intel_undervolt_download.changed
+      become: true
+      tags: system,undervolt
+
     - name: Set Thinkpad Fan driver options
       lineinfile:
         path: /etc/modprobe.d/thinkpad_acpi.conf
