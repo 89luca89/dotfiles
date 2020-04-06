@@ -48,8 +48,25 @@
           - simple-scan
           - virtualbox-guest-additions
           - yelp
+          - evolution
+          - evolution-ews
         state: absent
       become: true
+      tags: bloat
+
+    - name: Mask evolution services
+      systemd:
+        name: "{{ item }}"
+        state: stopped
+        enabled: false
+        masked: true
+        daemon_reload: true
+        scope: user
+      with_items:
+        - evolution-addressbook-factory
+        - evolution-source-registry
+        - evolution-calendar-factory
+      become: false
       tags: bloat
 
     - name: Setup /usr/local directory
@@ -178,12 +195,11 @@
       package:
         state: present
         name:
-          - evolution
-          - evolution-ews
           - gimp
           - gnome-tweak-tool
           - keepassxc
           - kitty
+          - geary
           - rhythmbox
           - rhythmbox-alternative-toolbar
           - syncthing
@@ -701,6 +717,7 @@
         - '{{ ansible_env.HOME }}/.config/keepassxc'
         - '{{ ansible_env.HOME }}/.config/systemd'
         - '{{ ansible_env.HOME }}/Programs'
+        - '{{ ansible_env.HOME }}/.config/systemd/user'
       register: firstrun
       tags: dotfiles
 
@@ -732,7 +749,6 @@
         - '{{ ansible_env.HOME }}/.config/mpv/mpv.conf'
         - '{{ ansible_env.HOME }}/.config/kitty'
         - '{{ ansible_env.HOME }}/.config/keepassxc/keepassxc.ini'
-        - '{{ ansible_env.HOME }}/.config/systemd/user'
         - '{{ ansible_env.HOME }}/.ssh/assh.yml'
         - '{{ ansible_env.HOME }}/.local/share/applications'
       when: firstrun.changed
@@ -755,7 +771,8 @@
         - {src: '{{ ansible_env.HOME }}/dotfiles/libinput-gestures.conf', dest: '{{ ansible_env.HOME }}/.config/libinput-gestures.conf'}
         - {src: '{{ ansible_env.HOME }}/dotfiles/mpv.conf', dest: '{{ ansible_env.HOME }}/.config/mpv/mpv.conf'}
         - {src: '{{ ansible_env.HOME }}/dotfiles/kitty', dest: '{{ ansible_env.HOME }}/.config/kitty'}
-        - {src: '{{ ansible_env.HOME }}/dotfiles/systemd', dest: '{{ ansible_env.HOME }}/.config/systemd/user'}
+        - {src: '{{ ansible_env.HOME }}/dotfiles/systemd/syncthing.service', dest: '{{ ansible_env.HOME }}/.config/systemd/user/syncthing.service'}
+        - {src: '{{ ansible_env.HOME }}/dotfiles/systemd/syncthing-proxy.service', dest: '{{ ansible_env.HOME }}/.config/systemd/user/syncthing-proxy.service'}
         - {src: '{{ ansible_env.HOME }}/Syncthing/Conf/keepassxc.ini', dest: '{{ ansible_env.HOME }}/.config/keepassxc/keepassxc.ini'}
         - {src: '{{ ansible_env.HOME }}/Syncthing/Conf/assh.yml', dest: '{{ ansible_env.HOME }}/.ssh/assh.yml'}
         - {src: '{{ ansible_env.HOME }}/Syncthing/Conf/Shortcuts/applications', dest: '{{ ansible_env.HOME }}/.local/share/applications'}
