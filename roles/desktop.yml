@@ -370,6 +370,7 @@
         name: zram-swap
         state: started
         enabled: true
+        daemon_reload: true
       become: true
       tags: system
 
@@ -389,6 +390,7 @@
       systemd:
         name: powertop.service
         enabled: true
+        daemon_reload: true
       become: true
       tags: system
 
@@ -413,6 +415,7 @@
         name: powertop.timer
         state: started
         enabled: true
+        daemon_reload: true
       become: true
       tags: system
 
@@ -421,6 +424,7 @@
         name: tlp.service
         state: started
         enabled: true
+        daemon_reload: true
       become: true
       tags: system
 
@@ -461,6 +465,7 @@
         name: fstrim.timer
         state: started
         enabled: true
+        daemon_reload: true
       become: true
       tags: system
 
@@ -606,6 +611,31 @@
       become: true
       tags: system,undervolt
 
+    - name: Set Undervolt daemon timer
+      blockinfile:
+        path: /etc/systemd/system/undervolt.timer
+        create: true
+        block: |
+            [Unit]
+            Description=Runs Undervolt every 20s
+            [Timer]
+            OnBootSec=20
+            OnUnitActiveSec=20
+            Unit=undervolt.service
+            [Install]
+            WantedBy=multi-user.target
+      become: true
+      tags: [ system,undervolt ]
+
+    - name: Undervolt timer enable
+      systemd:
+        name: undervolt.timer
+        state: started
+        enabled: true
+        daemon_reload: true
+      become: true
+      tags: [ system,undervolt ]
+
     - name: Set Thinkpad Fan driver options
       lineinfile:
         path: /etc/modprobe.d/thinkpad_acpi.conf
@@ -648,6 +678,7 @@
         name: fan_daemon.timer
         state: started
         enabled: true
+        daemon_reload: true
       become: true
       tags: [ never, thinkpad ]
 
