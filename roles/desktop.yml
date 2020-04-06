@@ -564,6 +564,44 @@
       become: true
       tags: system
 
+    - name: Set Fan daemon service
+      blockinfile:
+        path: /etc/systemd/system/fan_daemon.service
+        create: true
+        block: |
+            [Unit]
+            Description=FanDaemon
+            [Service]
+            Type=simple
+            ExecStart=/bin/bash /home/luca-linux/bin/fan_daemon
+      become: true
+      tags: system,perftweaks
+
+    - name: Set Fan daemon timer
+      blockinfile:
+        path: /etc/systemd/system/fan_daemon.timer
+        create: true
+        block: |
+            [Unit]
+            Description=Runs FanDaemon every 20s
+            [Timer]
+            OnBootSec=10
+            OnUnitActiveSec=10
+            Unit=fan_daemon.service
+            [Install]
+            WantedBy=multi-user.target
+      become: true
+      tags: system,perftweaks
+
+    - name: Fan daemon timer enable
+      systemd:
+        name: fan_daemon.timer
+        state: started
+        enabled: true
+        daemon_reload: true
+      become: true
+      tags: system,perftweaks
+
     - name: Update Grub and Initramfs
       command: '{{ item }}'
       with_items:
@@ -641,44 +679,6 @@
         path: /etc/modprobe.d/thinkpad_acpi.conf
         create: true
         line: 'options thinkpad_acpi fan_control=1'
-      become: true
-      tags: [ never, thinkpad ]
-
-    - name: Set Fan daemon service
-      blockinfile:
-        path: /etc/systemd/system/fan_daemon.service
-        create: true
-        block: |
-            [Unit]
-            Description=FanDaemon
-            [Service]
-            Type=simple
-            ExecStart=/bin/bash /home/luca-linux/bin/fan_daemon
-      become: true
-      tags: [ never, thinkpad ]
-
-    - name: Set Fan daemon timer
-      blockinfile:
-        path: /etc/systemd/system/fan_daemon.timer
-        create: true
-        block: |
-            [Unit]
-            Description=Runs FanDaemon every 20s
-            [Timer]
-            OnBootSec=10
-            OnUnitActiveSec=10
-            Unit=fan_daemon.service
-            [Install]
-            WantedBy=multi-user.target
-      become: true
-      tags: [ never, thinkpad ]
-
-    - name: Fan daemon timer enable
-      systemd:
-        name: fan_daemon.timer
-        state: started
-        enabled: true
-        daemon_reload: true
       become: true
       tags: [ never, thinkpad ]
 
