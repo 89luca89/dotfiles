@@ -713,7 +713,6 @@
         - '{{ ansible_env.HOME }}/.local/go'
         - '{{ ansible_env.HOME }}/.local/rust'
         - '{{ ansible_env.HOME }}/.config/mpv'
-        - '{{ ansible_env.HOME }}/.config/kitty'
         - '{{ ansible_env.HOME }}/.config/keepassxc'
         - '{{ ansible_env.HOME }}/.config/systemd'
         - '{{ ansible_env.HOME }}/Programs'
