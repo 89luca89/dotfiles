@@ -123,6 +123,7 @@
         name:
           - libvirt
           - virt-manager
+          - spice-webdavd
       become: true
       tags: virtualization
 
