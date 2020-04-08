@@ -12,7 +12,6 @@
       package:
         name:
           - gnome-abrt
-          - gnome-boxes
           - gnome-characters
           - gnome-dictionary
           - gnome-documents
@@ -98,6 +97,25 @@
         - ansible_distribution == 'Fedora'
         - rpmfusion_exists is defined
         - not rpmfusion_exists.stat.exists
+
+    - name: Check if Gnome-Boxes folder is present
+      file:
+        path: '~/.config/gnome-boxes/sources'
+        state: directory
+      register: firstrun
+      tags: virtualization
+
+    - name: Configure Programs (Virtualization)
+      blockinfile:
+        path: '~/.config/gnome-boxes/sources/QEMU System'
+        create: true
+        block: |
+          [source]
+          name=QEMU System
+          type=libvirt
+          uri=qemu+unix:///system
+          save-on-quit=true
+      tags: virtualization
 
     - name: Install Programs (Virtualization)
       package:
