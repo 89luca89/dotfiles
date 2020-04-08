@@ -113,7 +113,8 @@
           [source]
           name=QEMU System
           type=libvirt
-          uri=qemu+unix:///system
+          #uri=qemu+unix:///system
+          uri=qemu+ssh://root@localhost/system
           save-on-quit=true
       tags: virtualization
 
@@ -124,6 +125,7 @@
           - libvirt
           - virt-manager
           - spice-webdavd
+          - spice-vdagent
       become: true
       tags: virtualization
 
