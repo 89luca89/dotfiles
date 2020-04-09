@@ -1,3 +1,4 @@
+set nocompatible
 filetype off
 call plug#begin('~/.vim/plugged')
 " vim tmux navigator
@@ -236,14 +237,14 @@ set autoindent backspace=indent,eol,start
 set directory=$HOME/.vim/swap                                     " Custom swapfile directory
 set expandtab shiftwidth=4 tabstop=4 softtabstop=4                " Four spaces for tabs everywhere
 set mouse=a                                                       " it's always useful
-set nowrap number nomodeline cursorline relativenumber
+set nowrap number nomodeline cursorline
 set path+=**                                                      " Recursive path Tab autocomplete
 set smartindent copyindent                                        " always set autoindenting on
-set smarttab incsearch sessionoptions-=options viewoptions-=options
+set smarttab smartcase incsearch sessionoptions-=options viewoptions-=options
 set splitright splitbelow                                         " Open new splits to the right and bottom
-set title nocompatible nowritebackup nobackup
+set title nowritebackup nobackup
 set undofile undolevels=1000 undodir=$HOME/.vim/undo              " Undo file and directory
-set updatetime=1000 ttyfast lazyredraw t_Co=16
+set updatetime=1000 ttyfast lazyredraw t_Co=256
 " Theming
 set noshowmode noruler noshowcmd laststatus=0 ruler               " hide statusline
 set rulerformat=%25(%m%r%w\ %y\ %l/%c%)\                          " Modified+FileType+Ruler

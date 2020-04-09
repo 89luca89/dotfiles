@@ -5,6 +5,8 @@ if [[ $- == *i* ]]; then
         "$HOME/.local/bin/fzf/install" --all
     fi
 
+    export EDITOR=vim
+
     # HISTORY SIZE
     export HISTFILE=~/Syncthing/Conf/.histfile
     export HISTCONTROL=ignoredups:erasedups # no duplicate entries

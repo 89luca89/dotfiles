@@ -700,7 +700,7 @@
             [Install]
             WantedBy=multi-user.target
       become: true
-      tags: [ system,undervolt ]
+      tags: [ system, undervolt ]
 
     - name: Undervolt timer enable
       systemd:
@@ -709,7 +709,7 @@
         enabled: true
         daemon_reload: true
       become: true
-      tags: [ system,undervolt ]
+      tags: [ system, undervolt ]
 
     - name: Set Thinkpad Fan driver options
       lineinfile:

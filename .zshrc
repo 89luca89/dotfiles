@@ -23,12 +23,14 @@ if [ ! -d "$ZSH" ]; then
     mkdir -p $ZSH/plugins
 	git clone https://github.com/zsh-users/zsh-autosuggestions.git $ZSH/plugins/zsh-autosuggestions
 	git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH/plugins/zsh-syntax-highlighting
-	git clone https://github.com/agkozak/agkozak-zsh-prompt $ZSH/plugins/agkozak-zsh-prompt
 fi
 if [ ! -d "$HOME/.local/bin/fzf" ]; then
     git clone --depth 1 https://github.com/junegunn/fzf.git "$HOME/.local/bin/fzf"
     "$HOME/.local/bin/fzf/install" --all
 fi
+
+export EDITOR=vim
+
 # Manage history
 unsetopt EXTENDEDHISTORY
 SAVEHIST=100000
@@ -66,21 +68,18 @@ fi
 fpath=(/usr/local/share/zsh-completions $fpath)
 source $ZSH/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 source $ZSH/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source $ZSH/plugins/agkozak-zsh-prompt/agkozak-zsh-prompt.plugin.zsh
-AGKOZAK_LEFT_PROMPT_ONLY=1
-AGKOZAK_USER_HOST_DISPLAY=0
 source $HOME/.aliases
 
 # PROMPT
-#autoload -Uz vcs_info
-#precmd_vcs_info() { vcs_info }
-#precmd_functions+=( precmd_vcs_info )
-#zstyle ':vcs_info:*' enable git
-#zstyle ':vcs_info:*' check-for-changes true
-#zstyle ':vcs_info:*' stagedstr '%F{green}*%f'
-#zstyle ':vcs_info:*' unstagedstr '%F{red}*%f'
-#zstyle ':vcs_info:git:*' formats '%F{yellow}(%b%f%c%u%F{yellow})'
-#zstyle ':vcs_info:git:*' actionformats '%F{yellow}(%b (%a)%f%c%u%F{yellow})'
-#setopt PROMPT_PERCENT
-#setopt PROMPT_SUBST
-#PROMPT='%B%F{green}%n@%m:%F{blue}%30<..<%~%f%<< %b$vcs_info_msg_0_%b%b%F{white}$ '
+autoload -Uz vcs_info
+precmd_vcs_info() { vcs_info }
+precmd_functions+=( precmd_vcs_info )
+zstyle ':vcs_info:*' enable git
+zstyle ':vcs_info:*' check-for-changes true
+zstyle ':vcs_info:*' stagedstr '%F{green}*%f'
+zstyle ':vcs_info:*' unstagedstr '%F{red}*%f'
+zstyle ':vcs_info:git:*' formats '%F{yellow}(%b%f%c%u%F{yellow})'
+zstyle ':vcs_info:git:*' actionformats '%F{yellow}(%b (%a)%f%c%u%F{yellow})'
+setopt PROMPT_PERCENT
+setopt PROMPT_SUBST
+PROMPT='%B%F{green}%n@%m:%F{blue}%30<..<%~%f%<< %b$vcs_info_msg_0_%b%b%F{white}$ '
