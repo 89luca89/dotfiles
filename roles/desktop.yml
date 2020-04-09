@@ -32,6 +32,7 @@
           - gnome-user-docs
           - gnome-user-share
           - gnome-video-effects
+          - gnome-boxes
           - httpd
           - ibus-kkc
           - ibus-libpinyin
@@ -98,26 +99,6 @@
         - rpmfusion_exists is defined
         - not rpmfusion_exists.stat.exists
 
-    - name: Check if Gnome-Boxes folder is present
-      file:
-        path: '~/.config/gnome-boxes/sources'
-        state: directory
-      register: firstrun
-      tags: virtualization
-
-    - name: Configure Programs (Virtualization)
-      blockinfile:
-        path: '~/.config/gnome-boxes/sources/QEMU System'
-        create: true
-        block: |
-          [source]
-          name=QEMU System
-          type=libvirt
-          #uri=qemu+unix:///system
-          uri=qemu+ssh://root@localhost/system
-          save-on-quit=true
-      tags: virtualization
-
     - name: Install Programs (Virtualization)
       package:
         state: present
@@ -137,18 +118,9 @@
           - acpi
           - etckeeper
           - flatpak
-          - openssh-askpass
           - wmctrl
           - xclip
           - xdotool
-      become: true
-      tags: term_pkg
-
-    - name: Configure etckeeper.conf
-      lineinfile:
-        path: /etc/etckeeper/etckeeper.conf
-        regexp: ^GIT_COMMIT_OPTIONS=.*
-        line: GIT_COMMIT_OPTIONS="-q"
       become: true
       tags: term_pkg
 
@@ -216,10 +188,10 @@
       package:
         state: present
         name:
+          #          - kitty
           - gimp
           - gnome-tweak-tool
           - keepassxc
-          - kitty
           - geary
           - rhythmbox
           - rhythmbox-alternative-toolbar
@@ -244,7 +216,6 @@
         - com.github.tchx84.Flatseal
         - org.libreoffice.LibreOffice
         - com.jgraph.drawio.desktop
-        - com.skype.Client
       tags: flathub
 
     - name: Install Programs (Programming Packages)
@@ -261,10 +232,7 @@
           - git-credential-libsecret
           - golang
           - make
-          - ncurses-compat-libs
-          - python2
           - python2-devel
-          - python3
           - python3-devel
           - ripgrep
           - tmux
@@ -272,7 +240,7 @@
           - vim-X11
           - vim-enhanced
       become: true
-      tags: devel,python
+      tags: [ devel, tools ]
 
     - name: Install Programs (PIP Packages) - pip
       pip:
@@ -287,13 +255,13 @@
           - setuptools
           - demjson
       become: true
-      tags: devel,python
+      tags: [ devel, python ]
 
     - name: Check that golang exists
       stat:
         path: "{{ ansible_env.HOME }}/.local/go/bin/gopls"
       register: golang
-      tags: devel,golang
+      tags: [ devel, golang ]
 
     - name: Install Programs (Programming Packages) - golang
       command: "go get -u {{ item }}"
@@ -309,50 +277,7 @@
       environment:
         GOPATH: "{{ ansible_env.HOME }}/.local/go"
       when: not golang.stat.exists
-      tags: devel,golang
-
-    #- name: Install Programs (npm Packages) - npm
-    #  npm:
-    #    name: "{{ item }}"
-    #    global: yes
-    #  with_items:
-    #    - bash-language-server
-    #    - yaml-language-server
-    #    - dockerfile-language-server-nodejs
-    #  tags: devel,npm
-
-    # - name: Check that rustup exists
-    #   stat:
-    #     path: "{{ ansible_env.HOME }}/.local/rust/bin/rustup"
-    #   register: rustup
-    #   tags: devel,rust
-
-    # - name: Install Programs (Programming Packages) - rustup/rust
-    #   shell: "curl https://sh.rustup.rs -sSf | sh -s -- -y"
-    #   when: not rustup.stat.exists
-    #   tags: devel,rust
-
-    # - name: Install Programs (Programming Packages) - rust/deps
-    #   shell: |
-    #     {{ ansible_env.HOME }}/.local/rust/bin/rustup component add {{ item }}
-    #   with_items:
-    #     - rls --toolchain stable-x86_64-unknown-linux-gnu
-    #   when: not rustup.stat.exists
-    #   tags: devel,rust
-
-    # - name: Install Programs (Programming Packages) - rust/deps
-    #   shell: |
-    #     {{ ansible_env.HOME }}/.local/rust/bin/rustup run stable cargo install {{ item }}
-    #   with_items:
-    #     - parallel
-    #     - racer
-    #     - rls
-    #     - rls
-    #     - rust-analysis
-    #     - rust-src
-    #     - rustfmt
-    #   when: not rustup.stat.exists
-    #   tags: devel,rust
+      tags: [ devel, golang ]
 
     - name: Ensure {{ ansible_env.HOME }}/Programs Exists
       file:
@@ -767,10 +692,10 @@
         - '{{ ansible_env.HOME }}/.config/user-dirs.dirs'
         - '{{ ansible_env.HOME }}/.config/libinput-gestures.conf'
         - '{{ ansible_env.HOME }}/.config/mpv/mpv.conf'
-        - '{{ ansible_env.HOME }}/.config/kitty'
         - '{{ ansible_env.HOME }}/.config/keepassxc/keepassxc.ini'
         - '{{ ansible_env.HOME }}/.ssh/assh.yml'
         - '{{ ansible_env.HOME }}/.local/share/applications'
+        #        - '{{ ansible_env.HOME }}/.config/kitty'
       when: firstrun.changed
       tags: dotfiles
 
@@ -790,7 +715,6 @@
         - {src: '{{ ansible_env.HOME }}/dotfiles/user-dirs.dirs', dest: '{{ ansible_env.HOME }}/.config/user-dirs.dirs'}
         - {src: '{{ ansible_env.HOME }}/dotfiles/libinput-gestures.conf', dest: '{{ ansible_env.HOME }}/.config/libinput-gestures.conf'}
         - {src: '{{ ansible_env.HOME }}/dotfiles/mpv.conf', dest: '{{ ansible_env.HOME }}/.config/mpv/mpv.conf'}
-        - {src: '{{ ansible_env.HOME }}/dotfiles/kitty', dest: '{{ ansible_env.HOME }}/.config/kitty'}
         - {src: '{{ ansible_env.HOME }}/dotfiles/systemd/syncthing.service', dest: '{{ ansible_env.HOME }}/.config/systemd/user/syncthing.service'}
         - {src: '{{ ansible_env.HOME }}/dotfiles/systemd/syncthing-proxy.service', dest: '{{ ansible_env.HOME }}/.config/systemd/user/syncthing-proxy.service'}
         - {src: '{{ ansible_env.HOME }}/Syncthing/Conf/keepassxc.ini', dest: '{{ ansible_env.HOME }}/.config/keepassxc/keepassxc.ini'}
@@ -798,6 +722,7 @@
         - {src: '{{ ansible_env.HOME }}/Syncthing/Conf/Shortcuts/applications', dest: '{{ ansible_env.HOME }}/.local/share/applications'}
         - {src: '{{ ansible_env.HOME }}/Syncthing/Conf/.gitconfig', dest: '{{ ansible_env.HOME }}/.gitconfig'}
         - {src: '{{ ansible_env.HOME }}/Syncthing/Conf/.histfile', dest: '{{ ansible_env.HOME }}/.histfile'}
+        #        - {src: '{{ ansible_env.HOME }}/dotfiles/kitty', dest: '{{ ansible_env.HOME }}/.config/kitty'}
       when: firstrun.changed
       tags: dotfiles
 
