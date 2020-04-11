@@ -38,12 +38,6 @@
           - ibus-libpinyin
           - ibus-libzhuyin
           - ibus-typing-booster
-          - libreoffice
-          - libreoffice-calc
-          - libreoffice-draw
-          - libreoffice-impress
-          - libreoffice-math
-          - libreoffice-writer
           - orca
           - simple-scan
           - virtualbox-guest-additions
@@ -107,6 +101,14 @@
           - virt-manager
           - spice-webdavd
           - spice-vdagent
+      become: true
+      tags: virtualization
+
+    - name: Add "{{ lookup('env','USER') }}" to libvirt Group
+      user:
+        name: "{{ lookup('env','USER') }}"
+        groups: libvirt
+        append: yes
       become: true
       tags: virtualization
 
@@ -214,7 +216,6 @@
         method: user
       with_items:
         - com.github.tchx84.Flatseal
-        - org.libreoffice.LibreOffice
         - com.jgraph.drawio.desktop
       tags: flathub
 
