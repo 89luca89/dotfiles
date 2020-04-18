@@ -85,82 +85,17 @@ let g:python_highlight_all  = 1
 set completeopt=noinsert,noselect,menu,popup
 set completepopup=align:menu,border:off,highlight:Pmenu
 let g:asyncomplete_auto_completeopt  = 0
-let g:asyncomplete_remove_duplicates = 1
 let g:asyncomplete_smart_completion  = 1
-let g:lsp_auto_enable   = 1
+let g:lsp_auto_enable                = 1
 let g:lsp_diagnostics_echo_cursor    = 1
 let g:lsp_diagnostics_enabled        = 1
 let g:lsp_highlight_references_enabled = 1
 let g:lsp_highlights_enabled         = 1
 let g:lsp_log_file  = expand('/dev/null')
-let g:lsp_log_verbose          = 0
-let g:lsp_preview_max_width    = 100
 let g:lsp_semantic_enabled     = 1
 let g:lsp_signs_enabled        = 1
 let g:lsp_virtual_text_enabled = 1
-call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
-            \ 'name': 'buffer',
-            \ 'whitelist': ['*'],
-            \ 'completor': function('asyncomplete#sources#buffer#completor'),
-            \ }))
-call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
-            \ 'name': 'file',
-            \ 'whitelist': ['*'],
-            \ 'completor': function('asyncomplete#sources#file#completor')
-            \ }))
-call asyncomplete#register_source(asyncomplete#sources#tags#get_source_options({
-            \ 'name': 'tags',
-            \ 'whitelist': ['*'],
-            \ 'blacklist': [ 'c', 'cpp', 'go', 'python' ],
-            \ 'completor': function('asyncomplete#sources#tags#completor'),
-            \ }))
-call lsp#register_server({
-            \ 'name': 'efm-langserver',
-            \ 'whitelist': [ 'yaml', 'yaml.ansible', 'sh', 'python', 'go' ],
-            \ 'cmd': {server_info->['efm-langserver',
-            \       '-c=/home/luca-linux/dotfiles/efm-config.yml',
-            \       '-logfile=/tmp/lsp.log', '-loglevel=5']},
-            \ })
-call lsp#register_server({
-            \ 'name': 'gopls',
-            \ 'whitelist': ['go'],
-            \ 'cmd': {server_info->['gopls']},
-            \ 'workspace_config': {
-            \  'gopls' : {
-            \       'usePlaceholders' : v:true,
-            \       'staticcheck': v:true,
-            \       "deepCompletion": v:true,
-            \       "completeUnimported": v:true,
-            \	    "analyses": {
-            \		    "fillreturns": v:true,
-            \           "undeclarename": v:true,
-            \           "unusedparams": v:true,
-            \           "nonewvars": v:true,
-            \	      }
-            \     }
-            \ },
-            \ })
-call lsp#register_server({
-            \ 'name': 'pyls',
-            \ 'whitelist': ['python'],
-            \ 'cmd': {server_info->['pyls']},
-            \ 'workspace_config': {
-            \   'pyls' : {
-            \      'plugins': {
-            \         'pydocstyle': {
-            \            'enabled': v:true
-            \            }
-            \        }
-            \    }
-            \ },
-            \ })
-call lsp#register_server({
-            \ 'name': 'clangd',
-            \ 'whitelist': ['c', 'cpp', 'objc', 'objcpp'],
-            \ 'cmd': {server_info->['clangd', '-background-index']},
-            \ })
 "
-"    'workspace_config': {},
 " FZF fuzzy
 let g:fzf_action = {'alt-enter':'vsplit' }
 let g:fzf_files_options = "--preview 'if file {1} | grep -Ei \"text|JSON\"; then cat {1} ; fi'"
@@ -288,3 +223,65 @@ function! StripTrailingWhiteSpace()
     %s/\s\+$//e
     %s/\($\n\s*\)\+\%$//e
 endfun
+"
+call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
+            \ 'name': 'buffer',
+            \ 'whitelist': ['*'],
+            \ 'completor': function('asyncomplete#sources#buffer#completor'),
+            \ }))
+call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
+            \ 'name': 'file',
+            \ 'whitelist': ['*'],
+            \ 'completor': function('asyncomplete#sources#file#completor')
+            \ }))
+call asyncomplete#register_source(asyncomplete#sources#tags#get_source_options({
+            \ 'name': 'tags',
+            \ 'whitelist': ['*'],
+            \ 'blacklist': [ 'c', 'cpp', 'go', 'python' ],
+            \ 'completor': function('asyncomplete#sources#tags#completor'),
+            \ }))
+call lsp#register_server({
+            \ 'name': 'efm-langserver',
+            \ 'whitelist': [ 'yaml', 'yaml.ansible', 'sh', 'python', 'go' ],
+            \ 'cmd': {server_info->['efm-langserver',
+            \       '-c=/home/luca-linux/dotfiles/efm-config.yml',
+            \       '-logfile=/tmp/lsp.log', '-loglevel=5']},
+            \ })
+call lsp#register_server({
+            \ 'name': 'gopls',
+            \ 'whitelist': ['go'],
+            \ 'cmd': {server_info->['gopls']},
+            \ 'workspace_config': {
+            \  'gopls' : {
+            \       'usePlaceholders' : v:true,
+            \       'staticcheck': v:true,
+            \       "deepCompletion": v:true,
+            \       "completeUnimported": v:true,
+            \	    "analyses": {
+            \		    "fillreturns": v:true,
+            \           "undeclarename": v:true,
+            \           "unusedparams": v:true,
+            \           "nonewvars": v:true,
+            \	      }
+            \     }
+            \ },
+            \ })
+call lsp#register_server({
+            \ 'name': 'pyls',
+            \ 'whitelist': ['python'],
+            \ 'cmd': {server_info->['pyls']},
+            \ 'workspace_config': {
+            \   'pyls' : {
+            \      'plugins': {
+            \         'pydocstyle': {
+            \            'enabled': v:true
+            \            }
+            \        }
+            \    }
+            \ },
+            \ })
+call lsp#register_server({
+            \ 'name': 'clangd',
+            \ 'whitelist': ['c', 'cpp', 'objc', 'objcpp'],
+            \ 'cmd': {server_info->['clangd', '-background-index']},
+            \ })
