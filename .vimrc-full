@@ -20,7 +20,6 @@ Plug 'prabirshrestha/async.vim'
 Plug 'prabirshrestha/asyncomplete.vim'
 Plug 'prabirshrestha/asyncomplete-buffer.vim'
 Plug 'prabirshrestha/asyncomplete-file.vim'
-Plug 'prabirshrestha/asyncomplete-tags.vim'
 Plug 'prabirshrestha/asyncomplete-lsp.vim'
 Plug 'prabirshrestha/vim-lsp'
 " Aestetics
@@ -224,22 +223,6 @@ function! StripTrailingWhiteSpace()
     %s/\($\n\s*\)\+\%$//e
 endfun
 "
-call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
-            \ 'name': 'buffer',
-            \ 'whitelist': ['*'],
-            \ 'completor': function('asyncomplete#sources#buffer#completor'),
-            \ }))
-call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
-            \ 'name': 'file',
-            \ 'whitelist': ['*'],
-            \ 'completor': function('asyncomplete#sources#file#completor')
-            \ }))
-call asyncomplete#register_source(asyncomplete#sources#tags#get_source_options({
-            \ 'name': 'tags',
-            \ 'whitelist': ['*'],
-            \ 'blacklist': [ 'c', 'cpp', 'go', 'python' ],
-            \ 'completor': function('asyncomplete#sources#tags#completor'),
-            \ }))
 call lsp#register_server({
             \ 'name': 'efm-langserver',
             \ 'whitelist': [ 'yaml', 'yaml.ansible', 'sh', 'python', 'go' ],
@@ -253,16 +236,19 @@ call lsp#register_server({
             \ 'cmd': {server_info->['gopls']},
             \ 'workspace_config': {
             \  'gopls' : {
-            \       'usePlaceholders' : v:true,
+            \       'hoverKind': "FullDocumentation",
+            \       'usePlaceholders': v:true,
+            \       'fuzzyMatching': v:true,
             \       'staticcheck': v:true,
-            \       "deepCompletion": v:true,
-            \       "completeUnimported": v:true,
-            \	    "analyses": {
-            \		    "fillreturns": v:true,
-            \           "undeclarename": v:true,
-            \           "unusedparams": v:true,
-            \           "nonewvars": v:true,
-            \	      }
+            \       'deepCompletion': v:true,
+            \       'completionDocumentation': v:true,
+            \       'completeUnimported': v:true,
+            \       'analyses': {
+            \            'fillreturns': v:true,
+            \           'undeclarename': v:true,
+            \           'unusedparams': v:true,
+            \           'nonewvars': v:true,
+            \          }
             \     }
             \ },
             \ })
@@ -285,3 +271,13 @@ call lsp#register_server({
             \ 'whitelist': ['c', 'cpp', 'objc', 'objcpp'],
             \ 'cmd': {server_info->['clangd', '-background-index']},
             \ })
+call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
+            \ 'name': 'buffer',
+            \ 'whitelist': ['*'],
+            \ 'completor': function('asyncomplete#sources#buffer#completor'),
+            \ }))
+call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
+            \ 'name': 'file',
+            \ 'whitelist': ['*'],
+            \ 'completor': function('asyncomplete#sources#file#completor')
+            \ }))
