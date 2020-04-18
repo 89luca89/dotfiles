@@ -111,30 +111,15 @@ call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
 call asyncomplete#register_source(asyncomplete#sources#tags#get_source_options({
             \ 'name': 'tags',
             \ 'whitelist': ['*'],
-            \ 'blacklist': [
-            \        'c',
-            \        'cpp',
-            \        'go',
-            \        'python'],
+            \ 'blacklist': [ 'c', 'cpp', 'go', 'python' ],
             \ 'completor': function('asyncomplete#sources#tags#completor'),
             \ }))
 call lsp#register_server({
             \ 'name': 'efm-langserver',
-            \ 'whitelist': [
-            \       'yaml',
-            \       'yaml.ansible',
-            \       'sh',
-            \       'python',
-            \       'go'
-            \ ],
+            \ 'whitelist': [ 'yaml', 'yaml.ansible', 'sh', 'python', 'go' ],
             \ 'cmd': {server_info->['efm-langserver',
             \       '-c=/home/luca-linux/dotfiles/efm-config.yml',
             \       '-logfile=/tmp/lsp.log', '-loglevel=5']},
-            \ })
-call lsp#register_server({
-            \ 'name': 'clangd',
-            \ 'whitelist': ['c', 'cpp'],
-            \ 'cmd': {server_info->['clangd', '-background-index']},
             \ })
 call lsp#register_server({
             \ 'name': 'gopls',
@@ -168,6 +153,11 @@ call lsp#register_server({
             \        }
             \    }
             \ },
+            \ })
+call lsp#register_server({
+            \ 'name': 'clangd',
+            \ 'whitelist': ['c', 'cpp', 'objc', 'objcpp'],
+            \ 'cmd': {server_info->['clangd', '-background-index']},
             \ })
 "
 "    'workspace_config': {},
