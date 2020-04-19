@@ -1,3 +1,18 @@
+" Miscellaneous
+let &colorcolumn=join(range(81,250),",")
+set autoindent backspace=indent,eol,start
+set expandtab shiftwidth=4 tabstop=4 softtabstop=4                " Four spaces for tabs everywhere
+set mouse=a                                                       " it's always useful
+set nowrap number nomodeline cursorline
+set path+=**                                                      " Recursive path Tab autocomplete
+set smartindent copyindent                                        " always set autoindenting on
+set smarttab smartcase incsearch sessionoptions-=options viewoptions-=options
+set splitright splitbelow                                         " Open new splits to the right and bottom
+set title nowritebackup nobackup
+set undofile undolevels=1000
+set updatetime=1000
+set undodir=$HOME/.vim/undo
+set directory=$HOME/.vim/swap
 set nocompatible
 filetype off
 call plug#begin('~/.vim/plugged')
@@ -13,8 +28,6 @@ Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 "" Lang Packs
 Plug 'sheerun/vim-polyglot', { 'do': './build' }
-"" CTags (for non-lsp langs)
-Plug 'ludovicchabant/vim-gutentags'
 " vim-lsp + asyncomplete
 Plug 'prabirshrestha/async.vim'
 Plug 'prabirshrestha/asyncomplete.vim'
@@ -49,14 +62,6 @@ let g:indentLine_concealcursor = ''
 let g:indentLine_setConceal = 1
 let g:intendLine_faser = 1
 set list lcs=tab:\|\  " here is a space
-" Tags
-let g:gutentags_project_root = ['Makefile', '.project', '.git', '.hg', '.svn',
-            \           '.bzr', '_darcs', '_darcs', '_FOSSIL_', '.fslckout' ]
-let g:gutentags_cache_dir = expand('~/.cache/vim/ctags/')
-let g:gutentags_generate_on_new     = 1
-let g:gutentags_generate_on_missing = 1
-let g:gutentags_generate_on_write   = 1
-let g:gutentags_generate_on_empty_buffer = 0
 "
 let g:python_host_prog  = '/usr/bin/python2'
 let g:python3_host_prog = '/usr/bin/python3'
@@ -161,20 +166,6 @@ augroup lspbindings
     autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>l :<C-u>LspDocumentFormat<CR>
     autocmd Filetype * nnoremap <buffer> <leader>e :<C-u>LspDocumentDiagnostics<CR>
 augroup end
-" Miscellaneous
-let &colorcolumn=join(range(81,250),",")
-set autoindent backspace=indent,eol,start
-set directory=$HOME/.vim/swap                                     " Custom swapfile directory
-set expandtab shiftwidth=4 tabstop=4 softtabstop=4                " Four spaces for tabs everywhere
-set mouse=a                                                       " it's always useful
-set nowrap number nomodeline cursorline
-set path+=**                                                      " Recursive path Tab autocomplete
-set smartindent copyindent                                        " always set autoindenting on
-set smarttab smartcase incsearch sessionoptions-=options viewoptions-=options
-set splitright splitbelow                                         " Open new splits to the right and bottom
-set title nowritebackup nobackup
-set undofile undolevels=1000 undodir=$HOME/.vim/undo              " Undo file and directory
-set updatetime=1000 ttyfast lazyredraw t_Co=256
 " Theming
 set noshowmode noruler noshowcmd laststatus=0 ruler               " hide statusline
 set rulerformat=%25(%m%r%w\ %y\ %l/%c%)\                          " Modified+FileType+Ruler
@@ -221,16 +212,35 @@ function! StripTrailingWhiteSpace()
     endif
     %s/\s\+$//e
     %s/\($\n\s*\)\+\%$//e
+    redraw!
+endfun
+" Generate tags
+function! GenTags()
+    silent exec "!rm -f ./tags; ctags -R ."
+    redraw!
 endfun
 "
-call lsp#register_server({
+augroup lspregister
+    autocmd! lspregister
+    " Lang specific keybindings
+    autocmd VIMEnter * call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
+            \ 'name': 'buffer',
+            \ 'whitelist': ['*'],
+            \ 'completor': function('asyncomplete#sources#buffer#completor'),
+            \ }))
+    autocmd VIMEnter * call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
+            \ 'name': 'file',
+            \ 'whitelist': ['*'],
+            \ 'completor': function('asyncomplete#sources#file#completor')
+            \ }))
+    autocmd Filetype yaml,yaml.ansible,sh,python,go call lsp#register_server({
             \ 'name': 'efm-langserver',
             \ 'whitelist': [ 'yaml', 'yaml.ansible', 'sh', 'python', 'go' ],
             \ 'cmd': {server_info->['efm-langserver',
             \       '-c=/home/luca-linux/dotfiles/efm-config.yml',
             \       '-logfile=/tmp/lsp.log', '-loglevel=5']},
             \ })
-call lsp#register_server({
+    autocmd Filetype go call lsp#register_server({
             \ 'name': 'gopls',
             \ 'whitelist': ['go'],
             \ 'cmd': {server_info->['gopls']},
@@ -252,7 +262,7 @@ call lsp#register_server({
             \     }
             \ },
             \ })
-call lsp#register_server({
+    autocmd Filetype python call lsp#register_server({
             \ 'name': 'pyls',
             \ 'whitelist': ['python'],
             \ 'cmd': {server_info->['pyls']},
@@ -266,18 +276,9 @@ call lsp#register_server({
             \    }
             \ },
             \ })
-call lsp#register_server({
+    autocmd Filetype c,cpp,objc,objcpp call lsp#register_server({
             \ 'name': 'clangd',
             \ 'whitelist': ['c', 'cpp', 'objc', 'objcpp'],
             \ 'cmd': {server_info->['clangd', '-background-index']},
             \ })
-call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
-            \ 'name': 'buffer',
-            \ 'whitelist': ['*'],
-            \ 'completor': function('asyncomplete#sources#buffer#completor'),
-            \ }))
-call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
-            \ 'name': 'file',
-            \ 'whitelist': ['*'],
-            \ 'completor': function('asyncomplete#sources#file#completor')
-            \ }))
+augroup end
