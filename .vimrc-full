@@ -1,4 +1,6 @@
 " Miscellaneous
+let g:python_host_prog  = '/usr/bin/python2'
+let g:python3_host_prog = '/usr/bin/python3'
 let &colorcolumn=join(range(81,250),",")
 set autoindent backspace=indent,eol,start
 set expandtab shiftwidth=4 tabstop=4 softtabstop=4                " Four spaces for tabs everywhere
@@ -42,13 +44,11 @@ call plug#end()
 "
 filetype plugin indent on
 syntax on
-" Dynamic split resize
-autocmd VimResized * :wincmd =
-" Remove trailing whitespaces and lines
-autocmd BufWritePre * silent! :call StripTrailingWhiteSpace()
 " Set cursorline ONLY on active buffer
 augroup CursorLine
     au!
+    " Dynamic split resize
+    au VimResized * :wincmd =
     au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
     au WinLeave * setlocal nocursorline
 augroup END
@@ -62,9 +62,6 @@ let g:indentLine_concealcursor = ''
 let g:indentLine_setConceal = 1
 let g:intendLine_faser = 1
 set list lcs=tab:\|\  " here is a space
-"
-let g:python_host_prog  = '/usr/bin/python2'
-let g:python3_host_prog = '/usr/bin/python3'
 " Netrw
 let g:netrw_banner          = 0
 let g:netrw_browse_split    = 4
@@ -93,8 +90,8 @@ let g:asyncomplete_smart_completion  = 1
 let g:lsp_auto_enable                = 1
 let g:lsp_diagnostics_echo_cursor    = 1
 let g:lsp_diagnostics_enabled        = 1
-let g:lsp_highlight_references_enabled = 1
 let g:lsp_highlights_enabled         = 1
+let g:lsp_highlight_references_enabled = 1
 let g:lsp_log_file  = expand('/dev/null')
 let g:lsp_semantic_enabled     = 1
 let g:lsp_signs_enabled        = 1
@@ -168,14 +165,20 @@ augroup lspbindings
 augroup end
 " Theming
 set noshowmode noruler noshowcmd laststatus=0 ruler               " hide statusline
-set rulerformat=%25(%m%r%w\ %y\ %l/%c%)\                          " Modified+FileType+Ruler
+set rulerformat=%20(%m%r%w\ %y\ %l/%c%)\                          " Modified+FileType+Ruler
 set fillchars+=vert:│
 set guioptions=d
 set background=dark
 set termguicolors
-autocmd Syntax,InsertEnter * syntax match myFunction /\<\k\+\ze(/
-autocmd Syntax,InsertEnter * syntax match myDeclaration_1 /\<\k\+\ze\s*=[a-zA-Z0-9 $:.\/\\]/
-autocmd Syntax,InsertEnter * syntax match myDeclaration_2 /\<.*\k\+\ze\s*:=[a-zA-Z0-9 $:.\/\\]/
+augroup customsyntax
+    autocmd! customsyntax
+    autocmd Syntax,InsertEnter * syntax match myFunction /\<\k\+\ze(/
+    autocmd Syntax,InsertEnter * syntax match myDeclaration_1 /\<\k\+\ze\s*=[a-zA-Z0-9 $:.\/\\]/
+    autocmd Syntax,InsertEnter * syntax match myDeclaration_2 /\<.*\k\+\ze\s*:=[a-zA-Z0-9 $:.\/\\]/
+    " Remove trailing whitespaces and lines
+    autocmd BufWritePre * silent! :call StripTrailingWhiteSpace()
+    autocmd BufWritePost * silent! :call GenTags()
+augroup end
 highlight link myFunction   Function
 highlight link myDeclaration_1   Identifier
 highlight link myDeclaration_2   Identifier
@@ -216,69 +219,71 @@ function! StripTrailingWhiteSpace()
 endfun
 " Generate tags
 function! GenTags()
-    silent exec "!rm -f ./tags; ctags -R ."
-    redraw!
+    if isdirectory(".git") || filereadable(".project")
+        silent exec "!rm -f ./tags; ctags -R ."
+        redraw!
+    endif
 endfun
 "
-augroup lspregister
-    autocmd! lspregister
+augroup asyncompleteregister
+    autocmd! asyncompleteregister
     " Lang specific keybindings
-    autocmd VIMEnter * call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
-            \ 'name': 'buffer',
-            \ 'whitelist': ['*'],
-            \ 'completor': function('asyncomplete#sources#buffer#completor'),
-            \ }))
-    autocmd VIMEnter * call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
-            \ 'name': 'file',
-            \ 'whitelist': ['*'],
-            \ 'completor': function('asyncomplete#sources#file#completor')
-            \ }))
+    autocmd VimEnter * call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
+                \ 'name': 'buffer',
+                \ 'whitelist': ['*'],
+                \ 'completor': function('asyncomplete#sources#buffer#completor'),
+                \ }))
+    autocmd VimEnter * call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
+                \ 'name': 'file',
+                \ 'whitelist': ['*'],
+                \ 'completor': function('asyncomplete#sources#file#completor')
+                \ }))
     autocmd Filetype yaml,yaml.ansible,sh,python,go call lsp#register_server({
-            \ 'name': 'efm-langserver',
-            \ 'whitelist': [ 'yaml', 'yaml.ansible', 'sh', 'python', 'go' ],
-            \ 'cmd': {server_info->['efm-langserver',
-            \       '-c=/home/luca-linux/dotfiles/efm-config.yml',
-            \       '-logfile=/tmp/lsp.log', '-loglevel=5']},
-            \ })
+                \ 'name': 'efm-langserver',
+                \ 'whitelist': [ 'yaml', 'yaml.ansible', 'sh', 'python', 'go' ],
+                \ 'cmd': {server_info->['efm-langserver',
+                \       '-c=/home/luca-linux/dotfiles/efm-config.yml',
+                \       '-logfile=/tmp/lsp.log', '-loglevel=5']},
+                \ })
     autocmd Filetype go call lsp#register_server({
-            \ 'name': 'gopls',
-            \ 'whitelist': ['go'],
-            \ 'cmd': {server_info->['gopls']},
-            \ 'workspace_config': {
-            \  'gopls' : {
-            \       'hoverKind': "FullDocumentation",
-            \       'usePlaceholders': v:true,
-            \       'fuzzyMatching': v:true,
-            \       'staticcheck': v:true,
-            \       'deepCompletion': v:true,
-            \       'completionDocumentation': v:true,
-            \       'completeUnimported': v:true,
-            \       'analyses': {
-            \            'fillreturns': v:true,
-            \           'undeclarename': v:true,
-            \           'unusedparams': v:true,
-            \           'nonewvars': v:true,
-            \          }
-            \     }
-            \ },
-            \ })
+                \ 'name': 'gopls',
+                \ 'whitelist': ['go'],
+                \ 'cmd': {server_info->['gopls']},
+                \ 'workspace_config': {
+                \  'gopls' : {
+                \       'hoverKind': "FullDocumentation",
+                \       'usePlaceholders': v:true,
+                \       'fuzzyMatching': v:true,
+                \       'staticcheck': v:true,
+                \       'deepCompletion': v:true,
+                \       'completionDocumentation': v:true,
+                \       'completeUnimported': v:true,
+                \       'analyses': {
+                \            'fillreturns': v:true,
+                \           'undeclarename': v:true,
+                \           'unusedparams': v:true,
+                \           'nonewvars': v:true,
+                \          }
+                \     }
+                \ },
+                \ })
     autocmd Filetype python call lsp#register_server({
-            \ 'name': 'pyls',
-            \ 'whitelist': ['python'],
-            \ 'cmd': {server_info->['pyls']},
-            \ 'workspace_config': {
-            \   'pyls' : {
-            \      'plugins': {
-            \         'pydocstyle': {
-            \            'enabled': v:true
-            \            }
-            \        }
-            \    }
-            \ },
-            \ })
+                \ 'name': 'pyls',
+                \ 'whitelist': ['python'],
+                \ 'cmd': {server_info->['pyls']},
+                \ 'workspace_config': {
+                \   'pyls' : {
+                \      'plugins': {
+                \         'pydocstyle': {
+                \            'enabled': v:true
+                \            }
+                \        }
+                \    }
+                \ },
+                \ })
     autocmd Filetype c,cpp,objc,objcpp call lsp#register_server({
-            \ 'name': 'clangd',
-            \ 'whitelist': ['c', 'cpp', 'objc', 'objcpp'],
-            \ 'cmd': {server_info->['clangd', '-background-index']},
-            \ })
+                \ 'name': 'clangd',
+                \ 'whitelist': ['c', 'cpp', 'objc', 'objcpp'],
+                \ 'cmd': {server_info->['clangd', '-background-index']},
+                \ })
 augroup end
