@@ -11,7 +11,10 @@
     - name: Remove Programs (Unused Programs)
       package:
         name:
+          - evolution
+          - evolution-ews
           - gnome-abrt
+          - gnome-boxes
           - gnome-characters
           - gnome-dictionary
           - gnome-documents
@@ -23,27 +26,19 @@
           - gnome-music
           - gnome-online-miners
           - gnome-photos
-          - gnome-shell-extension-apps-menu
-          - gnome-shell-extension-background-logo
-          - gnome-shell-extension-horizontal-workspaces
-          - gnome-shell-extension-launch-new-instance
-          - gnome-shell-extension-places-menu
-          - gnome-shell-extension-window-list
           - gnome-user-docs
           - gnome-user-share
           - gnome-video-effects
-          - gnome-boxes
           - httpd
           - ibus-kkc
           - ibus-libpinyin
           - ibus-libzhuyin
           - ibus-typing-booster
           - orca
+          - shotwell
           - simple-scan
           - virtualbox-guest-additions
           - yelp
-          - evolution
-          - evolution-ews
         state: absent
       become: true
       tags: bloat
@@ -182,7 +177,6 @@
           - libva-vdpau-driver
           - libvdpau-va-gl
           - youtube-dl
-          - mpv
       become: true
       tags: media_pkg
 
@@ -190,15 +184,10 @@
       package:
         state: present
         name:
-          #          - kitty
-          - gimp
           - gnome-tweak-tool
           - keepassxc
-          - geary
-          - telegram-desktop
-          - rhythmbox
-          - rhythmbox-alternative-toolbar
           - syncthing
+          - mpv
       become: true
       tags: gui_pkg
 
@@ -210,6 +199,25 @@
         method: user
       tags: flathub
 
+    - name: Remove apps that I want as flatpaks
+      package:
+        name:
+          - eog
+          - evince
+          - geary
+          - gedit
+          - gnome-calculator
+          - gnome-calendar
+          - gnome-clocks
+          - gnome-contacts
+          - gnome-weather
+          - libreoffice
+          - rhythmbox
+          - totem
+        state: absent
+      become: true
+      tags: flathub
+
     - name: Install Programs (Flatpak Programs)
       flatpak:
         name: "{{ item }}"
@@ -217,7 +225,23 @@
         method: user
       with_items:
         - com.github.tchx84.Flatseal
+        - com.github.fabiocolacio.marker
+        - com.github.maoschanz.drawing
+        - com.github.muriloventuroso.pdftrick
+        - com.github.wwmm.pulseeffects
         - com.jgraph.drawio.desktop
+        - org.gnome.Calculator
+        - org.gnome.Calendar
+        - org.gnome.Contacts
+        - org.gnome.Evince
+        - org.gnome.Extensions
+        - org.gnome.Geary
+        - org.gnome.Totem
+        - org.gnome.Weather
+        - org.gnome.clocks
+        - org.gnome.eog
+        - org.gnome.gedit
+        - org.libreoffice.LibreOffice
       tags: flathub
 
     - name: Install Programs (Programming Packages)
