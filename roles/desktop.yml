@@ -234,7 +234,6 @@
         - org.gnome.Calendar
         - org.gnome.Contacts
         - org.gnome.Evince
-        - org.gnome.Extensions
         - org.gnome.Geary
         - org.gnome.Totem
         - org.gnome.Weather
