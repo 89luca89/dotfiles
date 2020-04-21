@@ -109,6 +109,7 @@ nnoremap <C-n> :Lexplore<CR>
 map <leader>y "+y
 map <leader>p "+p
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
+vnoremap . :'<,'>:normal .<CR>
 " vim-tmux-navigator shortcuts
 let g:tmux_navigator_no_mappings    = 1
 inoremap <silent> <M-Down>  <Esc>:<C-u>TmuxNavigateDown<CR>
