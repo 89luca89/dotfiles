@@ -90,7 +90,7 @@
 
     - name: Install Programs (Virtualization)
       package:
-        state: present
+        state: latest
         name:
           - libvirt
           - virt-manager
@@ -109,7 +109,7 @@
 
     - name: Install Programs (Generic Utilities)
       package:
-        state: present
+        state: latest
         name:
           - htop
           - acpi
@@ -139,7 +139,7 @@
 
     - name: Install Programs (Archive Utilities)
       package:
-        state: present
+        state: latest
         name:
           - cabextract
           - lzip
@@ -150,7 +150,7 @@
 
     - name: Install Programs (Media Utilities)
       package:
-        state: present
+        state: latest
         name:
           - compat-ffmpeg28
           - compat-ffmpeg28-devel
@@ -182,7 +182,7 @@
 
     - name: Install Programs (GUI Programs)
       package:
-        state: present
+        state: latest
         name:
           - gnome-tweak-tool
           - keepassxc
@@ -245,7 +245,7 @@
 
     - name: Install Programs (Programming Packages)
       package:
-        state: present
+        state: latest
         name:
           - ShellCheck
           - ccze
@@ -269,7 +269,7 @@
 
     - name: Install Programs (PIP Packages) - pip
       pip:
-        state: present
+        state: latest
         executable: pip3
         name:
           - 'python-language-server[all]'
@@ -329,7 +329,7 @@
 
     - name: Libinput Gestures (Dependencies)
       package:
-        state: present
+        state: latest
         name:
           - systemd-devel
           - libinput-devel
@@ -363,7 +363,7 @@
 
     - name: Install Power Management (Laptop)
       package:
-        state: present
+        state: latest
         name:
           - powertop
           - tlp
