@@ -240,7 +240,7 @@
         - org.gnome.clocks
         - org.gnome.eog
         - org.gnome.gedit
-        - org.libreoffice.LibreOffice
+        - org.onlyoffice.desktopeditors
       tags: flathub
 
     - name: Install Programs (Programming Packages)
