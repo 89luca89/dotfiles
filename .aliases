@@ -16,7 +16,7 @@ alias :q="exit"
 alias :wq="exit"
 alias :qa="exit"
 alias :wqa="exit"
-alias rsyncthingD='pushd ~/Syncthing; rsync -av --delete --progress -e "ssh -J tunnel" root@fileserver.lan:/usr/local/mnt/Vault/Syncthing/ ~/Syncthing/; popd'
+alias rsyncthingD='pushd ~/Syncthing; rsync -av --delete --progress -e "ssh -J tunnel" --exclude=".stversions" root@fileserver.lan:/usr/local/mnt/Vault/Syncthing/ ~/Syncthing/; popd'
 alias rsyncthingS='pushd ~/Syncthing; rsync -av --delete --progress -e "ssh -J tunnel" --exclude=".stversions" ~/Syncthing/ root@fileserver.lan:/usr/local/mnt/Vault/Syncthing/; popd'
 alias firefoxSync='find ~/.mozilla/ -iname "*cache*" | xargs rm -rf; find .mozilla/firefox/*/storage/default/http* -iname "*.files" | xargs rm -rf; pushd ~ ; tar cfv - .mozilla | xz -T 0 -4e > /tmp/firefox-profile.tar.xz; mv /tmp/firefox-profile.tar.xz ~/Syncthing/Browsers/firefox-profile.tar.xz; popd'
 alias firefoxRestore='rm -rf ~/.mozilla; xz -T 0 -dc  ~/Syncthing/Browsers/firefox-profile.tar.xz | tar x -C ~/'
