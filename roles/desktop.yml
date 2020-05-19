@@ -11,47 +11,40 @@
     - name: Remove Programs (Unused Programs)
       package:
         name:
-          - evolution
-          - evolution-ews
           - gnome-abrt
           - gnome-boxes
+          - gnome-calendar
+          - gnome-characters
+          - gnome-clocks
+          - gnome-contacts
           - gnome-documents
           - gnome-font-viewer
           - gnome-getting-started-docs
           - gnome-initial-setup
+          - gnome-logs
+          - gnome-maps
           - gnome-music
           - gnome-online-miners
           - gnome-photos
+          - gnome-software
           - gnome-user-docs
           - gnome-user-share
           - gnome-video-effects
+          - gnome-weather
           - httpd
           - ibus-kkc
           - ibus-libpinyin
           - ibus-libzhuyin
           - ibus-typing-booster
           - orca
+          - rhythmbox
           - shotwell
           - simple-scan
+          - totem
           - virtualbox-guest-additions
           - yelp
         state: absent
       become: true
-      tags: bloat
-
-    - name: Mask evolution services
-      systemd:
-        name: "{{ item }}"
-        state: stopped
-        enabled: false
-        masked: true
-        daemon_reload: true
-        scope: user
-      with_items:
-        - evolution-addressbook-factory
-        - evolution-source-registry
-        - evolution-calendar-factory
-      become: false
       tags: bloat
 
     - name: Setup /usr/local directory
@@ -180,9 +173,6 @@
       package:
         state: latest
         name:
-          - geary
-          - marker
-          - drawing
           - gnome-tweak-tool
           - keepassxc
           - syncthing
@@ -330,31 +320,6 @@
     - name: Powertop Enable
       systemd:
         name: powertop.service
-        enabled: true
-        daemon_reload: true
-      become: true
-      tags: system
-
-    - name: Set Powertop daemon timer
-      blockinfile:
-        path: /etc/systemd/system/powertop.timer
-        create: true
-        block: |
-            [Unit]
-            Description=Runs Powertop every 120s
-            [Timer]
-            OnBootSec=120
-            OnUnitActiveSec=120
-            Unit=powertop.service
-            [Install]
-            WantedBy=multi-user.target
-      become: true
-      tags: system
-
-    - name: Powertop daemon timer enable
-      systemd:
-        name: powertop.timer
-        state: started
         enabled: true
         daemon_reload: true
       become: true
