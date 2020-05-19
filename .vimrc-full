@@ -40,6 +40,7 @@ Plug 'prabirshrestha/vim-lsp'
 " Aestetics
 Plug '89luca89/vim-code-dark'
 Plug 'acarapetis/vim-colors-github'
+Plug 'morhetz/gruvbox'
 call plug#end()
 "
 filetype plugin indent on
@@ -239,14 +240,14 @@ augroup asyncompleteregister
                 \ 'whitelist': ['*'],
                 \ 'completor': function('asyncomplete#sources#file#completor')
                 \ }))
-    autocmd Filetype yaml,yaml.ansible,sh,python,go call lsp#register_server({
+    autocmd VimEnter * call lsp#register_server({
                 \ 'name': 'efm-langserver',
                 \ 'whitelist': [ 'yaml', 'yaml.ansible', 'sh', 'python', 'go' ],
                 \ 'cmd': {server_info->['efm-langserver',
                 \       '-c=/home/luca-linux/dotfiles/efm-config.yml',
                 \       '-logfile=/tmp/lsp.log', '-loglevel=5']},
                 \ })
-    autocmd Filetype go call lsp#register_server({
+    autocmd VimEnter * call lsp#register_server({
                 \ 'name': 'gopls',
                 \ 'whitelist': ['go'],
                 \ 'cmd': {server_info->['gopls']},
@@ -268,7 +269,7 @@ augroup asyncompleteregister
                 \     }
                 \ },
                 \ })
-    autocmd Filetype python call lsp#register_server({
+    autocmd VimEnter * call lsp#register_server({
                 \ 'name': 'pyls',
                 \ 'whitelist': ['python'],
                 \ 'cmd': {server_info->['pyls']},
@@ -282,7 +283,7 @@ augroup asyncompleteregister
                 \    }
                 \ },
                 \ })
-    autocmd Filetype c,cpp,objc,objcpp call lsp#register_server({
+    autocmd VimEnter * call lsp#register_server({
                 \ 'name': 'clangd',
                 \ 'whitelist': ['c', 'cpp', 'objc', 'objcpp'],
                 \ 'cmd': {server_info->['clangd', '-background-index']},
