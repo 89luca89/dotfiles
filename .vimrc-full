@@ -1,16 +1,16 @@
 " Miscellaneous
 let g:python_host_prog  = '/usr/bin/python2'
 let g:python3_host_prog = '/usr/bin/python3'
-let &colorcolumn=join(range(81,250),",")
 set autoindent backspace=indent,eol,start
+set colorcolumn=80
 set expandtab shiftwidth=4 tabstop=4 softtabstop=4                " Four spaces for tabs everywhere
 set mouse=a                                                       " it's always useful
 set nowrap number nomodeline cursorline
 set path+=**                                                      " Recursive path Tab autocomplete
 set smartindent copyindent                                        " always set autoindenting on
-set smarttab smartcase incsearch sessionoptions-=options viewoptions-=options
+set smarttab smartcase ignorecase incsearch
 set splitright splitbelow                                         " Open new splits to the right and bottom
-set title nowritebackup nobackup
+set title nowritebackup nobackup noswapfile
 set undofile undolevels=1000
 set updatetime=1000
 set undodir=$HOME/.vim/undo
@@ -26,26 +26,24 @@ Plug 'junegunn/fzf.vim'
 Plug 'yggdroot/indentLine'
 Plug 'ap/vim-buftabline'
 " Git
-Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 "" Lang Packs
 Plug 'sheerun/vim-polyglot', { 'do': './build' }
-" vim-lsp + asyncomplete
-Plug 'prabirshrestha/async.vim'
-Plug 'prabirshrestha/asyncomplete.vim'
-Plug 'prabirshrestha/asyncomplete-buffer.vim'
-Plug 'prabirshrestha/asyncomplete-file.vim'
-Plug 'prabirshrestha/asyncomplete-lsp.vim'
-Plug 'prabirshrestha/vim-lsp'
+" vim-lpsp + asyncomplete
+Plug 'dense-analysis/ale'
+Plug 'ycm-core/YouCompleteMe', { 'do': './install.py --all' }
 " Aestetics
 Plug '89luca89/vim-code-dark'
 Plug 'acarapetis/vim-colors-github'
-Plug 'morhetz/gruvbox'
 call plug#end()
 "
 filetype plugin indent on
 syntax on
 " Set cursorline ONLY on active buffer
+set completeopt=noinsert,noselect,menu,popup
+set completepopup=align:menu,border:off,highlight:Pmenu
+let g:ycm_always_populate_location_list = 1
+let g:ycm_goto_buffer_command = 'vertical-split'
 augroup CursorLine
     au!
     " Dynamic split resize
@@ -53,6 +51,20 @@ augroup CursorLine
     au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
     au WinLeave * setlocal nocursorline
 augroup END
+
+let g:ale_enabled           = 1                     " Start on insert mode
+let g:ale_set_loclist       = 1
+let g:ale_linters_explicit  = 1
+let g:ale_fix_on_save       = 1
+let g:ale_yaml_yamllint_options     = '-d relaxed'
+let g:ale_fixers = {
+            \ 'sh':['shfmt'],
+            \ }
+let g:ale_linters = {
+            \ 'sh':['shellcheck'],
+            \ 'yaml':['yamllint'],
+            \ 'ansible':['ansible-lint'],
+            \}
 " tabline
 let g:buftabline_indicators = 1
 let g:buftabline_separators = 1
@@ -83,20 +95,6 @@ let g:go_highlight_operators    = 1
 let g:go_highlight_structs      = 1
 let g:go_highlight_types        = 1
 let g:python_highlight_all  = 1
-" Asyncomplete + LSP
-set completeopt=noinsert,noselect,menu,popup
-set completepopup=align:menu,border:off,highlight:Pmenu
-let g:asyncomplete_auto_completeopt  = 0
-let g:asyncomplete_smart_completion  = 1
-let g:lsp_auto_enable                = 1
-let g:lsp_diagnostics_echo_cursor    = 1
-let g:lsp_diagnostics_enabled        = 1
-let g:lsp_highlights_enabled         = 1
-let g:lsp_highlight_references_enabled = 1
-let g:lsp_log_file  = expand('/dev/null')
-let g:lsp_semantic_enabled     = 1
-let g:lsp_signs_enabled        = 1
-let g:lsp_virtual_text_enabled = 1
 "
 " FZF fuzzy
 let g:fzf_action = {'alt-enter':'vsplit' }
@@ -139,7 +137,6 @@ nnoremap <leader>f      :<C-u>Rg<CR>
 nnoremap <leader>j  :<C-u>set ft=
 " Default IDE-Style keybindings
 nnoremap <leader>gd :<C-u>GitGutterPreviewHunk<CR>
-nnoremap <leader>gu :<C-u>GitGutterUndoHunk<CR>
 nnoremap <leader>gs :<C-u>GFiles?<CR>
 nnoremap <leader>gg :<C-u>GitGutterLineHighlightsToggle<CR>
 nnoremap <leader>m  :<C-u>Commands<CR>
@@ -149,21 +146,18 @@ nnoremap <leader>D  <C-T>
 nnoremap <leader>d  :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
 nnoremap <leader>r  :<C-u>!grep -rl <c-r>=expand("<cword>")<CR><BAR>xargs sed -i 's/<c-r>=expand("<cword>")<CR>//g'<Left><Left><Left>
 nnoremap <leader>l  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>
-" nnoremap <leader>e  :<C-u>lopen<CR>
-" LSP keybindings overriding the previous
-augroup lspbindings
-    autocmd! lspbindings
+nnoremap <leader>e  :<C-u>lopen<CR>
+" YCM keybindings overriding the previous
+augroup ycmbindings
+    autocmd! ycmbindings
     " Lang specific keybindings
     autocmd Filetype sh nnoremap <buffer> <leader>l :<C-u>mkview<CR>:%!shfmt -f <CR><CR>:loadview<CR>
     " IDE-like keybindings
-    autocmd Filetype c,cpp,python,go nnoremap <buffer> K  :<C-u>call popup_clear()<BAR>LspHover<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>m :<C-u>LspCodeAction<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>h :<C-u>call popup_clear()<BAR>LspPeekDefinition<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>td :<C-u>call popup_clear()<BAR>LspPeekTypeDefinition<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>d :<C-u>LspDefinition<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>r :<C-u>LspRename<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>l :<C-u>LspDocumentFormat<CR>
-    autocmd Filetype * nnoremap <buffer> <leader>e :<C-u>LspDocumentDiagnostics<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <buffer> K  :<C-u>YcmCompleter GetDoc<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>d :<C-u>YcmCompleter GoTo<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>m  :<C-u>YcmCompleter GoToReferences<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <leader>l  :<C-u>YcmCompleter FixIt<CR>:<C-u>YcmCompleter Format<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <leader>r  :<C-u>YcmCompleter RefactorRename<CR>
 augroup end
 " Theming
 set noshowmode noruler noshowcmd laststatus=0 ruler               " hide statusline
@@ -226,66 +220,3 @@ function! GenTags()
         redraw!
     endif
 endfun
-"
-augroup asyncompleteregister
-    autocmd! asyncompleteregister
-    " Lang specific keybindings
-    autocmd VimEnter * call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
-                \ 'name': 'buffer',
-                \ 'whitelist': ['*'],
-                \ 'completor': function('asyncomplete#sources#buffer#completor'),
-                \ }))
-    autocmd VimEnter * call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
-                \ 'name': 'file',
-                \ 'whitelist': ['*'],
-                \ 'completor': function('asyncomplete#sources#file#completor')
-                \ }))
-    autocmd VimEnter * call lsp#register_server({
-                \ 'name': 'efm-langserver',
-                \ 'whitelist': [ 'yaml', 'yaml.ansible', 'sh', 'python', 'go' ],
-                \ 'cmd': {server_info->['efm-langserver',
-                \       '-c=/home/luca-linux/dotfiles/efm-config.yml',
-                \       '-logfile=/tmp/lsp.log', '-loglevel=5']},
-                \ })
-    autocmd VimEnter * call lsp#register_server({
-                \ 'name': 'gopls',
-                \ 'whitelist': ['go'],
-                \ 'cmd': {server_info->['gopls']},
-                \ 'workspace_config': {
-                \  'gopls' : {
-                \       'hoverKind': "FullDocumentation",
-                \       'usePlaceholders': v:true,
-                \       'fuzzyMatching': v:true,
-                \       'staticcheck': v:true,
-                \       'deepCompletion': v:true,
-                \       'completionDocumentation': v:true,
-                \       'completeUnimported': v:true,
-                \       'analyses': {
-                \            'fillreturns': v:true,
-                \           'undeclarename': v:true,
-                \           'unusedparams': v:true,
-                \           'nonewvars': v:true,
-                \          }
-                \     }
-                \ },
-                \ })
-    autocmd VimEnter * call lsp#register_server({
-                \ 'name': 'pyls',
-                \ 'whitelist': ['python'],
-                \ 'cmd': {server_info->['pyls']},
-                \ 'workspace_config': {
-                \   'pyls' : {
-                \      'plugins': {
-                \         'pydocstyle': {
-                \            'enabled': v:true
-                \            }
-                \        }
-                \    }
-                \ },
-                \ })
-    autocmd VimEnter * call lsp#register_server({
-                \ 'name': 'clangd',
-                \ 'whitelist': ['c', 'cpp', 'objc', 'objcpp'],
-                \ 'cmd': {server_info->['clangd', '-background-index']},
-                \ })
-augroup end
