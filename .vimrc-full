@@ -23,13 +23,12 @@ Plug 'christoomey/vim-tmux-navigator'
 " utilities
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
-Plug 'yggdroot/indentLine'
 Plug 'ap/vim-buftabline'
 " Git
 Plug 'tpope/vim-fugitive'
 "" Lang Packs
 Plug 'sheerun/vim-polyglot', { 'do': './build' }
-" vim-lpsp + asyncomplete
+" vim-ycm + ale for unsupported langs
 Plug 'dense-analysis/ale'
 Plug 'ycm-core/YouCompleteMe', { 'do': './install.py --all' }
 " Aestetics
@@ -68,12 +67,6 @@ let g:ale_linters = {
 let g:buftabline_indicators = 1
 let g:buftabline_separators = 1
 let g:buftabline_plug_max   = 0
-" indentline
-let g:indentLine_char = '|'
-let g:indentLine_concealcursor = ''
-let g:indentLine_setConceal = 1
-let g:intendLine_faser = 1
-set list lcs=tab:\|\  " here is a space
 " Netrw
 let g:netrw_banner          = 0
 let g:netrw_browse_split    = 4
@@ -107,6 +100,7 @@ nnoremap <C-n> :Lexplore<CR>
 map <leader>y "+y
 map <leader>p "+p
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
+" do last action on a selection
 vnoremap . :'<,'>:normal .<CR>
 " vim-tmux-navigator shortcuts
 let g:tmux_navigator_no_mappings    = 1
@@ -135,27 +129,33 @@ nnoremap <leader>f      :<C-u>Rg<CR>
 " Utility for Markdown and Ansible
 nnoremap <leader>j  :<C-u>set ft=
 " Default IDE-Style keybindings
-nnoremap <leader>gd :<C-u>GitGutterPreviewHunk<CR>
+nnoremap <leader>gd :<C-u>Git diff<CR>
 nnoremap <leader>gs :<C-u>GFiles?<CR>
-nnoremap <leader>gg :<C-u>GitGutterLineHighlightsToggle<CR>
 nnoremap <leader>t  :<C-u>Tags<CR>
-nnoremap <leader>x  :<C-u>Rg <c-r>=expand("<cword>")<CR><CR>
-nnoremap <leader>d  :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
-nnoremap <leader>m  :<C-u>Commands<CR>
-nnoremap <leader>r  :<C-u>!grep -rl <c-r>=expand("<cword>")<CR><BAR>xargs sed -i 's/<c-r>=expand("<cword>")<CR>//g'<Left><Left><Left>
-nnoremap <leader>l  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>
 nnoremap <leader>e  :<C-u>lopen<CR>
+" search definition
+nnoremap <leader>d  :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
+" search references
+nnoremap <leader>m  :<C-u>Rg <c-r>=expand("<cword>")<CR><CR>
+" refactor/rename using sed
+nnoremap <leader>r  :<C-u>!grep -rl <c-r>=expand("<cword>")<CR><BAR>xargs sed -i 's/<c-r>=expand("<cword>")<CR>//g'<Left><Left><Left>
+" indent
+nnoremap <leader>l  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>
 " YCM keybindings overriding the previous
 augroup ycmbindings
     autocmd! ycmbindings
     " Lang specific keybindings
     autocmd Filetype sh nnoremap <buffer> <leader>l :<C-u>mkview<CR>:%!shfmt -f <CR><CR>:loadview<CR>
     " IDE-like keybindings
-    autocmd Filetype c,cpp,python,go nnoremap <buffer> K  :<C-u>YcmCompleter GetDoc<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>d :<C-u>YcmCompleter GoTo<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>m  :<C-u>YcmCompleter GoToReferences<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <leader>r  :<C-u>YcmCompleter RefactorRename<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <leader>l  :<C-u>YcmCompleter FixIt<CR>:<C-u>YcmCompleter Format<CR>
+    autocmd Filetype c,cpp,objc,objcpp,rust,javascript,typescript,java,python,go nnoremap <buffer> K  :<C-u>YcmCompleter GetDoc<CR>
+    " search definition
+    autocmd Filetype c,cpp,objc,objcpp,rust,javascript,typescript,java,python,go nnoremap <buffer> <leader>d :<C-u>YcmCompleter GoTo<CR>
+    " search references
+    autocmd Filetype c,cpp,objc,objcpp,rust,javascript,typescript,java,python,go nnoremap <buffer> <leader>m  :<C-u>YcmCompleter GoToReferences<CR>
+    " refactor/rename using ycm
+    autocmd Filetype c,cpp,objc,objcpp,rust,javascript,typescript,java,python,go nnoremap <buffer> <leader>r  :<C-u>YcmCompleter RefactorRename<CR>
+    " indent
+    autocmd Filetype c,cpp,objc,objcpp,rust,javascript,typescript,java,python,go nnoremap <buffer> <leader>l  :<C-u>YcmCompleter FixIt<CR>:<C-u>YcmCompleter Format<CR>
 augroup end
 " Theming
 set noshowmode noruler noshowcmd laststatus=0 ruler               " hide statusline
@@ -171,6 +171,7 @@ augroup customsyntax
     autocmd Syntax,InsertEnter * syntax match myDeclaration_2 /\<.*\k\+\ze\s*:=[a-zA-Z0-9 $:.\/\\]/
     " Remove trailing whitespaces and lines
     autocmd BufWritePre * silent! :call StripTrailingWhiteSpace()
+    " Refresh tags on save
     autocmd BufWritePost * silent! :call GenTags()
 augroup end
 highlight link myFunction   Function
