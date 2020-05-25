@@ -51,7 +51,6 @@ augroup CursorLine
     au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
     au WinLeave * setlocal nocursorline
 augroup END
-
 let g:ale_enabled           = 1                     " Start on insert mode
 let g:ale_set_loclist       = 1
 let g:ale_linters_explicit  = 1
@@ -139,11 +138,10 @@ nnoremap <leader>j  :<C-u>set ft=
 nnoremap <leader>gd :<C-u>GitGutterPreviewHunk<CR>
 nnoremap <leader>gs :<C-u>GFiles?<CR>
 nnoremap <leader>gg :<C-u>GitGutterLineHighlightsToggle<CR>
-nnoremap <leader>m  :<C-u>Commands<CR>
 nnoremap <leader>t  :<C-u>Tags<CR>
 nnoremap <leader>x  :<C-u>Rg <c-r>=expand("<cword>")<CR><CR>
-nnoremap <leader>D  <C-T>
 nnoremap <leader>d  :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
+nnoremap <leader>m  :<C-u>Commands<CR>
 nnoremap <leader>r  :<C-u>!grep -rl <c-r>=expand("<cword>")<CR><BAR>xargs sed -i 's/<c-r>=expand("<cword>")<CR>//g'<Left><Left><Left>
 nnoremap <leader>l  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>
 nnoremap <leader>e  :<C-u>lopen<CR>
@@ -156,8 +154,8 @@ augroup ycmbindings
     autocmd Filetype c,cpp,python,go nnoremap <buffer> K  :<C-u>YcmCompleter GetDoc<CR>
     autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>d :<C-u>YcmCompleter GoTo<CR>
     autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>m  :<C-u>YcmCompleter GoToReferences<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <leader>l  :<C-u>YcmCompleter FixIt<CR>:<C-u>YcmCompleter Format<CR>
     autocmd Filetype c,cpp,python,go nnoremap <leader>r  :<C-u>YcmCompleter RefactorRename<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <leader>l  :<C-u>YcmCompleter FixIt<CR>:<C-u>YcmCompleter Format<CR>
 augroup end
 " Theming
 set noshowmode noruler noshowcmd laststatus=0 ruler               " hide statusline
