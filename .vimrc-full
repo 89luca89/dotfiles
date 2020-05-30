@@ -1,68 +1,40 @@
 " Miscellaneous
 let g:python_host_prog  = '/usr/bin/python2'
 let g:python3_host_prog = '/usr/bin/python3'
-set autoindent backspace=indent,eol,start
+set updatetime=300
 set colorcolumn=80
-set expandtab shiftwidth=4 tabstop=4 softtabstop=4                " Four spaces for tabs everywhere
+set title nocompatible nowritebackup nobackup                     " required
 set mouse=a                                                       " it's always useful
-set nowrap number nomodeline cursorline
-set path+=**                                                      " Recursive path Tab autocomplete
-set smartindent copyindent                                        " always set autoindenting on
-set smarttab smartcase ignorecase incsearch
+set undofile undolevels=1000 undodir=$HOME/.vim/undo              " Undo file and directory
+set directory=$HOME/.vim/swap                                     " Custom swapfile directory
+set path+=** wildmenu                                             " Recursive path Tab autocomplete
+set hidden                                                        " change buffer without saving
+set backspace=indent,eol,start                                    " http://vi.stackexchange.com/a/2163
 set splitright splitbelow                                         " Open new splits to the right and bottom
-set title nowritebackup nobackup noswapfile
-set undofile undolevels=1000
-set updatetime=1000
-set undodir=$HOME/.vim/undo
-set directory=$HOME/.vim/swap
-set nocompatible
+set autoindent smartindent copyindent                             " always set autoindenting on
+set smarttab expandtab shiftwidth=4 tabstop=4 softtabstop=4       " Four spaces for tabs everywhere
+set hlsearch incsearch ignorecase smartcase                       " Highlight search results, ignore case if search is all lowercase
+set nowrap number nomodeline
 filetype off
 call plug#begin('~/.vim/plugged')
 " vim tmux navigator
 Plug 'christoomey/vim-tmux-navigator'
 " utilities
-Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
+Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 Plug 'ap/vim-buftabline'
 " Git
 Plug 'tpope/vim-fugitive'
 "" Lang Packs
 Plug 'sheerun/vim-polyglot', { 'do': './build' }
-" vim-ycm + ale for unsupported langs
-Plug 'dense-analysis/ale'
-Plug 'ycm-core/YouCompleteMe', { 'do': './install.py --all' }
+" YCM // dnf install clang clang-devel boost boost-devel
+Plug 'ycm-core/YouCompleteMe', { 'do': './install.py --clangd-completer --go-completer --java-completer --system-libclang --system-boost' }
 " Aestetics
 Plug '89luca89/vim-code-dark'
 Plug 'acarapetis/vim-colors-github'
 call plug#end()
-"
 filetype plugin indent on
 syntax on
-" Set cursorline ONLY on active buffer
-set completeopt=noinsert,noselect,menu,popup
-set completepopup=align:menu,border:off,highlight:Pmenu
-let g:ycm_always_populate_location_list = 1
-let g:ycm_goto_buffer_command = 'vertical-split'
-augroup CursorLine
-    au!
-    " Dynamic split resize
-    au VimResized * :wincmd =
-    au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
-    au WinLeave * setlocal nocursorline
-augroup END
-let g:ale_enabled           = 1                     " Start on insert mode
-let g:ale_set_loclist       = 1
-let g:ale_linters_explicit  = 1
-let g:ale_fix_on_save       = 1
-let g:ale_yaml_yamllint_options     = '-d relaxed'
-let g:ale_fixers = {
-            \ 'sh':['shfmt'],
-            \ }
-let g:ale_linters = {
-            \ 'sh':['shellcheck'],
-            \ 'yaml':['yamllint'],
-            \ 'ansible':['ansible-lint'],
-            \}
 " tabline
 let g:buftabline_indicators = 1
 let g:buftabline_separators = 1
@@ -87,11 +59,17 @@ let g:go_highlight_operators    = 1
 let g:go_highlight_structs      = 1
 let g:go_highlight_types        = 1
 let g:python_highlight_all  = 1
-"
 " FZF fuzzy
 let g:fzf_action = {'alt-enter':'vsplit' }
 let g:fzf_files_options = "--preview 'if file {1} | grep -Ei \"text|JSON\"; then cat {1} ; fi'"
 """     Shortcuts   "
+" do last action on a selection
+vnoremap . :'<,'>:normal .<CR>
+" navigate tabs Tab (fw) S-Tab (prev)
+map <Tab>   :<C-u>bn!<CR>
+map <S-Tab> :<C-u>bp!<CR>
+" C-c close buffer
+nnoremap <C-c> :<C-u>bp<BAR>sp<BAR>bn<BAR>bd<CR>
 " Leader map
 let mapleader = ' '
 " toggle file explorer
@@ -100,10 +78,13 @@ nnoremap <C-n> :Lexplore<CR>
 map <leader>y "+y
 map <leader>p "+p
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
-" do last action on a selection
-vnoremap . :'<,'>:normal .<CR>
+" " Resize split window horizontally and vertically
+noremap <S-M-Down>  :<C-u>2winc-<CR>
+noremap <S-M-Left>  :<C-u>2winc<<CR>
+noremap <S-M-Right> :<C-u>2winc><CR>
+noremap <S-M-Up>    :<C-u>2winc+<CR>
 " vim-tmux-navigator shortcuts
-let g:tmux_navigator_no_mappings    = 1
+let g:tmux_navigator_no_mappings =  1
 inoremap <silent> <M-Down>  <Esc>:<C-u>TmuxNavigateDown<CR>
 inoremap <silent> <M-Left>  <Esc>:<C-u>TmuxNavigateLeft<CR>
 inoremap <silent> <M-Right> <Esc>:<C-u>TmuxNavigateRight<CR>
@@ -112,54 +93,16 @@ nnoremap <silent> <M-Down>  :<C-u>TmuxNavigateDown<CR>
 nnoremap <silent> <M-Left>  :<C-u>TmuxNavigateLeft<CR>
 nnoremap <silent> <M-Right> :<C-u>TmuxNavigateRight<CR>
 nnoremap <silent> <M-Up>    :<C-u>TmuxNavigateUp<CR>
-" navigate tabs Tab (fw) S-Tab (prev)
-map <Tab>   :<C-u>bn!<CR>
-map <S-Tab> :<C-u>bp!<CR>
-" C-c close buffer
-nnoremap <C-c> :<C-u>bp<BAR>sp<BAR>bn<BAR>bd<CR>
-" " Resize split window horizontally and vertically
-noremap <S-M-Down>  :<C-u>2winc-<CR>
-noremap <S-M-Left>  :<C-u>2winc<<CR>
-noremap <S-M-Right> :<C-u>2winc><CR>
-noremap <S-M-Up>    :<C-u>2winc+<CR>
 " Utility shortcuts with leader:
 nnoremap <leader><Tab>  :<C-u>Buffers<CR>
 nnoremap <leader>b      :<C-u>Files<CR>
 nnoremap <leader>f      :<C-u>Rg<CR>
+nnoremap <leader>t      :<C-u>Tags<CR>
 " Utility for Markdown and Ansible
 nnoremap <leader>j  :<C-u>set ft=
-" Default IDE-Style keybindings
-nnoremap <leader>gd :<C-u>Git diff<CR>
-nnoremap <leader>gs :<C-u>GFiles?<CR>
-nnoremap <leader>t  :<C-u>Tags<CR>
-nnoremap <leader>e  :<C-u>lopen<CR>
-" search definition
-nnoremap <leader>d  :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
-" search references
-nnoremap <leader>m  :<C-u>Rg <c-r>=expand("<cword>")<CR><CR>
-" refactor/rename using sed
-nnoremap <leader>r  :<C-u>!grep -rl <c-r>=expand("<cword>")<CR><BAR>xargs sed -i 's/<c-r>=expand("<cword>")<CR>//g'<Left><Left><Left>
-" indent
-nnoremap <leader>l  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>
-" YCM keybindings overriding the previous
-augroup ycmbindings
-    autocmd! ycmbindings
-    " Lang specific keybindings
-    autocmd Filetype sh nnoremap <buffer> <leader>l :<C-u>mkview<CR>:%!shfmt -f <CR><CR>:loadview<CR>
-    " IDE-like keybindings
-    autocmd Filetype c,cpp,objc,objcpp,rust,javascript,typescript,java,python,go nnoremap <buffer> K  :<C-u>YcmCompleter GetDoc<CR>
-    " search definition
-    autocmd Filetype c,cpp,objc,objcpp,rust,javascript,typescript,java,python,go nnoremap <buffer> <leader>d :<C-u>YcmCompleter GoTo<CR>
-    " search references
-    autocmd Filetype c,cpp,objc,objcpp,rust,javascript,typescript,java,python,go nnoremap <buffer> <leader>m  :<C-u>YcmCompleter GoToReferences<CR>
-    " refactor/rename using ycm
-    autocmd Filetype c,cpp,objc,objcpp,rust,javascript,typescript,java,python,go nnoremap <buffer> <leader>r  :<C-u>YcmCompleter RefactorRename<CR>
-    " indent
-    autocmd Filetype c,cpp,objc,objcpp,rust,javascript,typescript,java,python,go nnoremap <buffer> <leader>l  :<C-u>YcmCompleter FixIt<CR>:<C-u>YcmCompleter Format<CR>
-augroup end
 " Theming
-set noshowmode noruler noshowcmd laststatus=0 ruler               " hide statusline
-set rulerformat=%20(%m%r%w\ %y\ %l/%c%)\                          " Modified+FileType+Ruler
+set noshowmode noshowcmd laststatus=0 ruler   " hide statusline
+set rulerformat=%20(%m%r%w\ %y\ %l/%c%)\        " Modified+FileType+Ruler
 set fillchars+=vert:│
 set guioptions=d
 set background=dark
@@ -181,7 +124,9 @@ colorscheme codedark
 highlight TabLine       guibg=#1E1E1E guifg=#D3D7CF
 highlight TabLineFill   guibg=#1E1E1E guifg=#D3D7CF
 highlight TabLineSel    guifg=#262626 guibg=#8a8a8a
+highlight ColorColumn   guibg=#252525
 highlight SpecialKey    guifg=#505050
+" FUNCTIONS ------------------------------------------------------------------
 " Toggle Theme
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
@@ -191,6 +136,7 @@ function! ToggleTheme()
         highlight TabLine       guibg=#1E1E1E guifg=#D3D7CF
         highlight TabLineFill   guibg=#1E1E1E guifg=#D3D7CF
         highlight TabLineSel    guifg=#262626 guibg=#8a8a8a
+        highlight ColorColumn   guibg=#252525
         highlight SpecialKey    guifg=#505050
     else
         set background=light
@@ -219,3 +165,37 @@ function! GenTags()
         redraw!
     endif
 endfun
+" LSP SETUP ------------------------------------------------------------------
+" Set cursorline ONLY on active buffer
+set completeopt=noinsert,noselect,menu,popup
+set completepopup=align:menu,border:off,highlight:Pmenu
+" Default IDE-Style keybindings EDMRL, errors, definition, references, rename, indent
+nnoremap <leader>e  :<C-u>lopen<CR>
+nnoremap <leader>d  :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
+nnoremap <leader>m  :<C-u>Rg <c-r>=expand("<cword>")<CR><CR>
+nnoremap <leader>r  :<C-u>!grep -rl <c-r>=expand("<cword>")<CR><BAR>xargs sed -i 's/<c-r>=expand("<cword>")<CR>//g'<Left><Left><Left>
+nnoremap <leader>l  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>
+" YCM keybindings overriding the previous
+augroup ycmbindings
+    autocmd! ycmbindings
+    " IDE-like keybindings
+    autocmd Filetype c,cpp,objc,objcpp,java,python,go,yaml,yaml.ansible,sh nnoremap <buffer> K  :<C-u>YcmCompleter GetDoc<CR>
+    autocmd Filetype c,cpp,objc,objcpp,java,python,go,yaml,yaml.ansible,sh nnoremap <buffer> <leader>e :<C-u>YcmDiags<CR>
+    " search definition
+    autocmd Filetype c,cpp,objc,objcpp,java,python,go,yaml,yaml.ansible,sh nnoremap <buffer> <leader>d :<C-u>YcmCompleter GoTo<CR>
+    " search references
+    autocmd Filetype c,cpp,objc,objcpp,java,python,go,yaml,yaml.ansible,sh nnoremap <buffer> <leader>m  :<C-u>YcmCompleter GoToReferences<CR>
+    " refactor/rename using ycm
+    autocmd Filetype c,cpp,objc,objcpp,java,python,go,yaml,yaml.ansible,sh nnoremap <buffer> <leader>r  :<C-u>YcmCompleter RefactorRename .
+
+    " indent
+    autocmd Filetype c,cpp,objc,objcpp,java,python,go nnoremap <buffer> <leader>l  :<C-u>YcmCompleter FixIt<CR>:<C-u>YcmCompleter Format<CR>
+augroup end
+let g:ycm_semantic_triggers = {'c,cpp,objc,objcpp,java,python,go': ['re!.']}
+let g:ycm_language_server = [
+            \   {
+            \     'name': 'efm-langserver',
+            \     'cmdline': [ '/home/luca-linux/.local/go/bin/efm-langserver', '-c=/home/luca-linux/dotfiles/efm-config.yml' ],
+            \     'filetypes': [ 'yaml', 'yaml.ansible', 'sh', 'python', 'go' ]
+            \   }
+            \ ]
