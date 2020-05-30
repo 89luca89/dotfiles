@@ -21,7 +21,11 @@ syntax on
 " play nicely with modern graphics
 set encoding=utf8
 set background=dark
-
+" navigate tabs Tab (fw) S-Tab (prev)
+map <Tab>   :<C-u>bn!<CR>
+map <S-Tab> :<C-u>bp!<CR>
+" C-c close buffer
+nnoremap <C-c> :<C-u>bp<BAR>sp<BAR>bn<BAR>bd<CR>
 " Toggle Theme
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
