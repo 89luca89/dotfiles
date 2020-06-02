@@ -32,6 +32,8 @@ alias whois="whois -h whois-servers.net"
 alias vi='vimx -u ~/dotfiles/.vimrc-minimal'
 alias vim='vimx'
 alias diff="diff --color=always"
+alias goproject="cd $GOPATH/src/github.com/89luca89"
+alias project="cd ~/Projects"
 alias gnome-reload='xdotool key Alt+F2; sleep 1; xdotool key r; xdotool key Return'
 export PATH=$HOME/bin:$PATH
 export GOPATH=$HOME/.local/go
