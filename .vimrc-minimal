@@ -17,6 +17,7 @@ set smarttab expandtab shiftwidth=4 tabstop=4 softtabstop=4       " Four spaces 
 set hlsearch incsearch ignorecase smartcase                       " Highlight search results, ignore case if search is all lowercase
 set nowrap number nomodeline
 set laststatus=2
+set colorcolumn=80
 syntax on
 " play nicely with modern graphics
 set encoding=utf8
