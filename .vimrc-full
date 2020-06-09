@@ -142,7 +142,7 @@ endfunction
 function! LintProject()
     silent!
     cgete system('lint-project ' . &filetype . " .")
-    :copen
+    :vert copen
 endfun
 " Generate tags
 function! GenTags()
@@ -161,14 +161,14 @@ function! StripTrailingWhiteSpace()
     %s/\($\n\s*\)\+\%$//e
     redraw!
 endfun
-" LSP SETUP --------------------------------------------------------------------
 " Default IDE-Style keybindings EDMRL, errors, definition, references, rename, indent
-nnoremap <leader>A  :<C-u>:call LintProject()<CR>
-nnoremap <leader>e  :<C-u>copen<CR>
+nnoremap <leader>A  :<C-u>call LintProject()<CR>
+nnoremap <leader>e  :<C-u>vert copen<BAR>vert resize 80<CR>
 nnoremap <leader>d  :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
 nnoremap <leader>m  :<C-u>Rg <c-r>=expand("<cword>")<CR><CR>
 nnoremap <leader>r  :<C-u>!grep -rl <c-r>=expand("<cword>")<CR><BAR>xargs sed -i 's/<c-r>=expand("<cword>")<CR>//g'<Left><Left><Left>
 nnoremap <leader>l  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>
+" LSP SETUP --------------------------------------------------------------------
 " Lsp keybindings overriding the previous
 augroup lspbindings
     autocmd! lspbindings
