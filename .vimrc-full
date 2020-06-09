@@ -17,34 +17,36 @@ set completepopup=align:menu,border:off,highlight:Pmenu
 filetype off
 call plug#begin('~/.vim/plugged')
 " utilities
+Plug 'ap/vim-buftabline'
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
-Plug 'ap/vim-buftabline'
-Plug 'scrooloose/nerdtree'
 " Git
 Plug 'mhinz/vim-signify'
 " Lang Packs
 Plug 'sheerun/vim-polyglot', { 'do': './build' }
 " Aestetics
 Plug 'acarapetis/vim-colors-github'
-Plug 'tomasr/molokai'
-" vim-lsp + asyncomplete
-Plug 'prabirshrestha/async.vim'
-Plug 'prabirshrestha/asyncomplete.vim'
-Plug 'prabirshrestha/asyncomplete-buffer.vim'
-Plug 'prabirshrestha/asyncomplete-lsp.vim'
-Plug 'prabirshrestha/vim-lsp'
+Plug 'tomasiser/vim-code-dark'
+" LSP + ALE
+Plug 'autozimu/languageclient-neovim', { 'branch': 'next', 'do': 'bash install.sh', }
+Plug 'dense-analysis/ale'
+" Deoplete + Dependencies
+Plug 'shougo/deoplete.nvim'
+Plug 'roxma/nvim-yarp'
+Plug 'roxma/vim-hug-neovim-rpc'
 call plug#end()
 filetype plugin indent on
 syntax on
+" Dynamic split resize
+autocmd VimResized * :wincmd =
 " tabline
 let g:buftabline_indicators = 1
-let g:buftabline_separators = 1
 let g:buftabline_plug_max   = 0
+let g:buftabline_separators = 1
 " Git
 let g:signify_sign_add               = '>'
-let g:signify_sign_delete            = '<'
 let g:signify_sign_change            = '~'
+let g:signify_sign_delete            = '<'
 " Langs
 let g:ansible_attribute_highlight       = 'ab'
 let g:ansible_extra_keywords_highlight  = 1
@@ -70,9 +72,9 @@ let g:java_highlight_all    = 1
 let g:python_highlight_all  = 1
 let g:python_highlight_builtin_funcs        = 1
 let g:python_highlight_builtin_funcs_kwarg  = 1
-let g:python_highlight_builtin_objs = 1
-let g:python_highlight_builtins     = 1
+let g:python_highlight_builtin_objs     = 1
 let g:python_highlight_builtin_types    = 1
+let g:python_highlight_builtins     = 1
 let g:python_highlight_class_vars   = 1
 let g:python_highlight_doctests     = 1
 let g:python_highlight_exceptions   = 1
@@ -91,8 +93,8 @@ let g:fzf_files_options = "--preview 'if file {1} | grep -Ei \"text|JSON\"; then
 " do last action on a selection
 vnoremap . :'<,'>:normal .<CR>
 " navigate tabs Tab (fw) S-Tab (prev)
-map <Tab>   :<C-u>bn!<CR>
-map <S-Tab> :<C-u>bp!<CR>
+map <Tab>   :<C-u>bn<CR>
+map <S-Tab> :<C-u>bp<CR>
 " C-c close buffer
 nnoremap <C-c> :<C-u>bp<BAR>sp<BAR>bn<BAR>bd<CR>
 " Leader map
@@ -101,9 +103,6 @@ let mapleader = ' '
 map <leader>y "+y
 map <leader>p "+p
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
-" Nerdtree setup
-noremap <leader>n   :NERDTreeToggle<CR>
-noremap <leader>\   :NERDTreeFind<CR>
 " " Resize split window horizontally and vertically
 noremap <S-M-Down>  :<C-u>2winc-<CR>
 noremap <S-M-Left>  :<C-u>2winc<<CR>
@@ -127,21 +126,17 @@ augroup customsyntax
     autocmd! customsyntax
     autocmd Syntax,InsertEnter * syntax match myFunction /\<\k\+\ze(/
     autocmd Syntax,InsertEnter * syntax match myDeclaration_1 /\<\k\+\ze\s*=[a-zA-Z0-9 $:.\/\\]/
-    autocmd Syntax,InsertEnter * syntax match myDeclaration_2 /\<.*\k\+\ze\s*:=[a-zA-Z0-9 $:.\/\\]/
     " Remove trailing whitespaces and lines
     autocmd BufWritePre * silent! :call StripTrailingWhiteSpace()
     " Refresh tags on save
     autocmd BufWritePost * silent! :call GenTags()
 augroup end
 highlight link myFunction       Function
-highlight link myDeclaration_1  Special
-highlight link myDeclaration_2  Special
-colorscheme molokai
-highlight Normal        guibg=#1E1E1E
-highlight ColorColumn   guibg=#252525
-highlight SpecialKey    guifg=#505050
+highlight link myDeclaration_1  Identifier
+colorscheme codedark
+highlight Normal        guibg=#131313
 highlight TabLine       guibg=#2E1E1E guifg=#D3D7CF
-highlight TabLineFill   guibg=#1E1E1E guifg=#D3D7CF gui=NONE cterm=NONE term=NONE
+highlight TabLineFill   guibg=#1E1E1E guifg=#D3D7CF
 highlight TabLineSel    guifg=#262626 guibg=#8a8a8a
 " FUNCTIONS --------------------------------------------------------------------
 " Toggle Theme
@@ -149,12 +144,10 @@ map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        colorscheme molokai
-        highlight ColorColumn   guibg=#252525
-        highlight Normal        guibg=#1E1E1E
-        highlight SpecialKey    guifg=#505050
+        colorscheme codedark
+        highlight Normal        guibg=#131313
         highlight TabLine       guibg=#1E1E1E guifg=#D3D7CF
-        highlight TabLineFill   guibg=#1E1E1E guifg=#D3D7CF gui=NONE cterm=NONE term=NONE
+        highlight TabLineFill   guibg=#1E1E1E guifg=#D3D7CF
         highlight TabLineSel    guifg=#262626 guibg=#8a8a8a
     else
         set background=light
@@ -185,83 +178,50 @@ function! StripTrailingWhiteSpace()
 endfun
 " LSP SETUP --------------------------------------------------------------------
 " Default IDE-Style keybindings EDMRL, errors, definition, references, rename, indent
-nnoremap <leader>e  :<C-u>lopen<CR>
+nnoremap <leader>e  :<C-u>copen<CR>
 nnoremap <leader>d  :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
+nnoremap <leader>l  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>
 nnoremap <leader>m  :<C-u>Rg <c-r>=expand("<cword>")<CR><CR>
 nnoremap <leader>r  :<C-u>!grep -rl <c-r>=expand("<cword>")<CR><BAR>xargs sed -i 's/<c-r>=expand("<cword>")<CR>//g'<Left><Left><Left>
-nnoremap <leader>l  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>
 " Lsp keybindings overriding the previous
 augroup lspbindings
     autocmd! lspbindings
     " IDE-like keybindings
-    autocmd Filetype c,cpp,objc,objcpp,python,go,yaml,yaml.ansible,sh nnoremap <buffer> K  :<C-u>call popup_clear()<BAR>LspHover<CR>
+    autocmd Filetype c,cpp,objc,objcpp,python,go,yaml.yaml.ansible,sh nnoremap <buffer> <leader>A  :<C-u>bufdo ALELint<CR><CR>:so ~/.vimrc<CR>
+    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap <buffer> K  :<C-u>call LanguageClient#textDocument_hover()<CR>
     " Default IDE-Style keybindings EDMRL, errors, definition, references, rename, indent
-    autocmd Filetype c,cpp,objc,objcpp,python,go,yaml,yaml.ansible,sh nnoremap <buffer> <leader>e :<C-u>LspDocumentDiagnostics<CR>
-    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap <buffer> <leader>d :<C-u>LspDefinition<CR>
-    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap <buffer> <leader>m :<C-u>LspCodeAction<CR>
-    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap <buffer> <leader>r :<C-u>LspRename<CR>
-    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap <buffer> <leader>l :<C-u>LspDocumentFormat<CR>
-    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap <buffer> <leader>h :<C-u>call popup_clear()<BAR>LspPeekDefinition<CR>
-    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap <buffer> <leader>td :<C-u>call popup_clear()<BAR>LspPeekTypeDefinition<CR>
+    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap <buffer> <leader>h :<C-u>call LanguageClient_contextMenu()<CR>
+    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap <buffer> <leader>d :<C-u>call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<CR>
+    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap <buffer> <leader>l :<C-u>call LanguageClient#textDocument_formatting()<CR>
+    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap <buffer> <leader>m :<C-u>call LanguageClient#textDocument_references()<aCR>
+    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap <buffer> <leader>r :<C-u>call LanguageClient#textDocument_rename()<CR>
 augroup end
-" Asyncomplete + LSP
-let g:asyncomplete_auto_completeopt  = 0
-let g:asyncomplete_smart_completion  = 1
-let g:lsp_auto_enable                = 1
-let g:lsp_diagnostics_echo_cursor    = 1
-let g:lsp_diagnostics_enabled        = 1
-let g:lsp_highlights_enabled         = 1
-let g:lsp_highlight_references_enabled = 1
-let g:lsp_log_file  = expand('/dev/null')
-let g:lsp_semantic_enabled     = 1
-let g:lsp_signs_enabled        = 1
-let g:lsp_virtual_text_enabled = 1
-"
-augroup asyncompleteregister
-    autocmd! asyncompleteregister
-    " Lang specific keybindings
-    autocmd VimEnter * call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
-                \ 'name': 'buffer',
-                \ 'whitelist': ['*'],
-                \ 'completor': function('asyncomplete#sources#buffer#completor'),
-                \ }))
-    autocmd VimEnter * call lsp#register_server({
-                \ 'name': 'efm-langserver',
-                \ 'whitelist': [ 'yaml', 'yaml.ansible', 'sh', 'python', 'go' ],
-                \ 'cmd': {server_info->['/home/luca-linux/.local/go/bin/efm-langserver',
-                \       '-c=/home/luca-linux/dotfiles/efm-config.yml',
-                \       '-logfile=/tmp/lsp.log', '-loglevel=5']},
-                \ })
-    autocmd VimEnter * call lsp#register_server({
-                \ 'name': 'clangd',
-                \ 'whitelist': ['c', 'cpp', 'objc', 'objcpp'],
-                \ 'cmd': {server_info->['clangd', '-background-index']},
-                \ })
-    autocmd VimEnter * call lsp#register_server({
-                \ 'name': 'pyls',
-                \ 'whitelist': ['python'],
-                \ 'cmd': {server_info->['pyls']},
-                \ })
-    autocmd VimEnter * call lsp#register_server({
-                \ 'name': 'gopls',
-                \ 'whitelist': ['go'],
-                \ 'cmd': {server_info->['/home/luca-linux/.local/go/bin/gopls']},
-                \ 'workspace_config': {
-                \  'gopls' : {
-                \       'hoverKind': "FullDocumentation",
-                \       'usePlaceholders': v:true,
-                \       'fuzzyMatching': v:true,
-                \       'staticcheck': v:true,
-                \       'deepCompletion': v:true,
-                \       'completionDocumentation': v:true,
-                \       'completeUnimported': v:true,
-                \       'analyses': {
-                \            'fillreturns': v:true,
-                \           'undeclarename': v:true,
-                \           'unusedparams': v:true,
-                \           'nonewvars': v:true,
-                \          }
-                \     }
-                \ },
-                \ })
-augroup end
+" Async enable ALE and Deoplete for better performances
+autocmd InsertEnter * call deoplete#enable()
+let g:deoplete#enable_at_startup = 0                " Start on insert mode
+" ALE linter
+let g:ale_enabled           = 1
+let g:ale_set_quickfix      = 1
+let g:ale_linters_explicit  = 1
+let g:ale_sign_error        = '⤫'
+let g:ale_sign_warning      = '▲'
+let g:ale_yaml_yamllint_options = '-d relaxed'
+let g:ale_linters = {
+            \ 'sh':['shellcheck'],
+            \ 'ansible':['ansible-lint'],
+            \ 'yaml':['yamllint'],
+            \ 'go':['golangci-lint'],
+            \ 'python':['pylint'],
+            \}
+" LSP Language Client
+let g:LanguageClient_autoStart  = 1
+let g:LanguageClient_diagnosticsEnable  = 1
+let g:LanguageClient_diagnosticsList = "Quickfix"
+let g:LanguageClient_serverCommands     = {
+            \ 'c': ['clangd'],
+            \ 'cpp': ['clangd'],
+            \ 'objc': ['clangd'],
+            \ 'objcpp': ['clangd'],
+            \ 'go': ['gopls'],
+            \ 'python': ['pyls'],
+            \}
