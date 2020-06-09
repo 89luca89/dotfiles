@@ -21,7 +21,6 @@ call plug#begin('~/.vim/plugged')
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 Plug 'ap/vim-buftabline'
-Plug 'scrooloose/nerdtree'
 " Git
 Plug 'mhinz/vim-signify'
 " Lang Packs
@@ -86,9 +85,6 @@ let mapleader = ' '
 nnoremap <leader>y "+y
 nnoremap <leader>p "+p
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
-" Nerdtree setup
-noremap <leader>n   :NERDTreeToggle<CR>
-noremap <leader>\   :NERDTreeFind<CR>
 " " Resize split window horizontally and vertically
 noremap <S-M-Down>  :<C-u>2winc-<CR>
 noremap <S-M-Left>  :<C-u>2winc<<CR>
