@@ -223,7 +223,9 @@
           - neovim
           - psutil
           - setuptools
-          - demjson
+          - flake8-awesome
+          - flake8-mypy
+          - flake8-docstring
       become: true
       tags: [ devel, python ]
 
