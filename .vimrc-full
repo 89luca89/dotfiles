@@ -13,8 +13,7 @@ set autoindent smartindent copyindent smarttab expandtab
 set shiftwidth=4 tabstop=4 softtabstop=4
 set hlsearch incsearch ignorecase smartcase
 set nowrap number nomodeline ttyfast lazyredraw
-set completeopt=noinsert,noselect,menu,popup
-set completepopup=align:menu,border:off,highlight:Pmenu
+set completeopt=noinsert,noselect,menu
 filetype off
 call plug#begin('~/.vim/plugged')
 " utilities
@@ -147,7 +146,8 @@ endfun
 " Generate tags
 function! GenTags()
     if isdirectory(".git") || filereadable(".project")
-        silent exec "!rm -f ./tags; ctags -R ."
+        silent!
+        exec "!rm -f ./tags; ctags -R ."
         redraw!
     endif
 endfun
