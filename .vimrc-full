@@ -175,9 +175,9 @@ augroup lspbindings
     " Default IDE-Style keybindings EDMRL, errors, definition, references, rename, indent
     autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>d :<C-u>call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<CR>
     autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>l :<C-u>call LanguageClient#textDocument_formatting()<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>m :<C-u>call LanguageClient#textDocument_references()<aCR>
+    autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>m :<C-u>call LanguageClient#textDocument_references()<CR>
     autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>r :<C-u>call LanguageClient#textDocument_rename()<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>h :<C-u>call LanguageClient_contextMenu()<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>h :<C-u>call LanguageClient#textDocument_codeAction()<CR>
 augroup end
 " Async enable Deoplete for better performances
 autocmd InsertEnter * call deoplete#enable()
