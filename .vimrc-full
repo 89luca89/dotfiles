@@ -27,12 +27,15 @@ Plug 'sheerun/vim-polyglot', { 'do': './build' }
 " Aestetics
 Plug 'acarapetis/vim-colors-github'
 Plug 'tomasiser/vim-code-dark'
-" vim-lsp + asyncomplete
-Plug 'prabirshrestha/async.vim'
-Plug 'prabirshrestha/asyncomplete.vim'
-Plug 'prabirshrestha/asyncomplete-buffer.vim'
-Plug 'prabirshrestha/asyncomplete-lsp.vim'
-Plug 'prabirshrestha/vim-lsp'
+" LSP
+Plug 'autozimu/languageclient-neovim', { 'branch': 'next', 'do': 'bash install.sh', }
+" Deoplete + Dependencies
+Plug 'shougo/deoplete.nvim'
+Plug 'deoplete-plugins/deoplete-tag'
+Plug 'roxma/nvim-yarp'
+Plug 'roxma/vim-hug-neovim-rpc'
+ call plug#end()
+
 call plug#end()
 filetype plugin indent on
 syntax on
@@ -103,19 +106,20 @@ set background=dark
 set termguicolors
 augroup customsyntax
     autocmd! customsyntax
-    autocmd Syntax,InsertEnter * syntax match myFunction /\<\k\+\ze(/
-    autocmd Syntax,InsertEnter * syntax match myDeclaration_1 /\<\k\+\ze\s*=[a-zA-Z0-9 $:.\/\\]/
     " Remove trailing whitespaces and lines
     autocmd BufWritePre * silent! :call StripTrailingWhiteSpace()
     " Refresh tags on save
     autocmd BufWritePost * silent! :call GenTags()
+    " Custom syntax highlight
+    autocmd Syntax,InsertEnter * syntax match myFunction /\<\k\+\ze(/
+    autocmd Syntax,InsertEnter * syntax match myDeclaration_1 /\<\k\+\ze\s*=[a-zA-Z0-9 $:.\/\\]/
+    autocmd Syntax,InsertEnter * syntax match myDeclaration_2 /\<.*\k\+\ze\s*:=[a-zA-Z0-9 $:.\/\\]/
 augroup end
 highlight link myFunction       Function
 highlight link myDeclaration_1  Identifier
+highlight link myDeclaration_2  Identifier
 colorscheme codedark
-highlight Normal        guibg=#151515
-highlight TabLine       guibg=#151515 guifg=#D3D7CF
-highlight TabLineFill   guibg=#151515 guifg=#D3D7CF
+highlight Normal        guibg=#101010
 highlight TabLineSel    guifg=#262626 guibg=#8a8a8a
 " FUNCTIONS --------------------------------------------------------------------
 " Toggle Theme
@@ -124,17 +128,12 @@ function! ToggleTheme()
     if &background == 'light'
         set background=dark
         colorscheme codedark
-        highlight Normal        guibg=#151515
-        highlight TabLine       guibg=#151515 guifg=#D3D7CF
-        highlight TabLineFill   guibg=#151515 guifg=#D3D7CF
+        highlight Normal        guibg=#101010
         highlight TabLineSel    guifg=#262626 guibg=#8a8a8a
     else
         set background=light
         colorscheme github
         highlight Normal        guibg=#FFFFFF
-        highlight Pmenu         guifg=#000000 guibg=#EEEEEE
-        highlight SpecialKey    guibg=#FFFFFF guifg=#9a9a9a
-        highlight TabLineSel    guifg=#262626 guibg=#8a8a8a
     endif
 endfunction
 " Lint the entire project using filetype as reference. out to quickfix
@@ -169,70 +168,27 @@ nnoremap <leader>m  :<C-u>Rg <c-r>=expand("<cword>")<CR><CR>
 nnoremap <leader>r  :<C-u>!grep -rl <c-r>=expand("<cword>")<CR><BAR>xargs sed -i 's/<c-r>=expand("<cword>")<CR>//g'<Left><Left><Left>
 nnoremap <leader>l  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>
 " LSP SETUP --------------------------------------------------------------------
-" Lsp keybindings overriding the previous
 augroup lspbindings
     autocmd! lspbindings
     " IDE-like keybindings
-    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap <buffer> K  :<C-u>call popup_clear()<BAR>LspHover<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <buffer> K  :<C-u>call LanguageClient#textDocument_hover()<CR>
     " Default IDE-Style keybindings EDMRL, errors, definition, references, rename, indent
-    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap <buffer> <leader>e :<C-u>LspDocumentDiagnostics<CR>
-    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap <buffer> <leader>d :<C-u>LspDefinition<CR>
-    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap <buffer> <leader>m :<C-u>LspCodeAction<CR>
-    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap <buffer> <leader>r :<C-u>LspRename<CR>
-    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap <buffer> <leader>l :<C-u>LspDocumentFormat<CR>
-    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap <buffer> <leader>h :<C-u>call popup_clear()<BAR>LspPeekDefinition<CR>
-    autocmd Filetype c,cpp,objc,objcpp,python,go nnoremap <buffer> <leader>td :<C-u>call popup_clear()<BAR>LspPeekTypeDefinition<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>d :<C-u>call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>l :<C-u>call LanguageClient#textDocument_formatting()<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>m :<C-u>call LanguageClient#textDocument_references()<aCR>
+    autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>r :<C-u>call LanguageClient#textDocument_rename()<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>h :<C-u>call LanguageClient_contextMenu()<CR>
 augroup end
-" Asyncomplete + LSP
-let g:asyncomplete_auto_completeopt  = 0
-let g:asyncomplete_smart_completion  = 1
-let g:lsp_auto_enable                = 1
-let g:lsp_diagnostics_echo_cursor    = 1
-let g:lsp_diagnostics_enabled        = 1
-let g:lsp_highlights_enabled         = 1
-let g:lsp_highlight_references_enabled = 1
-let g:lsp_log_file  = expand('/dev/null')
-let g:lsp_semantic_enabled     = 1
-let g:lsp_signs_enabled        = 1
-let g:lsp_virtual_text_enabled = 1
-augroup asyncompleteregister
-    autocmd! asyncompleteregister
-    " Lang specific keybindings
-    autocmd VimEnter * call asyncomplete#register_source(asyncomplete#sources#buffer#get_source_options({
-                \ 'name': 'buffer',
-                \ 'whitelist': ['*'],
-                \ 'completor': function('asyncomplete#sources#buffer#completor'),
-                \ }))
-    autocmd VimEnter * call lsp#register_server({
-                \ 'name': 'clangd',
-                \ 'whitelist': ['c', 'cpp', 'objc', 'objcpp'],
-                \ 'cmd': {server_info->['clangd', '-background-index']},
-                \ })
-    autocmd VimEnter * call lsp#register_server({
-                \ 'name': 'pyls',
-                \ 'whitelist': ['python'],
-                \ 'cmd': {server_info->['pyls']},
-                \ })
-    autocmd VimEnter * call lsp#register_server({
-                \ 'name': 'gopls',
-                \ 'whitelist': ['go'],
-                \ 'cmd': {server_info->['/home/luca-linux/.local/go/bin/gopls']},
-                \ 'workspace_config': {
-                \  'gopls' : {
-                \       'hoverKind': "FullDocumentation",
-                \       'usePlaceholders': v:true,
-                \       'fuzzyMatching': v:true,
-                \       'staticcheck': v:true,
-                \       'deepCompletion': v:true,
-                \       'completionDocumentation': v:true,
-                \       'completeUnimported': v:true,
-                \       'analyses': {
-                \            'fillreturns': v:true,
-                \           'undeclarename': v:true,
-                \           'unusedparams': v:true,
-                \           'nonewvars': v:true,
-                \          }
-                \     }
-                \ },
-                \ })
-augroup end
+" Async enable Deoplete for better performances
+autocmd InsertEnter * call deoplete#enable()
+let g:deoplete#enable_at_startup = 0                " Start on insert mode
+" LSP Language Client
+let g:LanguageClient_autoStart  = 1
+let g:LanguageClient_diagnosticsEnable  = 1
+let g:LanguageClient_diagnosticsList = "Quickfix"
+let g:LanguageClient_serverCommands     = {
+            \ 'c': ['clangd'],
+            \ 'cpp': ['clangd'],
+            \ 'go': ['gopls'],
+            \ 'python': ['pyls'],
+            \}
