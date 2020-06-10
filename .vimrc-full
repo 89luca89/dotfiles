@@ -84,19 +84,19 @@ nnoremap <C-c> :<C-u>bp<BAR>sp<BAR>bn<BAR>bd<CR>
 " Leader map
 let mapleader = ' '
 " leader y/p to use system clipboard, C-c in vmode for xclip
-nnoremap <leader>y "+y
-nnoremap <leader>p "+p
+map <leader>y "+y
+map <leader>p "+p
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 " " Resize split window horizontally and vertically
-noremap <S-M-Down>  :<C-u>2winc-<CR>
-noremap <S-M-Left>  :<C-u>2winc<<CR>
-noremap <S-M-Right> :<C-u>2winc><CR>
-noremap <S-M-Up>    :<C-u>2winc+<CR>
+map <S-M-Down>  :<C-u>2winc-<CR>
+map <S-M-Left>  :<C-u>2winc<<CR>
+map <S-M-Right> :<C-u>2winc><CR>
+map <S-M-Up>    :<C-u>2winc+<CR>
 " Utility shortcuts with leader:
-nnoremap <leader><Tab>  :<C-u>Buffers<CR>
-nnoremap <leader>b      :<C-u>Files<CR>
-nnoremap <leader>f      :<C-u>Rg<CR>
-nnoremap <leader>t      :<C-u>Tags<CR>
+map <leader><Tab>  :<C-u>Buffers<CR>
+map <leader>b      :<C-u>Files<CR>
+map <leader>f      :<C-u>Rg<CR>
+map <leader>t      :<C-u>Tags<CR>
 " Utility for Markdown and Ansible
 nnoremap <leader>j  :<C-u>set ft=
 " Theming
@@ -172,7 +172,7 @@ augroup lspbindings
     autocmd! lspbindings
     " IDE-like keybindings
     autocmd Filetype c,cpp,python,go nnoremap <buffer> K  :<C-u>call LanguageClient#textDocument_hover()<CR>
-    " Default IDE-Style keybindings EDMRL, errors, definition, references, rename, indent
+    " LSP IDE-Style keybindings EDMRL, errors, definition, references, rename, indent
     autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>d :<C-u>call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<CR>
     autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>l :<C-u>call LanguageClient#textDocument_formatting()<CR>
     autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>m :<C-u>call LanguageClient#textDocument_references()<CR>
