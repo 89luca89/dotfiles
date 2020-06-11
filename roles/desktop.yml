@@ -665,7 +665,7 @@
         - {src: '{{ ansible_env.HOME }}/dotfiles/.aliases', dest: '{{ ansible_env.HOME }}/.aliases'}
         - {src: '{{ ansible_env.HOME }}/dotfiles/.bashrc', dest: '{{ ansible_env.HOME }}/.bashrc'}
         - {src: '{{ ansible_env.HOME }}/dotfiles/.tmux.conf', dest: '{{ ansible_env.HOME }}/.tmux.conf'}
-        - {src: '{{ ansible_env.HOME }}/dotfiles/.vimrc-full', dest: '{{ ansible_env.HOME }}/.vimrc'}
+        - {src: '{{ ansible_env.HOME }}/dotfiles/.vimrc', dest: '{{ ansible_env.HOME }}/.vimrc'}
         - {src: '{{ ansible_env.HOME }}/dotfiles/.zshrc', dest: '{{ ansible_env.HOME }}/.zshrc'}
         - {src: '{{ ansible_env.HOME }}/dotfiles/.ctags', dest: '{{ ansible_env.HOME }}/.ctags'}
         - {src: '{{ ansible_env.HOME }}/dotfiles/user-dirs.dirs', dest: '{{ ansible_env.HOME }}/.config/user-dirs.dirs'}
