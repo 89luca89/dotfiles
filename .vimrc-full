@@ -7,7 +7,7 @@ set title nocompatible nowritebackup nobackup
 set mouse=a undofile undolevels=1000 undodir=$HOME/.vim/undo
 set directory=$HOME/.vim/swap
 set path+=** wildmenu
-set hidden backspace=indent,eol,start
+set autoread hidden backspace=indent,eol,start
 set splitright splitbelow
 set autoindent smartindent copyindent smarttab expandtab
 set shiftwidth=4 tabstop=4 softtabstop=4
@@ -77,10 +77,10 @@ let g:fzf_files_options = "--preview 'if file {1} | grep -Ei \"text|JSON\"; then
 " do last action on a visual selection
 vnoremap . :'<,'>:normal .<CR>
 " navigate tabs Tab (fw) S-Tab (prev)
-nnoremap <Tab>   :<C-u>bn!<CR>
-nnoremap <S-Tab> :<C-u>bp!<CR>
+map <Tab>   :<C-u>bn!<CR>
+map <S-Tab> :<C-u>bp!<CR>
 " C-c close buffer
-nnoremap <C-c> :<C-u>bp<BAR>sp<BAR>bn<BAR>bd<CR>
+map <C-c> :<C-u>bp<BAR>sp<BAR>bn<BAR>bd<CR>
 " Leader map
 let mapleader = ' '
 " leader y/p to use system clipboard, C-c in vmode for xclip
@@ -98,7 +98,7 @@ map <leader>b      :<C-u>Files<CR>
 map <leader>f      :<C-u>Rg<CR>
 map <leader>t      :<C-u>Tags<CR>
 " Utility for Markdown and Ansible
-nnoremap <leader>j  :<C-u>set ft=
+nnoremap <leader>j :<C-u>set ft=
 " Theming
 set noshowmode noshowcmd laststatus=0 ruler   " hide statusline
 set rulerformat=%20(%m%r%w\ %y\ %l/%c%)\        " Modified+FileType+Ruler
@@ -142,6 +142,12 @@ function! LintProject()
     cgete system('lint-project ' . &filetype . " .")
     :vert copen
 endfun
+" Lint the entire project using filetype as reference. out to quickfix
+function! FormatProject()
+    silent!
+    call system('lint-project ' . &filetype . " . f")
+    bufdo checktime
+endfun
 " Generate tags
 function! GenTags()
     if isdirectory(".git") || filereadable(".project")
@@ -162,6 +168,7 @@ function! StripTrailingWhiteSpace()
 endfun
 " Default IDE-Style keybindings EDMRL, errors, definition, references, rename, indent
 nnoremap <leader>A  :<C-u>call LintProject()<CR>
+nnoremap <leader>L  :<C-u>call FormatProject()<CR>
 nnoremap <leader>e  :<C-u>vert copen<BAR>vert resize 80<CR>
 nnoremap <leader>d  :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
 nnoremap <leader>m  :<C-u>Rg <c-r>=expand("<cword>")<CR><CR>
