@@ -25,8 +25,8 @@ Plug 'mhinz/vim-signify'
 " Lang Packs
 Plug 'sheerun/vim-polyglot', { 'do': './build' }
 " Aestetics
-Plug 'acarapetis/vim-colors-github'
 Plug 'tomasiser/vim-code-dark'
+Plug 'acarapetis/vim-colors-github'
 " LSP
 Plug 'autozimu/languageclient-neovim', { 'branch': 'next', 'do': 'bash install.sh', }
 " Deoplete + Dependencies
@@ -169,9 +169,10 @@ endfun
 " Default IDE-Style keybindings EDMRL, errors, definition, references, rename, indent
 nnoremap <leader>A  :<C-u>call LintProject()<CR>
 nnoremap <leader>L  :<C-u>call FormatProject()<CR>
+nnoremap <leader>R  :<C-u>cgete system('grep -Rn ""')<Left><Left><Left>
 nnoremap <leader>e  :<C-u>vert copen<BAR>vert resize 80<CR>
 nnoremap <leader>d  :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
-nnoremap <leader>m  :<C-u>Rg <c-r>=expand("<cword>")<CR><CR>
+nnoremap <leader>m  :<C-u>cgete system('grep -Rn "<c-r>=expand("<cword>")<CR>"')<CR>
 nnoremap <leader>r  :<C-u>!grep -rl <c-r>=expand("<cword>")<CR><BAR>xargs sed -i 's/<c-r>=expand("<cword>")<CR>//g'<Left><Left><Left>
 nnoremap <leader>l  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>
 " LSP SETUP --------------------------------------------------------------------
@@ -197,7 +198,8 @@ let g:deoplete#enable_at_startup = 0                " Start on insert mode
 " LSP Language Client
 let g:LanguageClient_autoStart  = 1
 let g:LanguageClient_diagnosticsEnable  = 1
-let g:LanguageClient_diagnosticsList = "Quickfix"
+let g:LanguageClient_diagnosticsList = "Location"
+let g:LanguageClient_selectionUI = "quickfix"
 let g:LanguageClient_serverCommands     = {
             \ 'c': ['clangd'],
             \ 'cpp': ['clangd'],
