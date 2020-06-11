@@ -1,747 +1,727 @@
+# To run
+# ansible-playbook -i localhost, -kK roles/desktop.yml
+
+---
+
 - name: Playbook to manage My Distro
   hosts: all
   gather_facts: true
   tasks:
 
-  - name: Remove Programs (Unused Programs)
-    package:
-      name:
-      - gnome-abrt
-      - gnome-boxes
-      - gnome-calendar
-      - gnome-characters
-      - gnome-clocks
-      - gnome-contacts
-      - gnome-documents
-      - gnome-font-viewer
-      - gnome-getting-started-docs
-      - gnome-initial-setup
-      - gnome-logs
-      - gnome-maps
-      - gnome-music
-      - gnome-online-miners
-      - gnome-photos
-      - gnome-software
-      - gnome-user-docs
-      - gnome-user-share
-      - gnome-video-effects
-      - gnome-weather
-      - httpd
-      - ibus-kkc
-      - ibus-libpinyin
-      - ibus-libzhuyin
-      - ibus-typing-booster
-      - orca
-      - rhythmbox
-      - shotwell
-      - simple-scan
-      - totem
-      - virtualbox-guest-additions
-      - yelp
-      state: absent
-    become: true
-    tags: bloat
+    - name: Remove Programs (Unused Programs)
+      package:
+        name:
+          - gnome-abrt
+          - gnome-boxes
+          - gnome-calendar
+          - gnome-characters
+          - gnome-clocks
+          - gnome-contacts
+          - gnome-documents
+          - gnome-font-viewer
+          - gnome-getting-started-docs
+          - gnome-initial-setup
+          - gnome-logs
+          - gnome-maps
+          - gnome-music
+          - gnome-online-miners
+          - gnome-photos
+          - gnome-software
+          - gnome-user-docs
+          - gnome-user-share
+          - gnome-video-effects
+          - gnome-weather
+          - httpd
+          - ibus-kkc
+          - ibus-libpinyin
+          - ibus-libzhuyin
+          - ibus-typing-booster
+          - orca
+          - rhythmbox
+          - shotwell
+          - simple-scan
+          - totem
+          - virtualbox-guest-additions
+          - yelp
+        state: absent
+      become: true
+      tags: bloat
 
-  - name: Setup /usr/local directory
-    file:
-      dest: /usr/local
-      owner: luca-linux
-      group: luca-linux
-      recurse: true
-    become: true
-    tags: system
+    - name: Setup /usr/local directory
+      file:
+        dest: /usr/local
+        owner: luca-linux
+        group: luca-linux
+        recurse: true
+      become: true
+      tags: system
 
-  - name: Check if rpmfusion exists
-    stat:
-      path: /etc/yum.repos.d/rpmfusion-free.repo
-    register: rpmfusion_exists
-    tags: rpmfusion
-    when: ansible_distribution == 'Fedora'
+    - name: Check if rpmfusion exists
+      stat:
+        path: /etc/yum.repos.d/rpmfusion-free.repo
+      register: rpmfusion_exists
+      tags: rpmfusion
+      when: ansible_distribution == 'Fedora'
 
-  - name: Install the rpmfusion and fonts repo packages
-    dnf:
-      state: present
-      name:
-      - http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_facts.distribution_version
-        }}.noarch.rpm
-      - http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{
-        ansible_facts.distribution_version }}.noarch.rpm
-      - http://li.nux.ro/download/nux/dextop/el7/x86_64//msttcore-fonts-installer-2.6-1.noarch.rpm
-    become: true
-    tags: rpmfusion
-    when:
-    - ansible_distribution == 'Fedora'
-    - rpmfusion_exists is defined
-    - not rpmfusion_exists.stat.exists
+    - name: Install the rpmfusion and fonts repo packages
+      dnf:
+        state: present
+        name:
+          - http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_facts.distribution_version }}.noarch.rpm
+          - http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_facts.distribution_version }}.noarch.rpm
+          - http://li.nux.ro/download/nux/dextop/el7/x86_64//msttcore-fonts-installer-2.6-1.noarch.rpm
+      become: true
+      tags: rpmfusion
+      when:
+        - ansible_distribution == 'Fedora'
+        - rpmfusion_exists is defined
+        - not rpmfusion_exists.stat.exists
 
-  - name: Install Programs (Virtualization)
-    package:
-      state: latest
-      name:
-      - libvirt
-      - virt-manager
-      - spice-webdavd
-      - spice-vdagent
-    become: true
-    tags: virtualization
+    - name: Install Programs (Virtualization)
+      package:
+        state: latest
+        name:
+          - libvirt
+          - virt-manager
+          - spice-webdavd
+          - spice-vdagent
+      become: true
+      tags: virtualization
 
-  - name: Add "{{ lookup('env','USER') }}" to libvirt Group
-    user:
-      name: "{{ lookup('env','USER') }}"
-      groups: libvirt
-      append: yes
-    become: true
-    tags: virtualization
+    - name: Add "{{ lookup('env','USER') }}" to libvirt Group
+      user:
+        name: "{{ lookup('env','USER') }}"
+        groups: libvirt
+        append: yes
+      become: true
+      tags: virtualization
 
-  - name: Install Programs (Generic Utilities)
-    package:
-      state: latest
-      name:
-      - htop
-      - acpi
-      - etckeeper
-      - flatpak
-      - wmctrl
-      - xclip
-      - xdotool
-    become: true
-    tags: term_pkg
+    - name: Install Programs (Generic Utilities)
+      package:
+        state: latest
+        name:
+          - htop
+          - acpi
+          - etckeeper
+          - flatpak
+          - wmctrl
+          - xclip
+          - xdotool
+      become: true
+      tags: term_pkg
 
-  - name: Check if etckeeper is already initialized
-    stat:
-      path: /etc/.git
-    register: file_exists
-    become: true
-    tags: term_pkg
+    - name: Check if etckeeper is already initialized
+      stat:
+        path: /etc/.git
+      register: file_exists
+      become: true
+      tags: term_pkg
 
-  - name: Initialize Etckeeper
-    command: '{{ item }}'
-    with_items:
-    - etckeeper init
-    - etckeeper commit "Initial Commit"
-    become: true
-    tags: term_pkg
-    when: not file_exists.stat.exists
+    - name: Initialize Etckeeper
+      command: '{{ item }}'
+      with_items:
+        - etckeeper init
+        - etckeeper commit "Initial Commit"
+      become: true
+      tags: term_pkg
+      when: not file_exists.stat.exists
 
-  - name: Install Programs (Archive Utilities)
-    package:
-      state: latest
-      name:
-      - cabextract
-      - lzip
-      - p7zip
-      - p7zip-plugins
-    become: true
-    tags: archive_pkg
+    - name: Install Programs (Archive Utilities)
+      package:
+        state: latest
+        name:
+          - cabextract
+          - lzip
+          - p7zip
+          - p7zip-plugins
+      become: true
+      tags: archive_pkg
 
-  - name: Install Programs (Media Utilities)
-    package:
-      state: latest
-      name:
-      - compat-ffmpeg28
-      - compat-ffmpeg28-devel
-      - ffmpeg
-      - ffmpeg-libs
-      - gstreamer1-libav
-      - gstreamer1-plugins-bad-free
-      - gstreamer1-plugins-bad-freeworld
-      - gstreamer1-plugins-base
-      - gstreamer1-plugins-base-tools
-      - gstreamer1-plugins-good
-      - gstreamer1-plugins-good-extras
-      - gstreamer1-plugins-ugly
-      - gstreamer1-plugins-ugly-free
-      - gstreamer1-svt-av1
-      - gstreamer1-svt-vp9
-      - gstreamer1-vaapi
-      - gvfs-fuse
-      - intel-media-driver
-      - libva-devel
-      - libva-intel-driver
-      - libva-intel-hybrid-driver
-      - libva-utils
-      - libva-vdpau-driver
-      - libvdpau-va-gl
-      - youtube-dl
-    become: true
-    tags: media_pkg
+    - name: Install Programs (Media Utilities)
+      package:
+        state: latest
+        name:
+          - compat-ffmpeg28
+          - compat-ffmpeg28-devel
+          - ffmpeg
+          - ffmpeg-libs
+          - gstreamer1-libav
+          - gstreamer1-plugins-bad-free
+          - gstreamer1-plugins-bad-freeworld
+          - gstreamer1-plugins-base
+          - gstreamer1-plugins-base-tools
+          - gstreamer1-plugins-good
+          - gstreamer1-plugins-good-extras
+          - gstreamer1-plugins-ugly
+          - gstreamer1-plugins-ugly-free
+          - gstreamer1-svt-av1
+          - gstreamer1-svt-vp9
+          - gstreamer1-vaapi
+          - gvfs-fuse
+          - intel-media-driver
+          - libva-devel
+          - libva-intel-driver
+          - libva-intel-hybrid-driver
+          - libva-utils
+          - libva-vdpau-driver
+          - libvdpau-va-gl
+          - youtube-dl
+      become: true
+      tags: media_pkg
 
-  - name: Install Programs (GUI Programs)
-    package:
-      state: latest
-      name:
-      - gnome-tweak-tool
-      - keepassxc
-      - syncthing
-      - mpv
-    become: true
-    tags: gui_pkg
+    - name: Install Programs (GUI Programs)
+      package:
+        state: latest
+        name:
+          - gnome-tweak-tool
+          - keepassxc
+          - syncthing
+          - mpv
+      become: true
+      tags: gui_pkg
 
-  - name: Install Flathub
-    flatpak_remote:
-      name: flathub
-      state: present
-      flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
-      method: user
-    tags: flathub
+    - name: Install Flathub
+      flatpak_remote:
+        name: flathub
+        state: present
+        flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
+        method: user
+      tags: flathub
 
-  - name: Install Programs (Programming Packages)
-    package:
-      state: latest
-      name:
-      - ShellCheck
-      - ccze
-      - clang
-      - clang-tools-extra
-      - ctags
-      - ctags-etags
-      - git
-      - git-credential-libsecret
-      - golang
-      - make
-      - python2-devel
-      - python3-devel
-      - ripgrep
-      - tmux
-      - vim
-      - vim-X11
-      - vim-enhanced
-    become: true
-    tags: [devel, tools]
+    - name: Install Programs (Programming Packages)
+      package:
+        state: latest
+        name:
+          - ShellCheck
+          - ccze
+          - clang
+          - clang-tools-extra
+          - ctags
+          - ctags-etags
+          - git
+          - git-credential-libsecret
+          - golang
+          - make
+          - python2-devel
+          - python3-devel
+          - ripgrep
+          - tmux
+          - vim
+          - vim-X11
+          - vim-enhanced
+      become: true
+      tags: [ devel, tools ]
 
-  - name: Install Programs (PIP Packages) - pip
-    pip:
-      state: latest
-      executable: pip3
-      name:
-      - python-language-server[all]
-      - yamllint
-      - ansible-lint
-      - neovim
-      - psutil
-      - setuptools
-      - flake8-awesome
-      - flake8-mypy
-      - flake8-docstring
-    become: true
-    tags: [devel, python]
+    - name: Install Programs (PIP Packages) - pip
+      pip:
+        state: latest
+        executable: pip3
+        name:
+          - 'python-language-server[all]'
+          - yamllint
+          - ansible-lint
+          - neovim
+          - psutil
+          - setuptools
+          - flake8-awesome
+          - flake8-mypy
+          - flake8-docstring
+      become: true
+      tags: [ devel, python ]
 
-  - name: Check that golang exists
-    stat:
-      path: '{{ ansible_env.HOME }}/.local/go/bin/gopls'
-    register: golang
-    tags: [devel, golang]
+    - name: Check that golang exists
+      stat:
+        path: "{{ ansible_env.HOME }}/.local/go/bin/gopls"
+      register: golang
+      tags: [ devel, golang ]
 
-  - name: Install Programs (Programming Packages) - golang
-    command: go get -u {{ item }}
-    with_items:
-    - github.com/mattn/efm-langserver
-    - golang.org/x/tools/gopls
-    - github.com/go-delve/delve/cmd/dlv
-    - golang.org/x/lint/golint
-    - golang.org/x/tools/cmd/goimports
-    - golang.org/x/tools/cmd/goimports
-    - golang.org/x/tools/cmd/gorename
-    - golang.org/x/tools/cmd/guru
-    environment:
-      GOPATH: '{{ ansible_env.HOME }}/.local/go'
-    when: not golang.stat.exists
-    tags: [devel, golang]
+    - name: Install Programs (Programming Packages) - golang
+      command: "go get -u {{ item }}"
+      with_items:
+        - github.com/mattn/efm-langserver
+        - golang.org/x/tools/gopls
+        - github.com/go-delve/delve/cmd/dlv
+        - golang.org/x/lint/golint
+        - golang.org/x/tools/cmd/goimports
+        - golang.org/x/tools/cmd/goimports
+        - golang.org/x/tools/cmd/gorename
+        - golang.org/x/tools/cmd/guru
+      environment:
+        GOPATH: "{{ ansible_env.HOME }}/.local/go"
+      when: not golang.stat.exists
+      tags: [ devel, golang ]
 
-  - name: Install Programs (Programming Packages) - golangci-lint
-    shell: |
-      curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.27.0
-    environment:
-      GOPATH: '{{ ansible_env.HOME }}/.local/go'
-    when: not golang.stat.exists
-    tags: [devel, golang]
+    - name: Install Programs (Programming Packages) - golangci-lint
+      shell: |
+        curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.27.0
+      environment:
+        GOPATH: "{{ ansible_env.HOME }}/.local/go"
+      when: not golang.stat.exists
+      tags: [ devel, golang ]
 
 
-  - name: Ensure {{ ansible_env.HOME }}/Programs Exists
-    file:
-      path: '{{ ansible_env.HOME }}/Programs'
-      state: directory
-    tags: external_pkg
+    - name: Ensure {{ ansible_env.HOME }}/Programs Exists
+      file:
+        path: '{{ ansible_env.HOME }}/Programs'
+        state: directory
+      tags: external_pkg
 
-  - name: Libinput Gestures (Clone)
-    git:
-      repo: https://github.com/bulletmark/libinput-gestures
-      dest: '{{ ansible_env.HOME }}/Programs/libinput-gestures'
-      version: master
-      update: true
-    register: libinput_gesture_download
-    tags: external_pkg
+    - name: Libinput Gestures (Clone)
+      git:
+        repo: https://github.com/bulletmark/libinput-gestures
+        dest: '{{ ansible_env.HOME }}/Programs/libinput-gestures'
+        version: master
+        update: true
+      register: libinput_gesture_download
+      tags: external_pkg
 
-  - name: Libinput Gestures (Add "{{ lookup('env','USER') }}" to Input Group)
-    user:
-      name: "{{ lookup('env','USER') }}"
-      groups: input
-      append: yes
-    become: true
-    tags: external_pkg
+    - name: Libinput Gestures (Add "{{ lookup('env','USER') }}" to Input Group)
+      user:
+        name: "{{ lookup('env','USER') }}"
+        groups: input
+        append: yes
+      become: true
+      tags: external_pkg
 
-  - name: Libinput Gestures (Dependencies)
-    package:
-      state: latest
-      name:
-      - systemd-devel
-      - libinput-devel
-    become: true
-    tags: external_pkg
+    - name: Libinput Gestures (Dependencies)
+      package:
+        state: latest
+        name:
+          - systemd-devel
+          - libinput-devel
+      become: true
+      tags: external_pkg
 
-  - name: Libinput Gestures (Compile and Install)
-    make:
-      chdir: '{{ ansible_env.HOME }}/Programs/libinput-gestures'
-      target: install
-    become: true
-    when: libinput_gesture_download.changed
-    tags: external_pkg
+    - name: Libinput Gestures (Compile and Install)
+      make:
+        chdir: "{{ ansible_env.HOME }}/Programs/libinput-gestures"
+        target: install
+      become: true
+      when: libinput_gesture_download.changed
+      tags: external_pkg
 
-  - name: Libinput Gestures (Start and Autorun)
-    command: '{{ item }}'
-    with_items:
-    - libinput-gestures-setup autostart
-    - libinput-gestures-setup start
-    when: libinput_gesture_download.changed
-    tags: external_pkg
+    - name: Libinput Gestures (Start and Autorun)
+      command: '{{ item }}'
+      with_items:
+        - libinput-gestures-setup autostart
+        - libinput-gestures-setup start
+      when: libinput_gesture_download.changed
+      tags: external_pkg
 
-  - name: zRam Swap Enable
-    systemd:
-      name: zram-swap
-      state: started
-      enabled: true
-      daemon_reload: true
-    become: true
-    tags: system
+    - name: zRam Swap Enable
+      systemd:
+        name: zram-swap
+        state: started
+        enabled: true
+        daemon_reload: true
+      become: true
+      tags: system
 
-  - name: Install Power Management (Laptop)
-    package:
-      state: latest
-      name:
-      - powertop
-      - tlp
-      - msr-tools
-      - hdparm
-      - lm_sensors
-    become: true
-    tags: system
+    - name: Install Power Management (Laptop)
+      package:
+        state: latest
+        name:
+          - powertop
+          - tlp
+          - msr-tools
+          - hdparm
+          - lm_sensors
+      become: true
+      tags: system
 
-  - name: Powertop Enable
-    systemd:
-      name: powertop.service
-      enabled: true
-      daemon_reload: true
-    become: true
-    tags: system
+    - name: Powertop Enable
+      systemd:
+        name: powertop.service
+        enabled: true
+        daemon_reload: true
+      become: true
+      tags: system
 
-  - name: TLP daemon enable
-    systemd:
-      name: tlp.service
-      state: started
-      enabled: true
-      daemon_reload: true
-    become: true
-    tags: system
+    - name: TLP daemon enable
+      systemd:
+        name: tlp.service
+        state: started
+        enabled: true
+        daemon_reload: true
+      become: true
+      tags: system
 
-  - name: Set sysctl variables
-    sysctl:
-      name: '{{ item.name }}'
-      value: '{{ item.value }}'
-      sysctl_set: true
-      state: present
-      reload: true
-    with_items:
-    - {name: vm.laptop_mode, value: 5}
-    - {name: kernel.nmi_watchdog, value: 0}
-    - {name: vm.swappiness, value: 5}
-    - {name: vm.oom_kill_allocating_task, value: 1}
-    - {name: vm.block_dump, value: 1}
-    - {name: vm.vfs_cache_pressure, value: 100}
-    - {name: vm.dirty_ratio, value: 90}
-    - {name: vm.dirty_background_ratio, value: 50}
-    - {name: vm.dirty_writeback_centisecs, value: 60000}
-    - {name: vm.dirty_expire_centisecs, value: 60000}
-    - {name: fs.inotify.max_user_watches, value: 524288}
-    become: true
-    tags: system
+    - name: Set sysctl variables
+      sysctl:
+        name: '{{ item.name }}'
+        value: '{{ item.value }}'
+        sysctl_set: true
+        state: present
+        reload: true
+      with_items:
+        - {name: vm.laptop_mode, value: 5}
+        - {name: kernel.nmi_watchdog, value: 0}
+        - {name: vm.swappiness, value: 5}
+        - {name: vm.oom_kill_allocating_task, value: 1}
+        - {name: vm.block_dump, value: 1}
+        - {name: vm.vfs_cache_pressure, value: 100}
+        - {name: vm.dirty_ratio, value: 90}
+        - {name: vm.dirty_background_ratio, value: 50}
+        - {name: vm.dirty_writeback_centisecs, value: 60000}
+        - {name: vm.dirty_expire_centisecs, value: 60000}
+        - {name: fs.inotify.max_user_watches, value: 524288}
+      become: true
+      tags: system
 
-  - name: Update fstab file with tmpfs /tmp
-    lineinfile:
-      path: /etc/fstab
-      regexp: tmpfs /tmp tmpfs
-      line: tmpfs /tmp tmpfs defaults,lazytime,noatime,nodiratime 0 0
-      state: present
-      backup: true
-    become: true
-    tags: system
+    - name: Update fstab file with tmpfs /tmp
+      lineinfile:
+        path: /etc/fstab
+        regexp: tmpfs /tmp tmpfs
+        line: tmpfs /tmp tmpfs defaults,lazytime,noatime,nodiratime 0 0
+        state: present
+        backup: true
+      become: true
+      tags: system
 
-  - name: Discard Trim Enable
-    systemd:
-      name: fstrim.timer
-      state: started
-      enabled: true
-      daemon_reload: true
-    become: true
-    tags: system
+    - name: Discard Trim Enable
+      systemd:
+        name: fstrim.timer
+        state: started
+        enabled: true
+        daemon_reload: true
+      become: true
+      tags: system
 
-  - name: Blacklist unused kernel module
-    kernel_blacklist:
-      name: intel_powerclamp
-      state: present
-    become: true
-    tags: system
+    - name: Blacklist unused kernel module
+      kernel_blacklist:
+        name: intel_powerclamp
+        state: present
+      become: true
+      tags: system
 
-  - name: Set i915 driver options
-    lineinfile:
-      path: /etc/modprobe.d/i915.conf
-      create: true
-      line: options i915 disable_power_well=0 enable_dc=2 enable_psr=1 enable_rc6=7
-        enable_fbc=1 powersave=1
-    become: true
-    tags: system
+    - name: Set i915 driver options
+      lineinfile:
+        path: /etc/modprobe.d/i915.conf
+        create: true
+        line: 'options i915 disable_power_well=0 enable_dc=2 enable_psr=1 enable_rc6=7 enable_fbc=1 powersave=1'
+      become: true
+      tags: system
 
-  - name: Set Intel HDA driver options
-    lineinfile:
-      path: /etc/modprobe.d/snd_hda_intel.conf
-      create: true
-      line: options snd_hda_intel power_save_controlle=Y power_save=1
-    become: true
-    tags: system
+    - name: Set Intel HDA driver options
+      lineinfile:
+        path: /etc/modprobe.d/snd_hda_intel.conf
+        create: true
+        line: 'options snd_hda_intel power_save_controlle=Y power_save=1'
+      become: true
+      tags: system
 
-  - name: Set Intel ETH driver options
-    lineinfile:
-      path: /etc/modprobe.d/e1000e.conf
-      create: true
-      line: options e1000e SmartPowerDownEnable=1
-    become: true
-    tags: system
+    - name: Set Intel ETH driver options
+      lineinfile:
+        path: /etc/modprobe.d/e1000e.conf
+        create: true
+        line: 'options e1000e SmartPowerDownEnable=1'
+      become: true
+      tags: system
 
-  - name: Set Intel Wifi driver options
-    lineinfile:
-      path: /etc/modprobe.d/iwlwifi.conf
-      create: true
-      line: options iwlwifi power_save=Y power_level=5 iwlmvm power_scheme=3
-    become: true
-    tags: system
+    - name: Set Intel Wifi driver options
+      lineinfile:
+        path: /etc/modprobe.d/iwlwifi.conf
+        create: true
+        line: 'options iwlwifi power_save=Y power_level=5 iwlmvm power_scheme=3'
+      become: true
+      tags: system
 
-  - name: Load IO Schedulers at boot
-    blockinfile:
-      path: /etc/modules-load.d/iosched.conf
-      create: true
-      block: |
-        bfq
-        mq-deadline
-        kyber-iosched
-    become: true
-    tags: system
+    - name: Load IO Schedulers at boot
+      blockinfile:
+        path: /etc/modules-load.d/iosched.conf
+        create: true
+        block: |
+            bfq
+            mq-deadline
+            kyber-iosched
+      become: true
+      tags: system
 
-  - name: Set UDev Rules
-    blockinfile:
-      path: /etc/udev/rules.d/powersave.rules
-      create: true
-      block: |
-        ACTION=="add", SUBSYSTEM=="pci", ATTR{power/control}="auto"
-        ACTION=="add", SUBSYSTEM=="ahci", ATTR{power/control}="auto"
-        ACTION=="add", SUBSYSTEM=="scsi_host", KERNEL=="host*", ATTR{link_power_management_policy}="min_power"
-        ACTION=="add", SUBSYSTEM=="scsi", ATTR{power/control}="auto"
-        ACTION=="add", SUBSYSTEM=="acpi", ATTR{power/control}="auto"
-        ACTION=="add", SUBSYSTEM=="block", ATTR{power/control}="auto"
-        ACTION=="add", SUBSYSTEM=="workqueue", ATTR{power/control}="auto"
-        ACTION=="add", SUBSYSTEM=="i2c", ATTR{power/control}="auto"
-        ACTION=="add", SUBSYSTEM=="net", KERNEL=="enp*", RUN+="/usr/sbin/ethtool -s %k wol d"
-        ACTION=="add", SUBSYSTEM=="net", KERNEL=="wlp*", RUN+="/usr/sbin/ethtool -s %k wol d"
-        ACTION=="add", SUBSYSTEM=="net", KERNEL=="wlp*", RUN+="/usr/sbin/iw dev %k set power_save on"
-        ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/read_ahead_kb}="65536"
-        ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="bfq"
-        ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="0", ATTR{queue/iosched/low_latency}="1"
-        ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq"
-        ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/iosched/low_latency}="1"
-        ACTION=="add|change", KERNEL=="sd[a-z]", RUN+="/usr/sbin/hdparm -B 1 /dev/%k"
-    become: true
-    tags: system
+    - name: Set UDev Rules
+      blockinfile:
+        path: /etc/udev/rules.d/powersave.rules
+        create: true
+        block: |
+            ACTION=="add", SUBSYSTEM=="pci", ATTR{power/control}="auto"
+            ACTION=="add", SUBSYSTEM=="ahci", ATTR{power/control}="auto"
+            ACTION=="add", SUBSYSTEM=="scsi_host", KERNEL=="host*", ATTR{link_power_management_policy}="min_power"
+            ACTION=="add", SUBSYSTEM=="scsi", ATTR{power/control}="auto"
+            ACTION=="add", SUBSYSTEM=="acpi", ATTR{power/control}="auto"
+            ACTION=="add", SUBSYSTEM=="block", ATTR{power/control}="auto"
+            ACTION=="add", SUBSYSTEM=="workqueue", ATTR{power/control}="auto"
+            ACTION=="add", SUBSYSTEM=="i2c", ATTR{power/control}="auto"
+            ACTION=="add", SUBSYSTEM=="net", KERNEL=="enp*", RUN+="/usr/sbin/ethtool -s %k wol d"
+            ACTION=="add", SUBSYSTEM=="net", KERNEL=="wlp*", RUN+="/usr/sbin/ethtool -s %k wol d"
+            ACTION=="add", SUBSYSTEM=="net", KERNEL=="wlp*", RUN+="/usr/sbin/iw dev %k set power_save on"
+            ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/read_ahead_kb}="65536"
+            ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="bfq"
+            ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="0", ATTR{queue/iosched/low_latency}="1"
+            ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq"
+            ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/iosched/low_latency}="1"
+            ACTION=="add|change", KERNEL=="sd[a-z]", RUN+="/usr/sbin/hdparm -B 1 /dev/%k"
+      become: true
+      tags: system
 
-  - name: Update the /etc/hosts file with node name
-    lineinfile:
-      path: /etc/hosts
-      regexp: "127.0.0.1\t{{ ansible_hostname }}"
-      line: "127.0.0.1\t{{ ansible_hostname }}"
-      state: present
-      backup: true
-    become: true
-    tags: system
+    - name: Update the /etc/hosts file with node name
+      lineinfile:
+        path: /etc/hosts
+        regexp: "127.0.0.1\t{{ ansible_hostname }}"
+        line: "127.0.0.1\t{{ ansible_hostname }}"
+        state: present
+        backup: true
+      become: true
+      tags: system
 
-  - name: Deploy Grub Flags
-    replace:
-      path: /etc/default/grub
-      regexp: quiet"$
-      replace: quiet nmi_watchdog=0 pcie_aspm.policy=powersupersave pcie_aspm=force
-        drm.debug=0 drm.vblankoffdelay=1 scsi_mod.use_blk_mq=1 mmc_mod.use_blk_mq=1
-        noibrs noibpb nopti nospectre_v2 nospectre_v1 l1tf=off nospec_store_bypass_disable
-        no_stf_barrier mds=off tsx=on tsx_async_abort=off mitigations=off dis_ucode_ldr"
-      backup: true
-    register: grub_setup
-    become: true
-    tags: system, grub
+    - name: Deploy Grub Flags
+      replace:
+        path: /etc/default/grub
+        regexp: 'quiet"$'
+        replace: 'quiet nmi_watchdog=0 pcie_aspm.policy=powersupersave pcie_aspm=force drm.debug=0 drm.vblankoffdelay=1 scsi_mod.use_blk_mq=1 mmc_mod.use_blk_mq=1 noibrs noibpb nopti nospectre_v2 nospectre_v1 l1tf=off nospec_store_bypass_disable no_stf_barrier mds=off tsx=on tsx_async_abort=off mitigations=off dis_ucode_ldr"'
+        backup: true
+      register: grub_setup
+      become: true
+      tags: system, grub
 
-  - name: Set Fan daemon service
-    blockinfile:
-      path: /etc/systemd/system/fan_daemon.service
-      create: true
-      block: |
-        [Unit]
-        Description=FanDaemon
-        [Service]
-        Type=simple
-        ExecStart=/bin/bash /home/luca-linux/bin/fan_daemon
-    become: true
-    tags: system,perftweaks
+    - name: Set Fan daemon service
+      blockinfile:
+        path: /etc/systemd/system/fan_daemon.service
+        create: true
+        block: |
+            [Unit]
+            Description=FanDaemon
+            [Service]
+            Type=simple
+            ExecStart=/bin/bash /home/luca-linux/bin/fan_daemon
+      become: true
+      tags: system,perftweaks
 
-  - name: Set Fan daemon timer
-    blockinfile:
-      path: /etc/systemd/system/fan_daemon.timer
-      create: true
-      block: |
-        [Unit]
-        Description=Runs FanDaemon every 20s
-        [Timer]
-        OnBootSec=10
-        OnUnitActiveSec=10
-        Unit=fan_daemon.service
-        [Install]
-        WantedBy=multi-user.target
-    become: true
-    tags: system,perftweaks
+    - name: Set Fan daemon timer
+      blockinfile:
+        path: /etc/systemd/system/fan_daemon.timer
+        create: true
+        block: |
+            [Unit]
+            Description=Runs FanDaemon every 20s
+            [Timer]
+            OnBootSec=10
+            OnUnitActiveSec=10
+            Unit=fan_daemon.service
+            [Install]
+            WantedBy=multi-user.target
+      become: true
+      tags: system,perftweaks
 
-  - name: Fan daemon timer enable
-    systemd:
-      name: fan_daemon.timer
-      state: started
-      enabled: true
-      daemon_reload: true
-    become: true
-    tags: system,perftweaks
+    - name: Fan daemon timer enable
+      systemd:
+        name: fan_daemon.timer
+        state: started
+        enabled: true
+        daemon_reload: true
+      become: true
+      tags: system,perftweaks
 
-  - name: Update Grub and Initramfs
-    command: '{{ item }}'
-    with_items:
-    - grub2-mkconfig -o /boot/grub2/grub.cfg
-    - dracut --force --regenerate-all -v
-    when: grub_setup.changed
-    become: true
-    tags: system
+    - name: Update Grub and Initramfs
+      command: '{{ item }}'
+      with_items:
+        - 'grub2-mkconfig -o /boot/grub2/grub.cfg'
+        - 'dracut --force --regenerate-all -v'
+      when: grub_setup.changed
+      become: true
+      tags: system
 
-  - name: Gnome performance-tweaks
-    capabilities:
-      path: '{{ item }}'
-      capability: cap_sys_nice=+ep
-      state: present
-    with_items:
-    - /usr/bin/mutter
-    - /usr/bin/gnome-shell
-    become: true
-    tags: system,perftweaks
+    - name: Gnome performance-tweaks
+      capabilities:
+        path: "{{ item }}"
+        capability: cap_sys_nice=+ep
+        state: present
+      with_items:
+        - /usr/bin/mutter
+        - /usr/bin/gnome-shell
+      become: true
+      tags: system,perftweaks
 
-  - name: Install i7z package
-    dnf:
-      state: present
-      name:
-      - https://download.copr.fedorainfracloud.org/results/scx/i7z/fedora-rawhide-x86_64/00769928-i7z/i7z-0.27.2-21.20150629gitec09c4f.fc29.x86_64.rpm
-    become: true
-    tags: system,undervolt
-    when:
-    - ansible_distribution == 'Fedora'
+    - name: Install i7z package
+      dnf:
+        state: present
+        name:
+          - https://download.copr.fedorainfracloud.org/results/scx/i7z/fedora-rawhide-x86_64/00769928-i7z/i7z-0.27.2-21.20150629gitec09c4f.fc29.x86_64.rpm
+      become: true
+      tags: system,undervolt
+      when:
+        - ansible_distribution == 'Fedora'
 
-  - name: Intel-undervolt-tool (Clone)
-    git:
-      repo: https://github.com/hedgepigdaniel/linux-intel-undervolt-tool/
-      dest: '{{ ansible_env.HOME }}/Programs/linux-undervolt-tool'
-      version: master
-      update: true
-    register: intel_undervolt_download
-    tags: system,undervolt
+    - name: Intel-undervolt-tool (Clone)
+      git:
+        repo: https://github.com/hedgepigdaniel/linux-intel-undervolt-tool/
+        dest: '{{ ansible_env.HOME }}/Programs/linux-undervolt-tool'
+        version: master
+        update: true
+      register: intel_undervolt_download
+      tags: system,undervolt
 
-  - name: Intel-undervolt-tool (Clone)
-    shell: |
-      cd {{ ansible_env.HOME }}/Programs/linux-undervolt-tool;
-      ./install.sh
-    when: intel_undervolt_download.changed
-    become: true
-    tags: system,undervolt
+    - name: Intel-undervolt-tool (Clone)
+      shell: |
+        cd {{ ansible_env.HOME }}/Programs/linux-undervolt-tool;
+        ./install.sh
+      when: intel_undervolt_download.changed
+      become: true
+      tags: system,undervolt
 
-  - name: Set Undervolt daemon timer
-    blockinfile:
-      path: /etc/systemd/system/undervolt.timer
-      create: true
-      block: |
-        [Unit]
-        Description=Runs Undervolt every 20s
-        [Timer]
-        OnBootSec=20
-        OnUnitActiveSec=20
-        Unit=undervolt.service
-        [Install]
-        WantedBy=multi-user.target
-    become: true
-    tags: [system, undervolt]
+    - name: Set Undervolt daemon timer
+      blockinfile:
+        path: /etc/systemd/system/undervolt.timer
+        create: true
+        block: |
+            [Unit]
+            Description=Runs Undervolt every 20s
+            [Timer]
+            OnBootSec=20
+            OnUnitActiveSec=20
+            Unit=undervolt.service
+            [Install]
+            WantedBy=multi-user.target
+      become: true
+      tags: [ system, undervolt ]
 
-  - name: Undervolt timer enable
-    systemd:
-      name: undervolt.timer
-      state: started
-      enabled: true
-      daemon_reload: true
-    become: true
-    tags: [system, undervolt]
+    - name: Undervolt timer enable
+      systemd:
+        name: undervolt.timer
+        state: started
+        enabled: true
+        daemon_reload: true
+      become: true
+      tags: [ system, undervolt ]
 
-  - name: Set Thinkpad Fan driver options
-    lineinfile:
-      path: /etc/modprobe.d/thinkpad_acpi.conf
-      create: true
-      line: options thinkpad_acpi fan_control=1
-    become: true
-    tags: [never, thinkpad]
+    - name: Set Thinkpad Fan driver options
+      lineinfile:
+        path: /etc/modprobe.d/thinkpad_acpi.conf
+        create: true
+        line: 'options thinkpad_acpi fan_control=1'
+      become: true
+      tags: [ never, thinkpad ]
 
-  - name: Check if Baseline folder is present
-    file:
-      path: '{{ item }}'
-      state: directory
-    with_items:
-    - '{{ ansible_env.HOME }}/dotfiles'
-    - '{{ ansible_env.HOME }}/.vim'
-    - '{{ ansible_env.HOME }}/.vim/swap'
-    - '{{ ansible_env.HOME }}/.vim/undo'
-    - '{{ ansible_env.HOME }}/.vim/view'
-    - '{{ ansible_env.HOME }}/.vim/syntax'
-    - '{{ ansible_env.HOME }}/.vim/autoload'
-    - '{{ ansible_env.HOME }}/.local/go'
-    - '{{ ansible_env.HOME }}/.local/rust'
-    - '{{ ansible_env.HOME }}/.config/mpv'
-    - '{{ ansible_env.HOME }}/.config/keepassxc'
-    - '{{ ansible_env.HOME }}/.config/systemd'
-    - '{{ ansible_env.HOME }}/Programs'
-    - '{{ ansible_env.HOME }}/.config/systemd/user'
-    register: firstrun
-    tags: dotfiles
+    - name: Check if Baseline folder is present
+      file:
+        path: '{{ item }}'
+        state: directory
+      with_items:
+        - '{{ ansible_env.HOME }}/dotfiles'
+        - '{{ ansible_env.HOME }}/.vim'
+        - '{{ ansible_env.HOME }}/.vim/swap'
+        - '{{ ansible_env.HOME }}/.vim/undo'
+        - '{{ ansible_env.HOME }}/.vim/view'
+        - '{{ ansible_env.HOME }}/.vim/syntax'
+        - '{{ ansible_env.HOME }}/.vim/autoload'
+        - '{{ ansible_env.HOME }}/.local/go'
+        - '{{ ansible_env.HOME }}/.local/rust'
+        - '{{ ansible_env.HOME }}/.config/mpv'
+        - '{{ ansible_env.HOME }}/.config/keepassxc'
+        - '{{ ansible_env.HOME }}/.config/systemd'
+        - '{{ ansible_env.HOME }}/Programs'
+        - '{{ ansible_env.HOME }}/.config/systemd/user'
+      register: firstrun
+      tags: dotfiles
 
-  - name: Install scripts before starting dotfiles
-    get_url:
-      url: '{{ item.src }}'
-      dest: '{{ item.dest }}'
-      mode: 0755
-    with_items:
-    - {src: https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim, dest: '{{
-        ansible_env.HOME }}/.vim/autoload'}
-    tags: dotfiles
+    - name: Install scripts before starting dotfiles
+      get_url:
+        url: '{{ item.src }}'
+        dest: '{{ item.dest }}'
+        mode: 0755
+      with_items:
+        - { src: "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim", dest: '{{ ansible_env.HOME }}/.vim/autoload' }
+      tags: dotfiles
 
-  - name: Prepare to link dotfiles
-    file:
-      path: '{{ item }}'
-      state: absent
-    with_items:
-    - '{{ ansible_env.HOME }}/.ansible.cfg'
-    - '{{ ansible_env.HOME }}/.aliases'
-    - '{{ ansible_env.HOME }}/.bashrc'
-    - '{{ ansible_env.HOME }}/.histfile'
-    - '{{ ansible_env.HOME }}/.tmux.conf'
-    - '{{ ansible_env.HOME }}/.vimrc'
-    - '{{ ansible_env.HOME }}/.zshrc'
-    - '{{ ansible_env.HOME }}/.ctags'
-    - '{{ ansible_env.HOME }}/.gitconfig'
-    - '{{ ansible_env.HOME }}/.config/user-dirs.dirs'
-    - '{{ ansible_env.HOME }}/.config/libinput-gestures.conf'
-    - '{{ ansible_env.HOME }}/.config/mpv/mpv.conf'
-    - '{{ ansible_env.HOME }}/.config/keepassxc/keepassxc.ini'
-    - '{{ ansible_env.HOME }}/.ssh/assh.yml'
-    - '{{ ansible_env.HOME }}/.local/share/applications'
+    - name: Prepare to link dotfiles
+      file:
+        path: '{{ item }}'
+        state: absent
+      with_items:
+        - '{{ ansible_env.HOME }}/.ansible.cfg'
+        - '{{ ansible_env.HOME }}/.aliases'
+        - '{{ ansible_env.HOME }}/.bashrc'
+        - '{{ ansible_env.HOME }}/.histfile'
+        - '{{ ansible_env.HOME }}/.tmux.conf'
+        - '{{ ansible_env.HOME }}/.vimrc'
+        - '{{ ansible_env.HOME }}/.zshrc'
+        - '{{ ansible_env.HOME }}/.ctags'
+        - '{{ ansible_env.HOME }}/.gitconfig'
+        - '{{ ansible_env.HOME }}/.config/user-dirs.dirs'
+        - '{{ ansible_env.HOME }}/.config/libinput-gestures.conf'
+        - '{{ ansible_env.HOME }}/.config/mpv/mpv.conf'
+        - '{{ ansible_env.HOME }}/.config/keepassxc/keepassxc.ini'
+        - '{{ ansible_env.HOME }}/.ssh/assh.yml'
+        - '{{ ansible_env.HOME }}/.local/share/applications'
         #        - '{{ ansible_env.HOME }}/.config/kitty'
-    when: firstrun.changed
-    tags: dotfiles
+      when: firstrun.changed
+      tags: dotfiles
 
-  - name: link dotfiles
-    file:
-      src: '{{ item.src }}'
-      dest: '{{ item.dest }}'
-      state: link
-    with_items:
-    - {src: '{{ ansible_env.HOME }}/dotfiles/.ansible.cfg', dest: '{{ ansible_env.HOME
-        }}/.ansible.cfg'}
-    - {src: '{{ ansible_env.HOME }}/dotfiles/.aliases', dest: '{{ ansible_env.HOME
-        }}/.aliases'}
-    - {src: '{{ ansible_env.HOME }}/dotfiles/.bashrc', dest: '{{ ansible_env.HOME
-        }}/.bashrc'}
-    - {src: '{{ ansible_env.HOME }}/dotfiles/.tmux.conf', dest: '{{ ansible_env.HOME
-        }}/.tmux.conf'}
-    - {src: '{{ ansible_env.HOME }}/dotfiles/.vimrc-full', dest: '{{ ansible_env.HOME
-        }}/.vimrc'}
-    - {src: '{{ ansible_env.HOME }}/dotfiles/.zshrc', dest: '{{ ansible_env.HOME }}/.zshrc'}
-    - {src: '{{ ansible_env.HOME }}/dotfiles/.ctags', dest: '{{ ansible_env.HOME }}/.ctags'}
-    - {src: '{{ ansible_env.HOME }}/dotfiles/user-dirs.dirs', dest: '{{ ansible_env.HOME
-        }}/.config/user-dirs.dirs'}
-    - {src: '{{ ansible_env.HOME }}/dotfiles/libinput-gestures.conf', dest: '{{ ansible_env.HOME
-        }}/.config/libinput-gestures.conf'}
-    - {src: '{{ ansible_env.HOME }}/dotfiles/mpv.conf', dest: '{{ ansible_env.HOME
-        }}/.config/mpv/mpv.conf'}
-    - {src: '{{ ansible_env.HOME }}/dotfiles/systemd/syncthing.service', dest: '{{
-        ansible_env.HOME }}/.config/systemd/user/syncthing.service'}
-    - {src: '{{ ansible_env.HOME }}/dotfiles/systemd/syncthing-proxy.service', dest: '{{
-        ansible_env.HOME }}/.config/systemd/user/syncthing-proxy.service'}
-    - {src: '{{ ansible_env.HOME }}/Syncthing/Conf/keepassxc.ini', dest: '{{ ansible_env.HOME
-        }}/.config/keepassxc/keepassxc.ini'}
-    - {src: '{{ ansible_env.HOME }}/Syncthing/Conf/assh.yml', dest: '{{ ansible_env.HOME
-        }}/.ssh/assh.yml'}
-    - {src: '{{ ansible_env.HOME }}/Syncthing/Conf/Shortcuts/applications', dest: '{{
-        ansible_env.HOME }}/.local/share/applications'}
-    - {src: '{{ ansible_env.HOME }}/Syncthing/Conf/.gitconfig', dest: '{{ ansible_env.HOME
-        }}/.gitconfig'}
-    - {src: '{{ ansible_env.HOME }}/Syncthing/Conf/.histfile', dest: '{{ ansible_env.HOME
-        }}/.histfile'}
+    - name: link dotfiles
+      file:
+        src: '{{ item.src }}'
+        dest: '{{ item.dest }}'
+        state: link
+      with_items:
+        - {src: '{{ ansible_env.HOME }}/dotfiles/.ansible.cfg', dest: '{{ ansible_env.HOME }}/.ansible.cfg'}
+        - {src: '{{ ansible_env.HOME }}/dotfiles/.aliases', dest: '{{ ansible_env.HOME }}/.aliases'}
+        - {src: '{{ ansible_env.HOME }}/dotfiles/.bashrc', dest: '{{ ansible_env.HOME }}/.bashrc'}
+        - {src: '{{ ansible_env.HOME }}/dotfiles/.tmux.conf', dest: '{{ ansible_env.HOME }}/.tmux.conf'}
+        - {src: '{{ ansible_env.HOME }}/dotfiles/.vimrc-full', dest: '{{ ansible_env.HOME }}/.vimrc'}
+        - {src: '{{ ansible_env.HOME }}/dotfiles/.zshrc', dest: '{{ ansible_env.HOME }}/.zshrc'}
+        - {src: '{{ ansible_env.HOME }}/dotfiles/.ctags', dest: '{{ ansible_env.HOME }}/.ctags'}
+        - {src: '{{ ansible_env.HOME }}/dotfiles/user-dirs.dirs', dest: '{{ ansible_env.HOME }}/.config/user-dirs.dirs'}
+        - {src: '{{ ansible_env.HOME }}/dotfiles/libinput-gestures.conf', dest: '{{ ansible_env.HOME }}/.config/libinput-gestures.conf'}
+        - {src: '{{ ansible_env.HOME }}/dotfiles/mpv.conf', dest: '{{ ansible_env.HOME }}/.config/mpv/mpv.conf'}
+        - {src: '{{ ansible_env.HOME }}/dotfiles/systemd/syncthing.service', dest: '{{ ansible_env.HOME }}/.config/systemd/user/syncthing.service'}
+        - {src: '{{ ansible_env.HOME }}/dotfiles/systemd/syncthing-proxy.service', dest: '{{ ansible_env.HOME }}/.config/systemd/user/syncthing-proxy.service'}
+        - {src: '{{ ansible_env.HOME }}/Syncthing/Conf/keepassxc.ini', dest: '{{ ansible_env.HOME }}/.config/keepassxc/keepassxc.ini'}
+        - {src: '{{ ansible_env.HOME }}/Syncthing/Conf/assh.yml', dest: '{{ ansible_env.HOME }}/.ssh/assh.yml'}
+        - {src: '{{ ansible_env.HOME }}/Syncthing/Conf/Shortcuts/applications', dest: '{{ ansible_env.HOME }}/.local/share/applications'}
+        - {src: '{{ ansible_env.HOME }}/Syncthing/Conf/.gitconfig', dest: '{{ ansible_env.HOME }}/.gitconfig'}
+        - {src: '{{ ansible_env.HOME }}/Syncthing/Conf/.histfile', dest: '{{ ansible_env.HOME }}/.histfile'}
         #        - {src: '{{ ansible_env.HOME }}/dotfiles/kitty', dest: '{{ ansible_env.HOME }}/.config/kitty'}
-    when: firstrun.changed
-    tags: dotfiles
+      when: firstrun.changed
+      tags: dotfiles
 
-  - name: Load Gnome Keybindings (gsettings)
-    shell: |
-      dconf reset -f /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/;
-      gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/']";
-    when: firstrun.changed
-    tags: dotfiles
+    - name: Load Gnome Keybindings (gsettings)
+      shell: |
+        dconf reset -f /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/;
+        gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/']";
+      when: firstrun.changed
+      tags: dotfiles
 
-  - name: Load Gnome Keybindings and Terminal Settings (dconf)
-    shell: |
-      dconf load {{ item.key }} < {{ item.value }}
-    with_items:
-    - {key: /org/gnome/desktop/wm/keybindings/, value: '{{ ansible_env.HOME }}/dotfiles/gnome-shell-keybindings.conf'}
-    - {key: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/, value: '{{
-        ansible_env.HOME }}/dotfiles/gnome-keybindings.conf'}
-    - {key: /org/gnome/terminal/, value: '{{ ansible_env.HOME }}/dotfiles/gnome-terminal.conf'}
-    - {key: /org/gnome/desktop/app-folders/, value: '{{ ansible_env.HOME }}/dotfiles/gnome-folders.conf'}
-    when: firstrun.changed
-    tags: dotfiles
+    - name: Load Gnome Keybindings and Terminal Settings (dconf)
+      shell: |
+        dconf load {{ item.key }} < {{ item.value }}
+      with_items:
+        - {key: /org/gnome/desktop/wm/keybindings/, value: '{{ ansible_env.HOME }}/dotfiles/gnome-shell-keybindings.conf'}
+        - {key: /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/, value: '{{ ansible_env.HOME }}/dotfiles/gnome-keybindings.conf'}
+        - {key: /org/gnome/terminal/, value: '{{ ansible_env.HOME }}/dotfiles/gnome-terminal.conf'}
+        - {key: /org/gnome/desktop/app-folders/, value: '{{ ansible_env.HOME }}/dotfiles/gnome-folders.conf'}
+      when: firstrun.changed
+      tags: dotfiles
 
-  - name: Configure Dconf Options
-    dconf:
-      key: '{{ item.key }}'
-      value: '{{ item.value }}'
-      state: present
-    with_items:
-    - {key: /org/gnome/mutter/experimental-features, value: "['rt-scheduler']"}
-    - {key: /org/gnome/desktop/input-sources/xkb-options, value: "['caps:ctrl_modifier']"}
-    - {key: /org/gnome/desktop/interface/cursor-blink, value: 'false'}
-    - {key: /org/gnome/desktop/privacy/disable-microphone, value: 'true'}
-    - {key: /org/gnome/desktop/privacy/recent-files-max-age, value: '7'}
-    - {key: /org/gnome/desktop/privacy/remove-old-temp-files, value: 'true'}
-    - {key: /org/gnome/desktop/privacy/disable-camera, value: 'true'}
-    - {key: /org/gnome/desktop/privacy/report-technical-problems, value: 'false'}
-    - {key: /org/gnome/desktop/privacy/remove-old-trash-files, value: 'true'}
-    - {key: /org/gnome/desktop/privacy/send-software-usage-stats, value: 'false'}
-    - {key: /org/gnome/nautilus/preferences/show-create-link, value: 'true'}
-    - {key: /org/gnome/nautilus/preferences/show-delete-permanently, value: 'true'}
-    - {key: /org/gnome/nautilus/preferences/default-folder-viewer, value: "'list-view'"}
-    - {key: /org/gnome/nautilus/list-view/default-visible-columns, value: "['name',\
-        \ 'size', 'type', 'owner', 'group', 'permissions', 'date_modified', 'starred',\
-        \ 'detailed_type']"}
-    - {key: /org/gnome/desktop/wm/preferences/action-middle-click-titlebar, value: "'minimize'"}
-    tags: dotfiles
+    - name: Configure Dconf Options
+      dconf:
+        key: '{{ item.key }}'
+        value: '{{ item.value }}'
+        state: present
+      with_items:
+        - {key: /org/gnome/mutter/experimental-features, value: "['rt-scheduler']"}
+        - {key: /org/gnome/desktop/input-sources/xkb-options, value: "['caps:ctrl_modifier']"}
+        - {key: /org/gnome/desktop/interface/cursor-blink, value: 'false'}
+        - {key: /org/gnome/desktop/privacy/disable-microphone, value: 'true'}
+        - {key: /org/gnome/desktop/privacy/recent-files-max-age, value: '7'}
+        - {key: /org/gnome/desktop/privacy/remove-old-temp-files, value: 'true'}
+        - {key: /org/gnome/desktop/privacy/disable-camera, value: 'true'}
+        - {key: /org/gnome/desktop/privacy/report-technical-problems, value: 'false'}
+        - {key: /org/gnome/desktop/privacy/remove-old-trash-files, value: 'true'}
+        - {key: /org/gnome/desktop/privacy/send-software-usage-stats, value: 'false'}
+        - {key: /org/gnome/nautilus/preferences/show-create-link, value: 'true'}
+        - {key: /org/gnome/nautilus/preferences/show-delete-permanently, value: 'true'}
+        - {key: /org/gnome/nautilus/preferences/default-folder-viewer, value: "'list-view'"}
+        - {key: /org/gnome/nautilus/list-view/default-visible-columns, value: "['name', 'size', 'type', 'owner', 'group', 'permissions', 'date_modified', 'starred', 'detailed_type']"}
+        - {key: /org/gnome/desktop/wm/preferences/action-middle-click-titlebar, value: "'minimize'"}
+      tags: dotfiles
 
 # echo 'Section "InputClass"
 #         Identifier "libinput pointer catchall"
