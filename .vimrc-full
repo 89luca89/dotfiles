@@ -34,7 +34,7 @@ Plug 'shougo/deoplete.nvim'
 Plug 'deoplete-plugins/deoplete-tag'
 Plug 'roxma/nvim-yarp'
 Plug 'roxma/vim-hug-neovim-rpc'
- call plug#end()
+call plug#end()
 
 call plug#end()
 filetype plugin indent on
@@ -173,11 +173,16 @@ augroup lspbindings
     " IDE-like keybindings
     autocmd Filetype c,cpp,python,go nnoremap <buffer> K  :<C-u>call LanguageClient#textDocument_hover()<CR>
     " LSP IDE-Style keybindings EDMRL, errors, definition, references, rename, indent
-    autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>d :<C-u>call LanguageClient#textDocument_definition({'gotoCmd': 'split'})<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>l :<C-u>call LanguageClient#textDocument_formatting()<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>d :<C-u>call LanguageClient#textDocument_definition({'gotoCmd': 'vsplit'})<CR>
     autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>m :<C-u>call LanguageClient#textDocument_references()<CR>
     autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>r :<C-u>call LanguageClient#textDocument_rename()<CR>
     autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>h :<C-u>call LanguageClient#textDocument_codeAction()<CR>
+augroup end
+augroup autoformat_settings
+    autocmd FileType c,cpp,java   nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!clang-format -style=Chromium %<CR>:loadview<CR>
+    autocmd FileType python       nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!autopep8 %<CR>:loadview<CR>
+    autocmd FileType go           nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!goimports %<CR>:loadview<CR>
+    autocmd FileType ansible,yaml nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!yamlfmt<CR>:loadview<CR>
 augroup end
 " Async enable Deoplete for better performances
 autocmd InsertEnter * call deoplete#enable()
