@@ -168,11 +168,11 @@ endfun
 " Default IDE-Style keybindings EDMRL, errors, definition, references, rename, indent
 nnoremap <leader>A  :<C-u>call LintProject()<CR>
 nnoremap <leader>L  :<C-u>call FormatProject()<CR>
-nnoremap <leader>R  :<C-u>cgete system('grep -Rn ""')<Left><Left><Left>
+nnoremap <leader>R  :<C-u>cgete system('grep --exclude tags -Rn ""')<Left><Left><Left>
 nnoremap <leader>e  :<C-u>vert copen<BAR>vert resize 80<CR>
 nnoremap <leader>d  :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
-nnoremap <leader>m  :<C-u>cgete system('grep -Rn "<c-r>=expand("<cword>")<CR>"')<CR>
-nnoremap <leader>r  :<C-u>!grep -rl <c-r>=expand("<cword>")<CR><BAR>xargs sed -i 's/<c-r>=expand("<cword>")<CR>//g'<Left><Left><Left>
+nnoremap <leader>m  :<C-u>cgete system('grep --exclude tags -Rn "<c-r>=expand("<cword>")<CR>"')<CR>
+nnoremap <leader>r  :<C-u>!grep --exclude tags -Rl <c-r>=expand("<cword>")<CR><BAR>xargs sed -i 's/<c-r>=expand("<cword>")<CR>//g'<Left><Left><Left>
 nnoremap <leader>l  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>
 " LSP SETUP --------------------------------------------------------------------
 " Override IDE-Style keybindings EDMRL, errors, definition, references, rename, indent
