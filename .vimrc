@@ -146,7 +146,6 @@ endfun
 function! FormatProject()
     silent!
     call system('lint-project ' . &filetype . " . f")
-    bufdo checktime
 endfun
 " Generate tags
 function! GenTags()
