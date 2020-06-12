@@ -25,8 +25,7 @@ Plug 'mhinz/vim-signify'
 " Lang Packs
 Plug 'sheerun/vim-polyglot', { 'do': './build' }
 " Aestetics
-Plug 'tomasiser/vim-code-dark'
-Plug 'acarapetis/vim-colors-github'
+Plug 'rakr/vim-one'
 " LSP
 Plug 'autozimu/languageclient-neovim', { 'branch': 'next', 'do': 'bash install.sh', }
 " Deoplete + Dependencies
@@ -116,9 +115,9 @@ augroup customsyntax
     autocmd Syntax,InsertEnter * syntax match myDeclaration_2 /\<.*\k\+\ze\s*:=[a-zA-Z0-9 $:.\/\\]/
 augroup end
 highlight link myFunction       Function
-highlight link myDeclaration_1  Identifier
-highlight link myDeclaration_2  Identifier
-colorscheme codedark
+highlight link myDeclaration_1  Keyword
+highlight link myDeclaration_2  Keyword
+colorscheme one
 highlight Normal        guibg=#101010
 highlight TabLineSel    guifg=#262626 guibg=#8a8a8a
 " FUNCTIONS --------------------------------------------------------------------
@@ -127,12 +126,10 @@ map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        colorscheme codedark
         highlight Normal        guibg=#101010
         highlight TabLineSel    guifg=#262626 guibg=#8a8a8a
     else
         set background=light
-        colorscheme github
         highlight Normal        guibg=#FFFFFF
     endif
 endfunction
@@ -141,6 +138,7 @@ function! LintProject()
     silent!
     cgete system('lint-project ' . &filetype . " .")
     :vert copen
+    :vert resize 80
 endfun
 " Lint the entire project using filetype as reference. out to quickfix
 function! FormatProject()
