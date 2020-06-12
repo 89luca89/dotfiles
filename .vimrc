@@ -114,9 +114,9 @@ augroup customsyntax
     autocmd Syntax,InsertEnter * syntax match myDeclaration_1 /\<\k\+\ze\s*=[a-zA-Z0-9 $:.\/\\]/
     autocmd Syntax,InsertEnter * syntax match myDeclaration_2 /\<.*\k\+\ze\s*:=[a-zA-Z0-9 $:.\/\\]/
 augroup end
-highlight link myFunction       Function
-highlight link myDeclaration_1  Keyword
-highlight link myDeclaration_2  Keyword
+highlight link myFunction       Type
+highlight link myDeclaration_1  Special
+highlight link myDeclaration_2  Special
 colorscheme one
 highlight Normal        guibg=#101010
 highlight TabLineSel    guifg=#262626 guibg=#8a8a8a
