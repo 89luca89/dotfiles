@@ -20,8 +20,6 @@ call plug#begin('~/.vim/plugged')
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 Plug 'ap/vim-buftabline'
-" Git
-Plug 'mhinz/vim-signify'
 " Lang Packs
 Plug 'sheerun/vim-polyglot', { 'do': './build' }
 " Aestetics
@@ -42,10 +40,6 @@ syntax on
 let g:buftabline_indicators = 1
 let g:buftabline_separators = 1
 let g:buftabline_plug_max   = 0
-" Git
-let g:signify_sign_add               = '>'
-let g:signify_sign_delete            = '<'
-let g:signify_sign_change            = '~'
 " Langs
 let g:ansible_attribute_highlight       = 'ab'
 let g:ansible_extra_keywords_highlight  = 1
