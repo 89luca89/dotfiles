@@ -92,9 +92,8 @@ map <S-M-Left>  :<C-u>2winc<<CR>
 map <S-M-Right> :<C-u>2winc><CR>
 map <S-M-Up>    :<C-u>2winc+<CR>
 " Utility shortcuts with leader:
-map <leader><Tab>  :<C-u>Buffers<CR>
-map <leader>b      :<C-u>Files<CR>
-map <leader>f      :<C-u>Rg<CR>
+map <leader><leader>      :<C-u>Files<CR>
+map <leader>b  :<C-u>Buffers<CR>
 map <leader>t      :<C-u>Tags<CR>
 " Utility for Markdown and Ansible
 nnoremap <leader>j :<C-u>set ft=
@@ -136,20 +135,23 @@ endfunction
 " Lint the entire project using filetype as reference. out to quickfix
 function! LintProject()
     silent!
-    cgete system('lint-project ' . &filetype . " .")
-    :vert copen
-    :vert resize 80
+    cgete system('lint-project ' . &filetype . " . lint")
 endfun
 " Lint the entire project using filetype as reference. out to quickfix
 function! FormatProject()
     silent!
-    call system('lint-project ' . &filetype . " . f")
+    call system('lint-project ' . &filetype . " . format")
+endfun
+" Lint the entire project using filetype as reference. out to quickfix
+function! TagsProject()
+    silent!
+    call system('lint-project ' . &filetype . " . tags")
 endfun
 " Generate tags
 function! GenTags()
     if isdirectory(".git") || filereadable(".project")
         silent!
-        exec "!rm -f ./tags; ctags -R ."
+        exec "!rm -f ./tags; ctags -R . -a"
         redraw!
     endif
 endfun
@@ -163,17 +165,25 @@ function! StripTrailingWhiteSpace()
     %s/\($\n\s*\)\+\%$//e
     redraw!
 endfun
-" Default IDE-Style keybindings EDMRL, errors, definition, references, rename, indent
+" Code help using external scripts: Lint, Format, DeepTags, Grep, vert-copen
 nnoremap <leader>A  :<C-u>call LintProject()<CR>
 nnoremap <leader>L  :<C-u>call FormatProject()<CR>
-nnoremap <leader>R  :<C-u>cgete system('grep --exclude tags -Rn ""')<Left><Left><Left>
+nnoremap <leader>T  :<C-u>call TagsProject()<CR>
+nnoremap <leader>f  :<C-u>cgete system('grep --exclude tags -Rn ""')<Left><Left><Left>
 nnoremap <leader>e  :<C-u>vert copen<BAR>vert resize 80<CR>
+" Default IDE-Style keybindings EDMRL, errors, definition, references, rename, format
 nnoremap <leader>d  :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
 nnoremap <leader>m  :<C-u>cgete system('grep --exclude tags -Rn "<c-r>=expand("<cword>")<CR>"')<CR>
 nnoremap <leader>r  :<C-u>!grep --exclude tags -Rl <c-r>=expand("<cword>")<CR><BAR>xargs sed -i 's/<c-r>=expand("<cword>")<CR>//g'<Left><Left><Left>
 nnoremap <leader>l  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>
+" Override <leader>l formatting with corresponding formatter for each lang
+augroup autoformat_settings
+    autocmd FileType c,cpp,java   nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!clang-format -style=Chromium %<CR>:loadview<CR>
+    autocmd FileType python       nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!yapf --style=facebook %<CR>:loadview<CR>
+    autocmd FileType go           nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!goimports %<CR>:loadview<CR>
+augroup end
 " LSP SETUP --------------------------------------------------------------------
-" Override IDE-Style keybindings EDMRL, errors, definition, references, rename, indent
+" Override IDE-Style keybindings EDMRL, errors, definition, references, rename, format
 augroup lspbindings
     autocmd! lspbindings
     " IDE-like keybindings
@@ -182,12 +192,6 @@ augroup lspbindings
     autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>m :<C-u>call LanguageClient#textDocument_references()<CR>
     autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>r :<C-u>call LanguageClient#textDocument_rename()<CR>
     autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>h :<C-u>call LanguageClient#textDocument_codeAction()<CR>
-augroup end
-" Override <leader>l formatting with corresponding formatter for each lang
-augroup autoformat_settings
-    autocmd FileType c,cpp,java   nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!clang-format -style=Chromium %<CR>:loadview<CR>
-    autocmd FileType python       nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!yapf --style=facebook %<CR>:loadview<CR>
-    autocmd FileType go           nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!goimports %<CR>:loadview<CR>
 augroup end
 " Async enable Deoplete for better performances
 autocmd InsertEnter * call deoplete#enable()
