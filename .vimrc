@@ -103,9 +103,9 @@ augroup customsyntax
     " Refresh tags on save
     autocmd BufWritePost * silent! :call GenTags()
     " Custom syntax highlight
-    autocmd Syntax,InsertEnter * syntax match myFunction /\<\k\+\ze(/
-    autocmd Syntax,InsertEnter * syntax match myDeclaration_1 /\<\k\+\ze\s*=[a-zA-Z0-9 $:.\/\\]/
-    autocmd Syntax,InsertEnter * syntax match myDeclaration_2 /\<.*\k\+\ze\s*:=[a-zA-Z0-9 $:.\/\\]/
+    autocmd Syntax,InsertEnter * syntax match myFunction '\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\ze\%(\s*(\)'
+    autocmd Syntax,InsertEnter * syntax match myDeclaration_1 '\v[_.[:alnum:]]+(,\s*[_.[:alnum:]]+)*\ze(\s*([-^+|^\/%&]|\*|\<\<|\>\>|\&\^)?\=[^=])'
+    autocmd Syntax,InsertEnter * syntax match myDeclaration_2 '\v\w+(,\s*\w+)*\ze(\s*:\=)'
 augroup end
 highlight link myFunction       Type
 highlight link myDeclaration_1  Special
