@@ -11,6 +11,9 @@
     - name: Remove Programs (Unused Programs)
       package:
         name:
+          - abrt
+          - evince
+          - sushi
           - gnome-abrt
           - gnome-boxes
           - gnome-calendar
@@ -31,6 +34,12 @@
           - gnome-user-share
           - gnome-video-effects
           - gnome-weather
+          - gnome-shell-extension-apps-menu
+          - gnome-shell-extension-background-logo
+          - gnome-shell-extension-horizontal-workspaces
+          - gnome-shell-extension-launch-new-instance
+          - gnome-shell-extension-places-menu
+          - gnome-shell-extension-window-list
           - httpd
           - ibus-kkc
           - ibus-libpinyin
@@ -43,9 +52,77 @@
           - totem
           - virtualbox-guest-additions
           - yelp
+          - gvfs-goa
         state: absent
       become: true
       tags: bloat
+
+    - name: Remove Programs (Extreme)
+      package:
+        name:
+          - virt-manager
+          - libvirt
+          - libvirt-bash-completion
+          - libvirt-client
+          - libvirt-daemon
+          - libvirt-daemon-config-network
+          - libvirt-daemon-config-nwfilter
+          - libvirt-daemon-driver-interface
+          - libvirt-daemon-driver-libxl
+          - libvirt-daemon-driver-lxc
+          - libvirt-daemon-driver-network
+          - libvirt-daemon-driver-nodedev
+          - libvirt-daemon-driver-nwfilter
+          - libvirt-daemon-driver-qemu
+          - libvirt-daemon-driver-secret
+          - libvirt-daemon-driver-storage
+          - libvirt-daemon-driver-storage-core
+          - libvirt-daemon-driver-storage-disk
+          - libvirt-daemon-driver-storage-gluster
+          - libvirt-daemon-driver-storage-iscsi
+          - libvirt-daemon-driver-storage-iscsi-direct
+          - libvirt-daemon-driver-storage-logical
+          - libvirt-daemon-driver-storage-mpath
+          - libvirt-daemon-driver-storage-rbd
+          - libvirt-daemon-driver-storage-scsi
+          - libvirt-daemon-driver-storage-sheepdog
+          - libvirt-daemon-driver-storage-zfs
+          - libvirt-daemon-driver-vbox
+          - libvirt-daemon-kvm
+          - libvirt-glib
+          - libvirt-libs
+        state: absent
+      become: true
+      tags: never, extreme_bloat
+
+    - name: Mask services /1
+      systemd:
+        name: "{{ item }}"
+        state: stopped
+        enabled: false
+        masked: true
+        daemon_reload: true
+        scope: user
+      with_items:
+        - tracker-miner-fs
+          # - evolution-addressbook-factory
+          # - evolution-source-registry
+          # - evolution-calendar-factory
+      become: false
+      tags: bloat
+
+    - name: Mask services /2
+      systemd:
+        name: "{{ item }}"
+        state: stopped
+        enabled: false
+        masked: true
+        daemon_reload: true
+      with_items:
+        - switcheroo-control
+      become: true
+      tags: bloat
+
 
     - name: Setup /usr/local directory
       file:
@@ -60,8 +137,8 @@
       stat:
         path: /etc/yum.repos.d/rpmfusion-free.repo
       register: rpmfusion_exists
-      tags: rpmfusion
       when: ansible_distribution == 'Fedora'
+      tags: rpmfusion
 
     - name: Install the rpmfusion and fonts repo packages
       dnf:
@@ -71,11 +148,11 @@
           - http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_facts.distribution_version }}.noarch.rpm
           - http://li.nux.ro/download/nux/dextop/el7/x86_64//msttcore-fonts-installer-2.6-1.noarch.rpm
       become: true
-      tags: rpmfusion
       when:
         - ansible_distribution == 'Fedora'
         - rpmfusion_exists is defined
         - not rpmfusion_exists.stat.exists
+      tags: rpmfusion
 
     - name: Install Programs (Virtualization)
       package:
@@ -86,7 +163,7 @@
           - spice-webdavd
           - spice-vdagent
       become: true
-      tags: virtualization
+      tags: never, virtualization
 
     - name: Add "{{ lookup('env','USER') }}" to libvirt Group
       user:
@@ -94,7 +171,7 @@
         groups: libvirt
         append: yes
       become: true
-      tags: virtualization
+      tags: never, virtualization
 
     - name: Install Programs (Generic Utilities)
       package:
@@ -123,8 +200,8 @@
         - etckeeper init
         - etckeeper commit "Initial Commit"
       become: true
-      tags: term_pkg
       when: not file_exists.stat.exists
+      tags: term_pkg
 
     - name: Install Programs (Archive Utilities)
       package:
@@ -135,7 +212,7 @@
           - p7zip
           - p7zip-plugins
       become: true
-      tags: archive_pkg
+      tags: base_packages
 
     - name: Install Programs (Media Utilities)
       package:
@@ -167,7 +244,7 @@
           - libvdpau-va-gl
           - youtube-dl
       become: true
-      tags: media_pkg
+      tags: base_packages
 
     - name: Install Programs (GUI Programs)
       package:
@@ -177,8 +254,54 @@
           - keepassxc
           - syncthing
           - mpv
+          - telegram-desktop
+          - krita
+          - okular
       become: true
-      tags: gui_pkg
+      tags: base_packages
+
+    - name: Ensure {{ ansible_env.HOME }}/Programs Exists
+      file:
+        path: '{{ ansible_env.HOME }}/Programs'
+        state: directory
+      tags: base_packages
+
+    - name: Download appimages
+      get_url:
+        url: "{{ item.url }}"
+        dest: "{{ item.dest }}"
+        mode: 0755
+      with_items:
+        - {url: https://github.com/jgraph/drawio-desktop/releases/download/v13.2.4/draw.io-x86_64-13.2.4.AppImage, dest: '{{ ansible_env.HOME }}/Programs/drawio.Appimage'}
+        - {url: https://raw.githubusercontent.com/jgraph/drawio/17e0bf007bb614eb38c8585428932066fb1b5d0e/src/main/webapp/images/drawlogo128.png, dest: '{{ ansible_env.HOME }}/.local/share/icons/drawio.png'}
+        - {url: https://github.com/jgraph/drawio-desktop/releases/download/v13.2.4/draw.io-x86_64-13.2.4.AppImage, dest: '{{ ansible_env.HOME }}/Programs/drawio.Appimage'}
+        - {url: https://raw.githubusercontent.com/marktext/marktext/301722f3d3c703c2d92859df4cc7546e199aa116/static/logo-small.png, dest: '{{ ansible_env.HOME }}/.local/share/icons/marktext.png'}
+      tags: base_packages
+
+    - name: Download appimages
+      blockinfile:
+        path: '{{ ansible_env.HOME }}/.local/share/applications/{{ item.name }}.desktop'
+        create: true
+        block: |
+            [Desktop Entry]
+            Name={{ item.label }}
+            Exec={{ item.dest }} %F
+            Terminal=false
+            Type=Application
+            Icon={{ item.name }}
+            Categories=Office;TextEditor;Utility;
+            MimeType=text/markdown;
+            Keywords={{ item.name }};
+            StartupWMClass={{ item.name }}
+            Actions=NewWindow;
+            [Desktop Action NewWindow]
+            Name=New Window
+            Exec={{ item.dest }} --new-window %F
+            Icon={{ item.name }}
+      with_items:
+        - {label: Draw.io, name: drawio, dest: '{{ ansible_env.HOME }}/Programs/drawio.Appimage'}
+        - {label: Mark Text, name: marktext, dest: '{{ ansible_env.HOME }}/Programs/marktext.Appimage'}
+      tags: base_packages
 
     - name: Install Flathub
       flatpak_remote:
@@ -225,7 +348,7 @@
           - setuptools
           - flake8-awesome
           - flake8-mypy
-          - flake8-docstring
+          - flake8-docstrings
       become: true
       tags: [ devel, python ]
 
@@ -256,57 +379,7 @@
         curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.27.0
       environment:
         GOPATH: "{{ ansible_env.HOME }}/.local/go"
-      when: not golang.stat.exists
       tags: [ devel, golang ]
-
-
-    - name: Ensure {{ ansible_env.HOME }}/Programs Exists
-      file:
-        path: '{{ ansible_env.HOME }}/Programs'
-        state: directory
-      tags: external_pkg
-
-    - name: Libinput Gestures (Clone)
-      git:
-        repo: https://github.com/bulletmark/libinput-gestures
-        dest: '{{ ansible_env.HOME }}/Programs/libinput-gestures'
-        version: master
-        update: true
-      register: libinput_gesture_download
-      tags: external_pkg
-
-    - name: Libinput Gestures (Add "{{ lookup('env','USER') }}" to Input Group)
-      user:
-        name: "{{ lookup('env','USER') }}"
-        groups: input
-        append: yes
-      become: true
-      tags: external_pkg
-
-    - name: Libinput Gestures (Dependencies)
-      package:
-        state: latest
-        name:
-          - systemd-devel
-          - libinput-devel
-      become: true
-      tags: external_pkg
-
-    - name: Libinput Gestures (Compile and Install)
-      make:
-        chdir: "{{ ansible_env.HOME }}/Programs/libinput-gestures"
-        target: install
-      become: true
-      when: libinput_gesture_download.changed
-      tags: external_pkg
-
-    - name: Libinput Gestures (Start and Autorun)
-      command: '{{ item }}'
-      with_items:
-        - libinput-gestures-setup autostart
-        - libinput-gestures-setup start
-      when: libinput_gesture_download.changed
-      tags: external_pkg
 
     - name: zRam Swap Enable
       systemd:
@@ -480,7 +553,7 @@
         backup: true
       register: grub_setup
       become: true
-      tags: system, grub
+      tags: system
 
     - name: Set Fan daemon service
       blockinfile:
@@ -493,7 +566,7 @@
             Type=simple
             ExecStart=/bin/bash /home/luca-linux/bin/fan_daemon
       become: true
-      tags: system,perftweaks
+      tags: system
 
     - name: Set Fan daemon timer
       blockinfile:
@@ -509,7 +582,7 @@
             [Install]
             WantedBy=multi-user.target
       become: true
-      tags: system,perftweaks
+      tags: system
 
     - name: Fan daemon timer enable
       systemd:
@@ -518,7 +591,7 @@
         enabled: true
         daemon_reload: true
       become: true
-      tags: system,perftweaks
+      tags: system
 
     - name: Update Grub and Initramfs
       command: '{{ item }}'
@@ -538,7 +611,22 @@
         - /usr/bin/mutter
         - /usr/bin/gnome-shell
       become: true
-      tags: system,perftweaks
+      tags: system
+
+    - name: Update the profiles file with personal variables
+      lineinfile:
+        path: /etc/profile
+        regexp: '{{ item }}'
+        line: '{{ item }}'
+        state: present
+        backup: true
+      with_items:
+        - export MOZ_USE_XINPUT2=1
+        - export MOZ_ACCELLERATED=1
+        - export MOZ_WEBRENDER=1
+        - export QT_QPA_PLATFORM=xcb
+      become: true
+      tags: system
 
     - name: Install i7z package
       dnf:
@@ -546,9 +634,9 @@
         name:
           - https://download.copr.fedorainfracloud.org/results/scx/i7z/fedora-rawhide-x86_64/00769928-i7z/i7z-0.27.2-21.20150629gitec09c4f.fc29.x86_64.rpm
       become: true
-      tags: system,undervolt
       when:
         - ansible_distribution == 'Fedora'
+      tags: never,undervolt
 
     - name: Intel-undervolt-tool (Clone)
       git:
@@ -557,7 +645,7 @@
         version: master
         update: true
       register: intel_undervolt_download
-      tags: system,undervolt
+      tags: never,undervolt
 
     - name: Intel-undervolt-tool (Clone)
       shell: |
@@ -565,7 +653,7 @@
         ./install.sh
       when: intel_undervolt_download.changed
       become: true
-      tags: system,undervolt
+      tags: never,undervolt
 
     - name: Set Undervolt daemon timer
       blockinfile:
@@ -581,7 +669,7 @@
             [Install]
             WantedBy=multi-user.target
       become: true
-      tags: [ system, undervolt ]
+      tags: never,undervolt
 
     - name: Undervolt timer enable
       systemd:
@@ -590,7 +678,7 @@
         enabled: true
         daemon_reload: true
       become: true
-      tags: [ system, undervolt ]
+      tags: never,undervolt
 
     - name: Set Thinkpad Fan driver options
       lineinfile:
@@ -598,7 +686,7 @@
         create: true
         line: 'options thinkpad_acpi fan_control=1'
       become: true
-      tags: [ never, thinkpad ]
+      tags: never,thinkpad
 
     - name: Check if Baseline folder is present
       file:
@@ -651,7 +739,6 @@
         - '{{ ansible_env.HOME }}/.config/keepassxc/keepassxc.ini'
         - '{{ ansible_env.HOME }}/.ssh/assh.yml'
         - '{{ ansible_env.HOME }}/.local/share/applications'
-        #        - '{{ ansible_env.HOME }}/.config/kitty'
       when: firstrun.changed
       tags: dotfiles
 
@@ -678,7 +765,6 @@
         - {src: '{{ ansible_env.HOME }}/Syncthing/Conf/Shortcuts/applications', dest: '{{ ansible_env.HOME }}/.local/share/applications'}
         - {src: '{{ ansible_env.HOME }}/Syncthing/Conf/.gitconfig', dest: '{{ ansible_env.HOME }}/.gitconfig'}
         - {src: '{{ ansible_env.HOME }}/Syncthing/Conf/.histfile', dest: '{{ ansible_env.HOME }}/.histfile'}
-        #        - {src: '{{ ansible_env.HOME }}/dotfiles/kitty', dest: '{{ ansible_env.HOME }}/.config/kitty'}
       when: firstrun.changed
       tags: dotfiles
 
@@ -731,3 +817,45 @@
 #         Option "ScrollMethod" "button"
 #         Option "ScrollButton" "2"
 # EndSection' | sudo tee -a  /usr/share/X11/xorg.conf.d/40-libinput.conf
+#
+#    - name: Libinput Gestures (Clone)
+#      git:
+#        repo: https://github.com/bulletmark/libinput-gestures
+#        dest: '{{ ansible_env.HOME }}/Programs/libinput-gestures'
+#        version: master
+#        update: true
+#      register: libinput_gesture_download
+#      tags: external_pkg
+#
+#    - name: Libinput Gestures (Add "{{ lookup('env','USER') }}" to Input Group)
+#      user:
+#        name: "{{ lookup('env','USER') }}"
+#        groups: input
+#        append: yes
+#      become: true
+#      tags: external_pkg
+#
+#    - name: Libinput Gestures (Dependencies)
+#      package:
+#        state: latest
+#        name:
+#          - systemd-devel
+#          - libinput-devel
+#      become: true
+#      tags: external_pkg
+#
+#    - name: Libinput Gestures (Compile and Install)
+#      make:
+#        chdir: "{{ ansible_env.HOME }}/Programs/libinput-gestures"
+#        target: install
+#      become: true
+#      when: libinput_gesture_download.changed
+#      tags: external_pkg
+#
+#    - name: Libinput Gestures (Start and Autorun)
+#      command: '{{ item }}'
+#      with_items:
+#        - libinput-gestures-setup autostart
+#        - libinput-gestures-setup start
+#      when: libinput_gesture_download.changed
+#      tags: external_pkg
