@@ -23,6 +23,7 @@
           - NetworkManager-ssh-gnome
           - NetworkManager-vpnc-gnome
           - NetworkManager-wwan
+          - adwaita-gtk2-theme
           - adwaita-qt4
           - adwaita-qt5
           - alsa-plugins-pulseaudio
@@ -61,6 +62,7 @@
           - gnome-system-monitor
           - gnome-terminal
           - gnome-terminal-nautilus
+          - gnome-themes-extra
           - gnome-tweak-tool
           - gutenprint-cups
           - gvfs-afc
