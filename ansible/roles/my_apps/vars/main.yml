@@ -1,0 +1,111 @@
+---
+# vars file for my_apps
+#
+
+terminal_packages:
+    - ShellCheck
+    - ccze
+    - ctags
+    - ctags-etags
+    - git
+    - git-credential-libsecret
+    - htop
+    - make
+    - tmux
+    - vim
+    - vim-X11
+    - vim-enhanced
+    - wmctrl
+    - xclip
+    - xdotool
+
+clang_packages:
+    - clang
+    - clang-tools-extra
+
+python_packages:
+    - python2-devel
+    - python3-devel
+
+python_modules:
+    - 'python-language-server[all]'
+    - yamllint
+    - ansible-lint
+    - neovim
+    - psutil
+    - setuptools
+    - flake8-awesome
+    - flake8-mypy
+    - flake8-docstrings
+
+golang_packages:
+    - golang
+
+golang_modules:
+    - golang.org/x/tools/gopls
+    - github.com/go-delve/delve/cmd/dlv
+    - golang.org/x/lint/golint
+    - golang.org/x/tools/cmd/goimports
+    - golang.org/x/tools/cmd/goimports
+    - golang.org/x/tools/cmd/gorename
+    - golang.org/x/tools/cmd/guru
+
+my_packages:
+    - krita
+    - keepassxc
+    - syncthing
+    - telegram-desktop
+    - mpv
+    - youtube-dl
+
+appimages_packages:
+    - {url: https://github.com/jgraph/drawio-desktop/releases/download/v13.2.4/draw.io-x86_64-13.2.4.AppImage, dest: '{{ ansible_env.HOME }}/Programs/drawio.Appimage'}
+    - {url: https://raw.githubusercontent.com/jgraph/drawio/17e0bf007bb614eb38c8585428932066fb1b5d0e/src/main/webapp/images/drawlogo128.png, dest: '{{ ansible_env.HOME }}/.local/share/icons/drawio.png'}
+    - {url: https://github.com/jgraph/drawio-desktop/releases/download/v13.2.4/draw.io-x86_64-13.2.4.AppImage, dest: '{{ ansible_env.HOME }}/Programs/drawio.Appimage'}
+    - {url: https://raw.githubusercontent.com/marktext/marktext/301722f3d3c703c2d92859df4cc7546e199aa116/static/logo-small.png, dest: '{{ ansible_env.HOME }}/.local/share/icons/marktext.png'}
+
+appimages_entries:
+    - {label: Draw.io, name: drawio, dest: '{{ ansible_env.HOME }}/Programs/drawio.Appimage'}
+    - {label: Mark Text, name: marktext, dest: '{{ ansible_env.HOME }}/Programs/marktext.Appimage'}
+
+virtualization_packages:
+    - virt-manager
+    - libvirt
+    - libvirt-bash-completion
+    - libvirt-client
+    - libvirt-daemon
+    - libvirt-daemon-config-network
+    - libvirt-daemon-config-nwfilter
+    - libvirt-daemon-driver-interface
+    - libvirt-daemon-driver-libxl
+    - libvirt-daemon-driver-lxc
+    - libvirt-daemon-driver-network
+    - libvirt-daemon-driver-nodedev
+    - libvirt-daemon-driver-nwfilter
+    - libvirt-daemon-driver-qemu
+    - libvirt-daemon-driver-secret
+    - libvirt-daemon-driver-storage
+    - libvirt-daemon-driver-storage-core
+    - libvirt-daemon-driver-storage-disk
+    - libvirt-daemon-driver-storage-gluster
+    - libvirt-daemon-driver-storage-iscsi
+    - libvirt-daemon-driver-storage-iscsi-direct
+    - libvirt-daemon-driver-storage-logical
+    - libvirt-daemon-driver-storage-mpath
+    - libvirt-daemon-driver-storage-rbd
+    - libvirt-daemon-driver-storage-scsi
+    - libvirt-daemon-driver-storage-sheepdog
+    - libvirt-daemon-driver-storage-zfs
+    - libvirt-daemon-driver-vbox
+    - libvirt-daemon-kvm
+    - libvirt-glib
+    - libvirt-libs
+
+# echo 'Section "InputClass"
+#         Identifier "libinput pointer catchall"
+#         MatchIsPointer "on"
+#         MatchDevicePath "/dev/input/event*"
+#         Driver "libinput"
+#         Option "ScrollMethod" "button"
+#         Option "ScrollButton" "2"
+# EndSection' | sudo tee -a  /usr/share/X11/xorg.conf.d/40-libinput.conf

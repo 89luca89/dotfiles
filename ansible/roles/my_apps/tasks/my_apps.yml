@@ -1,0 +1,107 @@
+# my_apps.yml
+
+---
+
+- name: Install Programs (GUI Programs)
+  package:
+    state: latest
+    name: "{{ my_packages }}"
+  become: true
+
+- name: Ensure Folders Exists
+  file:
+    path: '{{ item }}'
+    state: directory
+  with_items:
+    - "{{ ansible_env.HOME }}/Programs"
+    - "{{ ansible_env.HOME }}/.local/share/icons"
+    - "{{ ansible_env.HOME }}/.local/share/applications"
+  tags: appimage
+
+- name: Download appimages
+  get_url:
+    url: "{{ item.url }}"
+    dest: "{{ item.dest }}"
+    mode: 0755
+  with_items: "{{ appimages_packages }}"
+  tags: appimage
+
+- name: Download appimages
+  blockinfile:
+    path: '{{ ansible_env.HOME }}/.local/share/applications/{{ item.name }}.desktop'
+    create: true
+    block: |
+      [Desktop Entry]
+      Name={{ item.label }}
+      Exec={{ item.dest }} %F
+      Terminal=false
+      Type=Application
+      Icon={{ item.name }}
+      Categories=Office;TextEditor;Utility;
+      MimeType=text/markdown;
+      Keywords={{ item.name }};
+      StartupWMClass={{ item.name }}
+      Actions=NewWindow;
+      [Desktop Action NewWindow]
+      Name=New Window
+      Exec={{ item.dest }} --new-window %F
+      Icon={{ item.name }}
+  with_items: "{{ appimages_entries }}"
+  tags: appimage
+
+- name: Libinput Gestures (Clone)
+  git:
+    repo: https://github.com/bulletmark/libinput-gestures
+    dest: '{{ ansible_env.HOME }}/Programs/libinput-gestures'
+    version: master
+    update: true
+  register: libinput_gesture_download
+  tags: libinput_gestures
+
+- name: Libinput Gestures (Add "{{ lookup('env','USER') }}" to Input Group)
+  user:
+    name: "{{ lookup('env','USER') }}"
+    groups: input
+    append: yes
+  become: true
+  tags: libinput_gestures
+
+- name: Libinput Gestures (Dependencies)
+  package:
+    state: latest
+    name:
+      - systemd-devel
+      - libinput-devel
+  become: true
+  tags: libinput_gestures
+
+- name: Libinput Gestures (Compile and Install)
+  make:
+    chdir: "{{ ansible_env.HOME }}/Programs/libinput-gestures"
+    target: install
+  become: true
+  when: libinput_gesture_download.changed
+  tags: libinput_gestures
+
+- name: Libinput Gestures (Start and Autorun)
+  command: '{{ item }}'
+  with_items:
+    - libinput-gestures-setup autostart
+    - libinput-gestures-setup start
+  when: libinput_gesture_download.changed
+  tags: libinput_gestures
+
+- name: Install Programs (Virtualization)
+  package:
+    state: latest
+    name: "{{ virtualization_packages }}"
+  become: true
+  tags: never, virtualization
+
+- name: Add "{{ lookup('env','USER') }}" to libvirt Group
+  user:
+    name: "{{ lookup('env','USER') }}"
+    groups: libvirt
+    append: yes
+  become: true
+  tags: never, virtualization

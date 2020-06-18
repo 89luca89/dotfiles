@@ -1,0 +1,59 @@
+---
+# tasks file for my_apps
+
+- name: Install Programs (Programming Packages)
+  package:
+    state: latest
+    name: "{{ terminal_packages }}"
+  become: true
+  tags: term_pkg
+
+- name: Install Programs (clang)
+  package:
+    state: latest
+    name: "{{ clang_packages }}"
+  become: true
+  tags: clang
+
+- name: Install Programs (python)
+  package:
+    state: latest
+    name: "{{ python_packages }}"
+  become: true
+  tags: python
+
+- name: Install Programs (PIP Packages) - pip
+  pip:
+    state: latest
+    executable: pip3
+    name: "{{ python_modules }}"
+  become: true
+  tags: python
+
+- name: Install Programs (golang)
+  package:
+    state: latest
+    name: "{{ golang_packages }}"
+  become: true
+  tags: golang
+
+- name: Check that golang exists
+  stat:
+    path: "{{ ansible_env.HOME }}/.local/go/bin/gopls"
+  register: golang
+  tags: golang
+
+- name: Install Programs (Programming Packages) - golang
+  command: "go get -u {{ item }}"
+  with_items: "{{ golang_modules }}"
+  environment:
+    GOPATH: "{{ ansible_env.HOME }}/.local/go"
+  when: not golang.stat.exists
+  tags: golang
+
+- name: Install Programs (Programming Packages) - golangci-lint
+  shell: |
+    curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.27.0
+  environment:
+    GOPATH: "{{ ansible_env.HOME }}/.local/go"
+  tags: golang

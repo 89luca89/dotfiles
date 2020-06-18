@@ -1,0 +1,15 @@
+---
+# Create base distro from minimal fedora netinstall
+#
+
+- name: Build up base distro
+  include: minimal_distro.yml
+  tags: base_distro
+
+- name: Performance Tweaks
+  include: system_tweaks.yml
+  tags: system_tweaks
+
+- name: Powersaving Tweaks
+  include: powersave.yml
+  tags: powersave

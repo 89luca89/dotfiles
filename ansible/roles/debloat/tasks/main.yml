@@ -1,0 +1,39 @@
+---
+# tasks file for debloat
+#
+- name: Remove Programs (Unused Programs)
+  package:
+    name: "{{ debloat_pkg }}"
+    state: absent
+  become: true
+  tags: debloat
+
+- name: Mask services /1
+  systemd:
+    name: "{{ item }}"
+    state: stopped
+    enabled: false
+    masked: true
+    daemon_reload: true
+    scope: user
+  with_items: "{{ systemd_user_mask_services }}"
+  become: false
+  tags: debloat
+
+- name: Mask services /2
+  systemd:
+    name: "{{ item }}"
+    state: stopped
+    enabled: false
+    masked: true
+    daemon_reload: true
+  with_items: "{{ systemd_root_mask_services }}"
+  become: true
+  tags: debloat
+
+- name: Remove Programs (Extreme)
+  package:
+    name: "{{ debloat_pkg_extreme }}"
+    state: absent
+  become: true
+  tags: never, extreme_debloat

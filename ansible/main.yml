@@ -1,0 +1,26 @@
+# Creation Date: 2019-06-17
+#
+# Author: Luca Di Maio
+---
+
+# file: main.yml
+
+- hosts: all
+  gather_facts: True
+  tasks:
+
+  - include_role:
+      name: fedora_minimal
+    tags: base_distro, system_tweaks, powersave
+
+  - include_role:
+      name: debloat
+    tags: never, debloat, extreme_debloat
+
+  - include_role:
+      name: my_apps
+    tags: devel, my_apps, undervolt, thinkpad
+
+  - include_role:
+      name: dotfiles
+    tags: dotfiles

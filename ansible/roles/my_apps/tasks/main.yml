@@ -1,0 +1,19 @@
+# main.yml
+
+---
+
+- name: Include Development Packages
+  include: devel.yml
+  tags: devel
+
+- name: Include myApps
+  include: my_apps.yml
+  tags: my_apps
+
+- name: Include Undervolt
+  include: undervolt.yml
+  tags: never,undervolt
+
+- name: Include Thinkpad Setup
+  include: thinkpad.yml
+  tags: never,thinkpad
