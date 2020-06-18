@@ -9,18 +9,23 @@
   gather_facts: True
   tasks:
 
+  # Role for minimal distro setup
   - include_role:
       name: fedora_minimal
     tags: base_distro, system_tweaks, powersave
 
+  # Role for debloating an existing setup
+  # RUN EXPLICITELY
   - include_role:
       name: debloat
     tags: never, debloat, extreme_debloat
 
+  # Setup my apps
   - include_role:
       name: my_apps
     tags: devel, my_apps, undervolt, thinkpad
 
+  # Setup dofiles
   - include_role:
       name: dotfiles
     tags: dotfiles

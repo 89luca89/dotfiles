@@ -1,6 +1,6 @@
 ---
 # tasks file for debloat
-#
+
 - name: Remove Programs (Unused Programs)
   package:
     name: "{{ debloat_pkg }}"
@@ -8,6 +8,7 @@
   become: true
   tags: debloat
 
+# Mask systemd services to free up memory
 - name: Mask services /1
   systemd:
     name: "{{ item }}"
@@ -20,6 +21,7 @@
   become: false
   tags: debloat
 
+# Mask systemd services to free up memory
 - name: Mask services /2
   systemd:
     name: "{{ item }}"
@@ -31,6 +33,8 @@
   become: true
   tags: debloat
 
+# EXTREME Debloat, remove also virtualization containers support
+# RUN EXPLICITELY
 - name: Remove Programs (Extreme)
   package:
     name: "{{ debloat_pkg_extreme }}"
