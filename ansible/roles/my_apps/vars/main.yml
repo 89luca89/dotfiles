@@ -51,6 +51,11 @@ golang_modules:
     - golang.org/x/tools/cmd/guru
 
 my_packages:
+    - geary
+    - libreoffice-calc
+    - libreoffice-impress
+    - libreoffice-math
+    - libreoffice-writer
     - krita
     - keepassxc
     - syncthing
