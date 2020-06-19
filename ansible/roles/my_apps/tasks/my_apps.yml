@@ -90,18 +90,3 @@
     - libinput-gestures-setup start
   when: libinput_gesture_download.changed
   tags: libinput_gestures
-
-- name: Install Programs (Virtualization)
-  package:
-    state: latest
-    name: "{{ virtualization_packages }}"
-  become: true
-  tags: never, virtualization
-
-- name: Add "{{ lookup('env','USER') }}" to libvirt Group
-  user:
-    name: "{{ lookup('env','USER') }}"
-    groups: libvirt
-    append: yes
-  become: true
-  tags: never, virtualization
