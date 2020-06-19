@@ -113,6 +113,7 @@
     - {key: /org/gnome/desktop/privacy/send-software-usage-stats, value: 'false'}
     - {key: /org/gnome/nautilus/preferences/show-create-link, value: 'true'}
     - {key: /org/gnome/nautilus/preferences/show-delete-permanently, value: 'true'}
+    - {key: /org/gnome/desktop/interface/show-battery-percentage, value: 'true'}
     - {key: /org/gnome/nautilus/preferences/default-folder-viewer, value: "'list-view'"}
     - {key: /org/gnome/nautilus/list-view/default-visible-columns, value: "['name', 'size', 'type', 'owner', 'group', 'permissions', 'date_modified', 'starred', 'detailed_type']"}
     - {key: /org/gnome/desktop/wm/preferences/action-middle-click-titlebar, value: "'minimize'"}
