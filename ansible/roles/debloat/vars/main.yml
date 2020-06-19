@@ -129,10 +129,14 @@ debloat_pkg_extreme:
     - libvirt-libs
 
 systemd_user_mask_services:
-    - tracker-miner-fs
     - evolution-addressbook-factory
-    - evolution-source-registry
     - evolution-calendar-factory
+    - evolution-source-registry
+    - goa-daemon
+    - goa-identity-service
+    - gvfs-goa-volume-monitor
+    - tracker-extract
+    - tracker-miner-fs
 
 systemd_root_mask_services:
     - switcheroo-control
