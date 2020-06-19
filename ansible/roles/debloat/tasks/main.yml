@@ -41,3 +41,20 @@
     state: absent
   become: true
   tags: never, extreme_debloat
+
+- name: Deploy Grub Flags
+  replace:
+    path: /etc/default/grub
+    regexp: 'mmc_mod.use_blk_mq=1"$'
+    replace: 'mmc_mod.use_blk_mq=1 mitigations=off dis_ucode_ldr"'
+    backup: true
+  register: grub_setup
+  become: true
+
+- name: Update Grub and Initramfs
+  command: '{{ item }}'
+  with_items:
+    - 'grub2-mkconfig -o /boot/grub2/grub.cfg'
+    - 'dracut --force --regenerate-all -v'
+  when: grub_setup.changed
+  become: true
