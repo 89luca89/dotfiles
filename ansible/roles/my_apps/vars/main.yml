@@ -10,7 +10,6 @@ terminal_packages:
     - git
     - git-credential-libsecret
     - htop
-    - make
     - tmux
     - vim
     - vim-X11
@@ -20,6 +19,7 @@ terminal_packages:
     - xdotool
 
 clang_packages:
+    - make
     - clang
     - clang-tools-extra
 

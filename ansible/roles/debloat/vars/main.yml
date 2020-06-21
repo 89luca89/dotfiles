@@ -48,7 +48,6 @@ debloat_pkg:
     - espeak-ng
     - f32-backgrounds-base
     - f32-backgrounds-gnome
-    - fedora-bookmarks
     - fedora-chromium-config
     - fedora-logos-httpd
     - fedora-release-workstation
@@ -164,7 +163,6 @@ debloat_pkg:
     - media-player-info
     - mod_dnssd
     - mod_http2
-    - mpage
     - mtools
     - open-vm-tools
     - open-vm-tools-desktop
@@ -173,7 +171,6 @@ debloat_pkg:
     - openh264
     - orca
     - ostree
-    - paps
     - pcaudiolib
     - pcsc-lite
     - pinentry-gnome3
