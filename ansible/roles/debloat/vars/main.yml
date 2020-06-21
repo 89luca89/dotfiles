@@ -4,11 +4,11 @@
 
 # /usr/lib/systemd/systemd-homed
 debloat_pkg:
-    - flatpak
-    - flatpak-selinux
-    - flatpak-session-helper
-    - mcelog
-    - pcsc-lite
+    - PackageKit
+    - PackageKit-command-not-found
+    - PackageKit-glib
+    - PackageKit-gstreamer-plugin
+    - PackageKit-gtk3-module
     - abrt
     - abrt-addon-ccpp
     - abrt-addon-kerneloops
@@ -17,20 +17,55 @@ debloat_pkg:
     - abrt-addon-xorg
     - abrt-cli
     - abrt-dbus
+    - abrt-desktop
+    - abrt-gui
+    - abrt-gui-libs
+    - abrt-java-connector
     - abrt-libs
     - abrt-plugin-bodhi
     - abrt-retrace-client
     - abrt-tui
-    - PackageKit-command-not-found
-    - PackageKit-gstreamer-plugin
-    - PackageKit-gtk3-module
-    - aajohan-comfortaa-fonts
+    - appstream-data
+    - babl
+    - brasero-libs
+    - catatonit
     - cheese
+    - cldr-emoji-annotation
+    - conmon
+    - container-selinux
+    - containernetworking-plugins
+    - containers-common
+    - criu
+    - crun
     - desktop-backgrounds-gnome
+    - dleyna-connector-dbus
+    - dleyna-core
+    - dleyna-renderer
+    - dleyna-server
+    - dotconf
+    - efivar-libs
+    - enchant
+    - espeak-ng
+    - f32-backgrounds-base
+    - f32-backgrounds-gnome
     - fedora-bookmarks
     - fedora-chromium-config
+    - fedora-logos-httpd
+    - fedora-release-workstation
     - fedora-workstation-backgrounds
+    - flashrom
+    - flatpak
+    - flatpak-libs
+    - flatpak-selinux
+    - flatpak-session-helper
+    - freerdp-libs
+    - frei0r-plugins
+    - fwupd
     - gamemode
+    - gavl
+    - gdouros-symbola-fonts
+    - gegl04
+    - gfbgraph
     - gnome-abrt
     - gnome-backgrounds
     - gnome-boxes
@@ -45,6 +80,7 @@ debloat_pkg:
     - gnome-initial-setup
     - gnome-logs
     - gnome-maps
+    - gnome-menus
     - gnome-music
     - gnome-online-miners
     - gnome-photos
@@ -59,12 +95,18 @@ debloat_pkg:
     - gnome-user-share
     - gnome-video-effects
     - gnome-weather
-    - google-noto-emoji-color-fonts
-    - google-noto-sans-cjk-ttc-fonts
-    - google-noto-sans-gurmukhi-fonts
-    - google-noto-sans-sinhala-vf-fonts
+    - gom
+    - grilo
+    - grilo-plugins
+    - gstreamer1-plugin-openh264
     - httpd
+    - httpd-filesystem
+    - httpd-tools
     - hyperv-daemons
+    - hyperv-daemons-license
+    - hypervfcopyd
+    - hypervkvpd
+    - hypervvssd
     - ibus-hangul
     - ibus-kkc
     - ibus-libpinyin
@@ -72,46 +114,121 @@ debloat_pkg:
     - ibus-m17n
     - ibus-qt
     - ibus-typing-booster
-    - jomolhari-fonts
-    - julietaula-montserrat-fonts
-    - khmeros-base-fonts
-    - lohit-assamese-fonts
-    - lohit-bengali-fonts
-    - lohit-devanagari-fonts
-    - lohit-gujarati-fonts
-    - lohit-kannada-fonts
-    - lohit-odia-fonts
-    - lohit-tamil-fonts
-    - lohit-telugu-fonts
+    - kyotocabinet-libs
+    - langtable
+    - libXres
+    - libao
+    - libbsd
+    - libchamplain
+    - libchamplain-gtk
+    - libdazzle
+    - libdmapsharing
+    - libftdi
+    - libgcab1
+    - libgdither
+    - libgfortran
+    - libgpod
+    - libhangul
+    - libjcat
+    - libkkc
+    - libkkc-common
+    - libkkc-data
+    - liblouis
+    - libmusicbrainz5
+    - libnet
+    - liboauth
+    - libpinyin
+    - libpinyin-data
+    - libquadmath
+    - libreoffice-emailmerge
+    - libreoffice-filters
+    - libreoffice-xsltfilter
+    - libreport-gtk
+    - libreport-plugin-reportuploader
+    - libsmbios
+    - libtomcrypt
+    - libtommath
+    - libvarlink-util
+    - libvirt-gconfig
+    - libvirt-gobject
+    - libwinpr
+    - libwnck3
+    - libxmlb
+    - libzapojit
+    - libzhuyin
     - lrzsz
+    - m17n-db
+    - m17n-lib
+    - marisa
+    - mcelog
+    - media-player-info
+    - mod_dnssd
+    - mod_http2
     - mpage
+    - mtools
+    - open-vm-tools
     - open-vm-tools-desktop
+    - openblas
+    - openblas-serial
+    - openh264
     - orca
-    - paktype-naskh-basic-fonts
+    - ostree
     - paps
-    - paratype-pt-sans-fonts
+    - pcaudiolib
+    - pcsc-lite
     - pinentry-gnome3
     - podman
+    - podman-plugins
+    - python3-abrt
+    - python3-abrt-addon
+    - python3-beaker
+    - python3-beautifulsoup4
+    - python3-brlapi
+    - python3-cffi
+    - python3-crypto
+    - python3-cryptography
+    - python3-enchant
+    - python3-humanize
+    - python3-inotify
+    - python3-louis
+    - python3-lxml
+    - python3-mako
+    - python3-markupsafe
+    - python3-paste
+    - python3-ply
+    - python3-pyOpenSSL
+    - python3-pyatspi
+    - python3-pycparser
+    - python3-pyxdg
+    - python3-soupsieve
+    - python3-speechd
+    - python3-tempita
     - qemu-guest-agent
     - rdist
+    - redhat-menus
     - rhythmbox
     - rpmfusion-free-appstream-data
     - rpmfusion-nonfree-appstream-data
+    - runc
+    - sg3_utils-libs
     - shotwell
-    - sil-abyssinica-fonts
-    - sil-mingzat-fonts
-    - sil-nuosu-fonts
-    - sil-padauk-fonts
     - simple-scan
-    - smc-meera-fonts
+    - skkdic
+    - slirp4netns
+    - speech-dispatcher
+    - speech-dispatcher-espeak-ng
     - spice-vdagent
-    - stix-fonts
+    - suitesparse
     - sushi
-    - thai-scalable-waree-fonts
+    - tbb
     - totem
+    - unicode-ucd
     - unoconv
     - virtualbox-guest-additions
+    - xmlsec1-openssl
     - yelp
+    - yelp-libs
+    - yelp-xsl
 
 debloat_pkg_extreme:
     - virt-manager
