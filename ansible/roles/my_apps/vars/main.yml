@@ -52,10 +52,7 @@ golang_modules:
 
 my_packages:
     - geary
-    - libreoffice-calc
-    - libreoffice-impress
-    - libreoffice-math
-    - libreoffice-writer
+    - "@libreoffice"
     - krita
     - keepassxc
     - syncthing

@@ -2,7 +2,25 @@
 # vars file for debloat
 #
 
+# /usr/lib/systemd/systemd-homed
 debloat_pkg:
+    - flatpak
+    - flatpak-selinux
+    - flatpak-session-helper
+    - mcelog
+    - pcsc-lite
+    - abrt
+    - abrt-addon-ccpp
+    - abrt-addon-kerneloops
+    - abrt-addon-pstoreoops
+    - abrt-addon-vmcore
+    - abrt-addon-xorg
+    - abrt-cli
+    - abrt-dbus
+    - abrt-libs
+    - abrt-plugin-bodhi
+    - abrt-retrace-client
+    - abrt-tui
     - PackageKit-command-not-found
     - PackageKit-gstreamer-plugin
     - PackageKit-gtk3-module
@@ -137,6 +155,10 @@ systemd_user_mask_services:
     - gvfs-goa-volume-monitor
     - tracker-extract
     - tracker-miner-fs
+    - tracker-miner-rss
+    - tracker-store
+    - tracker-writeback
 
 systemd_root_mask_services:
     - switcheroo-control
+    - systemd-homed
