@@ -53,10 +53,6 @@ debloat_pkg:
     - fedora-release-workstation
     - fedora-workstation-backgrounds
     - flashrom
-    - flatpak
-    - flatpak-libs
-    - flatpak-selinux
-    - flatpak-session-helper
     - freerdp-libs
     - frei0r-plugins
     - fwupd
@@ -181,21 +177,15 @@ debloat_pkg:
     - python3-beaker
     - python3-beautifulsoup4
     - python3-brlapi
-    - python3-cffi
-    - python3-crypto
-    - python3-cryptography
     - python3-enchant
     - python3-humanize
     - python3-inotify
     - python3-louis
     - python3-lxml
     - python3-mako
-    - python3-markupsafe
     - python3-paste
-    - python3-ply
     - python3-pyOpenSSL
     - python3-pyatspi
-    - python3-pycparser
     - python3-pyxdg
     - python3-soupsieve
     - python3-speechd
@@ -228,6 +218,10 @@ debloat_pkg:
     - yelp-xsl
 
 debloat_pkg_extreme:
+    - flatpak
+    - flatpak-libs
+    - flatpak-selinux
+    - flatpak-session-helper
     - virt-manager
     - libvirt
     - libvirt-bash-completion
