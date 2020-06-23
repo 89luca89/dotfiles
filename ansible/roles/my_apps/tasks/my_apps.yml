@@ -49,24 +49,38 @@
   with_items: "{{ appimages_entries }}"
   tags: appimage
 
-- name: get latest VSCodium
-  uri:
-    url: https://api.github.com/repos/VSCodium/vscodium/releases/latest
-    return_content: true
-  register: json_reponse
-  tags: vscodium
-
-- name: Download latest VSCodium
-  get_url:
-    url: "{{ json_reponse.json.assets[0].browser_download_url }}"
-    dest: "{{ playbook_dir }}/temp/vscodium.rpm"
+- name: Setup VSCodium repo
+  blockinfile:
+    path: /etc/yum.repos.d/vscodium.repo
+    create: true
+    block: |
+      [gitlab.com_paulcarroty_vscodium_repo]
+      name=gitlab.com_paulcarroty_vscodium_repo
+      baseurl=https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/repos/rpms/
+      enabled=1
+      gpgcheck=1
+      repo_gpgcheck=1
+      gpgkey=https://gitlab.com/paulcarroty/vscodium-deb-rpm-repo/raw/master/pub.gpg
+  become: true
   tags: vscodium
 
 - name: Installing latest VSCodium
-  become: true
   dnf:
-    name: ./temp/vscodium.rpm
-    state: present
+    name: codium
+    state: latest
+  become: true
+  tags: vscodium
+
+- name: Ensure VSCodium folders exist
+  file:
+    path: "{{ ansible_env.HOME }}/.config/VSCodium/User/"
+    state: directory
+  tags: vscodium
+
+- name: Configuring VSCodium
+  template:
+    src: settings.json.j2
+    dest: "{{ ansible_env.HOME }}/.config/VSCodium/User/settings.json"
   tags: vscodium
 
 - name: Libinput Gestures (Clone)
