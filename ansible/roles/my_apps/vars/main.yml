@@ -63,12 +63,9 @@ my_packages:
 appimages_packages:
     - {url: https://github.com/jgraph/drawio-desktop/releases/download/v13.2.4/draw.io-x86_64-13.2.4.AppImage, dest: '{{ ansible_env.HOME }}/Programs/drawio.Appimage'}
     - {url: https://raw.githubusercontent.com/jgraph/drawio/17e0bf007bb614eb38c8585428932066fb1b5d0e/src/main/webapp/images/drawlogo128.png, dest: '{{ ansible_env.HOME }}/.local/share/icons/drawio.png'}
-    - {url: https://github.com/jgraph/drawio-desktop/releases/download/v13.2.4/draw.io-x86_64-13.2.4.AppImage, dest: '{{ ansible_env.HOME }}/Programs/drawio.Appimage'}
-    - {url: https://raw.githubusercontent.com/marktext/marktext/301722f3d3c703c2d92859df4cc7546e199aa116/static/logo-small.png, dest: '{{ ansible_env.HOME }}/.local/share/icons/marktext.png'}
 
 appimages_entries:
     - {label: Draw.io, name: drawio, dest: '{{ ansible_env.HOME }}/Programs/drawio.Appimage'}
-    - {label: Mark Text, name: marktext, dest: '{{ ansible_env.HOME }}/Programs/marktext.Appimage'}
 
 virtualization_packages:
     - virt-manager
