@@ -33,6 +33,22 @@
   become: true
   tags: debloat
 
+- name: Find tracker files
+  find:
+    paths: /usr/libexec/
+    file_type: file
+    recurse: Yes
+    patterns: "tracker-*"
+  register: files_matched
+  tags: debloat
+
+- name: Debug files_matched loop
+  shell: |
+    mv {{ item.path }} "$(dirname {{ item.path }})"/disabled_"$(basename {{ item.path }})"
+  loop: "{{ files_matched.files|flatten(levels=1) }}"
+  become: true
+  tags: debloat
+
 # EXTREME Debloat, remove also virtualization containers support
 # RUN EXPLICITELY
 - name: Remove Programs (Extreme)
