@@ -23,7 +23,7 @@ Plug 'ap/vim-buftabline'
 " Lang Packs
 Plug 'sheerun/vim-polyglot', { 'do': './build' }
 " Aestetics
-Plug 'rakr/vim-one'
+Plug 'gruvbox-community/gruvbox'
 " LSP
 Plug 'autozimu/languageclient-neovim', { 'branch': 'next', 'do': 'bash install.sh', }
 " Deoplete + Dependencies
@@ -102,9 +102,11 @@ augroup customsyntax
     autocmd Syntax,InsertEnter * syntax match myDeclaration_2 '\v\w+(,\s*\w+)*\ze(\s*:\=)'
 augroup end
 highlight link myFunction       Type
-highlight link myDeclaration_1  Special
-highlight link myDeclaration_2  Special
-colorscheme one
+highlight link myDeclaration_1  Identifier
+highlight link myDeclaration_2  Identifier
+let g:gruvbox_contrast_light = 'hard'
+let g:gruvbox_contrast_dark = 'hard'
+colorscheme gruvbox
 highlight Normal        guibg=#101010
 highlight TabLineSel    guifg=#262626 guibg=#8a8a8a
 " FUNCTIONS --------------------------------------------------------------------
@@ -117,7 +119,6 @@ function! ToggleTheme()
         highlight TabLineSel    guifg=#262626 guibg=#8a8a8a
     else
         set background=light
-        highlight Normal        guibg=#FFFFFF
     endif
 endfunction
 " Lint the entire project using filetype as reference. out to quickfix
