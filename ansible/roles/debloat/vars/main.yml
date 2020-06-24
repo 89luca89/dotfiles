@@ -270,3 +270,16 @@ systemd_user_mask_services:
 systemd_root_mask_services:
     - switcheroo-control
     - systemd-homed
+
+dbus_root_mask_services:
+    - org.gtk.vfs.GoaVolumeMonitor.service
+    - org.gnome.OnlineAccounts.service
+    - org.freedesktop.Tracker1.Miner.Extract.service
+    - org.freedesktop.Tracker1.Miner.Files.service
+    - org.freedesktop.Tracker1.Miner.RSS.service
+    - org.freedesktop.Tracker1.service
+    - org.freedesktop.Tracker1.Writeback.service
+    - org.gnome.evolution.dataserver.AddressBook.service
+    - org.gnome.evolution.dataserver.Calendar.service
+    - org.gnome.evolution.dataserver.Sources.service
+    - org.gnome.evolution.dataserver.UserPrompter.service

@@ -33,19 +33,12 @@
   become: true
   tags: debloat
 
-- name: Find tracker files
-  find:
-    paths: /usr/libexec/
-    file_type: file
-    recurse: Yes
-    patterns: "tracker-*"
-  register: files_matched
-  tags: debloat
-
-- name: Debug files_matched loop
+- name: Disable tracker files
   shell: |
-    mv {{ item.path }} "$(dirname {{ item.path }})"/disabled_"$(basename {{ item.path }})"
-  loop: "{{ files_matched.files|flatten(levels=1) }}"
+    [ ! -f /usr/share/dbus-1/services/{{ item }}.bak ] && \
+        mv /usr/share/dbus-1/services/{{ item }} /usr/share/dbus-1/services/{{ item }}.bak;
+    ln -snf /dev/null /usr/share/dbus-1/services/{{ item }}
+  with_items: "{{ dbus_root_mask_services }}"
   become: true
   tags: debloat
 
