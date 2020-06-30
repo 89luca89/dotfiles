@@ -4,6 +4,7 @@
 
 # /usr/lib/systemd/systemd-homed
 debloat_pkg:
+    - NetworkManager-team
     - PackageKit
     - PackageKit-command-not-found
     - PackageKit-glib
@@ -25,24 +26,38 @@ debloat_pkg:
     - abrt-plugin-bodhi
     - abrt-retrace-client
     - abrt-tui
+    - anaconda-widgets
     - appstream-data
+    - authselect-compat
     - babl
+    - bcache-tools
+    - blivet-data
+    - blivet-gui-runtime
     - brasero-libs
     - catatonit
     - cheese
+    - chkconfig
     - cldr-emoji-annotation
     - conmon
     - container-selinux
     - containernetworking-plugins
     - containers-common
+    - createrepo_c
+    - createrepo_c-libs
     - criu
     - crun
+    - daxctl-libs
     - desktop-backgrounds-gnome
+    - device-mapper-multipath
     - dleyna-connector-dbus
     - dleyna-core
     - dleyna-renderer
     - dleyna-server
+    - dmraid
+    - dmraid-events
     - dotconf
+    - dracut-live
+    - drpm
     - efivar-libs
     - enchant
     - espeak-ng
@@ -52,12 +67,17 @@ debloat_pkg:
     - fedora-logos-httpd
     - fedora-release-workstation
     - fedora-workstation-backgrounds
+    - fipscheck
+    - fipscheck-lib
     - flashrom
     - freerdp-libs
     - frei0r-plugins
+    - fuse-overlayfs
     - fwupd
     - gamemode
     - gavl
+    - gcc-gdb-plugin
+    - gdb
     - gdouros-symbola-fonts
     - gegl04
     - gfbgraph
@@ -93,7 +113,11 @@ debloat_pkg:
     - gom
     - grilo
     - grilo-plugins
+    - grub2-pc
+    - grub2-pc-modules
+    - grub2-tools-extra
     - gstreamer1-plugin-openh264
+    - hfsplus-tools
     - httpd
     - httpd-filesystem
     - httpd-tools
@@ -109,10 +133,21 @@ debloat_pkg:
     - ibus-m17n
     - ibus-qt
     - ibus-typing-booster
+    - isomd5sum
+    - kernel-modules-extra
+    - keybinder3
     - kyotocabinet-libs
     - langtable
     - libXres
     - libao
+    - libblockdev-btrfs
+    - libblockdev-dm
+    - libblockdev-kbd
+    - libblockdev-lvm
+    - libblockdev-mpath
+    - libblockdev-nvdimm
+    - libblockdev-plugins-all
+    - libblockdev-vdo
     - libbsd
     - libchamplain
     - libchamplain-gtk
@@ -131,6 +166,7 @@ debloat_pkg:
     - liblouis
     - libmusicbrainz5
     - libnet
+    - libnl3-cli
     - liboauth
     - libpinyin
     - libpinyin-data
@@ -141,6 +177,8 @@ debloat_pkg:
     - libreport-gtk
     - libreport-plugin-reportuploader
     - libsmbios
+    - libteam
+    - libtimezonemap
     - libtomcrypt
     - libtommath
     - libvarlink-util
@@ -151,22 +189,32 @@ debloat_pkg:
     - libxmlb
     - libzapojit
     - libzhuyin
+    - lldpad
     - lrzsz
+    - lxpolkit
     - m17n-db
     - m17n-lib
+    - mactel-boot
     - marisa
     - mcelog
     - media-player-info
+    - memtest86+
     - mod_dnssd
     - mod_http2
     - mtools
+    - ndctl
+    - ndctl-libs
+    - oddjob
+    - oddjob-mkhomedir
     - open-vm-tools
     - open-vm-tools-desktop
     - openblas
     - openblas-serial
     - openh264
+    - openssh-askpass
     - orca
     - ostree
+    - passwdqc-lib
     - pcaudiolib
     - pcsc-lite
     - pinentry-gnome3
@@ -176,20 +224,37 @@ debloat_pkg:
     - python3-abrt-addon
     - python3-beaker
     - python3-beautifulsoup4
+    - python3-blivet
+    - python3-blockdev
     - python3-brlapi
+    - python3-bytesize
+    - python3-dasbus
     - python3-enchant
     - python3-humanize
     - python3-inotify
+    - python3-kickstart
     - python3-louis
     - python3-lxml
     - python3-mako
+    - python3-meh
+    - python3-ntplib
+    - python3-ordered-set
     - python3-paste
+    - python3-pid
+    - python3-productmd
+    - python3-pwquality
     - python3-pyOpenSSL
     - python3-pyatspi
+    - python3-pyparted
+    - python3-pyudev
     - python3-pyxdg
+    - python3-requests-file
+    - python3-requests-ftp
+    - python3-simpleline
     - python3-soupsieve
     - python3-speechd
     - python3-tempita
+    - python3-tkinter
     - qemu-guest-agent
     - rdist
     - redhat-menus
@@ -198,6 +263,7 @@ debloat_pkg:
     - rpmfusion-nonfree-appstream-data
     - runc
     - sg3_utils-libs
+    - sgpio
     - shotwell
     - simple-scan
     - skkdic
@@ -208,9 +274,14 @@ debloat_pkg:
     - suitesparse
     - sushi
     - tbb
+    - teamd
+    - tigervnc-license
+    - tigervnc-server-minimal
     - totem
+    - udisks2-iscsi
     - unicode-ucd
     - unoconv
+    - usermode
     - virtualbox-guest-additions
     - xmlsec1-openssl
     - yelp
