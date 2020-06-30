@@ -113,7 +113,6 @@ highlight Normal        guibg=#101010
 highlight TabLineSel    guifg=#262626 guibg=#8a8a8a
 " FUNCTIONS --------------------------------------------------------------------
 " Toggle Theme
-map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
@@ -158,7 +157,9 @@ function! StripTrailingWhiteSpace()
     %s/\($\n\s*\)\+\%$//e
     redraw!
 endfun
+" END FUNCTIONS --------------------------------------------------------------------
 " Code help using external scripts: Lint, Format, DeepTags, Grep, vert-copen
+map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 nnoremap <leader>A  :<C-u>call LintProject()<CR>
 nnoremap <leader>L  :<C-u>call FormatProject()<CR>
 nnoremap <leader>T  :<C-u>call TagsProject()<CR>
