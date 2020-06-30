@@ -98,10 +98,6 @@ set background=dark
 set termguicolors
 augroup customsyntax
     autocmd! customsyntax
-    " Remove trailing whitespaces and lines
-    autocmd BufWritePre * silent! :call StripTrailingWhiteSpace()
-    " Refresh tags on save
-    autocmd BufWritePost * silent! :call GenTags()
     " Custom syntax highlight
     autocmd Syntax * syntax match myFunction '\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\ze\%(\s*(\)'
     autocmd Syntax * syntax match myDeclaration_1 '\v[_.[:alnum:]]+(,\s*[_.[:alnum:]]+)*\ze(\s*([-^+|^\/%&]|\*|\<\<|\>\>|\&\^)?\=[^=])'
@@ -156,7 +152,9 @@ function! StripTrailingWhiteSpace()
     if &ft =~ 'markdown'
         return
     endif
+    " Strip trailing spaces
     %s/\s\+$//e
+    " Strip ending white lines
     %s/\($\n\s*\)\+\%$//e
     redraw!
 endfun
@@ -173,6 +171,7 @@ nnoremap <leader>r  :<C-u>!grep --exclude tags -Rl <c-r>=expand("<cword>")<CR><B
 nnoremap <leader>l  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>
 " Override <leader>l formatting with corresponding formatter for each lang
 augroup autoformat_settings
+    autocmd! autoformat_settings
     autocmd FileType c,cpp,java   nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!clang-format -style=Chromium %<CR>:loadview<CR>
     autocmd FileType python       nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!yapf --style=facebook %<CR>:w<CR>:%!isort -ac -d -y %<CR>:loadview<CR>
     autocmd FileType go           nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!goimports %<CR>:loadview<CR>
@@ -188,8 +187,15 @@ augroup lspbindings
     autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>r :<C-u>call LanguageClient#textDocument_rename()<CR>
     autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>h :<C-u>call LanguageClient#textDocument_codeAction()<CR>
 augroup end
-" Async enable Deoplete for better performances
-autocmd InsertEnter * call deoplete#enable()
+augroup misc
+    autocmd! misc
+    " Async enable Deoplete for better performances
+    autocmd InsertEnter * call deoplete#enable()
+    " Remove trailing whitespaces and lines
+    autocmd BufWritePre * silent! :call StripTrailingWhiteSpace()
+    " Refresh tags on save
+    autocmd BufWritePost * silent! :call GenTags()
+augroup end
 let g:deoplete#enable_at_startup = 0                " Start on insert mode
 " LSP Language Client
 let g:LanguageClient_autoStart  = 1
