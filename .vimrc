@@ -47,20 +47,15 @@ let g:signify_sign_add               = '>'
 let g:signify_sign_delete            = '<'
 let g:signify_sign_change            = '~'
 " Langs
-let g:ansible_attribute_highlight       = 'ab'
-let g:ansible_extra_keywords_highlight  = 1
-let g:ansible_name_highlight            = 'd'
-let g:ansible_normal_keywords_highlight = 'Define'
-let g:ansible_yamlKeyName               = 'yamlKey'
-let g:go_highlight_build_constraints        = 1
-let g:go_highlight_extra_types      = 1
-let g:go_highlight_fields           = 1
-let g:go_highlight_function_calls   = 1
+let g:go_highlight_build_constraints = 1
+let g:go_highlight_extra_types       = 1
+let g:go_highlight_fields            = 1
+let g:go_highlight_function_calls    = 1
 let g:go_highlight_function_parameters  = 1
-let g:go_highlight_functions        = 1
-let g:go_highlight_generate_tags    = 1
-let g:go_highlight_operators        = 1
-let g:go_highlight_types            = 1
+let g:go_highlight_functions         = 1
+let g:go_highlight_generate_tags     = 1
+let g:go_highlight_operators         = 1
+let g:go_highlight_types             = 1
 let g:java_highlight_all    = 1
 let g:python_highlight_all  = 1
 " FZF fuzzy
@@ -89,7 +84,7 @@ map <S-M-Up>    :<C-u>2winc+<CR>
 map <leader><leader>      :<C-u>Files<CR>
 map <leader>b  :<C-u>Buffers<CR>
 map <leader>t      :<C-u>Tags<CR>
-" Utility for Markdown and Ansible
+" set filetype shortcut
 nnoremap <leader>j :<C-u>set ft=
 " Theming
 set noshowmode noshowcmd laststatus=0 ruler   " hide statusline
