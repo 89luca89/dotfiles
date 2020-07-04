@@ -51,16 +51,15 @@ golang_modules:
     - golang.org/x/tools/cmd/guru
 
 my_packages:
-    - "@libreoffice"
     - android-tools
     - ansible
-    - geary
     - gimp
     - keepassxc
     - mpv
     - openssh-askpass
     - syncthing
     - telegram-desktop
+    - thunderbird
     - youtube-dl
 
 appimages_packages:

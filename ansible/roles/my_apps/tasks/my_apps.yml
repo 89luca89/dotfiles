@@ -8,6 +8,16 @@
     name: "{{ my_packages }}"
   become: true
 
+- name: Install onlyoffice
+  dnf:
+    state: present
+    name: "{{ item }}"
+  with_items:
+    - https://download.onlyoffice.com/repo/centos/main/noarch/onlyoffice-repo.noarch.rpm
+    - onlyoffice-desktopeditor
+  become: true
+  tags: onlyoffice
+
 - name: Ensure Folders Exists
   file:
     path: '{{ item }}'
