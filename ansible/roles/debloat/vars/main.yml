@@ -30,6 +30,7 @@ debloat_pkg:
     - appstream-data
     - authselect-compat
     - babl
+    - baobab
     - bcache-tools
     - blivet-data
     - blivet-gui-runtime
