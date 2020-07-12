@@ -1,6 +1,16 @@
 ---
 # tasks file for debloat
 
+
+- name: Responsiveness process performance-tweaks
+  capabilities:
+    path: "{{ item }}"
+    capability: cap_sys_nice=+ep
+    state: present
+  with_items: "{{ process_prioritize }}"
+  become: true
+  tags: debloat
+
 - name: Remove Programs (Unused Programs)
   package:
     name: "{{ debloat_pkg }}"

@@ -354,3 +354,7 @@ dbus_root_mask_services:
     - org.gnome.evolution.dataserver.Calendar.service
     - org.gnome.evolution.dataserver.Sources.service
     - org.gnome.evolution.dataserver.UserPrompter.service
+
+process_prioritize:
+      - /usr/bin/mutter
+      - /usr/bin/gnome-shell
