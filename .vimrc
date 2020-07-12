@@ -37,7 +37,27 @@ call plug#end()
 
 call plug#end()
 filetype plugin indent on
+" Theming
+set noshowmode noshowcmd laststatus=0 ruler   " hide statusline
+set rulerformat=%20(%m%r%w\ %y\ %l/%c%)\        " Modified+FileType+Ruler
+set background=dark
 syntax on
+set termguicolors
+augroup customsyntax
+    autocmd! customsyntax
+    " Custom syntax highlight
+    autocmd Syntax * syntax match myFunction '\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\ze\%(\s*(\)'
+    autocmd Syntax * syntax match myDeclaration_1 '\v[_.[:alnum:]]+(,\s*[_.[:alnum:]]+)*\ze(\s*([-^+|^\/%&]|\*|\<\<|\>\>|\&\^)?\=[^=])'
+    autocmd Syntax * syntax match myDeclaration_2 '\v\w+(,\s*\w+)*\ze(\s*:\=)'
+augroup end
+highlight link myFunction       Type
+highlight link myDeclaration_1  Identifier
+highlight link myDeclaration_2  Identifier
+let g:gruvbox_contrast_light = 'hard'
+let g:gruvbox_contrast_dark = 'hard'
+colorscheme gruvbox
+highlight Normal        guibg=#101010
+highlight TabLineSel    guifg=#262626 guibg=#8a8a8a
 " tabline
 let g:buftabline_indicators = 1
 let g:buftabline_separators = 1
@@ -86,26 +106,6 @@ map <leader>b  :<C-u>Buffers<CR>
 map <leader>t      :<C-u>Tags<CR>
 " set filetype shortcut
 nnoremap <leader>j :<C-u>set ft=
-" Theming
-set noshowmode noshowcmd laststatus=0 ruler   " hide statusline
-set rulerformat=%20(%m%r%w\ %y\ %l/%c%)\        " Modified+FileType+Ruler
-set background=dark
-set termguicolors
-augroup customsyntax
-    autocmd! customsyntax
-    " Custom syntax highlight
-    autocmd Syntax * syntax match myFunction '\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\ze\%(\s*(\)'
-    autocmd Syntax * syntax match myDeclaration_1 '\v[_.[:alnum:]]+(,\s*[_.[:alnum:]]+)*\ze(\s*([-^+|^\/%&]|\*|\<\<|\>\>|\&\^)?\=[^=])'
-    autocmd Syntax * syntax match myDeclaration_2 '\v\w+(,\s*\w+)*\ze(\s*:\=)'
-augroup end
-highlight link myFunction       Type
-highlight link myDeclaration_1  Identifier
-highlight link myDeclaration_2  Identifier
-let g:gruvbox_contrast_light = 'hard'
-let g:gruvbox_contrast_dark = 'hard'
-colorscheme gruvbox
-highlight Normal        guibg=#101010
-highlight TabLineSel    guifg=#262626 guibg=#8a8a8a
 " FUNCTIONS --------------------------------------------------------------------
 " Toggle Theme
 function! ToggleTheme()
