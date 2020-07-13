@@ -28,11 +28,16 @@ Plug 'sheerun/vim-polyglot', { 'do': './build' }
 Plug 'gruvbox-community/gruvbox'
 " LSP
 Plug 'autozimu/languageclient-neovim', { 'branch': 'next', 'do': 'bash install.sh', }
-" Deoplete + Dependencies
-Plug 'shougo/deoplete.nvim'
+" Deoplete
+if has('nvim')
+    Plug 'shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+else
+    Plug 'shougo/deoplete.nvim'
+    Plug 'roxma/nvim-yarp'
+    Plug 'roxma/vim-hug-neovim-rpc'
+endif
 Plug 'deoplete-plugins/deoplete-tag'
-Plug 'roxma/nvim-yarp'
-Plug 'roxma/vim-hug-neovim-rpc'
+
 call plug#end()
 filetype plugin indent on
 " Theming
@@ -171,8 +176,10 @@ nnoremap <leader>l  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>
 augroup autoformat_settings
     autocmd! autoformat_settings
     autocmd FileType c,cpp,java   nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!clang-format -style=Chromium %<CR>:loadview<CR>
-    autocmd FileType python       nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!yapf --style=facebook %<CR>:w<CR>:%!isort -ac -d -y %<CR>:loadview<CR>
     autocmd FileType go           nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!goimports %<CR>:loadview<CR>
+    autocmd FileType json         nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!jsonlint -f %<CR>:loadview<CR>
+    autocmd FileType python       nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!yapf --style=facebook %<CR>:w<CR>:%!isort -ac -d -y %<CR>:loadview<CR>
+    autocmd FileType rust         nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!rustfmt %<CR>:loadview<CR>
 augroup end
 " LSP SETUP --------------------------------------------------------------------
 " Override IDE-Style keybindings EDMRL, errors, definition, references, rename, format
@@ -205,4 +212,5 @@ let g:LanguageClient_serverCommands     = {
             \ 'cpp': ['clangd'],
             \ 'go': ['gopls'],
             \ 'python': ['pyls'],
+            \ 'rust': ['rust-analyzer'],
             \}

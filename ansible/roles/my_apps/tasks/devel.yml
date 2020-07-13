@@ -57,3 +57,40 @@
   environment:
     GOPATH: "{{ ansible_env.HOME }}/.local/go"
   tags: golang
+
+- name: Check that rustup exists
+  stat:
+    path: "{{ ansible_env.HOME }}/.local/rust/bin/rustup"
+  register: rustup
+  tags: rust
+
+- name: Install Programs (Programming Packages) - rustup/rust
+  shell: "curl https://sh.rustup.rs -sSf | sh -s -- -y"
+  when: not rustup.stat.exists
+  tags: rust
+
+- name: Install Programs (Programming Packages) - rustup/rustanalyzer
+  shell: |
+    curl -L https://github.com/rust-analyzer/rust-analyzer/releases/latest/download/rust-analyzer-linux \
+          -o {{ ansible_env.HOME }}/.local/rust/bin/rust-analyzer;
+    chmod +x {{ ansible_env.HOME }}/.local/rust/bin/rust-analyzer
+  when: not rustup.stat.exists
+  tags: rust
+
+- name: Install Programs (Programming Packages) - rust/runtime
+  shell: |
+    {{ ansible_env.HOME }}/.local/rust/bin/rustup install {{ item }}
+  with_items:
+    - stable-x86_64-unknown-linux-gnu
+    - nightly-x86_64-unknown-linux-gnu
+  when: not rustup.stat.exists
+  tags: rust
+
+- name: Install Programs (Programming Packages) - rust/deps
+  shell: |
+    {{ ansible_env.HOME }}/.local/rust/bin/rustup component add {{ item }}
+  with_items:
+    - rls --toolchain nightly-x86_64-unknown-linux-gnu
+    - rust-src --toolchain nightly-x86_64-unknown-linux-gnu
+  when: not rustup.stat.exists
+  tags: rust

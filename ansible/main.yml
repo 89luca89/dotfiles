@@ -7,20 +7,7 @@
 
 - hosts: all
   gather_facts: True
-  tasks:
-
-  # Role for debloating an existing setup
-  # RUN EXPLICITELY
-  - include_role:
-      name: debloat
-    tags: never, debloat, extreme_debloat
-
-  # Setup my apps
-  - include_role:
-      name: my_apps
-    tags: devel, my_apps, vscodium, virtualization, undervolt, thinkpad
-
-  # Setup dofiles
-  - include_role:
-      name: dotfiles
-    tags: dotfiles
+  roles:
+    - debloat
+    - my_apps
+    - dotfiles
