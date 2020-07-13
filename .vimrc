@@ -34,8 +34,6 @@ Plug 'deoplete-plugins/deoplete-tag'
 Plug 'roxma/nvim-yarp'
 Plug 'roxma/vim-hug-neovim-rpc'
 call plug#end()
-
-call plug#end()
 filetype plugin indent on
 " Theming
 set noshowmode noshowcmd laststatus=0 ruler   " hide statusline
@@ -56,8 +54,10 @@ highlight link myDeclaration_2  Identifier
 let g:gruvbox_contrast_light = 'hard'
 let g:gruvbox_contrast_dark = 'hard'
 colorscheme gruvbox
-highlight Normal        guibg=#101010
-highlight TabLineSel    guifg=#262626 guibg=#8a8a8a
+highlight BufTabLineCurrent guifg=#262626 guibg=#8a8a8a
+highlight BufTabLineActive  guifg=#898989 guibg=#505050
+highlight BufTabLineHidden  guifg=#7c7c7c guibg=#363636
+highlight BufTabLineFill    guifg=#1d2021 guibg=NONE
 " tabline
 let g:buftabline_indicators = 1
 let g:buftabline_separators = 1
@@ -111,8 +111,10 @@ nnoremap <leader>j :<C-u>set ft=
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        highlight Normal        guibg=#101010
-        highlight TabLineSel    guifg=#262626 guibg=#8a8a8a
+        highlight BufTabLineCurrent guifg=#262626 guibg=#8a8a8a
+        highlight BufTabLineActive  guifg=#898989 guibg=#505050
+        highlight BufTabLineHidden  guifg=#7c7c7c guibg=#363636
+        highlight BufTabLineFill    guifg=#1d2021 guibg=NONE
     else
         set background=light
     endif
