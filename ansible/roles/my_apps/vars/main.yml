@@ -59,7 +59,8 @@ my_packages:
     - openssh-askpass
     - syncthing
     - telegram-desktop
-    - thunderbird
+    - evolution
+    - evolution-ews
     - youtube-dl
 
 appimages_packages:
