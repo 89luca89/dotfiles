@@ -29,7 +29,7 @@
     scope: user
   with_items: "{{ systemd_user_mask_services }}"
   become: false
-  tags: debloat
+  tags: never, extreme_debloat
 
 # Mask systemd services to free up memory
 - name: Mask services /2
@@ -41,7 +41,7 @@
     daemon_reload: true
   with_items: "{{ systemd_root_mask_services }}"
   become: true
-  tags: debloat
+  tags: never, extreme_debloat
 
 - name: Disable tracker files
   shell: |
@@ -50,7 +50,7 @@
     ln -snf /dev/null /usr/share/dbus-1/services/{{ item }}
   with_items: "{{ dbus_root_mask_services }}"
   become: true
-  tags: debloat
+  tags: never, extreme_debloat
 
 # EXTREME Debloat, remove also virtualization containers support
 # RUN EXPLICITELY
