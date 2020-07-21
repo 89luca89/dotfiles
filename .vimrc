@@ -125,6 +125,11 @@ function! ToggleTheme()
     endif
 endfunction
 " Lint the entire project using filetype as reference. out to quickfix
+function! LintFile()
+    silent!
+    cgete system('lint-project ' . &filetype . " " .  expand('%') . " lint")
+endfun
+" Lint the entire project using filetype as reference. out to quickfix
 function! LintProject()
     silent!
     cgete system('lint-project ' . &filetype . " . lint")
@@ -162,6 +167,7 @@ endfun
 " END FUNCTIONS --------------------------------------------------------------------
 " Code help using external scripts: Lint, Format, DeepTags, Grep, vert-copen
 map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
+nnoremap <leader>a  :<C-u>call LintFile()<CR>
 nnoremap <leader>A  :<C-u>call LintProject()<CR>
 nnoremap <leader>L  :<C-u>call FormatProject()<CR>
 nnoremap <leader>T  :<C-u>call TagsProject()<CR>
