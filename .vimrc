@@ -181,12 +181,13 @@ nnoremap <leader>l  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>
 " Override <leader>l formatting with corresponding formatter for each lang
 augroup autoformat_settings
     autocmd! autoformat_settings
-    autocmd FileType c,cpp,java   nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!clang-format -style=Chromium %<CR>:loadview<CR>
+    autocmd FileType c,cpp,java   nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!clang-format -style=WebKit %<CR>:loadview<CR>
     autocmd FileType go           nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!goimports %<CR>:loadview<CR>
     autocmd FileType json         nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!jsonlint -f %<CR>:loadview<CR>
     autocmd FileType python       nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!yapf --style=facebook %<CR>:w<CR>:%!isort -ac -d -y %<CR>:loadview<CR>
     autocmd FileType rust         nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!rustfmt %<CR>:loadview<CR>
     autocmd FileType sh           nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!shfmt -s %<CR>:loadview<CR>
+    autocmd FileType terraform    nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:!terraform fmt %<CR>:loadview<CR><CR>
 augroup end
 " LSP SETUP --------------------------------------------------------------------
 " Override IDE-Style keybindings EDMRL, errors, definition, references, rename, format
@@ -220,4 +221,5 @@ let g:LanguageClient_serverCommands     = {
             \ 'go': ['gopls'],
             \ 'python': ['pyls'],
             \ 'rust': ['rust-analyzer'],
+            \ 'terraform' : ['terraform-ls'],
             \}

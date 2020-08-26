@@ -40,6 +40,7 @@ alias goproject="cd $HOME/Projects/goprojects/src/github.com/89luca89"
 alias project="cd ~/Projects"
 alias gogetsys="export GOPATH=~/.local/go; go get"
 alias gnome-reload='xdotool key Alt+F2; sleep 1; xdotool key r; xdotool key Return'
+export PATH=/bin:$PATH
 export PATH=$HOME/bin:$PATH
 export PATH=$HOME/.local/go/bin:$PATH
 export GOPATH=$HOME/Projects/goprojects
