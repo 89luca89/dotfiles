@@ -58,6 +58,7 @@ my_packages:
     - keepassxc
     - mpv
     - openssh-askpass
+    - gnome-shell-extension-appindicator
     - syncthing
     - telegram-desktop
     - evolution
