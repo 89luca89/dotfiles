@@ -24,7 +24,7 @@ Plug 'ap/vim-buftabline'
 " Git
 Plug 'mhinz/vim-signify'
 " Lang Packs
-Plug 'sheerun/vim-polyglot', { 'do': './build' }
+Plug 'sheerun/vim-polyglot'
 Plug 'pearofducks/ansible-vim'
 " Aestetics
 Plug 'gruvbox-community/gruvbox'
