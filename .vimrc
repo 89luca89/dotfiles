@@ -19,6 +19,7 @@ call plug#begin('~/.vim/plugged')
 " utilities
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
+Plug 'yggdroot/indentLine'
 Plug 'ap/vim-buftabline'
 " Git
 Plug 'mhinz/vim-signify'
@@ -63,6 +64,12 @@ highlight BufTabLineCurrent guifg=#262626 guibg=#8a8a8a
 highlight BufTabLineActive  guifg=#898989 guibg=#505050
 highlight BufTabLineHidden  guifg=#7c7c7c guibg=#363636
 highlight BufTabLineFill    guifg=#1d2021 guibg=NONE
+" indentline
+let g:indentLine_char = '|'
+let g:indentLine_concealcursor = ''
+let g:indentLine_setConceal = 1
+let g:intendLine_faser = 1
+set list lcs=tab:\|\  " here is a space
 " tabline
 let g:buftabline_indicators = 1
 let g:buftabline_separators = 1
