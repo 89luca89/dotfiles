@@ -25,6 +25,7 @@ Plug 'ap/vim-buftabline'
 Plug 'mhinz/vim-signify'
 " Lang Packs
 Plug 'sheerun/vim-polyglot', { 'do': './build' }
+Plug 'pearofducks/ansible-vim'
 " Aestetics
 Plug 'gruvbox-community/gruvbox'
 " LSP
@@ -79,6 +80,11 @@ let g:signify_sign_add               = '>'
 let g:signify_sign_delete            = '<'
 let g:signify_sign_change            = '~'
 " Langs
+let g:ansible_attribute_highlight       = 'ab'
+let g:ansible_extra_keywords_highlight  = 1
+let g:ansible_name_highlight            = 'd'
+let g:ansible_normal_keywords_highlight = 'Define'
+let g:ansible_yamlKeyName               = 'yamlKey'
 let g:go_highlight_build_constraints = 1
 let g:go_highlight_extra_types       = 1
 let g:go_highlight_fields            = 1
