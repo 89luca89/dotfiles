@@ -80,6 +80,7 @@ let g:signify_sign_add               = '>'
 let g:signify_sign_delete            = '<'
 let g:signify_sign_change            = '~'
 " Langs
+let g:polyglot_disabled = ['ansible']
 let g:ansible_attribute_highlight       = 'ab'
 let g:ansible_extra_keywords_highlight  = 1
 let g:ansible_name_highlight            = 'd'
@@ -222,6 +223,11 @@ augroup misc
     " Refresh tags on save
     autocmd BufWritePost * silent! :call GenTags()
 augroup end
+augroup ansible_vim_fthosts
+  autocmd!
+  autocmd BufNewFile,BufRead */vars/*.yml set filetype=yaml.ansible
+  autocmd BufNewFile,BufRead */*inventory*.yml set filetype=yaml.ansible
+augroup END
 let g:deoplete#enable_at_startup = 0                " Start on insert mode
 " LSP Language Client
 let g:LanguageClient_autoStart  = 1
