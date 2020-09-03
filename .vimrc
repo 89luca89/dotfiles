@@ -208,11 +208,11 @@ augroup end
 augroup lspbindings
     autocmd! lspbindings
     " IDE-like keybindings
-    autocmd Filetype c,cpp,python,go nnoremap <buffer> K  :<C-u>call LanguageClient#textDocument_hover()<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>d :<C-u>call LanguageClient#textDocument_definition({'gotoCmd': 'vsplit'})<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>m :<C-u>call LanguageClient#textDocument_references()<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>r :<C-u>call LanguageClient#textDocument_rename()<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>h :<C-u>call LanguageClient#textDocument_codeAction()<CR>
+    autocmd Filetype c,cpp,python,go,terraform nnoremap <buffer> K  :<C-u>call LanguageClient#textDocument_hover()<CR>
+    autocmd Filetype c,cpp,python,go,terraform nnoremap <buffer> <leader>d :<C-u>call LanguageClient#textDocument_definition({'gotoCmd': 'vsplit'})<CR>
+    autocmd Filetype c,cpp,python,go,terraform nnoremap <buffer> <leader>m :<C-u>call LanguageClient#textDocument_references()<CR>
+    autocmd Filetype c,cpp,python,go,terraform nnoremap <buffer> <leader>r :<C-u>call LanguageClient#textDocument_rename()<CR>
+    autocmd Filetype c,cpp,python,go,terraform nnoremap <buffer> <leader>h :<C-u>call LanguageClient#textDocument_codeAction()<CR>
 augroup end
 augroup misc
     autocmd! misc
@@ -227,6 +227,7 @@ augroup ansible_vim_fthosts
   autocmd!
   autocmd BufNewFile,BufRead */vars/*.yml set filetype=yaml.ansible
   autocmd BufNewFile,BufRead */*inventory*.yml set filetype=yaml.ansible
+  autocmd BufNewFile,BufRead *inventory*.yml set filetype=yaml.ansible
 augroup END
 let g:deoplete#enable_at_startup = 0                " Start on insert mode
 " LSP Language Client

@@ -59,6 +59,7 @@ my_packages:
     - mpv
     - openssh-askpass
     - gnome-shell-extension-appindicator
+    - gnome-shell-extension-workspace-indicator
     - syncthing
     - telegram-desktop
     - evolution
