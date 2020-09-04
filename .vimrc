@@ -21,8 +21,6 @@ Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 Plug 'yggdroot/indentLine'
 Plug 'ap/vim-buftabline'
-" Git
-Plug 'mhinz/vim-signify'
 " Lang Packs
 Plug 'sheerun/vim-polyglot'
 Plug 'pearofducks/ansible-vim'
@@ -75,10 +73,6 @@ set list lcs=tab:\|\  " here is a space
 let g:buftabline_indicators = 1
 let g:buftabline_separators = 1
 let g:buftabline_plug_max   = 0
-" Git
-let g:signify_sign_add               = '>'
-let g:signify_sign_delete            = '<'
-let g:signify_sign_change            = '~'
 " Langs
 let g:polyglot_disabled = ['ansible']
 let g:ansible_attribute_highlight       = 'ab'
