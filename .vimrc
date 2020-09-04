@@ -226,6 +226,7 @@ augroup end
 augroup ansible_vim_fthosts
   autocmd!
   autocmd BufNewFile,BufRead */vars/*.yml set filetype=yaml.ansible
+  autocmd BufNewFile,BufRead */*inventory*.yml set filetype=yaml.ansible
   autocmd BufNewFile,BufRead *inventory*.yml set filetype=yaml.ansible
 augroup END
 let g:deoplete#enable_at_startup = 0                " Start on insert mode
