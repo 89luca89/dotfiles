@@ -6,7 +6,7 @@ set colorcolumn=80
 set title nocompatible nowritebackup nobackup
 set mouse=a undofile undolevels=1000 undodir=$HOME/.vim/undo
 set directory=$HOME/.vim/swap
-set path+=** wildmenu
+set path+=.,** wildmenu
 set autoread hidden backspace=indent,eol,start
 set splitright splitbelow
 set autoindent smartindent copyindent smarttab expandtab
@@ -23,7 +23,6 @@ Plug 'yggdroot/indentLine'
 Plug 'ap/vim-buftabline'
 " Lang Packs
 Plug 'sheerun/vim-polyglot'
-Plug 'pearofducks/ansible-vim'
 " Aestetics
 Plug 'gruvbox-community/gruvbox'
 " LSP
@@ -59,22 +58,13 @@ highlight link myDeclaration_2  Identifier
 let g:gruvbox_contrast_light = 'hard'
 let g:gruvbox_contrast_dark = 'hard'
 colorscheme gruvbox
-highlight BufTabLineCurrent guifg=#262626 guibg=#8a8a8a
-highlight BufTabLineActive  guifg=#898989 guibg=#505050
-highlight BufTabLineHidden  guifg=#7c7c7c guibg=#363636
-highlight BufTabLineFill    guifg=#1d2021 guibg=NONE
 " indentline
 let g:indentLine_char = '|'
 let g:indentLine_concealcursor = ''
 let g:indentLine_setConceal = 1
 let g:intendLine_faser = 1
 set list lcs=tab:\|\  " here is a space
-" tabline
-let g:buftabline_indicators = 1
-let g:buftabline_separators = 1
-let g:buftabline_plug_max   = 0
 " Langs
-let g:polyglot_disabled = ['ansible']
 let g:ansible_attribute_highlight       = 'ab'
 let g:ansible_extra_keywords_highlight  = 1
 let g:ansible_name_highlight            = 'd'
@@ -91,9 +81,6 @@ let g:go_highlight_operators         = 1
 let g:go_highlight_types             = 1
 let g:java_highlight_all    = 1
 let g:python_highlight_all  = 1
-" FZF fuzzy
-let g:fzf_action = {'alt-enter':'vsplit' }
-let g:fzf_files_options = "--preview 'if file {1} | grep -Ei \"text|JSON\"; then cat {1} ; fi'"
 """     Shortcuts   "
 " do last action on a visual selection
 vnoremap . :'<,'>:normal .<CR>
@@ -114,9 +101,9 @@ map <S-M-Left>  :<C-u>2winc<<CR>
 map <S-M-Right> :<C-u>2winc><CR>
 map <S-M-Up>    :<C-u>2winc+<CR>
 " Utility shortcuts with leader:
-map <leader><leader>      :<C-u>Files<CR>
+map <leader><leader>  :<C-u>Files<CR>
 map <leader>b  :<C-u>Buffers<CR>
-map <leader>t      :<C-u>Tags<CR>
+map <leader>t  :<C-u>Tags<CR>
 " set filetype shortcut
 nnoremap <leader>j :<C-u>set ft=
 " FUNCTIONS --------------------------------------------------------------------
@@ -124,10 +111,6 @@ nnoremap <leader>j :<C-u>set ft=
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        highlight BufTabLineCurrent guifg=#262626 guibg=#8a8a8a
-        highlight BufTabLineActive  guifg=#898989 guibg=#505050
-        highlight BufTabLineHidden  guifg=#7c7c7c guibg=#363636
-        highlight BufTabLineFill    guifg=#1d2021 guibg=NONE
     else
         set background=light
     endif
@@ -174,16 +157,16 @@ function! StripTrailingWhiteSpace()
 endfun
 " END FUNCTIONS --------------------------------------------------------------------
 " Code help using external scripts: Lint, Format, DeepTags, Grep, vert-copen
-map <silent> <C-e> :<C-u>call ToggleTheme()<CR>
-nnoremap <leader>a  :<C-u>call LintFile()<CR>
-nnoremap <leader>A  :<C-u>call LintProject()<CR>
+nnoremap <silent> <C-e> :<C-u>call ToggleTheme()<CR>
+nnoremap <leader>a  :<C-u>call LintFile()<CR>:copen<CR>
+nnoremap <leader>A  :<C-u>call LintProject()<CR>:copen<CR>
 nnoremap <leader>L  :<C-u>call FormatProject()<CR>
 nnoremap <leader>T  :<C-u>call TagsProject()<CR>
 nnoremap <leader>f  :<C-u>cgete system('grep --exclude tags -Rn ""')<Left><Left><Left>
 nnoremap <leader>e  :<C-u>vert copen<BAR>vert resize 80<CR>
 " Default IDE-Style keybindings EDMRL, errors, definition, references, rename, format
 nnoremap <leader>d  :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
-nnoremap <leader>m  :<C-u>cgete system('grep --exclude tags -Rn "<c-r>=expand("<cword>")<CR>"')<CR>
+nnoremap <leader>m  :<C-u>cgete system('grep --exclude tags -Rn "<c-r>=expand("<cword>")<CR>"')<CR>:copen<CR>
 nnoremap <leader>r  :<C-u>!grep --exclude tags -Rl <c-r>=expand("<cword>")<CR><BAR>xargs sed -i 's/<c-r>=expand("<cword>")<CR>//g'<Left><Left><Left>
 nnoremap <leader>l  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>
 " Override <leader>l formatting with corresponding formatter for each lang
@@ -217,11 +200,14 @@ augroup misc
     " Refresh tags on save
     autocmd BufWritePost * silent! :call GenTags()
 augroup end
+" Fix ansible file detection
 augroup ansible_vim_fthosts
   autocmd!
-  autocmd BufNewFile,BufRead */vars/*.yml set filetype=yaml.ansible
   autocmd BufNewFile,BufRead */*inventory*.yml set filetype=yaml.ansible
-  autocmd BufNewFile,BufRead *inventory*.yml set filetype=yaml.ansible
+  autocmd BufNewFile,BufRead */roles/**/*.yml set filetype=yaml.ansible
+  autocmd BufNewFile,BufRead */vars/*/**.yml set filetype=yaml.ansible
+  autocmd BufNewFile,BufRead *main*.yml set filetype=yaml.ansible
+  autocmd BufNewFile,BufRead hosts set filetype=ini.ansible
 augroup END
 let g:deoplete#enable_at_startup = 0                " Start on insert mode
 " LSP Language Client
