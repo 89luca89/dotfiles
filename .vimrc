@@ -6,45 +6,38 @@ set colorcolumn=80
 set title nocompatible nowritebackup nobackup
 set mouse=a undofile undolevels=1000 undodir=$HOME/.vim/undo
 set directory=$HOME/.vim/swap
-set path+=.,** wildmenu
+set path=.,** wildmenu
 set autoread hidden backspace=indent,eol,start
 set splitright splitbelow
 set autoindent smartindent copyindent smarttab expandtab
 set shiftwidth=4 tabstop=4 softtabstop=4
 set hlsearch incsearch ignorecase smartcase
 set nowrap number nomodeline ttyfast lazyredraw
-set completeopt=noinsert,noselect,menu
+set completeopt=menu,menuone,popup,noselect,noinsert
 filetype off
 call plug#begin('~/.vim/plugged')
 " utilities
-Plug 'junegunn/fzf.vim'
-Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 Plug 'yggdroot/indentLine'
 Plug 'ap/vim-buftabline'
+Plug 'mhinz/vim-signify'
 " Lang Packs
 Plug 'sheerun/vim-polyglot'
 " Aestetics
 Plug 'gruvbox-community/gruvbox'
 " LSP
-Plug 'autozimu/languageclient-neovim', { 'branch': 'next', 'do': 'bash install.sh', }
-" Deoplete
-if has('nvim')
-    Plug 'shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-else
-    Plug 'shougo/deoplete.nvim'
-    Plug 'roxma/nvim-yarp'
-    Plug 'roxma/vim-hug-neovim-rpc'
-endif
-Plug 'deoplete-plugins/deoplete-tag'
+Plug 'natebosch/vim-lsc'
 
 call plug#end()
 filetype plugin indent on
+syntax on
 " Theming
 set noshowmode noshowcmd laststatus=0 ruler   " hide statusline
 set rulerformat=%20(%m%r%w\ %y\ %l/%c%)\        " Modified+FileType+Ruler
 set background=dark
-syntax on
 set termguicolors
+let g:gruvbox_contrast_light = 'hard'
+let g:gruvbox_contrast_dark = 'hard'
+colorscheme gruvbox
 augroup customsyntax
     autocmd! customsyntax
     " Custom syntax highlight
@@ -55,9 +48,6 @@ augroup end
 highlight link myFunction       Type
 highlight link myDeclaration_1  Identifier
 highlight link myDeclaration_2  Identifier
-let g:gruvbox_contrast_light = 'hard'
-let g:gruvbox_contrast_dark = 'hard'
-colorscheme gruvbox
 " indentline
 let g:indentLine_char = '|'
 let g:indentLine_concealcursor = ''
@@ -101,9 +91,9 @@ map <S-M-Left>  :<C-u>2winc<<CR>
 map <S-M-Right> :<C-u>2winc><CR>
 map <S-M-Up>    :<C-u>2winc+<CR>
 " Utility shortcuts with leader:
-map <leader><leader>  :<C-u>Files<CR>
-map <leader>b  :<C-u>Buffers<CR>
-map <leader>t  :<C-u>Tags<CR>
+map <leader><leader>  :<C-u>find<space>
+map <leader>b  :<C-u>buffers<CR>:buffer<space>
+map <leader>t  :<C-u>ltag<space>
 " set filetype shortcut
 nnoremap <leader>j :<C-u>set ft=
 " FUNCTIONS --------------------------------------------------------------------
@@ -139,7 +129,7 @@ endfun
 function! GenTags()
     if isdirectory(".git") || filereadable(".project")
         silent!
-        exec "!rm -f ./tags; ctags -R . -a"
+        exec "!ctags -R . -a"
         redraw!
     endif
 endfun
@@ -158,6 +148,7 @@ endfun
 " END FUNCTIONS --------------------------------------------------------------------
 " Code help using external scripts: Lint, Format, DeepTags, Grep, vert-copen
 nnoremap <silent> <C-e> :<C-u>call ToggleTheme()<CR>
+nnoremap <leader>gd  :<C-u>SignifyHunkDiff<CR>
 nnoremap <leader>a  :<C-u>call LintFile()<CR>:copen<CR>
 nnoremap <leader>A  :<C-u>call LintProject()<CR>:copen<CR>
 nnoremap <leader>L  :<C-u>call FormatProject()<CR>
@@ -185,16 +176,14 @@ augroup end
 augroup lspbindings
     autocmd! lspbindings
     " IDE-like keybindings
-    autocmd Filetype c,cpp,python,go,terraform nnoremap <buffer> K  :<C-u>call LanguageClient#textDocument_hover()<CR>
-    autocmd Filetype c,cpp,python,go,terraform nnoremap <buffer> <leader>d :<C-u>call LanguageClient#textDocument_definition({'gotoCmd': 'vsplit'})<CR>
-    autocmd Filetype c,cpp,python,go,terraform nnoremap <buffer> <leader>m :<C-u>call LanguageClient#textDocument_references()<CR>
-    autocmd Filetype c,cpp,python,go,terraform nnoremap <buffer> <leader>r :<C-u>call LanguageClient#textDocument_rename()<CR>
-    autocmd Filetype c,cpp,python,go,terraform nnoremap <buffer> <leader>h :<C-u>call LanguageClient#textDocument_codeAction()<CR>
+    autocmd Filetype c,cpp,python,go,terraform nnoremap <buffer> K  :<C-u>LSClientShowHover<CR>
+    autocmd Filetype c,cpp,python,go,terraform nnoremap <buffer> <leader>a :<C-u>LSClientAllDiagnostics<CR>
+    autocmd Filetype c,cpp,python,go,terraform nnoremap <buffer> <leader>d :<C-u>LSClientGoToDefinitionSplit<CR>
+    autocmd Filetype c,cpp,python,go,terraform nnoremap <buffer> <leader>m :<C-u>LSClientFindReferences<CR>
+    autocmd Filetype c,cpp,python,go,terraform nnoremap <buffer> <leader>r :<C-u>LSClientRename<CR>
 augroup end
 augroup misc
     autocmd! misc
-    " Async enable Deoplete for better performances
-    autocmd InsertEnter * call deoplete#enable()
     " Remove trailing whitespaces and lines
     autocmd BufWritePre * silent! :call StripTrailingWhiteSpace()
     " Refresh tags on save
@@ -202,24 +191,38 @@ augroup misc
 augroup end
 " Fix ansible file detection
 augroup ansible_vim_fthosts
-  autocmd!
-  autocmd BufNewFile,BufRead */*inventory*.yml set filetype=yaml.ansible
-  autocmd BufNewFile,BufRead */roles/**/*.yml set filetype=yaml.ansible
-  autocmd BufNewFile,BufRead */vars/*/**.yml set filetype=yaml.ansible
-  autocmd BufNewFile,BufRead *main*.yml set filetype=yaml.ansible
-  autocmd BufNewFile,BufRead hosts set filetype=ini.ansible
+    autocmd!
+    autocmd BufNewFile,BufRead */*inventory*.yml set filetype=yaml.ansible
+    autocmd BufNewFile,BufRead */roles/**/*.yml set filetype=yaml.ansible
+    autocmd BufNewFile,BufRead */vars/*/**.yml set filetype=yaml.ansible
+    autocmd BufNewFile,BufRead *main*.yml set filetype=yaml.ansible
+    autocmd BufNewFile,BufRead hosts set filetype=ini.ansible
 augroup END
-let g:deoplete#enable_at_startup = 0                " Start on insert mode
-" LSP Language Client
-let g:LanguageClient_autoStart  = 1
-let g:LanguageClient_diagnosticsEnable  = 1
-let g:LanguageClient_diagnosticsList = "Location"
-let g:LanguageClient_selectionUI = "quickfix"
-let g:LanguageClient_serverCommands     = {
-            \ 'c': ['clangd'],
-            \ 'cpp': ['clangd'],
-            \ 'go': ['gopls'],
-            \ 'python': ['pyls'],
-            \ 'rust': ['rust-analyzer'],
-            \ 'terraform' : ['terraform-ls'],
+" LSP
+let g:lsc_reference_highlights = v:false
+let g:lsc_server_commands  = {
+            \ 'c' : {
+            \   'name': 'c',
+            \   'command': 'clangd',
+            \   'enabled': v:true,
+            \   'suppress_stderr': v:true,
+            \ },
+            \ 'cpp' : {
+            \   'name': 'cpp',
+            \   'command': 'clangd',
+            \   'enabled': v:true,
+            \   'suppress_stderr': v:true,
+            \ },
+            \  "go": {
+            \    "command": "gopls serve",
+            \    "log_level": -1,
+            \    "suppress_stderr": v:true,
+            \  },
+            \ 'python': 'pyls',
+            \ 'rust': 'rust-analyzer',
+            \  "terraform": {
+            \    "command": "terraform-ls serve",
+            \    "log_level": -1,
+            \    "suppress_stderr": v:true,
+            \  },
             \}
