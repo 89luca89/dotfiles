@@ -153,7 +153,8 @@ nnoremap <leader>a  :<C-u>call LintFile()<CR>:copen<CR>
 nnoremap <leader>A  :<C-u>call LintProject()<CR>:copen<CR>
 nnoremap <leader>L  :<C-u>call FormatProject()<CR>
 nnoremap <leader>T  :<C-u>call TagsProject()<CR>
-nnoremap <leader>f  :<C-u>cgete system('grep --exclude tags -Rn ""')<Left><Left><Left>
+nnoremap <leader>f  :<C-u>cgete system('grep --exclude tags -Rn ""')<BAR>copen<C-Left><Right>
+"<Left><Left><Left>
 nnoremap <leader>e  :<C-u>vert copen<BAR>vert resize 80<CR>
 " Default IDE-Style keybindings EDMRL, errors, definition, references, rename, format
 nnoremap <leader>d  :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
