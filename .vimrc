@@ -69,7 +69,6 @@ let g:go_highlight_functions         = 1
 let g:go_highlight_generate_tags     = 1
 let g:go_highlight_operators         = 1
 let g:go_highlight_types             = 1
-let g:java_highlight_all    = 1
 let g:python_highlight_all  = 1
 """     Shortcuts   "
 " do last action on a visual selection
@@ -164,7 +163,7 @@ nnoremap <leader>l  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>
 " Override <leader>l formatting with corresponding formatter for each lang
 augroup autoformat_settings
     autocmd! autoformat_settings
-    autocmd FileType c,cpp,java   nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!clang-format -style=file %<CR>:loadview<CR>
+    autocmd FileType c,cpp        nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!clang-format -style=file %<CR>:loadview<CR>
     autocmd FileType go           nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!goimports %<CR>:loadview<CR>
     autocmd FileType json         nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!jsonlint -f %<CR>:loadview<CR>
     autocmd FileType python       nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!yapf --style=facebook %<CR>:w<CR>:%!isort -ac -d -y %<CR>:loadview<CR>
