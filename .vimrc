@@ -227,7 +227,7 @@ let g:lsc_server_commands  = {
             \    "suppress_stderr": v:true,
             \  },
             \  "terraform": {
-            \    "command": "terraform-ls serve",
+            \    "command": "tflint --langserver",
             \    'enabled': v:true,
             \    "suppress_stderr": v:true,
             \  },
