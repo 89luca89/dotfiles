@@ -13,19 +13,22 @@ set autoindent smartindent copyindent smarttab expandtab
 set shiftwidth=4 tabstop=4 softtabstop=4
 set hlsearch incsearch ignorecase smartcase
 set nowrap number nomodeline ttyfast lazyredraw
-set completeopt=menu,menuone,popup,noselect,noinsert
 filetype off
 call plug#begin('~/.vim/plugged')
 " utilities
+Plug 'yggdroot/indentLine'
 Plug 'ap/vim-buftabline'
 Plug 'mhinz/vim-signify'
-Plug 'yggdroot/indentLine'
 " Lang Packs
 Plug 'sheerun/vim-polyglot'
 " Aestetics
 Plug 'gruvbox-community/gruvbox'
 " LSP
-Plug 'natebosch/vim-lsc'
+Plug 'prabirshrestha/asyncomplete-file.vim'
+Plug 'prabirshrestha/asyncomplete-lsp.vim'
+Plug 'prabirshrestha/asyncomplete-tags.vim'
+Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'prabirshrestha/vim-lsp'
 
 call plug#end()
 filetype plugin indent on
@@ -48,7 +51,6 @@ augroup end
 highlight link myFunction       Type
 highlight link myDeclaration_1  Identifier
 highlight link myDeclaration_2  Identifier
-let g:buftabline_indicators = 1
 " indentline
 let g:indentLine_char = '|'
 let g:indentLine_concealcursor = ''
@@ -177,11 +179,11 @@ augroup end
 augroup lspbindings
     autocmd! lspbindings
     " IDE-like keybindings
-    autocmd Filetype c,cpp,python,go,terraform nnoremap <buffer> K  :<C-u>LSClientShowHover<CR>
-    autocmd Filetype c,cpp,python,go,terraform nnoremap <buffer> <leader>a :<C-u>LSClientAllDiagnostics<CR>
-    autocmd Filetype c,cpp,python,go,terraform nnoremap <buffer> <leader>d :<C-u>LSClientGoToDefinitionSplit<CR>
-    autocmd Filetype c,cpp,python,go,terraform nnoremap <buffer> <leader>m :<C-u>LSClientFindReferences<CR>
-    autocmd Filetype c,cpp,python,go,terraform nnoremap <buffer> <leader>r :<C-u>LSClientRename<CR>
+    autocmd Filetype c,cpp,python,go,terraform nnoremap <buffer> K  :<C-u>LspPeekDefinition<CR>
+    autocmd Filetype c,cpp,python,go,terraform nnoremap <buffer> <leader>a :<C-u>LspDocumentDiagnostics<CR>
+    autocmd Filetype c,cpp,python,go,terraform nnoremap <buffer> <leader>d :<C-u>vsplit<BAR>LspDefinition<CR>
+    autocmd Filetype c,cpp,python,go,terraform nnoremap <buffer> <leader>m :<C-u>LspReferences<CR>
+    autocmd Filetype c,cpp,python,go,terraform nnoremap <buffer> <leader>r :<C-u>LspRename<CR>
 augroup end
 augroup misc
     autocmd! misc
@@ -199,37 +201,78 @@ augroup ansible_vim_fthosts
     autocmd BufNewFile,BufRead *main*.yml set filetype=yaml.ansible
     autocmd BufNewFile,BufRead hosts set filetype=ini.ansible
 augroup END
-" LSP
-let g:lsc_reference_highlights = v:false
-let g:lsc_server_commands  = {
-            \ 'c' : {
-            \    'command': 'clangd',
-            \    'enabled': v:true,
-            \    'suppress_stderr': v:true,
-            \ },
-            \ 'cpp' : {
-            \    'command': 'clangd',
-            \    'enabled': v:true,
-            \    'suppress_stderr': v:true,
-            \ },
-            \  "go": {
-            \    "command": "gopls serve",
-            \    'enabled': v:true,
-            \    "suppress_stderr": v:true,
-            \  },
-            \  "python": {
-            \    "command": "pyls",
-            \    'enabled': v:true,
-            \    "suppress_stderr": v:true,
-            \  },
-            \  "rust": {
-            \    "command": "rust-analyzer",
-            \    'enabled': v:true,
-            \    "suppress_stderr": v:true,
-            \  },
-            \  "terraform": {
-            \    "command": "tflint --langserver",
-            \    'enabled': v:true,
-            \    "suppress_stderr": v:true,
-            \  },
-            \}
+" Asyncomplete + LSP
+" let g:asyncomplete_auto_completeopt  = 0
+let g:asyncomplete_smart_completion  = 1
+let g:lsp_auto_enable                = 1
+let g:lsp_diagnostics_echo_cursor    = 1
+let g:lsp_diagnostics_enabled        = 1
+let g:lsp_highlights_enabled         = 1
+let g:lsp_highlight_references_enabled = 1
+let g:lsp_log_file  = expand('/dev/null')
+let g:lsp_semantic_enabled     = 1
+let g:lsp_signs_enabled        = 1
+let g:lsp_virtual_text_enabled = 1
+"set completeopt=menu,menuone,popup,noselect,noinsert
+"
+augroup asyncompleteregister
+    autocmd! asyncompleteregister
+    " Lang specific keybindings
+    autocmd VimEnter * call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
+                \ 'name': 'file',
+                \ 'whitelist': ['*'],
+                \ 'priority': 10,
+                \ 'completor': function('asyncomplete#sources#file#completor')
+                \ }))
+    autocmd VimEnter * call asyncomplete#register_source(asyncomplete#sources#tags#get_source_options({
+                \ 'name': 'tags',
+                \ 'whitelist': ['*'],
+                \ 'blacklist': ['go'],
+                \ 'completor': function('asyncomplete#sources#tags#completor'),
+                \ 'config': {
+                \    'max_file_size': 50000000,
+                \  },
+                \ }))
+    autocmd VimEnter * call lsp#register_server({
+                \ 'name': 'clangd',
+                \ 'whitelist': ['c', 'cpp'],
+                \ 'cmd': {server_info->['clangd', '-background-index']},
+                \ })
+    autocmd VimEnter * call lsp#register_server({
+                \ 'name': 'gopls',
+                \ 'whitelist': ['go'],
+                \ 'cmd': {server_info->['/home/luca-linux/.local/go/bin/gopls']},
+                \ 'workspace_config': {
+                \  'gopls' : {
+                \       'hoverKind': "FullDocumentation",
+                \       'usePlaceholders': v:true,
+                \       'fuzzyMatching': v:true,
+                \       'staticcheck': v:true,
+                \       'deepCompletion': v:true,
+                \       'completionDocumentation': v:true,
+                \       'completeUnimported': v:true,
+                \       'analyses': {
+                \            'fillreturns': v:true,
+                \           'undeclarename': v:true,
+                \           'unusedparams': v:true,
+                \           'nonewvars': v:true,
+                \          }
+                \     }
+                \ },
+                \ })
+    autocmd VimEnter * call lsp#register_server({
+                \ 'name': 'pyls',
+                \ 'whitelist': ['python'],
+                \ 'cmd': {server_info->['pyls']},
+                \ })
+    autocmd VimEnter * call lsp#register_server({
+                \ 'name': 'rust-analyzer',
+                \ 'whitelist': ['rust'],
+                \ 'cmd': {server_info->['rust-analyzer']},
+                \ })
+    autocmd VimEnter * call lsp#register_server({
+                \ 'name': 'terraform',
+                \ 'whitelist': ['terraform'],
+                \ 'cmd': {server_info->['terraform-ls', 'serve']},
+                \ })
+augroup end
