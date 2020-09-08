@@ -203,13 +203,11 @@ augroup END
 let g:lsc_reference_highlights = v:false
 let g:lsc_server_commands  = {
             \ 'c' : {
-            \   'name': 'c',
             \   'command': 'clangd',
             \   'enabled': v:true,
             \   'suppress_stderr': v:true,
             \ },
             \ 'cpp' : {
-            \   'name': 'cpp',
             \   'command': 'clangd',
             \   'enabled': v:true,
             \   'suppress_stderr': v:true,
@@ -219,8 +217,16 @@ let g:lsc_server_commands  = {
             \    "log_level": -1,
             \    "suppress_stderr": v:true,
             \  },
-            \ 'python': 'pyls',
-            \ 'rust': 'rust-analyzer',
+            \  "python": {
+            \    "command": "pyls",
+            \    "log_level": -1,
+            \    "suppress_stderr": v:true,
+            \  },
+            \  "rust": {
+            \    "command": "rust-analyzer",
+            \    "log_level": -1,
+            \    "suppress_stderr": v:true,
+            \  },
             \  "terraform": {
             \    "command": "terraform-ls serve",
             \    "log_level": -1,
