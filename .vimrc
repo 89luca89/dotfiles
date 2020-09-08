@@ -17,9 +17,9 @@ set completeopt=menu,menuone,popup,noselect,noinsert
 filetype off
 call plug#begin('~/.vim/plugged')
 " utilities
-Plug 'yggdroot/indentLine'
 Plug 'ap/vim-buftabline'
 Plug 'mhinz/vim-signify'
+Plug 'yggdroot/indentLine'
 " Lang Packs
 Plug 'sheerun/vim-polyglot'
 " Aestetics
