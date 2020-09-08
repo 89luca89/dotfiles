@@ -48,6 +48,7 @@ augroup end
 highlight link myFunction       Type
 highlight link myDeclaration_1  Identifier
 highlight link myDeclaration_2  Identifier
+let g:buftabline_indicators = 1
 " indentline
 let g:indentLine_char = '|'
 let g:indentLine_concealcursor = ''
