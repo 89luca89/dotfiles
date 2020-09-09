@@ -38,9 +38,6 @@ set noshowmode noshowcmd laststatus=0 ruler   " hide statusline
 set rulerformat=%20(%m%r%w\ %y\ %l/%c%)\        " Modified+FileType+Ruler
 set background=dark
 set termguicolors
-let g:gruvbox_contrast_light = 'hard'
-let g:gruvbox_contrast_dark = 'hard'
-colorscheme gruvbox
 augroup customsyntax
     autocmd! customsyntax
     " Custom syntax highlight
@@ -51,6 +48,9 @@ augroup end
 highlight link myFunction       Type
 highlight link myDeclaration_1  Identifier
 highlight link myDeclaration_2  Identifier
+let g:gruvbox_contrast_light = 'hard'
+let g:gruvbox_contrast_dark = 'hard'
+colorscheme gruvbox
 " indentline
 let g:indentLine_char = '|'
 let g:indentLine_concealcursor = ''
@@ -93,8 +93,8 @@ map <S-M-Left>  :<C-u>2winc<<CR>
 map <S-M-Right> :<C-u>2winc><CR>
 map <S-M-Up>    :<C-u>2winc+<CR>
 " Utility shortcuts with leader:
-map <leader><leader>  :<C-u>cgete system("ls -1 --group-directories-first<BAR>xargs -I{} find {} -type f<BAR>xargs -I{} echo '{}:1:1: '")<CR>:copen<CR>G
-map <leader>t  :<C-u>cgete system("cat tags<BAR>grep -v '^!_'<BAR>sort -ru<BAR>awk -F'\t' '{split($5,line,\":\");print $2\":\"line[2]\":0: \"$1}'")<CR>:copen<CR>G
+map <leader><leader>  :<C-u>cgete system("ls -1 --group-directories-first<BAR>xargs -I{} find {} -type f<BAR>xargs -I{} echo '{}:1:1: '")<CR>:copen<CR>G//<backspace>
+map <leader>t  :<C-u>cgete system("cat tags<BAR>grep -v '^!_'<BAR>sort -ru<BAR>awk -F'\t' '{split($5,line,\":\");print $2\":\"line[2]\":0: \"$1}'")<CR>:copen<CR>G//<backspace>
 map <leader>b  :<C-u>buffers<CR>:buffer<space>
 " set filetype shortcut
 nnoremap <leader>j :<C-u>set ft=
@@ -179,11 +179,11 @@ augroup end
 augroup lspbindings
     autocmd! lspbindings
     " IDE-like keybindings
-    autocmd Filetype c,cpp,python,go,terraform nnoremap <buffer> K  :<C-u>LspPeekDefinition<CR>
-    autocmd Filetype c,cpp,python,go,terraform nnoremap <buffer> <leader>a :<C-u>LspDocumentDiagnostics<CR>
-    autocmd Filetype c,cpp,python,go,terraform nnoremap <buffer> <leader>d :<C-u>vsplit<BAR>LspDefinition<CR>
-    autocmd Filetype c,cpp,python,go,terraform nnoremap <buffer> <leader>m :<C-u>LspReferences<CR>
-    autocmd Filetype c,cpp,python,go,terraform nnoremap <buffer> <leader>r :<C-u>LspRename<CR>
+    autocmd Filetype c,cpp,python,go,rust,terraform nnoremap <buffer> K  :<C-u>LspPeekDefinition<CR>
+    autocmd Filetype c,cpp,python,go,rust,terraform nnoremap <buffer> <leader>a :<C-u>LspDocumentDiagnostics<CR>
+    autocmd Filetype c,cpp,python,go,rust,terraform nnoremap <buffer> <leader>d :<C-u>vsplit<BAR>LspDefinition<CR>
+    autocmd Filetype c,cpp,python,go,rust,terraform nnoremap <buffer> <leader>m :<C-u>LspReferences<CR>
+    autocmd Filetype c,cpp,python,go,rust,terraform nnoremap <buffer> <leader>r :<C-u>LspRename<CR>
 augroup end
 augroup misc
     autocmd! misc
@@ -195,10 +195,10 @@ augroup end
 " Fix ansible file detection
 augroup ansible_vim_fthosts
     autocmd!
-    autocmd BufNewFile,BufRead */*inventory*.yml set filetype=yaml.ansible
-    autocmd BufNewFile,BufRead */roles/**/*.yml set filetype=yaml.ansible
-    autocmd BufNewFile,BufRead */vars/*/**.yml set filetype=yaml.ansible
-    autocmd BufNewFile,BufRead *main*.yml set filetype=yaml.ansible
+    autocmd BufNewFile,BufRead */*inventory*.y*ml set filetype=yaml.ansible
+    autocmd BufNewFile,BufRead */roles/**/*.y*ml set filetype=yaml.ansible
+    autocmd BufNewFile,BufRead */vars/*/**.y*ml set filetype=yaml.ansible
+    autocmd BufNewFile,BufRead *main*.y*ml set filetype=yaml.ansible
     autocmd BufNewFile,BufRead hosts set filetype=ini.ansible
 augroup END
 " Asyncomplete + LSP
