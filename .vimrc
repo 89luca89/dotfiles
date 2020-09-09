@@ -198,6 +198,7 @@ augroup ansible_vim_fthosts
     autocmd BufNewFile,BufRead */vars/*/**.y*ml set filetype=yaml.ansible
     autocmd BufNewFile,BufRead *main*.y*ml set filetype=yaml.ansible
     autocmd BufNewFile,BufRead hosts set filetype=ini.ansible
+    autocmd BufNewFile,BufRead */*.j2 set filetype=jinja2
 augroup END
 " Asyncomplete + LSP
 " let g:asyncomplete_auto_completeopt  = 0
