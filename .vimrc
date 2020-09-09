@@ -56,6 +56,10 @@ let g:indentLine_concealcursor = ''
 let g:indentLine_setConceal = 1
 let g:intendLine_faser = 1
 set list lcs=tab:\|\  " here is a space
+" tabline
+let g:buftabline_indicators = 1
+let g:buftabline_separators = 1
+let g:buftabline_plug_max   = 0
 " Langs
 let g:ansible_attribute_highlight       = 'ab'
 let g:ansible_extra_keywords_highlight  = 1
