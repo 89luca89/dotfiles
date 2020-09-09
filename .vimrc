@@ -183,7 +183,7 @@ augroup end
 augroup lspbindings
     autocmd! lspbindings
     " IDE-like keybindings
-    autocmd Filetype c,cpp,python,go,rust,terraform nnoremap <buffer> K  :<C-u>LspPeekDefinition<CR>
+    autocmd Filetype c,cpp,python,go,rust,terraform nnoremap <buffer> K  :<C-u>LspHover<CR>
     autocmd Filetype c,cpp,python,go,rust,terraform nnoremap <buffer> <leader>a :<C-u>LspDocumentDiagnostics<CR>
     autocmd Filetype c,cpp,python,go,rust,terraform nnoremap <buffer> <leader>d :<C-u>vsplit<BAR>LspDefinition<CR>
     autocmd Filetype c,cpp,python,go,rust,terraform nnoremap <buffer> <leader>m :<C-u>LspReferences<CR>
