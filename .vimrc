@@ -29,7 +29,6 @@ Plug 'prabirshrestha/asyncomplete-lsp.vim'
 Plug 'prabirshrestha/asyncomplete-tags.vim'
 Plug 'prabirshrestha/asyncomplete.vim'
 Plug 'prabirshrestha/vim-lsp'
-
 call plug#end()
 filetype plugin indent on
 syntax on
@@ -61,8 +60,7 @@ set list lcs=tab:\|\  " here is a space
 let g:ansible_attribute_highlight       = 'ab'
 let g:ansible_extra_keywords_highlight  = 1
 let g:ansible_name_highlight            = 'd'
-let g:ansible_normal_keywords_highlight = 'Define'
-let g:ansible_yamlKeyName               = 'yamlKey'
+let g:ansible_normal_keywords_highlight = 'Special'
 let g:go_highlight_build_constraints = 1
 let g:go_highlight_extra_types       = 1
 let g:go_highlight_fields            = 1
