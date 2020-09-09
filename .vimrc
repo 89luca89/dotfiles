@@ -95,7 +95,7 @@ map <leader><leader>  :<C-u>cgete system("ls -1 --group-directories-first<BAR>xa
 map <leader>t  :<C-u>cgete system("cat tags<BAR>grep -v '^!_'<BAR>sort -ru<BAR>awk -F'\t' '{split($5,line,\":\");print $2\":\"line[2]\":0: \"$1}'")<CR>:copen<CR>G//<backspace>
 map <leader>b  :<C-u>buffers<CR>:buffer<space>
 " set filetype shortcut
-nnoremap <leader>j :<C-u>set ft=
+nnoremap <leader>j :<C-u>set ft=.jinja2<C-left><right><right><right>
 " FUNCTIONS --------------------------------------------------------------------
 " Toggle Theme
 function! ToggleTheme()
