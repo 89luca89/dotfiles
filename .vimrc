@@ -6,7 +6,7 @@ set colorcolumn=80
 set title nocompatible nowritebackup nobackup
 set mouse=a undofile undolevels=1000 undodir=$HOME/.vim/undo
 set directory=$HOME/.vim/swap
-set path=.,** wildmenu
+set path+=.,** wildmenu
 set autoread hidden backspace=indent,eol,start
 set splitright splitbelow
 set autoindent smartindent copyindent smarttab expandtab
