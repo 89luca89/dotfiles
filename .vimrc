@@ -154,7 +154,7 @@ endfun
 " END FUNCTIONS --------------------------------------------------------------------
 " Code help using external scripts: Lint, Format, DeepTags, Grep, vert-copen
 nnoremap <silent> <C-e> :<C-u>call ToggleTheme()<CR>
-nnoremap <leader>gd  :<C-u>SignifyHunkDiff<CR>
+nnoremap <leader>gf  :<C-u>:vertical wincmd f<CR>
 nnoremap <leader>a  :<C-u>call LintFile()<CR>:copen<CR>
 nnoremap <leader>A  :<C-u>call LintProject()<CR>:copen<CR>
 nnoremap <leader>L  :<C-u>call FormatProject()<CR>
