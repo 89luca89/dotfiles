@@ -20,7 +20,7 @@ Plug 'yggdroot/indentLine'
 Plug 'ap/vim-buftabline'
 Plug 'mhinz/vim-signify'
 " Lang Packs
-Plug 'sheerun/vim-polyglot'
+Plug 'sheerun/vim-polyglot', { 'tag': 'v4.9.2' }
 " Aestetics
 Plug 'gruvbox-community/gruvbox'
 " LSP
