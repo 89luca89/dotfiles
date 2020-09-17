@@ -151,6 +151,13 @@ function! StripTrailingWhiteSpace()
     %s/\($\n\s*\)\+\%$//e
     redraw!
 endfun
+function! ToggleQuickFix()
+    if empty(filter(getwininfo(), 'v:val.quickfix'))
+        copen
+    else
+        cclose
+    endif
+endfunction
 " END FUNCTIONS --------------------------------------------------------------------
 " Code help using external scripts: Lint, Format, DeepTags, Grep, vert-copen
 nnoremap <silent> <C-e> :<C-u>call ToggleTheme()<CR>
@@ -160,8 +167,8 @@ nnoremap <leader>A  :<C-u>call LintProject()<CR>:copen<CR>
 nnoremap <leader>L  :<C-u>call FormatProject()<CR>
 nnoremap <leader>T  :<C-u>call TagsProject()<CR>
 nnoremap <leader>f  :<C-u>cgete system('grep --exclude tags -Rn ""')<BAR>copen<C-Left><Right>
-"<Left><Left><Left>
-nnoremap <leader>e  :<C-u>vert copen<BAR>vert resize 80<CR>
+nnoremap <leader>E  :<C-u>vert copen<BAR>vert resize 80<CR>
+nnoremap <leader>e  :<C-u>call ToggleQuickFix()<CR>
 " Default IDE-Style keybindings EDMRL, errors, definition, references, rename, format
 nnoremap <leader>d  :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
 nnoremap <leader>m  :<C-u>cgete system('grep --exclude tags -Rn "<c-r>=expand("<cword>")<CR>"')<CR>:copen<CR>
@@ -171,7 +178,7 @@ nnoremap <leader>l  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>
 augroup autoformat_settings
     autocmd! autoformat_settings
     autocmd FileType c,cpp        nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!clang-format -style=file %<CR>:loadview<CR>
-    autocmd FileType go           nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!goimports %<CR>:loadview<CR>
+    autocmd FileType go           nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!gofmt -s %<CR>:%!goimports %<CR>:loadview<CR>
     autocmd FileType json         nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!jsonlint -f %<CR>:loadview<CR>
     autocmd FileType python       nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!yapf --style=facebook %<CR>:w<CR>:%!isort -ac -d -y %<CR>:loadview<CR>
     autocmd FileType rust         nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!rustfmt %<CR>:loadview<CR>
@@ -256,8 +263,11 @@ augroup asyncompleteregister
                 \       'deepCompletion': v:true,
                 \       'completionDocumentation': v:true,
                 \       'completeUnimported': v:true,
+                \       "codelens": {
+                \           "gc_details": v:true
+                \       },
                 \       'analyses': {
-                \            'fillreturns': v:true,
+                \           'fillreturns': v:true,
                 \           'undeclarename': v:true,
                 \           'unusedparams': v:true,
                 \           'nonewvars': v:true,
