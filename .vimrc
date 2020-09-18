@@ -19,6 +19,9 @@ call plug#begin('~/.vim/plugged')
 Plug 'yggdroot/indentLine'
 Plug 'ap/vim-buftabline'
 Plug 'mhinz/vim-signify'
+" Fzf
+Plug 'junegunn/fzf.vim'
+Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 " Lang Packs
 Plug 'sheerun/vim-polyglot', { 'tag': 'v4.9.2' }
 " Aestetics
@@ -97,9 +100,12 @@ map <S-M-Left>  :<C-u>2winc<<CR>
 map <S-M-Right> :<C-u>2winc><CR>
 map <S-M-Up>    :<C-u>2winc+<CR>
 " Utility shortcuts with leader:
-map <leader><leader>  :<C-u>cgete system("ls -1 --group-directories-first<BAR>xargs -I{} find {} -type f<BAR>xargs -I{} echo '{}:1:1: '")<CR>:copen<CR>G//<backspace>
-map <leader>t  :<C-u>cgete system("cat tags<BAR>grep -v '^!_'<BAR>sort -ru<BAR>awk -F'\t' '{split($5,line,\":\");print $2\":\"line[2]\":0: \"$1}'")<CR>:copen<CR>G//<backspace>
-map <leader>b  :<C-u>buffers<CR>:buffer<space>
+" map <leader><leader>  :<C-u>cgete system("ls -1 --group-directories-first<BAR>xargs -I{} find {} -type f<BAR>xargs -I{} echo '{}:1:1: '")<CR>:copen<CR>G//<backspace>
+" map <leader>t  :<C-u>cgete system("cat tags<BAR>grep -v '^!_'<BAR>sort -ru<BAR>awk -F'\t' '{split($5,line,\":\");print $2\":\"line[2]\":0: \"$1}'")<CR>:copen<CR>G//<backspace>
+" map <leader>b  :<C-u>buffers<CR>:buffer<space>
+map <leader><leader>  :<C-u>Files<CR>
+map <leader>t  :<C-u>Tags<CR>
+map <leader>b  :<C-u>Buffers<CR>
 " set filetype shortcut
 nnoremap <leader>j :<C-u>set ft=.jinja2<C-left><right><right><right>
 " FUNCTIONS --------------------------------------------------------------------
