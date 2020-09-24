@@ -26,3 +26,5 @@ xfconf-query -c xfce4-keyboard-shortcuts -p /commands/custom/Super_L /usr/bin/xf
 sudo dnf remove xfce4-terminal xfce4-taskmanager thunar*
 sudo dnf install nautilus gnome-terminal evince evolution evolution-ews file-roller marker gnome-screenshot mpv gnome-system-monitor
 # sudo dnf install xfdashboard
+echo "keyboard=onboard -t Droid -l Compact -e
+keyboard-position = 50%,center -0;100% 25%" | sudo tee -a /etc/lightdm/lightdm-gtk-greeter.conf
