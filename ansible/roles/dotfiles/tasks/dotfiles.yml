@@ -21,12 +21,12 @@
     - '{{ ansible_env.HOME }}/.config/systemd/user'
   register: firstrun
 
-- name: Download Dotfiles
-  git:
-    repo: https://github.com/89luca89/dotfiles
-    dest: '{{ ansible_env.HOME }}/dotfiles'
-    version: master
-    update: true
+  # - name: Download Dotfiles
+  #   git:
+  #     repo: https://github.com/89luca89/dotfiles
+  #     dest: '{{ ansible_env.HOME }}/dotfiles'
+  #     version: master
+  #     update: true
 
 - name: Install scripts before starting dotfiles
   get_url:
