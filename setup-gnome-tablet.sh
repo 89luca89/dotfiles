@@ -1,3 +1,8 @@
+sudo usermod -aG luca-linux gdm
+sudo chmod 0755 /var/lib/gdm/.config/
+sudo chmod g+w /var/lib/gdm/.config/
+sudo chmod g+w /var/lib/gdm/.config/monitors.xml
+
 sudo dnf install -y \
     cheese \
     geary \
@@ -9,13 +14,12 @@ sudo dnf install -y \
     gnome-tweaks \
     gnome-weather \
     marker \
-    onboard \
-    totem
+    onboard
 
 echo '[Desktop Entry]
 Name=Fix Touch
 Comment=Fix
-Exec=sh -c "sleep 5s && xdotool key Alt+F2 && sleep 1 && xdotool key r && xdotool key Return"
+Exec=/home/luca-linux/bin/fix_touch.sh
 Terminal=true
 Type=Application
 Icon=system-reboot
@@ -24,7 +28,7 @@ Keywords=Start again;Rotate;
 StartupNotify=true
 Hidden=true
 X-GNOME-Autostart-enabled=true
-X-GNOME-Autostart-Delay=10' | tee ~/.config/autostart/fix_touch.desktop | tee ~/.local/share/applications/fix_touch.desktop
+X-GNOME-Autostart-Delay=5' | tee ~/.config/autostart/fix_touch.desktop | tee ~/.local/share/applications/fix_touch.desktop
 
 echo '[Desktop Entry]
 Name=Rotate
@@ -56,3 +60,34 @@ gsettings set org.onboard.auto-show enabled true
 gsettings set org.onboard.keyboard audio-feedback-enabled true
 gsettings set org.onboard.keyboard touch-feedback-enabled true
 gsettings set org.onboard.window docking-enabled true
+gsettings set org.onboard.keyboard touch-feedback-size 100
+
+gsettings set org.gnome.desktop.interface text-scaling-factor 1.7
+
+echo '<monitors version="2">
+  <configuration>
+    <logicalmonitor>
+      <x>0</x>
+      <y>0</y>
+      <scale>2</scale>
+      <primary>yes</primary>
+      <transform>
+        <rotation>right</rotation>
+        <flipped>no</flipped>
+      </transform>
+      <monitor>
+        <monitorspec>
+          <connector>DSI-1</connector>
+          <vendor>unknown</vendor>
+          <product>unknown</product>
+          <serial>unknown</serial>
+        </monitorspec>
+        <mode>
+          <width>1200</width>
+          <height>1920</height>
+          <rate>60.023551940917969</rate>
+        </mode>
+      </monitor>
+    </logicalmonitor>
+  </configuration>
+</monitors>' | sudo tee /var/lib/gdm/.config/monitors.xml
