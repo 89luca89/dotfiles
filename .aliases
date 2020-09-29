@@ -9,9 +9,6 @@ tail() {
 ccat() {
     /usr/bin/cat $@ | ccze -A -o nolookups
 }
-make() {
-    /usr/bin/make $@ | ccze -A -o nolookups
-}
 alias :q="exit"
 alias :wq="exit"
 alias :qa="exit"
@@ -19,6 +16,8 @@ alias :wqa="exit"
 alias reset_ssh="assh sockets flush; killall ssh"
 alias rsyncthingD='pushd ~/Syncthing; rsync -av --delete --progress -e "ssh -J thinkpad-w540.lan" --exclude=".stversions" root@fileserver.lan:/usr/local/mnt/Vault/Syncthing/ ~/Syncthing/; popd'
 alias rsyncthingS='pushd ~/Syncthing; rsync -av --delete --progress -e "ssh -J thinkpad-w540.lan" --exclude=".stversions" ~/Syncthing/ root@fileserver.lan:/usr/local/mnt/Vault/Syncthing/; popd'
+alias chromiumSync='~/bin/get_chromium_tabs.sh > ~/Syncthing/Browsers/firefox_tabs.txt'
+alias chromiumRestore='cat ~/Syncthing/Browsers/firefox_tabs.txt | xargs chromium-freeworld'
 alias firefoxSync='~/bin/get_firefox_tabs.py > ~/Syncthing/Browsers/firefox_tabs.txt'
 alias firefoxRestore='cat ~/Syncthing/Browsers/firefox_tabs.txt | xargs firefox --new-tab &'
 alias firefoxDeepSync='find ~/.mozilla/ -iname "*cache*" | xargs rm -rf; find .mozilla/firefox/*/storage/default/http* -iname "*.files" | xargs rm -rf; pushd ~ ; tar cfv - .mozilla | xz -T 0 -9e > /tmp/firefox-profile.tar.xz; mv /tmp/firefox-profile.tar.xz ~/Syncthing/Browsers/firefox-profile.tar.xz; popd'
@@ -27,20 +26,16 @@ alias gearySync='pushd ~ ; tar cfv - .config/geary .local/share/geary/ | xz -T 0
 alias gearyRestore='rm -rf .config/geary/ .local/share/geary/; xz -T 0 -dc ~/Syncthing/Browsers/geary-profile.tar.xz | tar -x -C ~/'
 alias thunderSync='find ~/.thunderbird/ -iname "*cache*" | xargs rm -rf; pushd ~ ; tar cfv - --exclude=.thunderbird/*-default/ImapMail --exclude=.thunderbird/*-default/ExQuilla .thunderbird/ | xz -T 0 -9e > ~/Syncthing/Browsers/thunderbird-profile.tar.xz; popd'
 alias thunderRestore='rm -rf ~/.thunderbird; xz -T 0 -dc  ~/Syncthing/Browsers/thunderbird-profile.tar.xz | tar x -C ~/'
-alias grep='grep --color=auto'
 alias ll='ls -Ahl --group-directories-first --color'
-alias tree='tree -C'
-alias top='top -o %CPU'
 alias open='xdg-open'
 alias gcc='gcc -Wall -Wextra -lm'
 alias whois="whois -h whois-servers.net"
 alias vi='vimx -u ~/dotfiles/.vimrc-minimal'
 alias vim='vimx'
 alias diff="diff --color=always"
-alias goproject="cd $HOME/Projects/goprojects/src/github.com/89luca89"
-alias project="cd ~/Projects"
 alias gogetsys="export GOPATH=~/.local/go; go get"
 alias gnome-reload='xdotool key Alt+F2; sleep 1; xdotool key r; xdotool key Return'
+alias git-clean="git fetch -p && git branch -vv | awk '/: gone]/{print $1}' | xargs git branch -d"
 export PATH=/bin:$PATH
 export PATH=$HOME/bin:$PATH
 export PATH=$HOME/.local/go/bin:$PATH
