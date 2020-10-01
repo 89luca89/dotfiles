@@ -63,6 +63,7 @@ gsettings set org.onboard.window docking-enabled true
 gsettings set org.onboard.keyboard touch-feedback-size 100
 
 gsettings set org.gnome.desktop.interface text-scaling-factor 1.7
+gsettings set org.gnome.mutter experimental-features "['x11-randr-fractional-scaling']"
 
 echo '<monitors version="2">
   <configuration>
