@@ -18,12 +18,12 @@ alias rsyncthingD='pushd ~/Syncthing; rsync -av --delete --progress -e "ssh -J t
 alias rsyncthingS='pushd ~/Syncthing; rsync -av --delete --progress -e "ssh -J thinkpad-w540.lan" --exclude=".stversions" ~/Syncthing/ root@fileserver.lan:/usr/local/mnt/Vault/Syncthing/; popd'
 alias chromiumSync='~/bin/get_chromium_tabs.sh > ~/Syncthing/Browsers/firefox_tabs.txt'
 alias chromiumRestore='cat ~/Syncthing/Browsers/firefox_tabs.txt | xargs chromium-freeworld'
-alias chromiumDeepSync='find ~/.config/ungoogled-chromium -iname "*cache*" | xargs rm -rf; pushd ~ ; tar cfv - .config/ungoogled-chromium | xz -T 0 -9e > /tmp/chromium-profile.tar.xz; mv /tmp/chromium-profile.tar.xz ~/Syncthing/Browsers/chromium-profile.tar.xz; popd'
+alias chromiumDeepSync='pushd ~ ; tar cfv - .config/ungoogled-chromium | xz -T 0 -9e > /tmp/chromium-profile.tar.xz; mv /tmp/chromium-profile.tar.xz ~/Syncthing/Browsers/chromium-profile.tar.xz; popd'
 alias chromiumDeepRestore='rm -rf ~/.config/ungoogled-chromium; xz -T 0 -dc  ~/Syncthing/Browsers/chromium-profile.tar.xz | tar x -C ~/'
 alias firefoxSync='~/bin/get_firefox_tabs.py > ~/Syncthing/Browsers/firefox_tabs.txt'
 alias firefoxRestore='cat ~/Syncthing/Browsers/firefox_tabs.txt | xargs firefox --new-tab &'
-# alias firefoxDeepSync='find ~/.mozilla/ -iname "*cache*" | xargs rm -rf; find .mozilla/firefox/*/storage/default/http* -iname "*.files" | xargs rm -rf; pushd ~ ; tar cfv - .mozilla | xz -T 0 -9e > /tmp/firefox-profile.tar.xz; mv /tmp/firefox-profile.tar.xz ~/Syncthing/Browsers/firefox-profile.tar.xz; popd'
-# alias firefoxDeepRestore='rm -rf ~/.mozilla; xz -T 0 -dc  ~/Syncthing/Browsers/firefox-profile.tar.xz | tar x -C ~/'
+alias firefoxDeepSync='find ~/.mozilla/ -iname "*cache*" | xargs rm -rf; find .mozilla/firefox/*/storage/default/http* -iname "*.files" | xargs rm -rf; pushd ~ ; tar cfv - .mozilla | xz -T 0 -9e > /tmp/firefox-profile.tar.xz; mv /tmp/firefox-profile.tar.xz ~/Syncthing/Browsers/firefox-profile.tar.xz; popd'
+alias firefoxDeepRestore='rm -rf ~/.mozilla; xz -T 0 -dc  ~/Syncthing/Browsers/firefox-profile.tar.xz | tar x -C ~/'
 alias gearySync='pushd ~ ; tar cfv - .config/geary .local/share/geary/ | xz -T 0 -9e > ~/Syncthing/Browsers/geary-profile.tar.xz; popd'
 alias gearyRestore='rm -rf .config/geary/ .local/share/geary/; xz -T 0 -dc ~/Syncthing/Browsers/geary-profile.tar.xz | tar -x -C ~/'
 alias thunderSync='find ~/.thunderbird/ -iname "*cache*" | xargs rm -rf; pushd ~ ; tar cfv - --exclude=.thunderbird/*-default/ImapMail --exclude=.thunderbird/*-default/ExQuilla .thunderbird/ | xz -T 0 -9e > ~/Syncthing/Browsers/thunderbird-profile.tar.xz; popd'
@@ -36,7 +36,7 @@ alias vi='vimx -u ~/dotfiles/.vimrc-minimal'
 alias vim='vimx'
 alias diff="diff --color=always"
 alias gogetsys="export GOPATH=~/.local/go; go get"
-alias gnome-reload='xdotool key Alt+F2; sleep 1; xdotool key r; xdotool key Return'
+alias gnome-reload='DISPLAY=:0 xdotool key Alt+F2; sleep 1; DISPLAY=:0 xdotool key r;DISPLAY=:0  xdotool key Return'
 alias git-clean="git fetch -p && git branch -vv | awk '/: gone]/{print $1}' | xargs git branch -d"
 export PATH=/bin:$PATH
 export PATH=$HOME/bin:$PATH
