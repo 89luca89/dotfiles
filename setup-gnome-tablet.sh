@@ -41,6 +41,16 @@ Categories=GTK;Utility;
 Keywords=Start again;Rotate;
 StartupNotify=true' | tee ~/.local/share/applications/rotate.desktop
 
+echo '[Desktop Entry]
+Name=Sound Fix
+Comment=fix sound system
+Exec=/bin/sh -c 'killall gnome-shell; systemctl restart --user pulseaudio'
+Terminal=true
+Type=Application
+Icon=audio-volume-high-symbolic
+Categories=GTK;Utility;
+StartupNotify=true' | tee ~/.local/share/applications/fix_sound.desktop
+
 echo 'Section "Device"
   Identifier "Intel Graphics"
   Driver "intel"
