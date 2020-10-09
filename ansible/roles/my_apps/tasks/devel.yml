@@ -24,10 +24,10 @@
 
 - name: Install Programs (PIP Packages) - pip
   pip:
-    state: latest
+    state: present
     executable: pip3
+    extra_args: "--user"
     name: "{{ python_modules }}"
-  become: true
   tags: python
 
 - name: Install Programs (golang)

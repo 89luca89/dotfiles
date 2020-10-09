@@ -29,14 +29,41 @@ python_packages:
 
 python_modules:
     - 'python-language-server[all]'
-    - yamllint
+    - ansible
     - ansible-lint
-    - neovim
-    - psutil
-    - setuptools
+    - astroid
+    - autopep8
+    - flake8
     - flake8-awesome
-    - flake8-mypy
     - flake8-docstrings
+    - flake8-eradicate
+    - flake8-mypy
+    - isort
+    - jedi
+    - lazy-object-proxy
+    - lz4
+    - mccabe
+    - molecule
+    - neovim
+    - parso
+    - pluggy
+    - psutil
+    - pycodestyle
+    - pydocstyle
+    - pyflakes
+    - pykeepass
+    - pylint
+    - python-jsonrpc-server
+    - rope
+    - setuptools
+    - six
+    - snowballstemmer
+    - toml
+    - ujson
+    - wrapt
+    - yamllint
+    - yapf
+
 
 golang_packages:
     - golang
