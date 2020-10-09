@@ -58,6 +58,16 @@ echo 'Section "Device"
   Option "TearFree" "true"
 EndSection' | sudo tee /etc/X11/xorg.conf.d/20-intel.conf
 
+echo '[Desktop Entry]
+Name=Mpv Play
+Comment=play from clipboard
+Exec=/home/luca-linux/bin/mpv_play
+Terminal=false
+Type=Application
+Icon=/home/luca-linux/Syncthing/Conf/Shortcuts/applications/video-play.png
+Categories=GTK;Utility;
+StartupNotify=true'  | tee ~/.local/share/applications/fix_sound.desktop
+
 pushd ~/Syncthing/Conf
 for ext in *extension.zip; do
 	gnome-extensions install $ext --force
