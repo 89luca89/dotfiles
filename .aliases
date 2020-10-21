@@ -13,7 +13,7 @@ alias :q="exit"
 alias :wq="exit"
 alias :qa="exit"
 alias :wqa="exit"
-alias play_starred_videos="mpv $(get_starred_videos | xargs -n$(get_starred_videos | wc -l))"
+# alias play_starred_videos="mpv $(get_starred_videos | xargs -n$(get_starred_videos | wc -l))"
 alias reset_ssh="assh sockets flush; killall ssh"
 alias rsyncthingD='pushd ~/Syncthing; rsync -av --delete --progress -e "ssh -J thinkpad-w540.lan" --exclude=".stversions" root@fileserver.lan:/usr/local/mnt/Vault/Syncthing/ ~/Syncthing/; popd'
 alias rsyncthingS='pushd ~/Syncthing; rsync -av --delete --progress -e "ssh -J thinkpad-w540.lan" --exclude=".stversions" ~/Syncthing/ root@fileserver.lan:/usr/local/mnt/Vault/Syncthing/; popd'

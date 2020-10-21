@@ -20,6 +20,8 @@
 # $ sudo systemctl daemon-reload && sudo systemctl restart touchegg
 
 [Unit]
+Wants=touchegg.service
+After=touchegg.service
 Description=Touchégg
 
 [Service]
@@ -30,5 +32,3 @@ RestartSec=5s
 
 [Install]
 WantedBy=multi-user.target
-Wants=touchegg.service
-After=touchegg.service
