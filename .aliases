@@ -15,13 +15,13 @@ alias :qa="exit"
 alias :wqa="exit"
 # alias play_starred_videos="mpv $(get_starred_videos | xargs -n$(get_starred_videos | wc -l))"
 alias reset_ssh="assh sockets flush; killall ssh"
-alias rsyncthingD='pushd ~/Syncthing; rsync -av --delete --progress -e "ssh -J thinkpad-w540.lan" --exclude=".stversions" root@fileserver.lan:/usr/local/mnt/Vault/Syncthing/ ~/Syncthing/; popd'
-alias rsyncthingS='pushd ~/Syncthing; rsync -av --delete --progress -e "ssh -J thinkpad-w540.lan" --exclude=".stversions" ~/Syncthing/ root@fileserver.lan:/usr/local/mnt/Vault/Syncthing/; popd'
+alias rsyncthingD='pushd ~/Syncthing; rsync -av --delete --progress -e "ssh -J luca-lan -p 2223" --exclude=".stversions" fileserver@raspberrypi-1.lan:/data/Syncthing/ ~/Syncthing/; popd'
+alias rsyncthingS='pushd ~/Syncthing; rsync -av --delete --progress -e "ssh -J luca-lan -p 2223" --exclude=".stversions" ~/Syncthing/ fileserver@raspberrypi-1.lan:/data/Syncthing/; popd'
 alias chromiumSync='~/bin/get_chromium_tabs.sh > ~/Syncthing/Browsers/open_tabs.txt'
 alias chromiumRestore='cat ~/Syncthing/Browsers/open_tabs.txt | xargs chromium-freeworld'
 alias chromiumDeepSync='pushd ~ ; tar cfv - .config/chromium | xz -T 0 -9e > /tmp/chromium-profile.tar.xz; mv /tmp/chromium-profile.tar.xz ~/Syncthing/Browsers/chromium-profile.tar.xz; popd'
 alias chromiumDeepRestore='rm -rf ~/.config/chromium; xz -T 0 -dc  ~/Syncthing/Browsers/chromium-profile.tar.xz | tar x -C ~/'
-alias firefoxSync='~/bin/get_open_tabs.py > ~/Syncthing/Browsers/open_tabs.txt'
+alias firefoxSync='~/bin/get_firefox_tabs.py > ~/Syncthing/Browsers/open_tabs.txt'
 alias firefoxRestore='cat ~/Syncthing/Browsers/open_tabs.txt | xargs firefox --new-tab &'
 alias firefoxDeepSync='find ~/.mozilla/ -iname "*cache*" | xargs rm -rf; find .mozilla/firefox/*/storage/default/http* -iname "*.files" | xargs rm -rf; pushd ~ ; tar cfv - .mozilla | xz -T 0 -9e > /tmp/firefox-profile.tar.xz; mv /tmp/firefox-profile.tar.xz ~/Syncthing/Browsers/firefox-profile.tar.xz; popd'
 alias firefoxDeepRestore='rm -rf ~/.mozilla; xz -T 0 -dc  ~/Syncthing/Browsers/firefox-profile.tar.xz | tar x -C ~/'
