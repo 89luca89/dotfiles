@@ -291,7 +291,8 @@ sudo dnf remove \
         xmlsec1-openssl \
         yelp \
         yelp-libs \
-        yelp-xsl
+        yelp-xsl && \
+sudo dnf install https://github.com/JoseExposito/touchegg/releases/download/2.0.0/touchegg-2.0.0-1.x86_64.rpm
 
 # Install golang packages
 export GOPATH=~/.local/go;go get golang.org/x/tools/gopls && \
@@ -301,7 +302,7 @@ export GOPATH=~/.local/go;go get golang.org/x/tools/cmd/goimports && \
 export GOPATH=~/.local/go;go get golang.org/x/tools/cmd/gorename && \
 export GOPATH=~/.local/go;go get golang.org/x/tools/cmd/guru && \
 export GOPATH=~/.local/go;go get mvdan.cc/sh/cmd/shfmt && \
-rm -rf $GOPATH/src && \
+rm -rf $GOPATH/src
 
 # Install python packages
 pip3 install --no-cache --user -U 'python-language-server[all]' \
