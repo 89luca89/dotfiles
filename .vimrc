@@ -34,7 +34,6 @@ Plug 'prabirshrestha/asyncomplete.vim'
 Plug 'prabirshrestha/vim-lsp'
 call plug#end()
 filetype plugin indent on
-syntax on
 " Theming
 set noshowmode noshowcmd laststatus=0 ruler   " hide statusline
 set rulerformat=%20(%m%r%w\ %y\ %l/%c%)\        " Modified+FileType+Ruler
@@ -47,6 +46,7 @@ augroup customsyntax
     autocmd Syntax * syntax match myDeclaration_1 '\v[_.[:alnum:]]+(,\s*[_.[:alnum:]]+)*\ze(\s*([-^+|^\/%&]|\*|\<\<|\>\>|\&\^)?\=[^=])'
     autocmd Syntax * syntax match myDeclaration_2 '\v\w+(,\s*\w+)*\ze(\s*:\=)'
 augroup end
+syntax on
 highlight link myFunction       Type
 highlight link myDeclaration_1  Identifier
 highlight link myDeclaration_2  Identifier
@@ -245,7 +245,7 @@ augroup asyncompleteregister
     autocmd VimEnter * call asyncomplete#register_source(asyncomplete#sources#tags#get_source_options({
                 \ 'name': 'tags',
                 \ 'whitelist': ['*'],
-                \ 'blacklist': ['go'],
+                \ 'blacklist': ['go', 'python', 'rust', 'c', 'cpp'],
                 \ 'completor': function('asyncomplete#sources#tags#completor'),
                 \ 'config': {
                 \    'max_file_size': 50000000,
