@@ -1,6 +1,0 @@
----
-# tasks file for dotfiles
-
-- name: Include Dotfiles
-  include: dotfiles.yml
-  tags: dotfiles
