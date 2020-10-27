@@ -80,5 +80,7 @@ dconf write /org/gnome/nautilus/list-view/default-visible-columns "['name', 'siz
 dconf write /org/gnome/desktop/wm/preferences/action-middle-click-titlebar "'minimize'"
 
 # Vim install config
+curl -fsLo ~/.vim/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 vim +PlugInstall! +qall > /dev/null 2> /dev/null
 source ~/.bashrc
