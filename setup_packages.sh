@@ -70,12 +70,12 @@ declare -a PIP_PACKAGES=(
 )
 
 declare -a GO_PACKAGES=(
-	"golang.org/x/tools/gopls"
 	"github.com/go-delve/delve/cmd/dlv"
 	"golang.org/x/lint/golint"
 	"golang.org/x/tools/cmd/goimports"
 	"golang.org/x/tools/cmd/gorename"
 	"golang.org/x/tools/cmd/guru"
+	"golang.org/x/tools/gopls"
 	"mvdan.cc/sh/cmd/shfmt"
 )
 
@@ -139,20 +139,21 @@ declare -a TERM_PKG=(
 
 declare -a DESKTOP_PKG=(
 	"android-tools"
-	"gimp"
-	"keepassxc"
-	"mpv"
-	"gnome-shell-extension-appindicator"
-	"gnome-shell-extension-workspace-indicator"
-	"syncthing"
-	"telegram-desktop"
-	"gnome-tweaks"
 	"evolution"
 	"evolution-ews"
-	"lpf-mscore-fonts"
-	"tlp"
-	"powertop"
+	"gimp"
+	"gnome-shell-extension-appindicator"
+	"gnome-shell-extension-workspace-indicator"
+	"gnome-tweaks"
+	"keepassxc"
 	"lpf-cleartype-fonts"
+	"lpf-mscore-fonts"
+	"mpv"
+	"powertop"
+	"syncthing"
+	"telegram-desktop"
+	"tlp"
+	"virt-manager"
 	"https://github.com/JoseExposito/touchegg/releases/download/2.0.0/touchegg-2.0.0-1.x86_64.rpm"
 )
 
@@ -360,16 +361,16 @@ declare -a MASK_SERVICES=(
 )
 
 declare -a SYSCTL_FLAGS=(
-	"vm.laptop_mode=5"
-	"vm.swappiness=5"
-	"vm.oom_kill_allocating_task=1"
-	"vm.block_dump=1"
-	"vm.vfs_cache_pressure=100"
-	"vm.dirty_ratio=90"
-	"vm.dirty_background_ratio=50"
-	"vm.dirty_writeback_centisecs=60000"
-	"vm.dirty_expire_centisecs=60000"
 	"fs.inotify.max_user_watches=524288"
+	"vm.block_dump=1"
+	"vm.dirty_background_ratio=50"
+	"vm.dirty_expire_centisecs=60000"
+	"vm.dirty_ratio=90"
+	"vm.dirty_writeback_centisecs=60000"
+	"vm.laptop_mode=5"
+	"vm.oom_kill_allocating_task=1"
+	"vm.swappiness=5"
+	"vm.vfs_cache_pressure=100"
 )
 
 declare -a GLOBAL_VARIABLES=(
@@ -381,8 +382,8 @@ declare -a GLOBAL_VARIABLES=(
 )
 
 declare -a DNF_FLAGS=(
-	"fastestmirror=true"
 	"deltarpm=true"
+	"fastestmirror=true"
 	"max_parallel_downloads=6"
 )
 
