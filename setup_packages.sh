@@ -139,6 +139,8 @@ declare -a TERM_PKG=(
 
 declare -a DESKTOP_PKG=(
 	"android-tools"
+	"arc-theme"
+	"papirus-icon-theme"
 	"evolution"
 	"evolution-ews"
 	"gimp"
@@ -146,8 +148,11 @@ declare -a DESKTOP_PKG=(
 	"gnome-shell-extension-workspace-indicator"
 	"gnome-tweaks"
 	"keepassxc"
-	"lpf-cleartype-fonts"
-	"lpf-mscore-fonts"
+	"libreoffice-calc"
+	"libreoffice-draw"
+	"libreoffice-impress"
+	"libreoffice-writer"
+	"marker"
 	"mpv"
 	"powertop"
 	"syncthing"
@@ -507,7 +512,7 @@ if ! grep -q "$line" /etc/fstab 2>/dev/null; then
 fi
 
 Logger "Tweak btrfs noatime/nodiratime..."
-line="sed 'noatime,nodiratime,compress=lzo,subvol"
+line="noatime,nodiratime,compress=lzo,subvol"
 if ! grep -q "$line" /etc/fstab 2>/dev/null; then
 	sudo sed -i "s/subvol/$line/g" /etc/fstab
 fi

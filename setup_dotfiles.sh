@@ -108,8 +108,20 @@ dconf write /org/gnome/nautilus/preferences/default-folder-viewer "'list-view'"
 dconf write /org/gnome/nautilus/preferences/show-create-link 'true'
 dconf write /org/gnome/nautilus/preferences/show-delete-permanently 'true'
 
+# Restore app grid alphabetically
+gsettings reset org.gnome.shell app-picker-layout
+
+if rpm -qa | grep papirus > /dev/null; then
+	Logger "Setting Icon theme..."
+	gsettings set org.gnome.desktop.interface icon-theme "Papirus-Dark"
+fi
+if rpm -qa | grep arc-theme > /dev/null; then
+	Logger "Setting GTK theme..."
+	gsettings set org.gnome.desktop.interface gtk-theme "Arc-Dark"
+fi
+
 Logger "Setup Vim..."
 curl -fsLo ~/.vim/autoload/plug.vim --create-dirs \
 	https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 vim -E +PlugInstall! +qall 2>/dev/null
-gnome-terminal -- tmux "uname -a" 2> /dev/null || true
+gnome-terminal -- tmux "uname -a" 2>/dev/null || true
