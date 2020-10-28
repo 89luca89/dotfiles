@@ -1,7 +1,25 @@
 #!/bin/sh
 
+set -o errexit
+set -o nounset
+set -o pipefail
 
-# Create folders to prepare for dotfiles
+for v in "$@"; do
+        if [ "$v" == "-v" ]; then
+                set -o xtrace
+        fi
+done
+
+PWD="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+
+Logger() {
+	d=$(date +"%D-%T")
+	msg=$(echo "$@" | sed ':a;N;$!ba;s/\n/ <nl> /g')
+	echo -e "\033[1m[$d] \033\033[0m \033[0;32m $@  \033[0m "
+	logger -t $0 "$msg"
+}
+
+Logger "Create folders to prepare for dotfiles..."
 mkdir -p ~/.config/keepassxc
 mkdir -p ~/.config/mpv
 mkdir -p ~/.config/systemd
@@ -17,7 +35,7 @@ mkdir -p ~/.vim/undo
 mkdir -p ~/.vim/view
 mkdir -p ~/Programs
 
-# Remove target folders
+Logger "Remove target folders..."
 rm -f ~/.aliases
 rm -f ~/.ansible.cfg
 rm -f ~/.bashrc
@@ -33,35 +51,40 @@ rm -f ~/.tmux.conf
 rm -f ~/.vimrc
 rm -f ~/.zshrc
 
-# link dotfiles
-ln -sf $(pwd)/.aliases ~/.aliases
-ln -sf $(pwd)/.ansible.cfg ~/.ansible.cfg
-ln -sf $(pwd)/.bashrc ~/.bashrc
-ln -sf $(pwd)/.ctags ~/.ctags
-ln -sf $(pwd)/.tmux.conf ~/.tmux.conf
-ln -sf $(pwd)/.vimrc ~/.vimrc
-ln -sf $(pwd)/.zshrc ~/.zshrc
-ln -sf $(pwd)/libinput-gestures.conf ~/.config/libinput-gestures.conf
-ln -sf $(pwd)/mpv.conf ~/.config/mpv/mpv.conf
-ln -sf $(pwd)/touchegg.conf ~/.config/touchegg/touchegg.conf
-ln -sf $(pwd)/systemd/* ~/.config/systemd/
+Logger "Link dotfiles..."
+ln -sf $PWD/.aliases ~/.aliases
+ln -sf $PWD/.ansible.cfg ~/.ansible.cfg
+ln -sf $PWD/.bashrc ~/.bashrc
+ln -sf $PWD/.ctags ~/.ctags
+ln -sf $PWD/.tmux.conf ~/.tmux.conf
+ln -sf $PWD/.vimrc ~/.vimrc
+ln -sf $PWD/.zshrc ~/.zshrc
+ln -sf $PWD/libinput-gestures.conf ~/.config/libinput-gestures.conf
+ln -sf $PWD/mpv.conf ~/.config/mpv/mpv.conf
+ln -sf $PWD/touchegg.conf ~/.config/touchegg/touchegg.conf
+ln -sf $PWD/systemd/* ~/.config/systemd/user/
 ln -sf ~/Syncthing/Conf/.gitconfig ~/.gitconfig
 ln -sf ~/Syncthing/Conf/.histfile ~/.histfile
 ln -sf ~/Syncthing/Conf/keepassxc.ini ~/.config/keepassxc/keepassxc.ini
 ln -sf ~/Syncthing/Conf/assh.yml ~/.ssh/assh.yml
 
+Logger "Install services..."
 systemctl --user daemon-reload
-for user_service in $(ls -1 $(pwd)/systemd/); do
+for user_service in $(ls -1 $PWD/systemd/); do
     systemctl --user enable --now $user_service
 done
 
 # Srtup gnome!
+
+Logger "Setup Keybindings..."
 gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/']";
 dconf reset -f /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/;
-dconf load /org/gnome/desktop/wm/keybindings/ < $(pwd)/gnome-shell-keybindings.conf
-dconf load /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/ < $(pwd)/gnome-keybindings.conf
-dconf load /org/gnome/terminal/ < $(pwd)/gnome-terminal.conf
-dconf load /org/gnome/desktop/app-folders/ < $(pwd)/gnome-folders.conf
+dconf load /org/gnome/desktop/wm/keybindings/ < $PWD/gnome-shell-keybindings.conf
+dconf load /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/ < $PWD/gnome-keybindings.conf
+
+Logger "Setup gnome preferences..."
+dconf load /org/gnome/terminal/ < $PWD/gnome-terminal.conf
+dconf load /org/gnome/desktop/app-folders/ < $PWD/gnome-folders.conf
 dconf write /org/gnome/mutter/experimental-features "['rt-scheduler']"
 dconf write /org/gnome/desktop/input-sources/xkb-options "['caps:ctrl_modifier']"
 dconf write /org/gnome/desktop/interface/cursor-blink 'false'
@@ -79,7 +102,7 @@ dconf write /org/gnome/nautilus/preferences/default-folder-viewer "'list-view'"
 dconf write /org/gnome/nautilus/list-view/default-visible-columns "['name', 'size', 'type', 'owner', 'group', 'permissions', 'date_modified', 'starred', 'detailed_type']"
 dconf write /org/gnome/desktop/wm/preferences/action-middle-click-titlebar "'minimize'"
 
-# Vim install config
+Logger "Setup Vim..."
 curl -fsLo ~/.vim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 vim -E +PlugInstall! +qall 2> /dev/null
