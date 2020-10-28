@@ -132,9 +132,14 @@ declare -a TERM_PKG=(
 	"make"
 	"python3-devel"
 	"python3-pip"
+	"stunnel"
 	"tmux"
 	"vim"
+	"vim-X11"
 	"vim-enhanced"
+	"wmctrl"
+	"xclip"
+	"xdotool"
 )
 
 declare -a DESKTOP_PKG=(
@@ -445,7 +450,10 @@ for service in "${MASK_SERVICES[@]}"; do
 done
 
 Logger "Remove bloat packages..."
-sudo dnf remove "${PACKAGES_REMOVE[@]}" | grep -v 'No match'
+sudo dnf remove -y -q "${PACKAGES_REMOVE[@]}" | grep -v 'No match'
+
+Logger "Enable touchegg..."
+sudo systemctl enable --now touchegg.service
 
 Logger "Enable fstrim..."
 sudo systemctl enable --now fstrim.timer
@@ -512,7 +520,7 @@ if ! grep -q "$line" /etc/fstab 2>/dev/null; then
 fi
 
 Logger "Tweak btrfs noatime/nodiratime..."
-line="noatime,nodiratime,compress=lzo,subvol"
+line="noatime,nodiratime,compress=lzo,ssd,inode_cache,space_cache,subvol"
 if ! grep -q "$line" /etc/fstab 2>/dev/null; then
 	sudo sed -i "s/subvol/$line/g" /etc/fstab
 fi

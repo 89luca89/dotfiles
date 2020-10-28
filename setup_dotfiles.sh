@@ -71,7 +71,7 @@ ln -sf ~/Syncthing/Conf/.gitconfig ~/.gitconfig
 ln -sf ~/Syncthing/Conf/.histfile ~/.histfile
 ln -sf ~/Syncthing/Conf/keepassxc.ini ~/.config/keepassxc/keepassxc.ini
 ln -sf ~/Syncthing/Conf/assh.yml ~/.ssh/assh.yml
-ln -sf ~/Syncthing/Conf/dotfiles ~/dotfiles
+ln -sf ~/Syncthing/Conf/dotfiles ~/
 
 Logger "Install services..."
 systemctl --user daemon-reload
