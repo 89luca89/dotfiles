@@ -5,16 +5,22 @@ set -o nounset
 set -o pipefail
 
 for v in "$@"; do
-        if [ "$v" == "-v" ]; then
-                set -o xtrace
-        fi
+	if [ "$v" == "-v" ]; then
+		set -o xtrace
+	fi
 done
 
-PWD="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+PWD="$(
+	cd "$(dirname "$0")" >/dev/null 2>&1
+	pwd -P
+)"
 
 # Immediately ask sudo password, keep it up for the entire exeuction
 sudo -v
-while true; do sudo -v; sleep 30; done &
+while true; do
+	sudo -v
+	sleep 30
+done &
 infiloop=$!
 
 Logger() {
@@ -140,8 +146,13 @@ declare -a DESKTOP_PKG=(
 	"gnome-shell-extension-workspace-indicator"
 	"syncthing"
 	"telegram-desktop"
+	"gnome-tweaks"
 	"evolution"
 	"evolution-ews"
+	"lpf-mscore-fonts"
+	"tlp"
+	"powertop"
+	"lpf-cleartype-fonts"
 	"https://github.com/JoseExposito/touchegg/releases/download/2.0.0/touchegg-2.0.0-1.x86_64.rpm"
 )
 
@@ -348,6 +359,19 @@ declare -a MASK_SERVICES=(
 	"tracker-writeback.service"
 )
 
+declare -a SYSCTL_FLAGS=(
+	"vm.laptop_mode=5"
+	"vm.swappiness=5"
+	"vm.oom_kill_allocating_task=1"
+	"vm.block_dump=1"
+	"vm.vfs_cache_pressure=100"
+	"vm.dirty_ratio=90"
+	"vm.dirty_background_ratio=50"
+	"vm.dirty_writeback_centisecs=60000"
+	"vm.dirty_expire_centisecs=60000"
+	"fs.inotify.max_user_watches=524288"
+)
+
 declare -a GLOBAL_VARIABLES=(
 	"export MOZ_ACCELLERATED=1"
 	"export MOZ_USE_XINPUT2=1"
@@ -356,12 +380,28 @@ declare -a GLOBAL_VARIABLES=(
 	"export QT_QPA_PLATFORM=xcb"
 )
 
+declare -a DNF_FLAGS=(
+	"fastestmirror=true"
+	"deltarpm=true"
+	"max_parallel_downloads=6"
+)
+
 Logger "Add global variables..."
 for line in "${GLOBAL_VARIABLES[@]}"; do
 	if ! grep -q "$line" /etc/profile 2>/dev/null; then
 		echo "$line" | sudo tee -a /etc/profile
 	fi
 done
+
+Logger "Add dnf flags..."
+for line in "${DNF_FLAGS[@]}"; do
+	if ! grep -q "$line" /etc/dnf/dnf.conf 2>/dev/null; then
+		echo "$line" | sudo tee -a /etc/dnf/dnf.conf
+	fi
+done
+
+Logger "Install flathub..."
+flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
 Logger "Install rpmfusion..."
 sudo dnf install -y -q "${RPMFUSION_PKG[@]}"
@@ -382,7 +422,8 @@ Logger "Install golang packages..."
 # Install golang packages
 mkdir -p ~/.local/go
 for go_pkg in "${GO_PACKAGES[@]}"; do
-	export GOPATH=~/.local/go;go get "$go_pkg"
+	export GOPATH=~/.local/go
+	go get "$go_pkg"
 done
 Logger "Cleanup  golang packages src..."
 rm -rf $GOPATH/src
@@ -399,5 +440,75 @@ done
 
 Logger "Remove bloat packages..."
 sudo dnf remove "${PACKAGES_REMOVE[@]}" | grep -v 'No match'
+
+Logger "Enable fstrim..."
+sudo systemctl enable --now fstrim.timer
+
+Logger "Enable power management..."
+sudo systemctl enable --now tlp
+sudo systemctl enable --now powertop
+
+Logger "Enable power management - i915..."
+if [ ! -f /etc/modprobe.d/i915.conf ]; then
+	echo 'options i915 disable_power_well=0 enable_dc=2 enable_psr=1 enable_rc6=7 enable_fbc=1 powersave=1' | sudo tee /etc/modprobe.d/i915.conf
+fi
+if [ ! -f /etc/modprobe.d/snd_hda_intel.conf ]; then
+	echo 'options snd_hda_intel power_save_controlle=Y power_save=1' | sudo tee /etc/modprobe.d/snd_hda_intel.conf
+fi
+if [ ! -f /etc/modprobe.d/e1000e.conf ]; then
+	echo 'options e1000e SmartPowerDownEnable=1' | sudo tee /etc/modprobe.d/e1000e.conf
+fi
+if [ ! -f /etc/modprobe.d/iwlwifi.conf ]; then
+	echo 'options iwlwifi power_save=Y power_level=5 iwlmvm power_scheme=3' | sudo tee /etc/modprobe.d/iwlwifi.conf
+fi
+
+Logger "Enable power management - grub..."
+line="quiet nmi_watchdog=0 pcie_aspm.policy=powersupersave pcie_aspm=force drm.debug=0 drm.vblankoffdelay=1 scsi_mod.use_blk_mq=1 mmc_mod.use_blk_mq=1"
+if ! grep -q "$line" /etc/default/grub 2>/dev/null; then
+	sudo sed -i "s/quiet/quiet $line/g" /etc/default/grub
+    sudo grub2-mkconfig -o /boot/grub2/grub.cfg
+    sudo dracut --force --regenerate-all -v
+fi
+
+Logger "Enable power management - udev..."
+if [ ! -f /etc/udev/rules.d/powersave.rules ]; then
+	echo '      ACTION=="add", SUBSYSTEM=="pci", ATTR{power/control}="auto"
+      ACTION=="add", SUBSYSTEM=="ahci", ATTR{power/control}="auto"
+      ACTION=="add", SUBSYSTEM=="scsi_host", KERNEL=="host*", ATTR{link_power_management_policy}="min_power"
+      ACTION=="add", SUBSYSTEM=="scsi", ATTR{power/control}="auto"
+      ACTION=="add", SUBSYSTEM=="acpi", ATTR{power/control}="auto"
+      ACTION=="add", SUBSYSTEM=="block", ATTR{power/control}="auto"
+      ACTION=="add", SUBSYSTEM=="workqueue", ATTR{power/control}="auto"
+      ACTION=="add", SUBSYSTEM=="i2c", ATTR{power/control}="auto"
+      ACTION=="add", SUBSYSTEM=="net", KERNEL=="enp*", RUN+="/usr/sbin/ethtool -s %k wol d"
+      ACTION=="add", SUBSYSTEM=="net", KERNEL=="wlp*", RUN+="/usr/sbin/ethtool -s %k wol d"
+      ACTION=="add", SUBSYSTEM=="net", KERNEL=="wlp*", RUN+="/usr/sbin/iw dev %k set power_save on"
+      ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/read_ahead_kb}="65536"
+      ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="bfq"
+      ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="0", ATTR{queue/iosched/low_latency}="1"
+      ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq"
+      ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/iosched/low_latency}="1"
+      ACTION=="add|change", KERNEL=="sd[a-z]", RUN+="/usr/sbin/hdparm -B 1 /dev/%k"' | sudo tee /etc/udev/rules.d/powersave.rules
+fi
+
+Logger "Enable power management - sysctl..."
+for line in "${SYSCTL_FLAGS[@]}"; do
+	if ! grep -q "$line" /etc/sysctl.conf 2>/dev/null; then
+		echo "$line" | sudo tee -a /etc/sysctl.conf
+	fi
+done
+sudo sysctl -p -q
+
+Logger "Enable Tmpfs /tmp..."
+line="tmpfs /tmp tmpfs defaults,lazytime,noatime,nodiratime 0 0"
+if ! grep -q "$line" /etc/fstab 2>/dev/null; then
+	echo "$line" | sudo tee -a /etc/fstab
+fi
+
+Logger "Tweak btrfs noatime/nodiratime..."
+line="sed 'noatime,nodiratime,compress=lzo,subvol"
+if ! grep -q "$line" /etc/fstab 2>/dev/null; then
+	sudo sed -i "s/subvol/$line/g" /etc/fstab
+fi
 
 kill -9 $infiloop

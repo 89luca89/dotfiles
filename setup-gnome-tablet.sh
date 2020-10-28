@@ -4,17 +4,17 @@ sudo chmod g+w /var/lib/gdm/.config/
 sudo chmod g+w /var/lib/gdm/.config/monitors.xml
 
 sudo dnf install -y \
-    cheese \
-    geary \
-    gnome-calendar \
-    gnome-clocks \
-    gnome-contacts \
-    gnome-extensions-app \
-    gnome-music \
-    gnome-tweaks \
-    gnome-weather \
-    marker \
-    onboard
+	cheese \
+	geary \
+	gnome-calendar \
+	gnome-clocks \
+	gnome-contacts \
+	gnome-extensions-app \
+	gnome-music \
+	gnome-tweaks \
+	gnome-weather \
+	marker \
+	onboard
 
 echo '[Desktop Entry]
 Name=Fix Touch
@@ -44,7 +44,8 @@ StartupNotify=true' | tee ~/.local/share/applications/rotate.desktop
 echo '[Desktop Entry]
 Name=Sound Fix
 Comment=fix sound system
-Exec=/bin/sh -c 'killall gnome-shell; systemctl restart --user pulseaudio'
+Exec=/bin/sh -c 'killall gnome-shell
+systemctl restart --user pulseaudio'
 Terminal=true
 Type=Application
 Icon=audio-volume-high-symbolic
@@ -66,7 +67,7 @@ Terminal=false
 Type=Application
 Icon=/home/luca-linux/Syncthing/Conf/Shortcuts/applications/video-play.png
 Categories=GTK;Utility;
-StartupNotify=true'  | tee ~/.local/share/applications/fix_sound.desktop
+StartupNotify=true' | tee ~/.local/share/applications/fix_sound.desktop
 
 pushd ~/Syncthing/Conf
 for ext in *extension.zip; do

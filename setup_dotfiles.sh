@@ -5,12 +5,15 @@ set -o nounset
 set -o pipefail
 
 for v in "$@"; do
-        if [ "$v" == "-v" ]; then
-                set -o xtrace
-        fi
+	if [ "$v" == "-v" ]; then
+		set -o xtrace
+	fi
 done
 
-PWD="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+PWD="$(
+	cd "$(dirname "$0")" >/dev/null 2>&1
+	pwd -P
+)"
 
 Logger() {
 	d=$(date +"%D-%T")
@@ -33,6 +36,7 @@ mkdir -p ~/.vim/swap
 mkdir -p ~/.vim/syntax
 mkdir -p ~/.vim/undo
 mkdir -p ~/.vim/view
+mkdir -p ~/.ssh/
 mkdir -p ~/Programs
 
 Logger "Remove target folders..."
@@ -67,24 +71,26 @@ ln -sf ~/Syncthing/Conf/.gitconfig ~/.gitconfig
 ln -sf ~/Syncthing/Conf/.histfile ~/.histfile
 ln -sf ~/Syncthing/Conf/keepassxc.ini ~/.config/keepassxc/keepassxc.ini
 ln -sf ~/Syncthing/Conf/assh.yml ~/.ssh/assh.yml
+ln -sf ~/Syncthing/Conf/dotfiles ~/dotfiles
 
 Logger "Install services..."
 systemctl --user daemon-reload
 for user_service in $(ls -1 $PWD/systemd/); do
-    systemctl --user enable --now $user_service
+	systemctl --user enable --now $user_service
 done
 
 # Srtup gnome!
 
 Logger "Setup Keybindings..."
-gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/']";
-dconf reset -f /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/;
-dconf load /org/gnome/desktop/wm/keybindings/ < $PWD/gnome-shell-keybindings.conf
-dconf load /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/ < $PWD/gnome-keybindings.conf
+gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/']"
+dconf reset -f /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/
+dconf load /org/gnome/desktop/wm/keybindings/ <$PWD/gnome-shell-keybindings.conf
+dconf load /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/ <$PWD/gnome-keybindings.conf
 
 Logger "Setup gnome preferences..."
-dconf load /org/gnome/terminal/ < $PWD/gnome-terminal.conf
-dconf load /org/gnome/desktop/app-folders/ < $PWD/gnome-folders.conf
+gsettings set org.gnome.nautilus.preferences always-use-location-entry true
+dconf load /org/gnome/terminal/ <$PWD/gnome-terminal.conf
+# dconf load /org/gnome/desktop/app-folders/ <$PWD/gnome-folders.conf
 dconf write /org/gnome/mutter/experimental-features "['rt-scheduler']"
 dconf write /org/gnome/desktop/input-sources/xkb-options "['caps:ctrl_modifier']"
 dconf write /org/gnome/desktop/interface/cursor-blink 'false'
@@ -104,6 +110,6 @@ dconf write /org/gnome/desktop/wm/preferences/action-middle-click-titlebar "'min
 
 Logger "Setup Vim..."
 curl -fsLo ~/.vim/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-vim -E +PlugInstall! +qall 2> /dev/null
-source ~/.bashrc
+	https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+vim -E +PlugInstall! +qall 2>/dev/null
+gnome-terminal -- tmux "uname -a" 2> /dev/null || true
