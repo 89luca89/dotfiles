@@ -82,5 +82,5 @@ dconf write /org/gnome/desktop/wm/preferences/action-middle-click-titlebar "'min
 # Vim install config
 curl -fsLo ~/.vim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-vim +PlugInstall! +qall > /dev/null 2> /dev/null
+vim -E +PlugInstall! +qall 2> /dev/null
 source ~/.bashrc
