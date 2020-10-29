@@ -23,6 +23,12 @@ while true; do
 done &
 infiloop=$!
 
+clean() {
+	kill -9 $infiloop
+}
+
+trap clean 1 2 15
+
 Logger() {
 	d=$(date +"%D-%T")
 	msg=$(echo "$@" | sed ':a;N;$!ba;s/\n/ <nl> /g')
@@ -434,13 +440,17 @@ Logger "Install golang packages..."
 mkdir -p ~/.local/go
 for go_pkg in "${GO_PACKAGES[@]}"; do
 	export GOPATH=~/.local/go
-	go get "$go_pkg"
+	bin_name=$(echo $go_pkg | rev | cut -d'/' -f1 | rev)
+	if [ ! -f "$GOPATH"/bin/"$bin_name" ]; then
+		go get "$go_pkg"
+	fi
 done
 Logger "Cleanup  golang packages src..."
 rm -rf $GOPATH/src
 
 Logger "Install python pagkages..."
-pip3 -q install --no-input --no-cache --user -U "${PIP_PACKAGES[@]}" 2>/dev/null
+/usr/bin/python3 -m pip install --no-input --no-cache --user -U pip
+/usr/bin/python3 -m pip -q install --no-input --no-cache --user -U "${PIP_PACKAGES[@]}"
 
 Logger "Remove bloat services..."
 for service in "${MASK_SERVICES[@]}"; do
@@ -450,7 +460,7 @@ for service in "${MASK_SERVICES[@]}"; do
 done
 
 Logger "Remove bloat packages..."
-sudo dnf remove -y -q "${PACKAGES_REMOVE[@]}" | grep -v 'No match'
+sudo dnf remove -y -q "${PACKAGES_REMOVE[@]}"
 
 Logger "Enable touchegg..."
 sudo systemctl enable --now touchegg.service
@@ -514,7 +524,7 @@ done
 sudo sysctl -p -q
 
 Logger "Enable Tmpfs /tmp..."
-line="tmpfs /tmp tmpfs defaults,lazytime,noatime,nodiratime 0 0"
+line="tmpfs /tmp tmpfs defaults"
 if ! grep -q "$line" /etc/fstab 2>/dev/null; then
 	echo "$line" | sudo tee -a /etc/fstab
 fi
@@ -525,4 +535,10 @@ if ! grep -q "$line" /etc/fstab 2>/dev/null; then
 	sudo sed -i "s/subvol/$line/g" /etc/fstab
 fi
 
-kill -9 $infiloop
+Logger "Enable noatime nodiratime..."
+line="defaults,noatime,nodiratime"
+if ! grep -q "$line" /etc/fstab 2>/dev/null; then
+	sudo sed -i "s/defaults/$line/g" /etc/fstab
+fi
+
+clean

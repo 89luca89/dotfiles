@@ -109,7 +109,7 @@ dconf write /org/gnome/nautilus/preferences/show-create-link 'true'
 dconf write /org/gnome/nautilus/preferences/show-delete-permanently 'true'
 
 # Restore app grid alphabetically
-gsettings reset org.gnome.shell app-picker-layout
+gsettings reset org.gnome.shell app-picker-layout || true # allow it to fail on older gnome versions
 
 if rpm -qa | grep papirus > /dev/null; then
 	Logger "Setting Icon theme..."
