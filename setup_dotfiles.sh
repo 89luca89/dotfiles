@@ -117,7 +117,7 @@ if rpm -qa | grep papirus > /dev/null; then
 fi
 if rpm -qa | grep arc-theme > /dev/null; then
 	Logger "Setting GTK theme..."
-	gsettings set org.gnome.desktop.interface gtk-theme "Arc-Dark"
+	gsettings set org.gnome.desktop.interface gtk-theme "Arc-Dark-solid"
 fi
 
 Logger "Setup Vim..."
