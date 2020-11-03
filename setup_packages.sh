@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# nvidia: sudo dnf install kmod-nvidia akmod-nvidia xorg-x11-drv-nvidia nvidia-settings nvidia-modprobe nvidia-xconfig
+# sudo cp /usr/share/X11/xorg.conf.d/nvidia.conf /etc/X11/xorg.conf.d/
+# sudo sed -i '/^EndSection/i \\tOption "PrimaryGPU" "yes"' /etc/X11/xorg.conf.d/nvidia.conf
+
 set -o errexit
 set -o nounset
 set -o pipefail
@@ -39,6 +43,7 @@ Logger() {
 declare -a PIP_PACKAGES=(
 	'python-language-server[all]'
 	"ansible"
+	"ansible-later"
 	"ansible-lint"
 	"astroid"
 	"autopep8"
