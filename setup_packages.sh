@@ -475,7 +475,6 @@ sudo systemctl enable --now fstrim.timer
 
 Logger "Enable power management..."
 sudo systemctl enable --now tlp
-sudo systemctl enable --now powertop
 
 Logger "Enable power management - i915..."
 if [ ! -f /etc/modprobe.d/i915.conf ]; then
@@ -501,7 +500,8 @@ fi
 
 Logger "Enable power management - udev..."
 if [ ! -f /etc/udev/rules.d/powersave.rules ]; then
-	echo '      ACTION=="add", SUBSYSTEM=="pci", ATTR{power/control}="auto"
+	echo '
+	  # ACTION=="add", SUBSYSTEM=="pci", ATTR{power/control}="auto"
       ACTION=="add", SUBSYSTEM=="ahci", ATTR{power/control}="auto"
       ACTION=="add", SUBSYSTEM=="scsi_host", KERNEL=="host*", ATTR{link_power_management_policy}="min_power"
       ACTION=="add", SUBSYSTEM=="scsi", ATTR{power/control}="auto"
@@ -518,6 +518,12 @@ if [ ! -f /etc/udev/rules.d/powersave.rules ]; then
       ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq"
       ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/iosched/low_latency}="1"
       ACTION=="add|change", KERNEL=="sd[a-z]", RUN+="/usr/sbin/hdparm -B 1 /dev/%k"' | sudo tee /etc/udev/rules.d/powersave.rules
+fi
+
+Logger "Setup tlp..."
+line='USB_BLACKLIST="8087:07dc"'
+if ! grep -q "$line" /etc/tlp.conf 2>/dev/null; then
+	echo "$line" | sudo tee -a /etc/tlp.conf
 fi
 
 Logger "Enable power management - sysctl..."
