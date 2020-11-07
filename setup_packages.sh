@@ -130,6 +130,7 @@ declare -a ARCHIVE_PKG=(
 )
 
 declare -a TERM_PKG=(
+	"NetworkManager-tui"
 	"ShellCheck"
 	"ccze"
 	"clang"
