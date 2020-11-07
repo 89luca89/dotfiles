@@ -16,8 +16,8 @@ alias :wqa="exit"
 # alias play_starred_videos="mpv $(get_starred_videos | xargs -n$(get_starred_videos | wc -l))"
 alias glances="glances -1"
 alias reset_ssh="assh sockets flush; killall ssh"
-alias rsyncthingD='pushd ~/Syncthing;find ~/Syncthing/ -iname *.tmp -o -iname *conflict* -delete; rsync -av --delete --progress -e "ssh -J luca-lan -p 2223" --exclude=".stversions" fileserver@raspberrypi-1.lan:/data/Syncthing/ ~/Syncthing/; popd'
-alias rsyncthingS='pushd ~/Syncthing;find ~/Syncthing/ -iname *.tmp -o -iname *conflict* -delete; rsync -av --delete --progress -e "ssh -J luca-lan -p 2223" --exclude=".stversions" ~/Syncthing/ fileserver@raspberrypi-1.lan:/data/Syncthing/; popd'
+alias rsyncthingD='pushd ~/Syncthing;find ~/Syncthing/ -iname *.tmp -o -iname *conflict* -delete; assh sockets flush; rsync -av --delete --progress -e "ssh -J luca-lan -p 2223" --exclude=".stversions" fileserver@raspberrypi-1.lan:/data/Syncthing/ ~/Syncthing/; popd'
+alias rsyncthingS='pushd ~/Syncthing;find ~/Syncthing/ -iname *.tmp -o -iname *conflict* -delete; assh sockets flush; rsync -av --delete --progress -e "ssh -J luca-lan -p 2223" --exclude=".stversions" ~/Syncthing/ fileserver@raspberrypi-1.lan:/data/Syncthing/; popd'
 alias chromiumSync='~/bin/get_chromium_tabs.sh > ~/Syncthing/Browsers/open_tabs.txt'
 alias chromiumRestore='cat ~/Syncthing/Browsers/open_tabs.txt | xargs chromium-freeworld'
 alias chromiumDeepSync='pushd ~ ; tar cfv - .config/chromium | xz -T 0 -9e > /tmp/chromium-profile.tar.xz; mv /tmp/chromium-profile.tar.xz ~/Syncthing/Browsers/chromium-profile.tar.xz; popd'
