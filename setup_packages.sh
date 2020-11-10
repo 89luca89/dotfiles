@@ -405,17 +405,7 @@ declare -a DNF_FLAGS=(
 	"fastestmirror=true"
 	"max_parallel_downloads=6"
 )
-Logger "Install npm packages..."
-# Install golang packages
-mkdir -p ~/.local/bin/node_modules
-for npm_pkg in "${NPM_PACKAGES[@]}"; do
-	if [ ! -f ~/.local/bin/node_modules/.bin/"$npm_pkg" ]; then
-		pushd  ~/.local/bin/
-		npm install --production "$npm_pkg"
-		popd
-	fi
-done
-exit
+
 Logger "Add global variables..."
 for line in "${GLOBAL_VARIABLES[@]}"; do
 	if ! grep -q "$line" /etc/profile 2>/dev/null; then
@@ -475,6 +465,43 @@ done
 Logger "Install python pagkages..."
 /usr/bin/python3 -m pip install --no-input --no-cache --user -U pip
 /usr/bin/python3 -m pip -q install --no-input --no-cache --user -U "${PIP_PACKAGES[@]}"
+
+Logger "Install npm packages..."
+# Install golang packages
+mkdir -p ~/.local/bin/node_modules
+for npm_pkg in "${NPM_PACKAGES[@]}"; do
+	if [ ! -f ~/.local/bin/node_modules/.bin/"$npm_pkg" ]; then
+		pushd  ~/.local/bin/
+		npm install --production "$npm_pkg"
+		popd
+	fi
+done
+
+TERRAFORM_VERSION=0.12.0
+TERRAFORM_LS_VERSION=0.8.0
+TERRAFORM_PROVIDER_VERSION=0.6.2
+TERRAFORM_PROVIDER_RELEASE=0.6.2+git.1585292411.8cbe9ad0
+
+if ! which terraform 2> /dev/null; then
+	curl -sLo /tmp/terraform.zip https://releases.hashicorp.com/terraform/"$TERRAFORM_VERSION"/terraform_"$TERRAFORM_VERSION"_linux_amd64.zip
+	unzip /tmp/terraform.zip -d /tmp
+	mv /tmp/terraform ~/.local/bin
+fi
+
+if ! which terraform-ls 2> /dev/null; then
+	curl -sLo /tmp/terraform-ls.zip https://releases.hashicorp.com/terraform-ls/"$TERRAFORM_LS_VERSION"/terraform-ls_"$TERRAFORM_LS_VERSION"_linux_amd64.zip
+	unzip /tmp/terraform-ls.zip -d /tmp
+	mv /tmp/terraform-ls ~/.local/bin
+fi
+
+  # Install Terraform Provider for Libvirt 0.6.2
+if [ ! -f ~/.terraform.d/plugins/linux_amd64/terraform-provider-libvirt ]; then
+	mkdir -p ~/.terraform.d/plugins/linux_amd64
+	curl -sLo /tmp/terraform-provider-libvirt.tar.gz https://github.com/dmacvicar/terraform-provider-libvirt/releases/download/v"$TERRAFORM_PROVIDER_VERSION"/terraform-provider-libvirt-"$TERRAFORM_PROVIDER_RELEASE".Ubuntu_18.04.amd64.tar.gz
+	tar zxvf /tmp/terraform-provider-libvirt.tar.gz
+	mv terraform-provider-libvirt ~/.terraform.d/plugins/linux_amd64/
+	~/.terraform.d/plugins/linux_amd64/terraform-provider-libvirt -version
+fi
 
 Logger "Remove bloat services..."
 for service in "${MASK_SERVICES[@]}"; do
