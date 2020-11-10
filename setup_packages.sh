@@ -40,6 +40,14 @@ Logger() {
 	logger -t $0 "$msg"
 }
 
+#	vscode-html-languageserver-bin"
+declare -a NPM_PACKAGES=(
+	"bash-language-server"
+	"yaml-language-server"
+	"dockerfile-language-server-nodejs"
+	"vscode-langservers-extracted"
+)
+
 declare -a PIP_PACKAGES=(
 	'python-language-server[all]'
 	"ansible"
@@ -142,6 +150,8 @@ declare -a TERM_PKG=(
 	"golang"
 	"htop"
 	"make"
+	"nodejs"
+	"npm"
 	"python3-devel"
 	"python3-pip"
 	"stunnel"
@@ -395,7 +405,17 @@ declare -a DNF_FLAGS=(
 	"fastestmirror=true"
 	"max_parallel_downloads=6"
 )
-
+Logger "Install npm packages..."
+# Install golang packages
+mkdir -p ~/.local/bin/node_modules
+for npm_pkg in "${NPM_PACKAGES[@]}"; do
+	if [ ! -f ~/.local/bin/node_modules/.bin/"$npm_pkg" ]; then
+		pushd  ~/.local/bin/
+		npm install --production "$npm_pkg"
+		popd
+	fi
+done
+exit
 Logger "Add global variables..."
 for line in "${GLOBAL_VARIABLES[@]}"; do
 	if ! grep -q "$line" /etc/profile 2>/dev/null; then
@@ -440,6 +460,17 @@ for go_pkg in "${GO_PACKAGES[@]}"; do
 done
 Logger "Cleanup  golang packages src..."
 rm -rf $GOPATH/src
+
+Logger "Install npm packages..."
+# Install golang packages
+mkdir -p ~/.local/bin/node_modules
+for npm_pkg in "${NPM_PACKAGES[@]}"; do
+	if [ ! -f ~/.local/bin/node_modules/.bin/"$npm_pkg" ]; then
+		pushd  ~/.local/bin/
+		npm install --production "$npm_pkg"
+		popd
+	fi
+done
 
 Logger "Install python pagkages..."
 /usr/bin/python3 -m pip install --no-input --no-cache --user -U pip

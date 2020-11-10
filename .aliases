@@ -44,6 +44,7 @@ alias git-clean="git fetch -p && git branch -vv | awk '/: gone]/{print $1}' | xa
 export PATH=/bin:$PATH
 export PATH=$HOME/bin:$PATH
 export PATH=$HOME/.local/go/bin:$PATH
+export PATH=$HOME/.local/bin/node_modules/.bin:$PATH
 export GOPATH=$HOME/Projects/goprojects
 export PATH=$PATH:$GOPATH/bin
 export PATH=$HOME/.local/bin:$PATH
