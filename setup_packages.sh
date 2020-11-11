@@ -433,14 +433,15 @@ sudo dnf install -y -q "${DESKTOP_PKG[@]}"
 
 Logger "Install golang packages..."
 # Install golang packages
-mkdir -p ~/.local/go
+export GOPATH=~/.local/go
+mkdir -p "$GOPATH"
 for go_pkg in "${GO_PACKAGES[@]}"; do
-	export GOPATH=~/.local/go
 	bin_name=$(echo "$go_pkg" | rev | cut -d'/' -f1 | rev)
 	if [ ! -f "$GOPATH"/bin/"$bin_name" ]; then
 		go get "$go_pkg"
 	fi
 done
+curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b "$GOPATH"/bin v1.32.2
 Logger "Cleanup  golang packages src..."
 rm -rf $GOPATH/src
 
@@ -464,13 +465,13 @@ TERRAFORM_LS_VERSION=0.8.0
 TERRAFORM_PROVIDER_VERSION=0.6.2
 TERRAFORM_PROVIDER_RELEASE=0.6.2+git.1585292411.8cbe9ad0
 
-if ! which terraform 2> /dev/null; then
+if ! command -v  terraform 2> /dev/null; then
 	curl -sLo /tmp/terraform.zip https://releases.hashicorp.com/terraform/"$TERRAFORM_VERSION"/terraform_"$TERRAFORM_VERSION"_linux_amd64.zip
 	unzip /tmp/terraform.zip -d /tmp
 	mv /tmp/terraform ~/.local/bin
 fi
 
-if ! which terraform-ls 2> /dev/null; then
+if ! command -v  terraform-ls 2> /dev/null; then
 	curl -sLo /tmp/terraform-ls.zip https://releases.hashicorp.com/terraform-ls/"$TERRAFORM_LS_VERSION"/terraform-ls_"$TERRAFORM_LS_VERSION"_linux_amd64.zip
 	unzip /tmp/terraform-ls.zip -d /tmp
 	mv /tmp/terraform-ls ~/.local/bin
