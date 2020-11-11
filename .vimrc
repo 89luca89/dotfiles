@@ -16,42 +16,38 @@ set nowrap number nomodeline ttyfast lazyredraw
 filetype off
 call plug#begin('~/.vim/plugged')
 " utilities
-Plug 'yggdroot/indentLine'
 Plug 'ap/vim-buftabline'
 Plug 'mhinz/vim-signify'
+Plug 'yggdroot/indentLine'
 " Fzf
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 " Lang Packs
 Plug 'sheerun/vim-polyglot', { 'tag': 'v4.9.2' }
 " Aestetics
-Plug 'gruvbox-community/gruvbox'
+Plug '89luca89/vim-code-dark'
+Plug 'endel/vim-github-colorscheme'
 " LSP
-Plug 'prabirshrestha/asyncomplete-file.vim'
-Plug 'prabirshrestha/asyncomplete-lsp.vim'
-Plug 'prabirshrestha/asyncomplete-tags.vim'
-Plug 'prabirshrestha/asyncomplete.vim'
-Plug 'prabirshrestha/vim-lsp'
+Plug 'dense-analysis/ale'
+Plug 'natebosch/vim-lsc'
 call plug#end()
 filetype plugin indent on
 syntax on
 " Theming
 set noshowmode noshowcmd laststatus=0 ruler   " hide statusline
-set rulerformat=%20(%m%r%w\ %y\ %l/%c%)\        " Modified+FileType+Ruler
+set rulerformat=%20(%m%r%w\ %y\ %l/%c%)\      " Modified+FileType+Ruler
 set background=dark
 set termguicolors
 augroup customsyntax
     autocmd! customsyntax
     " Custom syntax highlight
-    autocmd Syntax * syntax match myFunction '\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\ze\%(\s*(\)'
-    autocmd Syntax * syntax match myDeclaration '\v[_.[:alnum:]]+(,\s*[_.[:alnum:]]+)*\ze(\s*([-^+|^\/%&]|\*|\<\<|\>\>|\&\^)?\=[^=])'
-    autocmd Syntax * syntax match myDeclaration '\v\w+(,\s*\w+)*\ze(\s*:\=)'
-    autocmd Syntax * highlight link myFunction      Function
-    autocmd Syntax * highlight link myDeclaration   Identifier
+    autocmd InsertEnter,Syntax * syntax match myFunction '\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\ze\%(\s*(\)'
+    autocmd InsertEnter,Syntax * syntax match myDeclaration '\v[_.[:alnum:]]+(,\s*[_.[:alnum:]]+)*\ze(\s*([-^+|^\/%&]|\*|\<\<|\>\>|\&\^)?\=[^=])'
+    autocmd InsertEnter,Syntax * syntax match myDeclaration '\v\w+(,\s*\w+)*\ze(\s*:\=)'
+    autocmd InsertEnter,Syntax * highlight link myFunction      Function
+    autocmd InsertEnter,Syntax * highlight link myDeclaration   Identifier
 augroup end
-let g:gruvbox_contrast_light = 'hard'
-let g:gruvbox_contrast_dark = 'hard'
-colorscheme gruvbox
+colorscheme codedark
 " indentline
 let g:indentLine_char = '|'
 let g:indentLine_concealcursor = ''
@@ -60,8 +56,8 @@ let g:intendLine_faser = 1
 set list lcs=tab:\|\  " here is a space
 " tabline
 let g:buftabline_indicators = 1
-let g:buftabline_separators = 1
 let g:buftabline_plug_max   = 0
+let g:buftabline_separators = 1
 " Langs
 let g:ansible_attribute_highlight       = 'ab'
 let g:ansible_extra_keywords_highlight  = 1
@@ -112,19 +108,22 @@ nnoremap <leader>j :<C-u>set ft=.jinja2<C-left><right><right><right>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
+        colorscheme codedark
     else
         set background=light
+        colorscheme github
+        highlight Normal guibg=#FFFFFF
     endif
 endfunction
 " Lint the entire project using filetype as reference. out to quickfix
 function! LintFile()
     silent!
-    cgete system('lint-project ' . &filetype . " " .  expand('%') . " lint")
+    cgete system('lint-project ' . &filetype . " " .  expand('%') . " lint | sort -u")
 endfun
 " Lint the entire project using filetype as reference. out to quickfix
 function! LintProject()
     silent!
-    cgete system('lint-project ' . &filetype . " . lint")
+    cgete system('lint-project ' . &filetype . " . lint | sort -u")
 endfun
 " Lint the entire project using filetype as reference. out to quickfix
 function! FormatProject()
@@ -144,36 +143,15 @@ function! GenTags()
         redraw!
     endif
 endfun
-" Remove Trailing Spaces and empty lines
-function! StripTrailingWhiteSpace()
-    " don't strip on these filetypes
-    if &ft =~ 'markdown'
-        return
-    endif
-    " Strip trailing spaces
-    %s/\s\+$//e
-    " Strip ending white lines
-    %s/\($\n\s*\)\+\%$//e
-    redraw!
-endfun
-function! ToggleQuickFix()
-    if empty(filter(getwininfo(), 'v:val.quickfix'))
-        copen
-    else
-        cclose
-    endif
-endfunction
 " END FUNCTIONS --------------------------------------------------------------------
 " Code help using external scripts: Lint, Format, DeepTags, Grep, vert-copen
 nnoremap <silent> <C-e> :<C-u>call ToggleTheme()<CR>
-nnoremap <leader>gf  :<C-u>:vertical wincmd f<CR>
+nnoremap <leader>f  :<C-u>cgete system('grep --exclude tags -Rn ""')<BAR>copen<C-Left><Right>
 nnoremap <leader>a  :<C-u>call LintFile()<CR>:copen<CR>
 nnoremap <leader>A  :<C-u>call LintProject()<CR>:copen<CR>
+nnoremap <leader>E  :<C-u>vert copen<BAR>vert resize 80<CR>
 nnoremap <leader>L  :<C-u>call FormatProject()<CR>
 nnoremap <leader>T  :<C-u>call TagsProject()<CR>
-nnoremap <leader>f  :<C-u>cgete system('grep --exclude tags -Rn ""')<BAR>copen<C-Left><Right>
-nnoremap <leader>E  :<C-u>vert copen<BAR>vert resize 80<CR>
-nnoremap <leader>e  :<C-u>call ToggleQuickFix()<CR>
 " Default IDE-Style keybindings EDMRL, errors, definition, references, rename, format
 nnoremap <leader>d  :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
 nnoremap <leader>m  :<C-u>cgete system('grep --exclude tags -Rn "<c-r>=expand("<cword>")<CR>"')<CR>:copen<CR>
@@ -183,10 +161,9 @@ nnoremap <leader>l  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>
 augroup autoformat_settings
     autocmd! autoformat_settings
     autocmd FileType c,cpp        nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!clang-format -style=file %<CR>:loadview<CR>
+    autocmd FileType python       nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!yapf --style=facebook %<CR>:w<CR>:%!isort --ac --float-to-top -d %<CR>:loadview<CR>
     autocmd FileType go           nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!gofmt -s %<CR>:%!goimports %<CR>:loadview<CR>
     autocmd FileType json         nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!jsonlint -f %<CR>:loadview<CR>
-    autocmd FileType python       nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!yapf --style=facebook %<CR>:w<CR>:%!isort --ac --float-to-top -d %<CR>:loadview<CR>
-    autocmd FileType rust         nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!rustfmt %<CR>:loadview<CR>
     autocmd FileType sh           nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!shfmt -s %<CR>:loadview<CR>
     autocmd FileType terraform    nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:!terraform fmt %<CR>:loadview<CR><CR>
 augroup end
@@ -195,16 +172,13 @@ augroup end
 augroup lspbindings
     autocmd! lspbindings
     " IDE-like keybindings
-    autocmd Filetype c,cpp,python,go,rust,terraform nnoremap <buffer> K  :<C-u>LspHover<CR>
-    autocmd Filetype c,cpp,python,go,rust,terraform nnoremap <buffer> <leader>a :<C-u>LspDocumentDiagnostics<CR>
-    autocmd Filetype c,cpp,python,go,rust,terraform nnoremap <buffer> <leader>d :<C-u>vsplit<BAR>LspDefinition<CR>
-    autocmd Filetype c,cpp,python,go,rust,terraform nnoremap <buffer> <leader>m :<C-u>LspReferences<CR>
-    autocmd Filetype c,cpp,python,go,rust,terraform nnoremap <buffer> <leader>r :<C-u>LspRename<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <buffer> K  :<C-u>LSClientShowHover<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>d :<C-u>vert LSClientGoToDefinitionSplit<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>m :<C-u>LSClientFindReferences<CR>
+    autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>r :<C-u>LSClientRename<CR>
 augroup end
 augroup misc
     autocmd! misc
-    " Remove trailing whitespaces and lines
-    autocmd BufWritePre * silent! :call StripTrailingWhiteSpace()
     " Refresh tags on save
     autocmd BufWritePost * silent! :call GenTags()
 augroup end
@@ -218,81 +192,25 @@ augroup ansible_vim_fthosts
     autocmd BufNewFile,BufRead hosts set filetype=ini.ansible
     autocmd BufNewFile,BufRead */*.j2 set filetype=jinja2
 augroup END
-" Asyncomplete + LSP
-" let g:asyncomplete_auto_completeopt  = 0
-let g:asyncomplete_smart_completion  = 1
-let g:lsp_auto_enable                = 1
-let g:lsp_diagnostics_echo_cursor    = 1
-let g:lsp_diagnostics_enabled        = 1
-let g:lsp_highlights_enabled         = 1
-let g:lsp_highlight_references_enabled = 1
-let g:lsp_log_file  = expand('/dev/null')
-let g:lsp_semantic_enabled     = 1
-let g:lsp_signs_enabled        = 1
-let g:lsp_virtual_text_enabled = 1
-"set completeopt=menu,menuone,popup,noselect,noinsert
-"
-augroup asyncompleteregister
-    autocmd! asyncompleteregister
-    " Lang specific keybindings
-    autocmd VimEnter * call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
-                \ 'name': 'file',
-                \ 'whitelist': ['*'],
-                \ 'priority': 10,
-                \ 'completor': function('asyncomplete#sources#file#completor')
-                \ }))
-    autocmd VimEnter * call asyncomplete#register_source(asyncomplete#sources#tags#get_source_options({
-                \ 'name': 'tags',
-                \ 'whitelist': ['*'],
-                \ 'blacklist': ['go', 'python', 'rust', 'c', 'cpp'],
-                \ 'completor': function('asyncomplete#sources#tags#completor'),
-                \ 'config': {
-                \    'max_file_size': 50000000,
-                \  },
-                \ }))
-    autocmd VimEnter * call lsp#register_server({
-                \ 'name': 'clangd',
-                \ 'whitelist': ['c', 'cpp'],
-                \ 'cmd': {server_info->['clangd', '-background-index']},
-                \ })
-    autocmd VimEnter * call lsp#register_server({
-                \ 'name': 'gopls',
-                \ 'whitelist': ['go'],
-                \ 'cmd': {server_info->['/home/luca-linux/.local/go/bin/gopls']},
-                \ 'workspace_config': {
-                \  'gopls' : {
-                \       'hoverKind': "FullDocumentation",
-                \       'usePlaceholders': v:true,
-                \       'fuzzyMatching': v:true,
-                \       'staticcheck': v:true,
-                \       'deepCompletion': v:true,
-                \       'completionDocumentation': v:true,
-                \       'completeUnimported': v:true,
-                \       "codelens": {
-                \           "gc_details": v:true
-                \       },
-                \       'analyses': {
-                \           'fillreturns': v:true,
-                \           'undeclarename': v:true,
-                \           'unusedparams': v:true,
-                \           'nonewvars': v:true,
-                \          }
-                \     }
-                \ },
-                \ })
-    autocmd VimEnter * call lsp#register_server({
-                \ 'name': 'pyls',
-                \ 'whitelist': ['python'],
-                \ 'cmd': {server_info->['pyls']},
-                \ })
-    autocmd VimEnter * call lsp#register_server({
-                \ 'name': 'rust-analyzer',
-                \ 'whitelist': ['rust'],
-                \ 'cmd': {server_info->['rust-analyzer']},
-                \ })
-    autocmd VimEnter * call lsp#register_server({
-                \ 'name': 'terraform',
-                \ 'whitelist': ['terraform'],
-                \ 'cmd': {server_info->['terraform-ls', 'serve']},
-                \ })
-augroup end
+" ALE
+let g:ale_disable_lsp       = 0
+let g:ale_enabled           = 1
+let g:ale_fix_on_save       = 1
+let g:ale_yaml_yamllint_options     = '-d relaxed'
+let g:ale_fixers = {'*': ['remove_trailing_lines', 'trim_whitespace'],}
+let g:lsc_auto_completeopt='menu,menuone,popup,noselect,noinsert'
+let g:lsc_server_commands  = {
+            \ "python": "pyls",
+            \ "go": {
+            \    "command": "gopls serve",
+            \    "log_level": -1,
+            \ },
+            \ 'cpp' : {
+            \   'name': 'cpp',
+            \   'command': 'clangd',
+            \ },
+            \ 'c' : {
+            \   'name': 'c',
+            \   'command': 'clangd',
+            \ },
+            \}
