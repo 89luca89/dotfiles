@@ -37,13 +37,8 @@ Logger() {
 	d=$(date +"%D-%T")
 	msg=$(echo "$@" | sed ':a;N;$!ba;s/\n/ <nl> /g')
 	echo -e "\033[1m[$d] \033\033[0m \033[0;32m $@  \033[0m "
-	logger -t $0 "$msg"
+	logger -t "$0" "$msg"
 }
-
-#	vscode-html-languageserver-bin"
-declare -a NPM_PACKAGES=(
-	"dockerfile-language-server-nodejs"
-)
 
 declare -a PIP_PACKAGES=(
 	'python-language-server[all]'
@@ -441,7 +436,7 @@ Logger "Install golang packages..."
 mkdir -p ~/.local/go
 for go_pkg in "${GO_PACKAGES[@]}"; do
 	export GOPATH=~/.local/go
-	bin_name=$(echo $go_pkg | rev | cut -d'/' -f1 | rev)
+	bin_name=$(echo "$go_pkg" | rev | cut -d'/' -f1 | rev)
 	if [ ! -f "$GOPATH"/bin/"$bin_name" ]; then
 		go get "$go_pkg"
 	fi
@@ -463,17 +458,6 @@ done
 Logger "Install python pagkages..."
 /usr/bin/python3 -m pip install --no-input --no-cache --user -U pip
 /usr/bin/python3 -m pip -q install --no-input --no-cache --user -U "${PIP_PACKAGES[@]}"
-
-Logger "Install npm packages..."
-# Install golang packages
-mkdir -p ~/.local/bin/node_modules
-for npm_pkg in "${NPM_PACKAGES[@]}"; do
-	if [ ! -f ~/.local/bin/node_modules/.bin/"$npm_pkg" ]; then
-		pushd  ~/.local/bin/
-		npm install --production "$npm_pkg"
-		popd
-	fi
-done
 
 TERRAFORM_VERSION=0.12.0
 TERRAFORM_LS_VERSION=0.8.0
@@ -504,8 +488,8 @@ fi
 Logger "Remove bloat services..."
 for service in "${MASK_SERVICES[@]}"; do
 	# add || true to allow them to fail, in case they are already masked
-	systemctl --user disable --now $service 2>/dev/null || true
-	systemctl --user mask $service 2>/dev/null || true
+	systemctl --user disable --now "$service" 2>/dev/null || true
+	systemctl --user mask "$service" 2>/dev/null || true
 done
 
 Logger "Remove bloat packages..."
