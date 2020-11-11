@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # nvidia: sudo dnf install kmod-nvidia akmod-nvidia xorg-x11-drv-nvidia nvidia-settings nvidia-modprobe nvidia-xconfig
 # sudo cp /usr/share/X11/xorg.conf.d/nvidia.conf /etc/X11/xorg.conf.d/
@@ -42,10 +42,7 @@ Logger() {
 
 #	vscode-html-languageserver-bin"
 declare -a NPM_PACKAGES=(
-	"bash-language-server"
-	"yaml-language-server"
 	"dockerfile-language-server-nodejs"
-	"vscode-langservers-extracted"
 )
 
 declare -a PIP_PACKAGES=(
@@ -55,6 +52,7 @@ declare -a PIP_PACKAGES=(
 	"ansible-lint"
 	"astroid"
 	"autopep8"
+	"demjson"
 	"flake8"
 	"flake8-awesome"
 	"flake8-docstrings"
