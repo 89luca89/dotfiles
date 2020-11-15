@@ -89,6 +89,8 @@ declare -a GO_PACKAGES=(
 	"golang.org/x/tools/cmd/guru"
 	"golang.org/x/tools/gopls"
 	"mvdan.cc/sh/cmd/shfmt"
+	"mvdan.cc/gofumpt/gofumports"
+	"mvdan.cc/gofumpt"
 )
 
 declare -a RPMFUSION_PKG=(
