@@ -43,8 +43,8 @@ augroup customsyntax
     autocmd Syntax * syntax match myFunction    '\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\ze\%(\s*(\)'
     autocmd Syntax * syntax match myDeclaration '\v[_.[:alnum:]]+(,\s*[_.[:alnum:]]+)*\ze(\s*([-^+|^\/%&]|\*|\<\<|\>\>|\&\^)?\=[^=])'
     autocmd Syntax * syntax match myDeclaration '\v\w+(,\s*\w+)*\ze(\s*:\=)'
-    autocmd Syntax * highlight link myFunction      Function
-    autocmd Syntax * highlight link myDeclaration   Identifier
+    autocmd Syntax * highlight myFunction      guifg=#8ec07c
+    autocmd Syntax * highlight myDeclaration   guifg=#83a598
 augroup end
 let g:gruvbox_contrast_dark = "hard"
 let g:gruvbox_contrast_light = "hard"
@@ -109,13 +109,13 @@ nnoremap <leader>j :<C-u>set ft=.jinja2<C-left><right><right><right>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        highlight link myFunction      Function
-        highlight link myDeclaration   Identifier
+        highlight myFunction      guifg=#8ec07c
+        highlight myDeclaration   guifg=#83a598
     else
         set background=light
-        highlight Normal guibg=#FFFFFF
-        highlight link myFunction      Function
-        highlight link myDeclaration   Identifier
+        highlight Normal          guibg=#ffffff
+        highlight myFunction      guifg=#427b58
+        highlight myDeclaration   guifg=#076678
     endif
 endfunction
 " Lint the entire project using filetype as reference. out to quickfix
