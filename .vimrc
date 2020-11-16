@@ -25,8 +25,7 @@ Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 " Lang Packs
 Plug 'sheerun/vim-polyglot', { 'tag': 'v4.9.2' }
 " Aestetics
-Plug '89luca89/vim-code-dark'
-Plug 'endel/vim-github-colorscheme'
+Plug 'gruvbox-community/gruvbox'
 " LSP
 Plug 'dense-analysis/ale'
 Plug 'natebosch/vim-lsc'
@@ -47,7 +46,9 @@ augroup customsyntax
     autocmd Syntax * highlight link myFunction      Function
     autocmd Syntax * highlight link myDeclaration   Identifier
 augroup end
-colorscheme codedark
+let g:gruvbox_contrast_dark = "hard"
+let g:gruvbox_contrast_light = "hard"
+colorscheme gruvbox
 " indentline
 let g:indentLine_char = '|'
 let g:indentLine_concealcursor = ''
@@ -108,12 +109,10 @@ nnoremap <leader>j :<C-u>set ft=.jinja2<C-left><right><right><right>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        colorscheme codedark
         highlight link myFunction      Function
         highlight link myDeclaration   Identifier
     else
         set background=light
-        colorscheme github
         highlight Normal guibg=#FFFFFF
         highlight link myFunction      Function
         highlight link myDeclaration   Identifier
