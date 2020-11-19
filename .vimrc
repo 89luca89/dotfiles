@@ -43,12 +43,13 @@ augroup customsyntax
     autocmd Syntax * syntax match myFunction    '\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\ze\%(\s*(\)'
     autocmd Syntax * syntax match myDeclaration '\v[_.[:alnum:]]+(,\s*[_.[:alnum:]]+)*\ze(\s*([-^+|^\/%&]|\*|\<\<|\>\>|\&\^)?\=[^=])'
     autocmd Syntax * syntax match myDeclaration '\v\w+(,\s*\w+)*\ze(\s*:\=)'
-    autocmd Syntax * highlight myFunction      guifg=#8ec07c
+    autocmd Syntax * highlight myFunction      guifg=#b8bb26
     autocmd Syntax * highlight myDeclaration   guifg=#83a598
 augroup end
 let g:gruvbox_contrast_dark = "hard"
 let g:gruvbox_contrast_light = "hard"
 colorscheme gruvbox
+highlight Normal          guibg=#1c1c1c
 " indentline
 let g:indentLine_char = '|'
 let g:indentLine_concealcursor = ''
@@ -109,7 +110,8 @@ nnoremap <leader>j :<C-u>set ft=.jinja2<C-left><right><right><right>
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        highlight myFunction      guifg=#8ec07c
+        highlight Normal          guibg=#1c1c1c
+        highlight myFunction      guifg=#b8bb26
         highlight myDeclaration   guifg=#83a598
     else
         set background=light
@@ -199,7 +201,7 @@ augroup END
 let g:ale_disable_lsp       = 0
 let g:ale_enabled           = 1
 let g:ale_fix_on_save       = 1
-let g:ale_yaml_yamllint_options     = '-d relaxed'
+let g:ale_yaml_yamllint_options     = '-d "{extends: default, rules: {line-length: disable, truthy: disable}}"'
 let g:ale_fixers = {'*': ['remove_trailing_lines', 'trim_whitespace'],}
 let g:lsc_auto_completeopt='menu,menuone,popup,noselect,noinsert'
 let g:lsc_server_commands  = {
