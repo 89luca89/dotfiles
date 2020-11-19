@@ -162,9 +162,6 @@ declare -a TERM_PKG=(
 declare -a DESKTOP_PKG=(
 	"android-tools"
 	"arc-theme"
-	"papirus-icon-theme"
-	"evolution"
-	"evolution-ews"
 	"gimp"
 	"gnome-shell-extension-appindicator"
 	"gnome-shell-extension-workspace-indicator"
@@ -175,13 +172,15 @@ declare -a DESKTOP_PKG=(
 	"libreoffice-impress"
 	"libreoffice-writer"
 	"mpv"
-	"vlc"
+	"papirus-icon-theme"
 	"powertop"
 	"rhythmbox"
 	"syncthing"
 	"telegram-desktop"
+	"thunderbird"
 	"tlp"
 	"virt-manager"
+	"vlc"
 	"https://github.com/JoseExposito/touchegg/releases/download/2.0.0/touchegg-2.0.0-1.x86_64.rpm"
 )
 
