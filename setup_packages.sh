@@ -214,6 +214,7 @@ declare -a PACKAGES_REMOVE=(
 	"fipscheck-lib"
 	"frei0r-plugins"
 	"fuse-overlayfs"
+	"fwupd"
 	"gamemode"
 	"gavl"
 	"gdouros-symbola-fonts"
@@ -235,6 +236,7 @@ declare -a PACKAGES_REMOVE=(
 	"gnome-online-miners"
 	"gnome-photos"
 	"gnome-shell-extension-background-logo"
+	"gnome-software"
 	"gnome-user-docs"
 	"gnome-user-share"
 	"gnome-video-effects"
@@ -363,11 +365,15 @@ declare -a PACKAGES_REMOVE=(
 )
 
 declare -a MASK_SERVICES=(
+	"evolution-addressbook-factory.service"
+	"evolution-calendar-factory.service"
+	"evolution-source-registry.service"
 	"goa-daemon.service"
 	"goa-identity-service.service"
 	"gvfs-goa-volume-monitor.service"
 	"tracker-extract.service"
 	"tracker-miner-fs.service"
+	"tracker-miner-fs-3.service"
 	"tracker-miner-rss.service"
 	"tracker-store.service"
 	"tracker-writeback.service"
