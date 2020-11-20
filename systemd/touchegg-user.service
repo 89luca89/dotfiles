@@ -26,7 +26,7 @@ Description=Touchégg
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/touchegg
+ExecStart=/usr/bin/touchegg --client
 Restart=always
 RestartSec=5s
 
