@@ -1,28 +1,15 @@
 # BASIC ALIASES
-function tssh() {
-    SESSION=$(hostname)
-    /usr/bin/ssh -t $@ "tmux new-session -A -s $SESSION > /dev/null 2>&1 || eval \$SHELL"
-}
 alias :q="exit"
 alias :wq="exit"
 alias :qa="exit"
 alias :wqa="exit"
-# alias play_starred_videos="mpv $(get_starred_videos | xargs -n$(get_starred_videos | wc -l))"
 alias update_ssh="assh config build | sed 's/%h$/%h 2> \/dev\/null/g' > ~/.ssh/config"
 alias rsyncthingD='pushd ~/Syncthing;find ~/Syncthing/ -iname *.tmp -o -iname *conflict* -delete; rsync -av --delete --progress -e "ssh -J luca-lan -p 2223" --exclude=".stversions" fileserver@raspberrypi-1.lan:/data/Syncthing/ ~/Syncthing/; popd'
 alias rsyncthingS='pushd ~/Syncthing;find ~/Syncthing/ -iname *.tmp -o -iname *conflict* -delete; rsync -av --delete --progress -e "ssh -J luca-lan -p 2223" --exclude=".stversions" ~/Syncthing/ fileserver@raspberrypi-1.lan:/data/Syncthing/; popd'
 alias chromiumSync='~/bin/get_chromium_tabs.sh > ~/Syncthing/Browsers/open_tabs.txt'
 alias chromiumRestore='cat ~/Syncthing/Browsers/open_tabs.txt | xargs chromium-freeworld'
-alias chromiumDeepSync='pushd ~ ; tar cfv - .config/chromium | xz -T 0 -9e > /tmp/chromium-profile.tar.xz; mv /tmp/chromium-profile.tar.xz ~/Syncthing/Browsers/chromium-profile.tar.xz; popd'
-alias chromiumDeepRestore='rm -rf ~/.config/chromium; xz -T 0 -dc  ~/Syncthing/Browsers/chromium-profile.tar.xz | tar x -C ~/'
 alias firefoxSync='~/bin/get_firefox_tabs.py > ~/Syncthing/Browsers/open_tabs.txt'
 alias firefoxRestore='cat ~/Syncthing/Browsers/open_tabs.txt | xargs firefox --new-tab &'
-alias firefoxDeepSync='find ~/.mozilla/ -iname "*cache*" | xargs rm -rf; find .mozilla/firefox/*/storage/default/http* -iname "*.files" | xargs rm -rf; pushd ~ ; tar cfv - .mozilla | xz -T 0 -9e > /tmp/firefox-profile.tar.xz; mv /tmp/firefox-profile.tar.xz ~/Syncthing/Browsers/firefox-profile.tar.xz; popd'
-alias firefoxDeepRestore='rm -rf ~/.mozilla; xz -T 0 -dc  ~/Syncthing/Browsers/firefox-profile.tar.xz | tar x -C ~/'
-alias gearySync='pushd ~ ; tar cfv - .config/geary .local/share/geary/ | xz -T 0 -9e > ~/Syncthing/Browsers/geary-profile.tar.xz; popd'
-alias gearyRestore='rm -rf .config/geary/ .local/share/geary/; xz -T 0 -dc ~/Syncthing/Browsers/geary-profile.tar.xz | tar -x -C ~/'
-alias thunderSync='find ~/.thunderbird/ -iname "*cache*" | xargs rm -rf; pushd ~ ; tar cfv - --exclude=.thunderbird/*-default/ImapMail .thunderbird/ | xz -T 0 -9e > ~/Syncthing/Browsers/thunderbird-profile.tar.xz; popd'
-alias thunderRestore='rm -rf ~/.thunderbird; xz -T 0 -dc  ~/Syncthing/Browsers/thunderbird-profile.tar.xz | tar x -C ~/'
 alias ll='ls -Ahl --group-directories-first --color'
 alias open='xdg-open'
 alias cp='cp --reflink=auto --sparse=always'
