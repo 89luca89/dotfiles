@@ -61,6 +61,7 @@ declare -a PIP_PACKAGES=(
 	"molecule"
 	"neovim"
 	"parso"
+	"pass-import"
 	"pluggy"
 	"psutil"
 	"pycodestyle"
