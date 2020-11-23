@@ -75,6 +75,7 @@ declare -a PIP_PACKAGES=(
 	"snowballstemmer"
 	"toml"
 	"ujson"
+	"upass"
 	"wrapt"
 	"yamllint"
 	"yapf"
@@ -173,6 +174,9 @@ declare -a DESKTOP_PKG=(
 	"libreoffice-writer"
 	"mpv"
 	"papirus-icon-theme"
+	"pass"
+	"pass-otp"
+	"pass-pwned"
 	"powertop"
 	"rhythmbox"
 	"syncthing"
@@ -180,7 +184,7 @@ declare -a DESKTOP_PKG=(
 	"thunderbird"
 	"tlp"
 	"virt-manager"
-	"vlc"
+	"zbar"
 	"https://github.com/JoseExposito/touchegg/releases/download/2.0.0/touchegg-2.0.0-1.x86_64.rpm"
 )
 
