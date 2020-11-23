@@ -1,41 +1,41 @@
 " Miscellaneous
-let g:python_host_prog  = '/usr/bin/python2'
 let g:python3_host_prog = '/usr/bin/python3'
-set updatetime=300
-set colorcolumn=80
-set title nocompatible nowritebackup nobackup
-set mouse=a undofile undolevels=1000 undodir=$HOME/.vim/undo
-set directory=$HOME/.vim/swap
-set path+=.,** wildmenu
-set autoread hidden backspace=indent,eol,start
-set splitright splitbelow
+let g:python_host_prog  = '/usr/bin/python2'
 set autoindent smartindent copyindent smarttab expandtab
-set shiftwidth=4 tabstop=4 softtabstop=4
+set autoread hidden backspace=indent,eol,start
+set colorcolumn=80
+set directory=$HOME/.vim/swap
 set hlsearch incsearch ignorecase smartcase
+set mouse=a undofile undolevels=1000 undodir=$HOME/.vim/undo
 set nowrap number nomodeline ttyfast lazyredraw
+set path+=.,** wildmenu
+set shiftwidth=4 tabstop=4 softtabstop=4
+set splitright splitbelow
+set title nocompatible nowritebackup nobackup
+set updatetime=300
 filetype off
 call plug#begin('~/.vim/plugged')
 " utilities
-Plug 'ap/vim-buftabline'
-Plug 'mhinz/vim-signify'
-Plug 'yggdroot/indentLine'
-" Fzf
-Plug 'junegunn/fzf.vim'
-Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
-" Lang Packs
-Plug 'sheerun/vim-polyglot', { 'tag': 'v4.9.2' }
-" Aestetics
-Plug 'gruvbox-community/gruvbox'
-" LSP
-Plug 'dense-analysis/ale'
-Plug 'natebosch/vim-lsc'
+    Plug 'ap/vim-buftabline'
+    Plug 'mhinz/vim-signify'
+    Plug 'yggdroot/indentLine'
+    " Fzf
+    Plug 'junegunn/fzf.vim'
+    Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
+    " Lang Packs
+    Plug 'sheerun/vim-polyglot', { 'tag': 'v4.9.2' }
+    " Aestetics
+    Plug 'gruvbox-community/gruvbox'
+    " LSP
+    Plug 'dense-analysis/ale'
+    Plug 'natebosch/vim-lsc'
 call plug#end()
 filetype plugin indent on
 syntax on
 " Theming
+set background=dark
 set noshowmode noshowcmd laststatus=0 ruler   " hide statusline
 set rulerformat=%20(%m%r%w\ %y\ %l/%c%)\      " Modified+FileType+Ruler
-set background=dark
 set termguicolors
 augroup customsyntax
     autocmd! customsyntax
@@ -190,19 +190,18 @@ augroup end
 " Fix ansible file detection
 augroup ansible_vim_fthosts
     autocmd!
+    autocmd BufNewFile,BufRead */*.j2 set filetype=jinja2
     autocmd BufNewFile,BufRead */*inventory*.y*ml set filetype=yaml.ansible
     autocmd BufNewFile,BufRead */roles/**/*.y*ml set filetype=yaml.ansible
     autocmd BufNewFile,BufRead */vars/*/**.y*ml set filetype=yaml.ansible
     autocmd BufNewFile,BufRead *main*.y*ml set filetype=yaml.ansible
     autocmd BufNewFile,BufRead hosts set filetype=ini.ansible
-    autocmd BufNewFile,BufRead */*.j2 set filetype=jinja2
 augroup END
 " ALE
-let g:ale_disable_lsp       = 0
 let g:ale_enabled           = 1
 let g:ale_fix_on_save       = 1
-let g:ale_yaml_yamllint_options     = '-d "{extends: default, rules: {line-length: disable, truthy: disable}}"'
 let g:ale_fixers = {'*': ['remove_trailing_lines', 'trim_whitespace'],}
+let g:ale_yaml_yamllint_options     = '-d "{extends: default, rules: {line-length: disable, truthy: disable}}"'
 let g:lsc_auto_completeopt='menu,menuone,popup,noselect,noinsert'
 let g:lsc_server_commands  = {
             \ "python": "pyls",
