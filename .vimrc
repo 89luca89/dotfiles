@@ -13,6 +13,7 @@ set shiftwidth=4 tabstop=4 softtabstop=4
 set splitright splitbelow
 set title nocompatible nowritebackup nobackup
 set updatetime=300
+set guioptions=d
 filetype off
 call plug#begin('~/.vim/plugged')
 " utilities
