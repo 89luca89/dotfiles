@@ -30,6 +30,7 @@ mkdir -p ~/.config/systemd/user
 mkdir -p ~/.config/touchegg
 mkdir -p ~/.local/go
 mkdir -p ~/.local/rust
+mkdir -p ~/.local/share
 mkdir -p ~/.ssh/
 mkdir -p ~/.vim
 mkdir -p ~/.vim/autoload
@@ -54,6 +55,7 @@ rm -f ~/.ssh/assh.yml
 rm -f ~/.tmux.conf
 rm -f ~/.vimrc
 rm -f ~/.zshrc
+rm -rf ~/.local/share/applications
 
 Logger "Link dotfiles..."
 ln -sf $PWD/.aliases ~/.aliases
@@ -72,6 +74,7 @@ ln -sf ~/Syncthing/Conf/.histfile ~/.histfile
 ln -sf ~/Syncthing/Conf/keepassxc.ini ~/.config/keepassxc/keepassxc.ini
 ln -sf ~/Syncthing/Conf/assh.yml ~/.ssh/assh.yml
 ln -sf ~/Syncthing/Conf/dotfiles ~/
+ln -sf ~/Syncthing/Conf/Shortcuts/applications ~/.local/share/applications
 
 Logger "Install services..."
 systemctl --user daemon-reload
