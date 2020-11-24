@@ -46,6 +46,11 @@ if [[ $- == *i* ]]; then
 	ssh-add -l >/dev/null || ssh-add
 	ssh-add -l >/dev/null || ssh-add ~/.ssh/id_rsa_ext
 
+	if type rg &>/dev/null; then
+		export FZF_DEFAULT_COMMAND="rg --files --hidden --follow --no-ignore-vcs"
+		export FZF_DEFAULT_OPTS='-m --height 50% --border'
+	fi
+
 fi
 if [ -f $HOME/.aliases ]; then
 	source $HOME/.aliases
