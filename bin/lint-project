@@ -1,0 +1,181 @@
+#!/bin/bash
+# Using bash instead of posix sh, to use arrays
+#
+# lint-project: Central hub to lint, format and generate ctags for
+# multiple languages.
+# Support single file or entire project folders.
+#
+# Usage:
+# lint-project go ~/path/to/project lint -> lint entire project
+# lint-project sh ~/path/to/file lint -> lint single file
+# lint-project cpp ~/path/to/file format -> reformat single file
+# lint-project python ~/path/to/folder format -> reformat entire project
+# lint-project c ~/path/to/folder tags -> create ctags for the project
+
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+LANG=$1
+DIR=$2
+COMMAND=$3
+
+case "$COMMAND" in
+"format")
+	case "$LANG" in
+	"c")
+		files=$(find "$DIR" -type f -name '*.c' -o -name '*.h')
+		for f in $files; do
+			clang-format -i -style=Chromium "$f"
+		done
+		;;
+	"cpp")
+		files=$(find "$DIR" -type f -name '*.cpp' -o -name '*.h')
+		for f in $files; do
+			clang-format -i -style=Chromium "$f"
+		done
+		;;
+	"go")
+		files=$(find "$DIR" -type f -name '*.go' -not -path "./vendor/*")
+		for f in $files; do
+			gofmt -s -w "$f"
+			goimports -w "$f"
+		done
+		;;
+	"python")
+		yapf -p --style facebook -i -r "$DIR" 2>/dev/null
+		isort -ac -y -rc "$DIR" 2>/dev/null
+		;;
+	"sh")
+		shfmt -s -w "$DIR" 2>/dev/null
+		;;
+	"rust")
+		files=$(find "$DIR" -type f -name '*.rs')
+		for f in $files; do
+			rustfmt "$f"
+		done
+		;;
+	"terraform")
+		files=$(find "$DIR" -type f -name '*.tf')
+		for f in $files; do
+			terraform fmt "$f"
+		done
+		;;
+	"json")
+		files=$(find "$DIR" -type f -name '*.json')
+		for f in $files; do
+			jsonlint -f -o "$f" "$f"
+		done
+		;;
+	esac
+	;;
+"lint")
+	case "$LANG" in
+	"go")
+		# golint
+		[ -d "$DIR" ] && DIR="$DIR/..."
+
+		golint -min_confidence 0 "$DIR"
+
+		# golangci with the rest
+		LINES=$(~/.local/go/bin/golangci-lint run --color never --enable-all -D golint,funlen,gomodguard --out-format tab | grep "$(basename "$DIR")" | sed "s/  */ /g" | sort -u)
+		while IFS= read -r line; do
+			is_formatted=$(echo "$line" | cut -d " " -f1 | cut -d ":" -f3)
+			is_multiline=$(echo "$line" | cut -d ":" -f2 | grep -Eo "^[0-9]")
+			if [ -z "$is_formatted" ]; then
+				echo "$line" | awk '{$1=$1":0"; print}'
+			elif [ -n "$is_multiline" ]; then
+				echo "$line"
+			fi
+		done <<<"$LINES"
+
+		if [ -d "$DIR" ]; then
+			find "$DIR" -name -0 "*.go" | xargs -I{} go vet {} 2>&1  | grep -v "#"
+		else
+			go vet "$DIR" 2>&1 | grep -v "#"
+		fi
+		;;
+	"python")
+		# flake8 with plugins:
+		# flake8-awesome flake8-mypy flake8-docstrings
+		flake8 -j auto --max-line-length 80 "$DIR" 2>/dev/null
+		;;
+	*"ansible"*)
+		yamllint -d "{extends: default, rules: {line-length: disable, truthy: disable}}"  --format parsable "$DIR"/roles
+		# yamllint -d relaxed  --format parsable "$DIR"/roles
+		ansible-lint -p --nocolor
+		pushd "$DIR" > /dev/null || exit
+		LINES=$(ansible-later tasks 2>&1)
+
+		while IFS= read -r line; do
+			if [ $(echo "$line" | wc -c) -lt 2 ]; then
+				continue
+			else
+				if ! echo "$line" | grep -q ERROR; then
+					if ! echo "$line" | grep -q WARN; then
+						echo "$line" | cut -c5-
+					fi
+				fi
+			fi
+		done <<<"$LINES"
+		popd > /dev/null || exit
+		;;
+	"sh")
+		if [ -d "$DIR" ]; then
+			for file in $(find "$DIR" -type f); do
+				if file "$file" | grep -qi shell; then
+					# file is a shell script, we can shellcheck
+					shellcheck -Cnever -a -f gcc -x "$file"
+				fi
+			done
+		else
+			shellcheck -Cnever -a -f gcc -x "$DIR"
+		fi
+		;;
+	"yaml")
+		yamllint -d "{extends: default, rules: {line-length: disable, truthy: disable}}"  --format parsable "$DIR"
+		;;
+	"xml")
+		if [ -d "$DIR" ]; then
+			for file in $(find "$DIR" -type f -iname "*.xml"); do
+				# file is xml, we can xmllint
+				xmllint --noout "$file" --format 2>&1 | head -n1 | awk '{$1=$1"0:"; print}'
+			done
+		else
+			xmllint --noout "$DIR" --format 2>&1 | head -n1 | awk '{$1=$1"0:"; print}'
+		fi
+		;;
+	"json")
+		if [ -d "$DIR" ]; then
+			find "$DIR" -type f -0 -iname "*.json" | xargs -I {} jsonlint {}
+		else
+			jsonlint "$DIR" 2>&1 | head -n1
+		fi
+		;;
+	esac
+	;;
+"tags")
+	ctags -R "$DIR"
+	case "$LANG" in
+	"c")
+		ctags -R --exclude=/usr/include/boost --exclude=/usr/include/c++ /usr/include/ -a
+		;;
+	"cpp")
+		ctags -R --exclude=/usr/include/boost /usr/include/ -a
+		;;
+	"go")
+		ctags -R /usr/lib/golang/src/ -a
+		ctags -R "$GOPATH"/src/ -a
+		;;
+	"python")
+		version=$(python --version | cut -d' ' -f2 | cut -d'.' -f1,2)
+		ctags -R /usr/lib/python"$version"/ -a
+		;;
+	"rust")
+		TOOLCHAIN=$(rustup toolchain list | grep default | awk '{print $1}')
+		ctags -R ~/.local/rust/toolchains/"$TOOLCHAIN" -a
+		;;
+	esac
+	;;
+esac

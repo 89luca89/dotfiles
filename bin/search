@@ -1,0 +1,157 @@
+#!/bin/sh
+
+set -o errexit
+set -o nounset
+
+# Default pass password store directory
+PASSWORD_STORE=".password-store"
+DATA=""
+
+# Preload incoming queries
+if [ $# -eq 0 ]; then
+	QUERY=" "
+else
+	QUERY=$1
+fi
+
+handle_password() {
+	RESP_PASS=$(
+		cat <<EOF | ~/.local/bin/fzf/bin/fzf
+OTP
+Password
+Username
+EOF
+	)
+
+	case "$RESP_PASS" in
+
+	Username)
+
+		PASSDATA=$(/bin/pass "$RESULT")
+		USRNAME="$(echo "$PASSDATA" | grep -Ei "login:|username:|user:" | head -1 | cut -d' ' -f2-)"
+		echo "$USRNAME" | /bin/xclip -sel clip
+		;;
+
+	Password)
+
+		/bin/pass -c "$RESULT"
+		;;
+
+	OTP)
+
+		/bin/pass otp -c "$RESULT"
+		;;
+
+	*)
+
+		exit 1
+		;;
+
+	esac
+
+	sleep 0.5
+}
+
+prepare_data() {
+	# Find all files using ripgrep
+	# Exclude some of the unwanted folders
+	DATA="$DATA $(
+		cd ~ || exit
+		rg --files --follow --no-ignore-vcs --sort-files \
+			-g '!{.git,*cache*,flatpak,.cache,site-packages}' 2>/dev/null |
+			sed 's/^/Files: /g'
+	)"
+
+	# Fetch password list
+	DATA="$DATA
+$(
+		cd ~ || exit
+		rg --files --follow --no-ignore-vcs --sort-files $PASSWORD_STORE \
+			-g '!{node_modules,.git,*cache*,flatpak,.cache,.local/lib,.local/share}' 2>/dev/null |
+			sed 's/^/Password: /g' |
+			sed "s/$PASSWORD_STORE\///g" |
+			sed "s/\.gpg//g"
+	)"
+
+	# Fetch executables from PATH
+	if [ ! -f /dev/shm/desktop-files ] ||
+		# if file is older than 60min, recreate
+		test "$(find /dev/shm/desktop-files -mmin +60)"; then
+
+		# Cleanup old files
+		rm -f /dev/shm/desktop-files
+
+		# We do not have a cache file, let's create it!
+		for file in $(rg --files --follow --no-ignore-vcs --sort-files --hidden ~/ /usr/share/applications/ \
+			-g '*.desktop' \
+			-g '!xdg' \
+			-g '!session' \
+			-g '!autostart' \
+			-g '!.stversions' \
+			-g '!app' 2>/dev/null | sort -u); do
+
+			if [ -f "$file" ]; then
+
+				if ! grep -q 'NoDisplay=true' "$file"; then
+
+					name=$(grep '^Name=' "$file" | head -1 | sed 's/^Name=//g')
+					command_name=$(grep '^Exec=' "$file" | head -1 | sed 's/^Exec=//g' | sed 's/%.*//g')
+					# Save name in file, this will be used for fzf
+					echo "$name | $command_name" >>/dev/shm/desktop-files
+
+				fi
+
+			fi
+
+		done
+
+	fi
+	# Aggregate with other data
+	DATA="$DATA
+$(cat /dev/shm/desktop-files | sort -u | sed 's/^/Program: /g')"
+
+	# Fetch open windows
+	DATA="$DATA
+$(wmctrl -l | grep -o "$(hostname).*" | sed "s/$(hostname) /Windows: /g")"
+
+}
+
+main() {
+	# Present on fzf
+	RESULT=$(printf '%s\n' "$DATA" | ~/.local/bin/fzf/bin/fzf --border -q "'$QUERY")
+	if [ -z "$RESULT" ]; then
+		exit 0
+	fi
+
+	if echo "$RESULT" | grep -q "^Windows"; then
+
+		### Focus target window
+		RESULT=$(echo "$RESULT" | cut -d":" -f2 | awk '{$1=$1};1')
+		wmctrl -a "$RESULT"
+
+	elif echo "$RESULT" | grep -q "^Program"; then
+
+		### Execute the file
+		RESULT=$(echo $RESULT | cut -d":" -f2 | awk '{$1=$1};1')
+		# Retrieve original file name
+		command_exec=$(echo $RESULT | cut -d"|" -f2 | awk '{$1=$1};1')
+		# Exec
+		setsid -f $command_exec >/dev/null 2>&1 &
+
+	elif echo "$RESULT" | grep -q "^Password"; then
+
+		### Handle the password
+		RESULT=$(echo "$RESULT" | cut -d":" -f2 | awk '{$1=$1};1')
+		handle_password
+
+	else
+
+		### Open the file using MIME recognition
+		RESULT=$(echo "$RESULT" | cut -d":" -f2 | awk '{$1=$1};1')
+		setsid -f xdg-open "$RESULT" >/dev/null 2>&1 &
+	fi
+}
+
+prepare_data
+main
+sleep 0.3

@@ -1,0 +1,158 @@
+#!/bin/sh
+# Sync target app via syncthing.
+# Create tar.xz of app config/data folder and protect it with gpg.
+
+set -o errexit
+set -o nounset
+
+app_sync() {
+	TARGET=$1
+	case "$TARGET" in
+	"gpg")
+		[ -d ~/.gnupg ] || (echo "No folder to backup" && exit 1)
+		cd ~ || exit 1
+		tar cfv - .gnupg | xz -T 0 -9e >/tmp/gnupg-keys.tar.xz
+		gpg --output /tmp/gnupg-keys.tar.xz.gpg --symmetric /tmp/gnupg-keys.tar.xz
+		shred -n 25 -u -z /tmp/gnupg-keys.tar.xz
+		mv /tmp/gnupg-keys.tar.xz.gpg ~/Syncthing/Secured/
+		;;
+	"pass")
+		[ -d ~/.password-store ] || (echo "No folder to backup" && exit 1)
+		cd ~ || exit 1
+		tar cfv - .password-store | xz -T 0 -9e >/tmp/pass-store.tar.xz
+		gpg --output /tmp/pass-store.tar.xz.gpg --symmetric /tmp/pass-store.tar.xz
+		shred -n 25 -u -z /tmp/pass-store.tar.xz
+		mv /tmp/pass-store.tar.xz.gpg ~/Syncthing/Secured/
+		;;
+	"firefox")
+		[ -d ~/.mozilla ] || (echo "No folder to backup" && exit 1)
+		find ~/.mozilla/ -iname "*cache*" | xargs rm -rf
+		find .mozilla/firefox/*/storage/default/http* -iname "*.files" | xargs rm -rf
+		cd ~ || exit 1
+		tar cfv - .mozilla | xz -T 0 -9e >/tmp/firefox-profile.tar.xz
+		gpg --output /tmp/firefox-profile.tar.xz.gpg --symmetric /tmp/firefox-profile.tar.xz
+		shred -n 25 -u -z /tmp/firefox-profile.tar.xz
+		mv /tmp/firefox-profile.tar.xz.gpg ~/Syncthing/Secured/
+		;;
+	"chromium")
+		[ -d ~/.config/chromium ] || (echo "No folder to backup" && exit 1)
+		cd ~ || exit 1
+		tar cfv - .config/chromium | xz -T 0 -9e >/tmp/chromium-profile.tar.xz
+		gpg --output /tmp/chromium-profile.tar.xz.gpg --symmetric /tmp/chromium-profile.tar.xz
+		shred -n 25 -u -z /tmp/chromium-profile.tar.xz
+		mv /tmp/chromium-profile.tar.xz.gpg ~/Syncthing/Secured/
+		;;
+	"thunderbird")
+		[ -d ~/.thunderbird ] || (echo "No folder to backup" && exit 1)
+		find ~/.thunderbird/ -iname "*cache*" | xargs rm -rf
+		cd ~ || exit 1
+		tar cfv - --exclude=.thunderbird/*-default/ImapMail .thunderbird/ | xz -T 0 -9e >/tmp/thunderbird-profile.tar.xz
+		gpg --output /tmp/thunderbird-profile.tar.xz.gpg --symmetric /tmp/thunderbird-profile.tar.xz
+		shred -n 25 -u -z /tmp/thunderbird-profile.tar.xz
+		mv /tmp/thunderbird-profile.tar.xz.gpg ~/Syncthing/Secured/
+		;;
+	"sylpheed")
+		[ -d ~/.sylpheed-2.0 ] || (echo "No folder to backup" && exit 1)
+		cd ~ || exit 1
+		tar cfv - .sylpheed-2.0/ | xz -T 0 -9e >/tmp/sylpheed-profile.tar.xz
+		gpg --output /tmp/sylpheed-profile.tar.xz.gpg --symmetric /tmp/sylpheed-profile.tar.xz
+		shred -n 25 -u -z /tmp/sylpheed-profile.tar.xz
+		mv /tmp/sylpheed-profile.tar.xz.gpg ~/Syncthing/Secured/
+		;;
+	"geary")
+		[ -d ~/.config/geary ] || (echo "No folder to backup" && exit 1)
+		cd ~ || exit 1
+		tar cfv - .config/geary/ | xz -T 0 -9e >/tmp/geary-profile.tar.xz
+		gpg --output /tmp/geary-profile.tar.xz.gpg --symmetric /tmp/geary-profile.tar.xz
+		shred -n 25 -u -z /tmp/geary-profile.tar.xz
+		mv /tmp/geary-profile.tar.xz.gpg ~/Syncthing/Secured/
+		;;
+	esac
+}
+
+#
+app_restore() {
+	TARGET=$1
+	case "$TARGET" in
+	"gpg")
+		gpg --output /tmp/gnupg-keys.tar.xz --decrypt ~/Syncthing/Secured/gnupg-keys.tar.xz.gpg
+		if [ ! -f /tmp/gnupg-keys.tar.xz ]; then
+			echo "Failed to decrypt"
+			exit 1
+		fi
+		xz -T 0 -dc /tmp/gnupg-keys.tar.xz | tar x -C ~/
+		shred -n 25 -u -z /tmp/gnupg-keys.tar.xz
+		;;
+	"pass")
+		gpg --output /tmp/pass-store.tar.xz --decrypt ~/Syncthing/Secured/pass-store.tar.xz.gpg
+		if [ ! -f /tmp/pass-store.tar.xz ]; then
+			echo "Failed to decrypt"
+			exit 1
+		fi
+		xz -T 0 -dc /tmp/pass-store.tar.xz | tar x -C ~/
+		shred -n 25 -u -z /tmp/pass-store.tar.xz
+		;;
+	"firefox")
+		gpg --output /tmp/firefox-profile.tar.xz --decrypt ~/Syncthing/Secured/firefox-profile.tar.xz.gpg
+		if [ ! -f /tmp/firefox-profile.tar.xz ]; then
+			echo "Failed to decrypt"
+			exit 1
+		fi
+		rm -rf ~/.mozilla
+		xz -T 0 -dc /tmp/firefox-profile.tar.xz | tar x -C ~/
+		shred -n 25 -u -z /tmp/firefox-profile.tar.xz
+		;;
+	"chromium")
+		gpg --output /tmp/chromium-profile.tar.xz --decrypt ~/Syncthing/Secured/chromium-profile.tar.xz.gpg
+		if [ ! -f /tmp/chromium-profile.tar.xz ]; then
+			echo "Failed to decrypt"
+			exit 1
+		fi
+		rm -rf ~/.config/chromium
+		xz -T 0 -dc /tmp/chromium-profile.tar.xz | tar x -C ~/
+		shred -n 25 -u -z /tmp/chromium-profile.tar.xz
+		;;
+	"thunderbird")
+		gpg --output /tmp/thunderbird-profile.tar.xz --decrypt ~/Syncthing/Secured/thunderbird-profile.tar.xz.gpg
+		if [ ! -f /tmp/thunderbird-profile.tar.xz ]; then
+			echo "Failed to decrypt"
+			exit 1
+		fi
+		rm -rf ~/.thunderbird
+		xz -T 0 -dc /tmp/thunderbird-profile.tar.xz | tar x -C ~/
+		shred -n 25 -u -z /tmp/thunderbird-profile.tar.xz
+		;;
+	"sylpheed")
+		gpg --output /tmp/sylpheed-profile.tar.xz --decrypt ~/Syncthing/Secured/sylpheed-profile.tar.xz.gpg
+		if [ ! -f /tmp/sylpheed-profile.tar.xz ]; then
+			echo "Failed to decrypt"
+			exit 1
+		fi
+		rm -rf ~/.sylpheed-2.0
+		xz -T 0 -dc /tmp/sylpheed-profile.tar.xz | tar x -C ~/
+		shred -n 25 -u -z /tmp/sylpheed-profile.tar.xz
+		;;
+	"geary")
+		gpg --output /tmp/geary-profile.tar.xz --decrypt ~/Syncthing/Secured/geary-profile.tar.xz.gpg
+		if [ ! -f /tmp/geary-profile.tar.xz ]; then
+			echo "Failed to decrypt"
+			exit 1
+		fi
+		rm -rf ~/.config/geary
+		xz -T 0 -dc /tmp/geary-profile.tar.xz | tar x -C ~/
+		shred -n 25 -u -z /tmp/geary-profile.tar.xz
+		;;
+	esac
+}
+
+if [ "$1" = "sync" ]; then
+	shift 1
+	app_sync "$1"
+elif [ "$1" = "restore" ]; then
+	shift 1
+	app_restore "$1"
+else
+	echo "Example: sync_app sync firefox"
+	echo "Example: sync_app restore firefox"
+	echo ""
+fi

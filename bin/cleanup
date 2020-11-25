@@ -1,0 +1,206 @@
+#!/bin/bash
+# Using bash instead of posix sh, to use arrays
+
+# -y don't ask anything
+if [[ $1 == "-y" ]]; then
+	G_SURE="y"
+else
+	G_SURE="n"
+fi
+
+read_bool_config() {
+	question=$1
+	default=$2
+	expected=$3
+
+	while true; do
+		read -p "$question  [$default]: " result
+		if [ ! -z "$result" ]; then
+			if [ ! -z "$expected" ]; then
+				if [[ $result =~ ^[yYnN]$ ]]; then
+					break
+				else
+					echo >&2 "Please reply Y or N."
+				fi
+			fi
+		elif [ ! -z "$default" ]; then
+			result=$default
+			break
+		fi
+	done
+	echo $result
+}
+
+clean_folder() {
+	dir=$1
+	if [[ ! $G_SURE =~ ^[yY]$ ]]; then
+		SURE=$(read_bool_config "Delete $dir? Y/N" "N" "Y or N")
+	else
+		SURE=$G_SURE
+	fi
+	if [[ $SURE =~ ^[yY]$ ]]; then
+		rm -rf $dir
+	fi
+}
+
+FOLDERS=(".aliases"
+	".ansible"
+	".ansible.cfg"
+	".bash_profile"
+	".bashrc"
+	".cache"
+	".clang-format"
+	".config"
+	".ctags"
+	".dbus"
+	".fzf.bash"
+	".fzf.zsh"
+	".gnupg"
+	".gitconfig"
+	".histfile"
+	".lesshst"
+	".local"
+	".localrc"
+	".mozilla"
+	".password-store"
+	".profile"
+	".purple"
+	".ssh"
+	".tmux.conf"
+	".var"
+	".vim"
+	".viminfo"
+	".vimrc"
+	".zshrc"
+	"Desktop"
+	"Documents"
+	"Downloads"
+	"Music"
+	"Pictures"
+	"Programs"
+	"Projects"
+	"Syncthing"
+	"Templates"
+	"VirtualMachines"
+	"bin"
+	"dotfiles"
+)
+pushd ~/ || exit 127
+shopt -s dotglob
+for dir in *; do
+	if [[ ! " ${FOLDERS[@]} " =~ " ${dir} " ]]; then
+		clean_folder "$dir"
+	fi
+done
+shopt -u dotglob
+popd || exit 1
+
+pushd ~/.var/app || exit 127
+APPS=$(flatpak list --all)
+if [ ! -z $APP ]; then
+	for dir in *; do
+		if ! echo "$APPS" | grep -q "$dir"; then
+			clean_folder "$dir"
+		fi
+	done
+fi
+popd || exit 1
+
+CONFIG_FOLDERS=("autostart"
+	"chromium"
+	"containers"
+	"dconf"
+	"enchant"
+	"gedit"
+	"gconf"
+	"eog"
+	"GIMP"
+	"evince"
+	"touchegg"
+	"gnome-control-center"
+	"gnome-initial-setup-done"
+	"gnome-session"
+	"goa-1.0"
+	"gtk-2.0"
+	"gtk-3.0"
+	"gtk-4.0"
+	"htop"
+	"ibus"
+	"keepassxc"
+	"leafpad"
+	"mypaint"
+	"libinput-gestures.conf"
+	"libreoffice"
+	"libvirt"
+	"menus"
+	"mimeapps.list"
+	"monitors-v1-backup.xml"
+	"monitors.xml"
+	"mpv"
+	"nautilus"
+	"pulse"
+	"session"
+	"syncthing"
+	"systemd"
+	"totem"
+	"toolbox"
+	"user-dirs.dirs"
+	"user-dirs.locale"
+)
+pushd ~/.config || exit 127
+for dir in *; do
+	if [[ ! " ${CONFIG_FOLDERS[@]} " =~ " ${dir} " ]]; then
+		clean_folder "$dir"
+	fi
+done
+popd || exit 1
+
+CONFIG_FOLDERS=("app-info"
+	"applications"
+	"backgrounds"
+	"contacts"
+	"containers"
+	"desktop-directories"
+	"doc"
+	"gedit"
+	"flatpak"
+	"leafpad"
+	"mypaint"
+	"fonts"
+	"gegl-0.4"
+	"gnome-settings-daemon"
+	"gnome-shell"
+	"gnome-software"
+	"grilo-plugins"
+	"gsettings-data-convert"
+	"gstreamer-1.0"
+	"gtk-doc"
+	"gtksourceview-3.0"
+	"gvfs-metadata"
+	"icc"
+	"icons"
+	"keyrings"
+	"libvirt"
+	"man"
+	"mime"
+	"nautilus"
+	"nautilus-python"
+	"recently-used.xbel"
+	"rhythmbox"
+	"sounds"
+	"totem"
+	"tracker"
+	"Trash"
+	"TelegramDesktop"
+	"webkitgtk"
+	"xorg"
+	"zeitgeist"
+)
+
+pushd ~/.local/share || exit 127
+for dir in *; do
+	if [[ ! " ${CONFIG_FOLDERS[@]} " =~ " ${dir} " ]]; then
+		clean_folder "$dir"
+	fi
+done
+popd || exit 1

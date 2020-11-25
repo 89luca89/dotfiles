@@ -1,0 +1,25 @@
+#!/bin/sh
+
+set -o errexit
+set -o nounset
+
+# Detect current theme
+THEME=$(gsettings get org.gnome.desktop.interface gtk-theme | sed "s/'//g")
+# Light theme variables
+LIGHT_THEME="Adwaita"
+LIGHT_ICONS="Papirus"
+# Dark theme variables
+DARK_THEME="Adwaita-dark"
+DARK_ICONS="Papirus-Dark"
+
+if echo "$THEME" | grep -iq $DARK_THEME; then
+    echo "go light"
+    THEME=$LIGHT_THEME
+    ICONS=$LIGHT_ICONS
+else
+    echo "go dark"
+    THEME=$DARK_THEME
+    ICONS=$DARK_ICONS
+fi
+gsettings set org.gnome.desktop.interface gtk-theme "$THEME"
+gsettings set org.gnome.desktop.interface icon-theme "$ICONS"
