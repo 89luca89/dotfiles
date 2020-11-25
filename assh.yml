@@ -1,0 +1,85 @@
+# Assh config file
+
+---
+#
+defaults:
+    Cipher: aes128-ctr,aes192-cbc,aes256-cb
+    Compression: yes
+    ConnectTimeout: 5
+    ControlMaster: no
+    ControlPath: ~/tmp/.ssh/cm/%h-%p-%r.sock
+    ControlPersist: no
+    GSSAPIAuthentication: no
+    GatewayTimeout: 2
+#
+hosts:
+
+    luca-lan:
+        Hostname: luca-lan.lan
+        User: root
+        Port: 22
+        ForwardAgent: yes
+        GatewayConnectTimeout: 2
+        Gateways:
+            - emergency-tunnel
+            - management
+            - tunnel
+
+    w540:
+        Hostname: localhost
+        Port: 3333
+        User: luca-linux
+        ForwardAgent: yes
+        Gateways:
+            - luca-lan
+
+    tunnel:
+        Hostname: luca-lan.mooo.com
+        Port: 50363
+        User: bastion
+        ForwardAgent: yes
+        IdentityFile: /home/luca-linux/.ssh/id_rsa_ext
+        Aliases:
+            - jump
+        Gateways:
+            - direct
+
+    fileserver:
+        Hostname: luca-lan.mooo.com
+        Port: 50364
+        User: fileserver
+        ForwardAgent: yes
+        IdentityFile: /home/luca-linux/.ssh/id_rsa_ext
+        Aliases:
+            - sftp
+        Gateways:
+            - direct
+
+    emergency-tunnel:
+        Hostname: localhost
+        Port: 2200
+        User: bastion
+        ForwardAgent: yes
+        IdentityFile: /home/luca-linux/.ssh/id_rsa_ext
+        Gateways:
+            - direct
+
+    failover:
+        Hostname: failover-luca-lan.mooo.com
+        User: bastion
+        Port: 50362
+        ForwardAgent: yes
+        IdentityFile: /home/luca-linux/.ssh/id_rsa_ext
+        GatewayConnectTimeout: 2
+        Gateways:
+            - direct
+
+    management:
+        Hostname: luca-lan.mooo.com
+        User: bastion
+        Port: 50365
+        ForwardAgent: yes
+        IdentityFile: /home/luca-linux/.ssh/id_rsa_ext
+        GatewayConnectTimeout: 2
+        Gateways:
+            - direct
