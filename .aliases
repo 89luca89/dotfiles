@@ -1,3 +1,35 @@
+get_starred_articles() {
+    curl -s  "https://luca-lan.mooo.com:50554/rss/i/?a=rss&get=s&state=3&hours=168" | grep "<link>" | grep -oE '<link>[^<]*' | sed 's/<link>//g' | sort -u
+}
+gnome-background() {
+    COLOR=$1
+    gsettings set org.gnome.desktop.background primary-color "$COLOR"
+    gsettings set org.gnome.desktop.background secondary-color "$COLOR"
+    gsettings set org.gnome.desktop.background color-shading-type 'solid'
+    gsettings set org.gnome.desktop.background picture-options 'none'
+}
+update-grub() {
+    CONFS=$(sudo find /boot -name "grub.cfg")
+    for conf in $CONFS; do
+        sudo grub2-mkconfig -o "$conf"
+    done
+    sudo dracut --force --regenerate-all -v
+    sync
+}
+update-all() {
+    sudo dnf update --refresh
+    flatpak --user update
+    flatpak --unused uninstall
+    pushd "$HOME/.vim/plugged" || exit 1
+# Reset all changes here
+    for i in *; do
+        pushd "$i"
+        git checkout .
+        popd
+    done
+    vim +PlugUpdate +PlugInstall! +qall
+    popd || exit 1
+}
 # BASIC ALIASES
 alias :q="exit"
 alias :wq="exit"
