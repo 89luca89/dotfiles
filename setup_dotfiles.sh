@@ -89,14 +89,14 @@ done
 Logger "Setup Keybindings..."
 gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/']" || true
 dconf reset -f /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/
-dconf load /org/gnome/desktop/wm/keybindings/ <"$PWD"/gnome-shell-keybindings.conf
-dconf load /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/ <"$PWD"/gnome-keybindings.conf
+dconf load /org/gnome/desktop/wm/keybindings/ <"$PWD"/gnome/gnome-shell-keybindings.conf
+dconf load /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/ <"$PWD"/gnome/gnome-keybindings.conf
 
 Logger "Setup gnome preferences..."
 gsettings set org.gnome.nautilus.preferences always-use-location-entry true || true
 gsettings set org.gnome.mutter center-new-windows true || true
-# dconf load /org/gnome/desktop/app-folders/ <$PWD/gnome-folders.conf
-dconf load /org/gnome/terminal/ <"$PWD"/gnome-terminal.conf
+dconf load /org/gnome/desktop/app-folders/ <$PWD/gnome/gnome-folders.conf
+dconf load /org/gnome/terminal/ <"$PWD"/gnome/gnome-terminal.conf
 dconf write /org/gnome/desktop/input-sources/xkb-options "['caps:ctrl_modifier']"
 dconf write /org/gnome/desktop/interface/cursor-blink 'false'
 dconf write /org/gnome/desktop/interface/show-battery-percentage 'true'

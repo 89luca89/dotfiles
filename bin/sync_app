@@ -27,7 +27,7 @@ app_sync() {
 	"xfce4")
 		[ -d ~/.config/xfce4 ] || (echo "No folder to backup" && exit 1)
 		cd ~ || exit 1
-		tar cfv - .config/xfce4/ | xz -T 0 -9e >~/dotfiles/xfce4-setup.tar.xz
+		tar cfv - .config/xfce4/ | xz -T 0 -9e >~/dotfiles/xfce/xfce4-setup.tar.xz
 		;;
 	"firefox")
 		[ -d ~/.mozilla ] || (echo "No folder to backup" && exit 1)
@@ -98,7 +98,7 @@ app_restore() {
 		shred -n 25 -u -z /tmp/pass-store.tar.xz
 		;;
 	"xfce4")
-		xz -T 0 -dc ~/dotfiles/xfce4-setup.tar.xz | tar x -C ~/
+		xz -T 0 -dc ~/dotfiles/xfce/xfce4-setup.tar.xz | tar x -C ~/
 		;;
 	"firefox")
 		gpg --output /tmp/firefox-profile.tar.xz --decrypt ~/Syncthing/Secured/firefox-profile.tar.xz.gpg
