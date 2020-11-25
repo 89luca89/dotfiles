@@ -1,11 +1,10 @@
-#!/bin/bash
+#!/bin/sh
 
 set -o errexit
 set -o nounset
-set -o pipefail
 
 for v in "$@"; do
-	if [ "$v" == "-v" ]; then
+	if [ "$v" = "-v" ]; then
 		set -o xtrace
 	fi
 done
@@ -18,7 +17,7 @@ PWD="$(
 Logger() {
 	d=$(date +"%D-%T")
 	msg=$(echo "$@" | sed ':a;N;$!ba;s/\n/ <nl> /g')
-	echo -e "\033[1m[$d] \033\033[0m \033[0;32m $@  \033[0m "
+	printf "\033[1m[%s] \033\033[0m \033[0;32m %s  \033[0m \n" "$d" "$@"
 	logger -t "$0" "$msg"
 }
 
@@ -65,16 +64,19 @@ ln -sf "$PWD"/.ctags ~/.ctags
 ln -sf "$PWD"/.tmux.conf ~/.tmux.conf
 ln -sf "$PWD"/.vimrc ~/.vimrc
 ln -sf "$PWD"/.zshrc ~/.zshrc
+ln -sf "$PWD"/assh.yml ~/.ssh/assh.yml
 ln -sf "$PWD"/libinput-gestures.conf ~/.config/libinput-gestures.conf
 ln -sf "$PWD"/mpv.conf ~/.config/mpv/mpv.conf
 ln -sf "$PWD"/systemd/* ~/.config/systemd/user/
 ln -sf "$PWD"/touchegg.conf ~/.config/touchegg/touchegg.conf
-ln -sf ~/Syncthing/Conf/.gitconfig ~/.gitconfig
-ln -sf ~/Syncthing/Conf/.histfile ~/.histfile
-ln -sf ~/Syncthing/Conf/keepassxc.ini ~/.config/keepassxc/keepassxc.ini
-ln -sf ~/Syncthing/Conf/assh.yml ~/.ssh/assh.yml
-ln -sf ~/Syncthing/Conf/dotfiles ~/
-ln -sf ~/Syncthing/Conf/Shortcuts/applications ~/.local/share/applications
+ln -sf "$PWD"/applications ~/.local/share/applications
+
+# Symlink also stuff from syncthing
+if [ -d ~/Syncthing ]; then
+	ln -sf ~/Syncthing/Conf/.gitconfig ~/.gitconfig
+	ln -sf ~/Syncthing/Conf/.histfile ~/.histfile
+	[ ! -d ~/dotfiles ] && ln -sf ~/Syncthing/Conf/dotfiles ~/
+fi
 
 Logger "Install services..."
 systemctl --user daemon-reload

@@ -37,7 +37,7 @@ trap clean 1 2 15
 Logger() {
 	d=$(date +"%D-%T")
 	msg=$(echo "$@" | sed ':a;N;$!ba;s/\n/ <nl> /g')
-	echo -e "\033[1m[$d] \033\033[0m \033[0;32m $@  \033[0m "
+	printf "\033[1m[%s] \033\033[0m \033[0;32m %s  \033[0m \n" "$d" "$@"
 	logger -t "$0" "$msg"
 }
 
