@@ -1,4 +1,5 @@
 #!/bin/bash
+# Using bash instead of posix sh, to use arrays
 
 # nvidia: sudo dnf install kmod-nvidia akmod-nvidia xorg-x11-drv-nvidia nvidia-settings nvidia-modprobe nvidia-xconfig
 # sudo cp /usr/share/X11/xorg.conf.d/nvidia.conf /etc/X11/xorg.conf.d/
@@ -67,7 +68,6 @@ declare -a PIP_PACKAGES=(
 	"pycodestyle"
 	"pydocstyle"
 	"pyflakes"
-	"pykeepass"
 	"pylint"
 	"python-jsonrpc-server"
 	"rope"

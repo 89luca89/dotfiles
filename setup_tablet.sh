@@ -1,3 +1,8 @@
+#!/bin/sh
+
+set -o errexit
+set -o nounset
+
 sudo usermod -aG luca-linux gdm
 sudo chmod 0755 /var/lib/gdm/.config/
 sudo chmod g+w /var/lib/gdm/.config/
@@ -16,7 +21,7 @@ sudo dnf install -y \
 	marker \
 	onboard
 
-echo '[Desktop Entry]
+echo "[Desktop Entry]
 Name=Fix Touch
 Comment=Fix
 Exec=/home/luca-linux/bin/fix_touch.sh
@@ -28,9 +33,9 @@ Keywords=Start again;Rotate;
 StartupNotify=true
 Hidden=true
 X-GNOME-Autostart-enabled=true
-X-GNOME-Autostart-Delay=5' | tee ~/.config/autostart/fix_touch.desktop | tee ~/.local/share/applications/fix_touch.desktop
+X-GNOME-Autostart-Delay=5" | tee ~/.config/autostart/fix_touch.desktop | tee ~/.local/share/applications/fix_touch.desktop
 
-echo '[Desktop Entry]
+echo "[Desktop Entry]
 Name=Rotate
 Comment=Rotate system
 Exec=/home/luca-linux/bin/rotate.sh
@@ -39,9 +44,9 @@ Type=Application
 Icon=rotation-allowed-symbolic
 Categories=GTK;Utility;
 Keywords=Start again;Rotate;
-StartupNotify=true' | tee ~/.local/share/applications/rotate.desktop
+StartupNotify=true" | tee ~/.local/share/applications/rotate.desktop
 
-echo '[Desktop Entry]
+echo "[Desktop Entry]
 Name=Sound Fix
 Comment=fix sound system
 Exec=/bin/sh -c 'killall gnome-shell
@@ -50,7 +55,7 @@ Terminal=true
 Type=Application
 Icon=audio-volume-high-symbolic
 Categories=GTK;Utility;
-StartupNotify=true' | tee ~/.local/share/applications/fix_sound.desktop
+StartupNotify=true" | tee ~/.local/share/applications/fix_sound.desktop
 
 echo 'Section "Device"
   Identifier "Intel Graphics"
@@ -69,11 +74,11 @@ Icon=/home/luca-linux/Syncthing/Conf/Shortcuts/applications/video-play.png
 Categories=GTK;Utility;
 StartupNotify=true' | tee ~/.local/share/applications/fix_sound.desktop
 
-pushd ~/Syncthing/Conf
+cd ~/Syncthing/Conf || exit 1
 for ext in *extension.zip; do
-	gnome-extensions install $ext --force
+	gnome-extensions install "$ext" --force
 done
-popd
+cd - || exit 1
 
 gsettings set org.onboard theme '/usr/share/onboard/themes/Droid.theme'
 gsettings set org.onboard layout '/usr/share/onboard/layouts/Compact.onboard' #Phone.onboard

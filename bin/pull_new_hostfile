@@ -1,5 +1,5 @@
 #!/bin/sh
-# Create a big hostfile that block most common ad, adware, malware and spying trackers.
+# pull_new_hostfile: create a big hostfile that block most common ad, adware, malware and spying trackers.
 
 set -o errexit
 set -o nounset

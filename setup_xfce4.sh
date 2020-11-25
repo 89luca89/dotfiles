@@ -1,3 +1,8 @@
+#!/bin/sh
+
+set -o errexit
+set -o nounset
+
 # xfconf-query -c xsettings -p /Gdk/WindowScalingFactor -s 2
 xfconf-query -c xsettings -p /Net/ThemeName -s 'Arc-Dark'
 xfconf-query -c xsettings -p /Net/IconThemeName -s 'Papirus-Dark'

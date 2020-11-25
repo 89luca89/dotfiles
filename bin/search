@@ -1,4 +1,5 @@
 #!/bin/sh
+# search: fuzzy finder based on fzf that works with Apps Files Passwords and open Windows.
 
 set -o errexit
 set -o nounset

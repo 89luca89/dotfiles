@@ -1,8 +1,7 @@
 #!/bin/bash
 # Using bash instead of posix sh, to use arrays
 #
-# lint-project: Central hub to lint, format and generate ctags for
-# multiple languages.
+# lint-project: Central hub to lint, format and generate ctags for multiple languages.
 # Support single file or entire project folders.
 #
 # Usage:
