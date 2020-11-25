@@ -142,6 +142,7 @@ declare -a TERM_PKG=(
 	"clang-tools-extra"
 	"ctags"
 	"ctags-etags"
+	"flatpak"
 	"git"
 	"git-credential-libsecret"
 	"golang"
@@ -156,6 +157,7 @@ declare -a TERM_PKG=(
 	"python3-devel"
 	"python3-pip"
 	"ripgrep"
+	"rsync"
 	"stunnel"
 	"tlp"
 	"tmux"
@@ -170,10 +172,15 @@ declare -a TERM_PKG=(
 
 declare -a DESKTOP_PKG=(
 	"arc-theme"
+	"baobab"
+	"eog"
+	"evince"
+	"file-roller"
+	"gedit"
 	"gimp"
-	"gnome-shell-extension-appindicator"
-	"gnome-shell-extension-workspace-indicator"
-	"gnome-tweaks"
+	"gnome-calculator"
+	"gnome-disk-utility"
+	"gnome-system-monitor"
 	"libreoffice-calc"
 	"libreoffice-draw"
 	"libreoffice-impress"
@@ -181,6 +188,7 @@ declare -a DESKTOP_PKG=(
 	"mpv"
 	"papirus-icon-theme"
 	"rhythmbox"
+	"simplescreenrecorder"
 	"syncthing"
 	"telegram-desktop"
 	"thunderbird"
@@ -194,7 +202,6 @@ declare -a PACKAGES_REMOVE=(
 	"PackageKit-glib"
 	"abrt"
 	"authselect-compat"
-	"baobab"
 	"catatonit"
 	"cheese"
 	"chkconfig"
@@ -260,10 +267,8 @@ declare -a PACKAGES_REMOVE=(
 	"ibus-m17n"
 	"ibus-qt"
 	"ibus-typing-booster"
-	"keybinder3"
 	"kyotocabinet-libs"
 	"langtable"
-	"libXres"
 	"libao"
 	"libbsd"
 	"libchamplain"
@@ -284,7 +289,6 @@ declare -a PACKAGES_REMOVE=(
 	"libteam"
 	"libtimezonemap"
 	"libvarlink-util"
-	"libwnck3"
 	"libzapojit"
 	"libzhuyin"
 	"lldpad"
@@ -303,7 +307,6 @@ declare -a PACKAGES_REMOVE=(
 	"open-vm-tools"
 	"open-vm-tools-desktop"
 	"openh264"
-	"openssh-askpass"
 	"orca"
 	"passwdqc-lib"
 	"pcaudiolib"
@@ -357,7 +360,6 @@ declare -a PACKAGES_REMOVE=(
 	"totem"
 	"unicode-ucd"
 	"unoconv"
-	"usermode"
 	"virtualbox-guest-additions"
 	"xmlsec1-openssl"
 	"yelp"
@@ -421,9 +423,6 @@ for line in "${DNF_FLAGS[@]}"; do
 	fi
 done
 
-Logger "Install flathub..."
-flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-
 Logger "Install rpmfusion..."
 sudo dnf install -y -q "${RPMFUSION_PKG[@]}"
 
@@ -438,6 +437,9 @@ sudo dnf install -y -q "${TERM_PKG[@]}"
 
 Logger "Install desktop tools..."
 sudo dnf install -y -q "${DESKTOP_PKG[@]}"
+
+Logger "Install flathub..."
+flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
 Logger "Install golang packages..."
 # Install golang packages
