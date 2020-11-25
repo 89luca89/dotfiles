@@ -92,6 +92,7 @@ dconf load /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/ <$P
 
 Logger "Setup gnome preferences..."
 gsettings set org.gnome.nautilus.preferences always-use-location-entry true
+gsettings set org.gnome.mutter center-new-windows true
 # dconf load /org/gnome/desktop/app-folders/ <$PWD/gnome-folders.conf
 dconf load /org/gnome/terminal/ <$PWD/gnome-terminal.conf
 dconf write /org/gnome/desktop/input-sources/xkb-options "['caps:ctrl_modifier']"
