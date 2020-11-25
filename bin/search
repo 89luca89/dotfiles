@@ -56,7 +56,8 @@ EOF
 prepare_data() {
 	# Find all files using ripgrep
 	# Exclude some of the unwanted folders
-	DATA="$DATA $(
+	DATA="$DATA
+$(
 		cd ~ || exit
 		rg --files --follow --no-ignore-vcs --sort-files \
 			-g '!{.git,*cache*,flatpak,.cache,site-packages}' 2>/dev/null |
@@ -76,8 +77,8 @@ $(
 
 	# Fetch executables from PATH
 	if [ ! -f /dev/shm/desktop-files ] ||
-		# if file is older than 60min, recreate
-		test "$(find /dev/shm/desktop-files -mmin +60)"; then
+		# if file is older than 180min, recreate
+		test "$(find /dev/shm/desktop-files -mmin +180)"; then
 
 		# Cleanup old files
 		rm -f /dev/shm/desktop-files
