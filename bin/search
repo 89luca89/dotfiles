@@ -114,7 +114,7 @@ $(cat /dev/shm/desktop-files | sort -u | sed 's/^/Program: /g')"
 
 	# Fetch open windows
 	DATA="$DATA
-$(wmctrl -l | grep -o "$(hostname).*" | sed "s/$(hostname) /Windows: /g")"
+$(wmctrl -l | grep -o "$(hostname).*" | sed "s/$(hostname) /Window: /g")"
 
 }
 
@@ -125,7 +125,7 @@ main() {
 		exit 0
 	fi
 
-	if echo "$RESULT" | grep -q "^Windows"; then
+	if echo "$RESULT" | grep -q "^Window"; then
 
 		### Focus target window
 		RESULT=$(echo "$RESULT" | cut -d":" -f2 | awk '{$1=$1};1')
