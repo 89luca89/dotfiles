@@ -87,14 +87,14 @@ done
 # Srtup gnome!
 
 Logger "Setup Keybindings..."
-gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/']"
+gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/']" || true
 dconf reset -f /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/
 dconf load /org/gnome/desktop/wm/keybindings/ <"$PWD"/gnome-shell-keybindings.conf
 dconf load /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/ <"$PWD"/gnome-keybindings.conf
 
 Logger "Setup gnome preferences..."
-gsettings set org.gnome.nautilus.preferences always-use-location-entry true
-gsettings set org.gnome.mutter center-new-windows true
+gsettings set org.gnome.nautilus.preferences always-use-location-entry true || true
+gsettings set org.gnome.mutter center-new-windows true || true
 # dconf load /org/gnome/desktop/app-folders/ <$PWD/gnome-folders.conf
 dconf load /org/gnome/terminal/ <"$PWD"/gnome-terminal.conf
 dconf write /org/gnome/desktop/input-sources/xkb-options "['caps:ctrl_modifier']"
@@ -131,3 +131,5 @@ curl -fsLo ~/.vim/autoload/plug.vim --create-dirs \
 	https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 vim -E +PlugInstall! +qall 2>/dev/null
 gnome-terminal -- tmux "uname -a" 2>/dev/null || true
+
+"$PWD"/bin/sync_app restore xfce4
