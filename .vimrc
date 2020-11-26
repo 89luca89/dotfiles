@@ -8,7 +8,7 @@ set directory=$HOME/.vim/swap
 set hlsearch incsearch ignorecase smartcase
 set mouse=a undofile undolevels=1000 undodir=$HOME/.vim/undo
 set nowrap number nomodeline ttyfast lazyredraw
-set path+=.,** wildmenu
+set path+=.,** wildmenu wildmode=list:longest,full
 set shiftwidth=4 tabstop=4 softtabstop=4
 set splitright splitbelow
 set title nocompatible nowritebackup nobackup
