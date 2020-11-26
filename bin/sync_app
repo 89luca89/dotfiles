@@ -27,7 +27,7 @@ app_sync() {
 	"xfce4")
 		[ -d ~/.config/xfce4 ] || (echo "No folder to backup" && exit 1)
 		cd ~ || exit 1
-		tar cfv - .config/xfce4/ | xz -T 0 -9e >~/dotfiles/xfce/xfce4-setup.tar.xz
+		tar cfv - .config/xfce4/ .config/Thunar | xz -T 0 -9e >~/dotfiles/xfce/xfce4-setup.tar.xz
 		git -C ~/dotfiles commit -m "xfce4: update settings" xfce/xfce4-setup.tar.xz
 		;;
 	"firefox")
@@ -101,7 +101,7 @@ app_restore() {
 		shred -n 25 -u -z /tmp/pass-store.tar.xz
 		;;
 	"xfce4")
-		rm -rf ~/.config/xfce4
+		rm -rf ~/.config/xfce4 ~/.config/Thunar
 		xz -T 0 -dc ~/dotfiles/xfce/xfce4-setup.tar.xz | tar x -C ~/
 		;;
 	"firefox")
