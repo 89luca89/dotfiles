@@ -11,6 +11,7 @@ gnome-background() {
 update-grub() {
 	CONFS=$(sudo find /boot -name "grub.cfg")
 	for conf in $CONFS; do
+	    echo $conf
 		sudo grub2-mkconfig -o "$conf"
 	done
 	sudo dracut --force --regenerate-all -v
