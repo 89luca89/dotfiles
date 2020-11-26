@@ -30,17 +30,17 @@ EOF
 
 		PASSDATA=$(/bin/pass "$RESULT")
 		USRNAME="$(echo "$PASSDATA" | grep -Ei "login:|username:|user:" | head -1 | cut -d' ' -f2-)"
-		echo "$USRNAME" | /bin/xclip -sel clip
+		echo "$USRNAME" | nohup xclip -loops 0 -sel p -sel s -sel c
 		;;
 
 	Password)
 
-		/bin/pass -c "$RESULT"
+		/bin/pass "$RESULT" | head -n1 | nohup xclip -loops 0 -sel p -sel s -sel c
 		;;
 
 	OTP)
 
-		/bin/pass otp -c "$RESULT"
+		/bin/pass otp "$RESULT" | head -n1 | nohup xclip -loops 0 -sel p -sel s -sel c
 		;;
 
 	*)
@@ -76,12 +76,7 @@ $(
 	)"
 
 	# Fetch executables from PATH
-	if [ ! -f /dev/shm/desktop-files ] ||
-		# if file is older than 180min, recreate
-		test "$(find /dev/shm/desktop-files -mmin +180)"; then
-
-		# Cleanup old files
-		rm -f /dev/shm/desktop-files
+	if [ ! -f ~/.cache/desktop-files ]; then
 
 		# We do not have a cache file, let's create it!
 		for file in $(rg --files --follow --no-ignore-vcs --sort-files --hidden ~/ /usr/share/applications/ \
@@ -99,18 +94,19 @@ $(
 					name=$(grep '^Name=' "$file" | head -1 | sed 's/^Name=//g')
 					command_name=$(grep '^Exec=' "$file" | head -1 | sed 's/^Exec=//g' | sed 's/%.*//g')
 					# Save name in file, this will be used for fzf
-					echo "$name | $command_name" >>/dev/shm/desktop-files
+					echo "$name | $command_name" >>~/.cache/desktop-files
 
 				fi
 
 			fi
+			echo "Refresh Apps | " >>~/.cache/desktop-files
 
 		done
 
 	fi
 	# Aggregate with other data
 	DATA="$DATA
-$(cat /dev/shm/desktop-files | sort -u | sed 's/^/Program: /g')"
+$(cat ~/.cache/desktop-files | sort -u | sed 's/^/Program: /g')"
 
 	# Fetch open windows
 	DATA="$DATA
@@ -135,6 +131,11 @@ main() {
 
 		### Execute the file
 		RESULT=$(echo $RESULT | cut -d":" -f2 | awk '{$1=$1};1')
+		echo "*$RESULT*"
+		if [ "$RESULT" = "Refresh Apps |" ]; then
+			rm ~/.cache/desktop-files
+			return
+		fi
 		# Retrieve original file name
 		command_exec=$(echo $RESULT | cut -d"|" -f2 | awk '{$1=$1};1')
 		# Exec
