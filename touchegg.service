@@ -24,7 +24,8 @@ Description=Touchégg
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/touchegg --client
+Group=input
+ExecStart=/usr/bin/touchegg --daemon
 Restart=always
 
 [Install]
