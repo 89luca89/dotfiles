@@ -28,6 +28,7 @@ app_sync() {
 		[ -d ~/.config/xfce4 ] || (echo "No folder to backup" && exit 1)
 		cd ~ || exit 1
 		tar cfv - .config/xfce4/ | xz -T 0 -9e >~/dotfiles/xfce/xfce4-setup.tar.xz
+		git -C ~/dotfiles commit -m "xfce4: update settings" xfce/xfce4-setup.tar.xz
 		;;
 	"firefox")
 		[ -d ~/.mozilla ] || (echo "No folder to backup" && exit 1)
@@ -85,6 +86,7 @@ app_restore() {
 			echo "Failed to decrypt"
 			exit 1
 		fi
+		rm -rf ~/.gnupg
 		xz -T 0 -dc /tmp/gnupg-keys.tar.xz | tar x -C ~/
 		shred -n 25 -u -z /tmp/gnupg-keys.tar.xz
 		;;
@@ -94,10 +96,12 @@ app_restore() {
 			echo "Failed to decrypt"
 			exit 1
 		fi
+		rm -rf ~/.password-store
 		xz -T 0 -dc /tmp/pass-store.tar.xz | tar x -C ~/
 		shred -n 25 -u -z /tmp/pass-store.tar.xz
 		;;
 	"xfce4")
+		rm -rf ~/.config/xfce4
 		xz -T 0 -dc ~/dotfiles/xfce/xfce4-setup.tar.xz | tar x -C ~/
 		;;
 	"firefox")
