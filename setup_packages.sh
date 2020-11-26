@@ -459,7 +459,7 @@ Logger "Install npm packages..."
 mkdir -p ~/.local/bin/node_modules
 for npm_pkg in "${NPM_PACKAGES[@]}"; do
 	if [ ! -f ~/.local/bin/node_modules/.bin/"$npm_pkg" ]; then
-		pushd  ~/.local/bin/
+		pushd ~/.local/bin/
 		npm install --production "$npm_pkg"
 		popd
 	fi
@@ -474,19 +474,19 @@ TERRAFORM_LS_VERSION=0.8.0
 TERRAFORM_PROVIDER_VERSION=0.6.2
 TERRAFORM_PROVIDER_RELEASE=0.6.2+git.1585292411.8cbe9ad0
 
-if ! command -v  terraform 2> /dev/null; then
+if ! command -v terraform 2>/dev/null; then
 	curl -sLo /tmp/terraform.zip https://releases.hashicorp.com/terraform/"$TERRAFORM_VERSION"/terraform_"$TERRAFORM_VERSION"_linux_amd64.zip
 	unzip /tmp/terraform.zip -d /tmp
 	mv /tmp/terraform ~/.local/bin
 fi
 
-if ! command -v  terraform-ls 2> /dev/null; then
+if ! command -v terraform-ls 2>/dev/null; then
 	curl -sLo /tmp/terraform-ls.zip https://releases.hashicorp.com/terraform-ls/"$TERRAFORM_LS_VERSION"/terraform-ls_"$TERRAFORM_LS_VERSION"_linux_amd64.zip
 	unzip /tmp/terraform-ls.zip -d /tmp
 	mv /tmp/terraform-ls ~/.local/bin
 fi
 
-  # Install Terraform Provider for Libvirt 0.6.2
+# Install Terraform Provider for Libvirt 0.6.2
 if [ ! -f ~/.terraform.d/plugins/linux_amd64/terraform-provider-libvirt ]; then
 	mkdir -p ~/.terraform.d/plugins/linux_amd64
 	curl -sLo /tmp/terraform-provider-libvirt.tar.gz https://github.com/dmacvicar/terraform-provider-libvirt/releases/download/v"$TERRAFORM_PROVIDER_VERSION"/terraform-provider-libvirt-"$TERRAFORM_PROVIDER_RELEASE".Ubuntu_18.04.amd64.tar.gz
@@ -532,8 +532,8 @@ Logger "Enable power management - grub..."
 line="quiet nmi_watchdog=0 pcie_aspm.policy=powersupersave pcie_aspm=force drm.debug=0 drm.vblankoffdelay=1 scsi_mod.use_blk_mq=1 mmc_mod.use_blk_mq=1"
 if ! grep -q "$line" /etc/default/grub 2>/dev/null; then
 	sudo sed -i "s/quiet/quiet $line/g" /etc/default/grub
-    sudo grub2-mkconfig -o /boot/grub2/grub.cfg
-    sudo dracut --force --regenerate-all -v
+	sudo grub2-mkconfig -o /boot/grub2/grub.cfg
+	sudo dracut --force --regenerate-all -v
 fi
 
 Logger "Enable power management - udev..."
@@ -588,6 +588,17 @@ Logger "Enable noatime nodiratime..."
 line="defaults,noatime,nodiratime"
 if ! grep -q "$line" /etc/fstab 2>/dev/null; then
 	sudo sed -i "s/defaults/$line/g" /etc/fstab
+fi
+
+# If we have intel graphics, set tearfree
+if glxinfo | grep Device | grep -q Intel; then
+	Logger "Setup intel tearfree..."
+	echo 'Section "Device"
+  Identifier "Intel Graphics"
+  Driver "intel"
+
+  Option "TearFree" "true"
+EndSection' | sudo tee /etc/X11/xorg.conf.d/20-intel.conf
 fi
 
 clean
