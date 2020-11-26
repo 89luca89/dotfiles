@@ -223,7 +223,6 @@ declare -a PACKAGES_REMOVE=(
 	"fipscheck-lib"
 	"frei0r-plugins"
 	"fuse-overlayfs"
-	"fwupd"
 	"gamemode"
 	"gavl"
 	"gdouros-symbola-fonts"
