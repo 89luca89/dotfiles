@@ -103,6 +103,17 @@ app_restore() {
 	"xfce4")
 		rm -rf ~/.config/xfce4 ~/.config/Thunar
 		xz -T 0 -dc ~/dotfiles/xfce/xfce4-setup.tar.xz | tar x -C ~/
+		killall -9 xfconfd || true
+		killall -9 xfce4-panel || true
+		killall -9 thunar || true
+		killall -9 xfce4-volumed-pulse || true
+		killall -9 xfdesktop || true
+		killall -9 xfce4-power-manager || true
+		killall -9 xfce4-notifyd || true
+		nohup xfce4-power-manager &
+		nohup xfce4-panel &
+		nohup /usr/lib64/xfce4/notifyd/xfce4-notifyd &
+		nohup xfwm4 --replace &
 		;;
 	"firefox")
 		gpg --output /tmp/firefox-profile.tar.xz --decrypt ~/Syncthing/Secured/firefox-profile.tar.xz.gpg
