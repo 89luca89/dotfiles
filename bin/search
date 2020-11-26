@@ -49,8 +49,6 @@ EOF
 		;;
 
 	esac
-
-	sleep 0.5
 }
 
 prepare_data() {
@@ -153,8 +151,8 @@ main() {
 		RESULT=$(echo "$RESULT" | cut -d":" -f2 | awk '{$1=$1};1')
 		setsid -f xdg-open "$RESULT" >/dev/null 2>&1 &
 	fi
+	sleep 0.3
 }
 
 prepare_data
 main
-sleep 0.3
