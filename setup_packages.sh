@@ -171,28 +171,37 @@ declare -a TERM_PKG=(
 )
 
 declare -a DESKTOP_PKG=(
-	"arc-theme"
 	"baobab"
 	"eog"
 	"evince"
 	"file-roller"
+	"geary"
 	"gedit"
 	"gimp"
 	"gnome-calculator"
 	"gnome-disk-utility"
 	"gnome-system-monitor"
+	"libpurple-devel"
 	"libreoffice-calc"
 	"libreoffice-draw"
 	"libreoffice-impress"
 	"libreoffice-writer"
 	"mpv"
+	"numix-gtk-theme"
 	"papirus-icon-theme"
+	"pidgin"
+	"pidgin-libnotify"
+	"purple-plugin_pack"
+	"purple-plugin_pack-pidgin"
+	"purple-plugin_pack-pidgin-xmms"
+	"purple-skypeweb"
+	"purple-telegram"
 	"rhythmbox"
 	"simplescreenrecorder"
 	"syncthing"
 	"telegram-desktop"
-	"thunderbird"
 	"virt-manager"
+	"https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm"
 	"https://github.com/JoseExposito/touchegg/releases/download/2.0.0/touchegg-2.0.0-1.x86_64.rpm"
 )
 
@@ -215,7 +224,6 @@ declare -a PACKAGES_REMOVE=(
 	"dmraid-events"
 	"dotconf"
 	"dracut-live"
-	"enchant"
 	"espeak-ng"
 	"fedora-chromium-config"
 	"fedora-logos-httpd"
@@ -422,20 +430,30 @@ for line in "${DNF_FLAGS[@]}"; do
 	fi
 done
 
+Logger "Remove bloat services..."
+for service in "${MASK_SERVICES[@]}"; do
+	# add || true to allow them to fail, in case they are already masked
+	systemctl --user disable --now "$service" 2>/dev/null || true
+	systemctl --user mask "$service" 2>/dev/null || true
+done
+
+Logger "Remove bloat packages..."
+sudo dnf remove -y -q "${PACKAGES_REMOVE[@]}"
+
 Logger "Install rpmfusion..."
-sudo dnf install -y -q "${RPMFUSION_PKG[@]}"
+sudo dnf --setopt=install_weak_deps=False --best install -y -q "${RPMFUSION_PKG[@]}"
 
 Logger "Install codecs..."
-sudo dnf install -y -q "${CODECS_PKG[@]}"
+sudo dnf --setopt=install_weak_deps=False --best install -y -q "${CODECS_PKG[@]}"
 
 Logger "Install archives..."
-sudo dnf install -y -q "${ARCHIVE_PKG[@]}"
+sudo dnf --setopt=install_weak_deps=False --best install -y -q "${ARCHIVE_PKG[@]}"
 
 Logger "Install term utils, devel tools..."
-sudo dnf install -y -q "${TERM_PKG[@]}"
+sudo dnf --setopt=install_weak_deps=False --best install -y -q "${TERM_PKG[@]}"
 
 Logger "Install desktop tools..."
-sudo dnf install -y -q "${DESKTOP_PKG[@]}"
+sudo dnf --setopt=install_weak_deps=False --best install -y -q "${DESKTOP_PKG[@]}"
 
 Logger "Install flathub..."
 flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
@@ -494,16 +512,6 @@ if [ ! -f ~/.terraform.d/plugins/linux_amd64/terraform-provider-libvirt ]; then
 	mv terraform-provider-libvirt ~/.terraform.d/plugins/linux_amd64/
 	~/.terraform.d/plugins/linux_amd64/terraform-provider-libvirt -version
 fi
-
-Logger "Remove bloat services..."
-for service in "${MASK_SERVICES[@]}"; do
-	# add || true to allow them to fail, in case they are already masked
-	systemctl --user disable --now "$service" 2>/dev/null || true
-	systemctl --user mask "$service" 2>/dev/null || true
-done
-
-Logger "Remove bloat packages..."
-sudo dnf remove -y -q "${PACKAGES_REMOVE[@]}"
 
 Logger "Enable touchegg..."
 sudo systemctl enable --now touchegg.service
