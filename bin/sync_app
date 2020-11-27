@@ -30,6 +30,14 @@ app_sync() {
 		tar cfv - .config/xfce4/ .config/Thunar | xz -T 0 -9e >~/dotfiles/xfce/xfce4-setup.tar.xz
 		git -C ~/dotfiles commit -m "xfce4: update settings" xfce/xfce4-setup.tar.xz
 		;;
+	"pidgin")
+		[ -d ~/.purple ] || (echo "No folder to backup" && exit 1)
+		cd ~ || exit 1
+		tar --exclude=*downloads* --exclude=.git -c -v -f - .purple | xz -T 0 -9e>/tmp/pidgin-profile.tar.xz
+		gpg --output /tmp/pidgin-profile.tar.xz.gpg --symmetric /tmp/pidgin-profile.tar.xz
+		shred -n 25 -u -z /tmp/pidgin-profile.tar.xz
+		mv /tmp/pidgin-profile.tar.xz.gpg ~/Syncthing/Secured/
+		;;
 	"firefox")
 		[ -d ~/.mozilla ] || (echo "No folder to backup" && exit 1)
 		find ~/.mozilla/ -iname "*cache*" | xargs rm -rf
@@ -99,6 +107,16 @@ app_restore() {
 		rm -rf ~/.password-store
 		xz -T 0 -dc /tmp/pass-store.tar.xz | tar x -C ~/
 		shred -n 25 -u -z /tmp/pass-store.tar.xz
+		;;
+	"pidgin")
+		gpg --output /tmp/pidgin-profile.tar.xz --decrypt ~/Syncthing/Secured/pidgin-profile.tar.xz.gpg
+		if [ ! -f /tmp/pidgin-profile.tar.xz ]; then
+			echo "Failed to decrypt"
+			exit 1
+		fi
+		rm -rf ~/.purple
+		xz -T 0 -dc /tmp/pidgin-profile.tar.xz | tar x -C ~/
+		shred -n 25 -u -z /tmp/pidgin-profile.tar.xz
 		;;
 	"xfce4")
 		rm -rf ~/.config/xfce4 ~/.config/Thunar
