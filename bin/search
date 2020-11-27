@@ -30,17 +30,19 @@ EOF
 
 		PASSDATA=$(/bin/pass "$RESULT")
 		USRNAME="$(echo "$PASSDATA" | grep -Ei "login:|username:|user:" | head -1 | cut -d' ' -f2-)"
-		echo "$USRNAME" | nohup xclip -loops 0 -sel p -sel s -sel c
+		echo -n "$USRNAME" | nohup xclip -loops 0 -sel p -sel s -sel c &
 		;;
 
 	Password)
 
-		/bin/pass "$RESULT" | head -n1 | nohup xclip -loops 0 -sel p -sel s -sel c
+		PASSDATA=$(/bin/pass "$RESULT" | head -n1)
+		echo -n "$PASSDATA" | nohup xclip -loops 0 -sel p -sel s -sel c &
 		;;
 
 	OTP)
 
-		/bin/pass otp "$RESULT" | head -n1 | nohup xclip -loops 0 -sel p -sel s -sel c
+		PASSDATA=$(/bin/pass otp "$RESULT" | head -n1)
+		echo -n "$PASSDATA" | nohup xclip -loops 0 -sel p -sel s -sel c &
 		;;
 
 	*)
@@ -57,7 +59,7 @@ prepare_data() {
 	DATA="$DATA
 $(
 		cd ~ || exit
-		rg --files --follow --no-ignore-vcs --sort-files \
+		rg --files --follow \
 			-g '!{.git,*cache*,flatpak,.cache,site-packages}' 2>/dev/null |
 			sed 's/^/Files: /g'
 	)"
@@ -66,7 +68,7 @@ $(
 	DATA="$DATA
 $(
 		cd ~ || exit
-		rg --files --follow --no-ignore-vcs --sort-files $PASSWORD_STORE \
+		rg --files --follow $PASSWORD_STORE \
 			-g '!{node_modules,.git,*cache*,flatpak,.cache,.local/lib,.local/share}' 2>/dev/null |
 			sed 's/^/Password: /g' |
 			sed "s/$PASSWORD_STORE\///g" |
@@ -77,13 +79,16 @@ $(
 	if [ ! -f ~/.cache/desktop-files ]; then
 
 		# We do not have a cache file, let's create it!
-		for file in $(rg --files --follow --no-ignore-vcs --sort-files --hidden ~/ /usr/share/applications/ \
+		for file in $(rg --files --dfa-size-limit 1G --hidden \
+			~/.local/share/applications \
+			~/.local/share/flatpak/app/*/current/active/export/ \
+			~/Programs \
+			/usr/share/applications/ \
 			-g '*.desktop' \
 			-g '!xdg' \
 			-g '!session' \
 			-g '!autostart' \
-			-g '!.stversions' \
-			-g '!app' 2>/dev/null | sort -u); do
+			-g '!.stversions' 2>/dev/null | sort -u); do
 
 			if [ -f "$file" ]; then
 
