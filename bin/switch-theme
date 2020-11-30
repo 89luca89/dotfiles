@@ -11,10 +11,10 @@ if which gsettings >/dev/null; then
 	THEME=$(gsettings get org.gnome.desktop.interface gtk-theme | sed "s/'//g")
 fi
 # Light theme variables
-LIGHT_THEME="Adwaita"
+LIGHT_THEME="Arc"
 LIGHT_ICONS="Papirus"
 # Dark theme variables
-DARK_THEME="Adwaita-dark"
+DARK_THEME="Arc-Dark"
 DARK_ICONS="Papirus-Dark"
 
 if echo "$THEME" | grep -iq $DARK_THEME; then
