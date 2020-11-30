@@ -1,9 +1,9 @@
 [Unit]
-Description=Touchégg
+Description=Claws-Mail
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/touchegg --client
+ExecStart=/home/luca-linux/.local/bin/indicator-syncthing
 Restart=always
 
 [Install]

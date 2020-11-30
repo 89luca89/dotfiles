@@ -1,9 +1,9 @@
 [Unit]
-Description=Touchégg
+Description=Claws-Mail
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/touchegg --client
+ExecStart=/bin/claws-mail --online
 Restart=always
 
 [Install]
