@@ -54,6 +54,7 @@ declare -a PIP_PACKAGES=(
 	"flake8-docstrings"
 	"flake8-eradicate"
 	"flake8-mypy"
+	"indicator-syncthing"
 	"isort"
 	"jedi"
 	"lazy-object-proxy"
@@ -123,6 +124,8 @@ declare -a CODECS_PKG=(
 	"libva-utils"
 	"libva-vdpau-driver"
 	"libvdpau-va-gl"
+	"egl-utils"
+	"egl-wayland"
 )
 
 declare -a ARCHIVE_PKG=(
@@ -148,6 +151,7 @@ declare -a TERM_PKG=(
 	"golang"
 	"htop"
 	"make"
+	"ncdu"
 	"nodejs"
 	"npm"
 	"pass"
@@ -171,11 +175,14 @@ declare -a TERM_PKG=(
 )
 
 declare -a DESKTOP_PKG=(
+	"arc-theme"
 	"baobab"
+	"claws-mail"
+	"claws-mail-plugins-address-keeper"
+	"claws-mail-plugins-notification"
 	"eog"
 	"evince"
 	"file-roller"
-	"geary"
 	"gedit"
 	"gimp"
 	"gnome-calculator"
