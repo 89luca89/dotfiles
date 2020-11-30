@@ -35,9 +35,9 @@ update-all() {
 alias update_ssh="assh config build | sed 's/%h$/%h 2> \/dev\/null/g' > ~/.ssh/config"
 alias rsyncthingD='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync -av --delete --progress -e "ssh -J luca-lan -p 2223" --exclude={.stversions,*.tmp} fileserver@raspberrypi-1.lan:/data/Syncthing/ ~/Syncthing/ && cd -'
 alias rsyncthingS='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync -av --delete --progress -e "ssh -J luca-lan -p 2223" --exclude={.stversions,*.tmp} ~/Syncthing/ fileserver@raspberrypi-1.lan:/data/Syncthing/ && cd -'
-alias chromiumSync='~/bin/get_chromium_tabs.sh > ~/Syncthing/Browsers/open_tabs.txt'
+alias chromiumSync='~/bin/dotfiles/get_chromium_tabs.sh > ~/Syncthing/Browsers/open_tabs.txt'
 alias chromiumRestore='cat ~/Syncthing/Browsers/open_tabs.txt | xargs chromium-freeworld'
-alias firefoxSync='~/bin/get_firefox_tabs.py > ~/Syncthing/Browsers/open_tabs.txt'
+alias firefoxSync='~/dotfiles/bin/get_firefox_tabs.py > ~/Syncthing/Browsers/open_tabs.txt'
 alias firefoxRestore='cat ~/Syncthing/Browsers/open_tabs.txt | xargs firefox --new-tab &'
 alias ll='ls -Ahl --group-directories-first --color'
 alias open='xdg-open'
