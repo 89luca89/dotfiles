@@ -176,15 +176,13 @@ declare -a TERM_PKG=(
 )
 
 declare -a DESKTOP_PKG=(
-	"arc-theme"
+	"baobab"
 	"evince"
 	"file-roller"
 	"geary"
 	"gimp"
-	"gnome-calculator"
 	"gnome-disk-utility"
-	"gnome-system-monitor"
-	"mousepad"
+	"libpurple-devel"
 	"libreoffice-calc"
 	"libreoffice-draw"
 	"libreoffice-impress"
@@ -199,12 +197,9 @@ declare -a DESKTOP_PKG=(
 	"purple-plugin_pack-pidgin-xmms"
 	"purple-skypeweb"
 	"purple-telegram"
-	"libpurple-devel"
-	"shotwell"
 	"simplescreenrecorder"
 	"syncthing"
 	"virt-manager"
-	"vlc"
 	"https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm"
 	"https://github.com/JoseExposito/touchegg/releases/download/2.0.0/touchegg-2.0.0-1.x86_64.rpm"
 )
