@@ -96,9 +96,10 @@ $(
 
 					name=$(grep '^Name=' "$file" | head -1 | sed 's/^Name=//g')
 					generic_name=$(grep '^GenericName=' "$file" | head -1 | sed 's/^GenericName=//g' | sed 's/%.*//g')
+					categories_names=$(grep '^Categories=' "$file" | head -1 | sed 's/^Categories=//g' | sed 's/%.*//g' | sed 's/;/ /g')
 					command_name=$(grep '^Exec=' "$file" | head -1 | sed 's/^Exec=//g' | sed 's/%.*//g')
 					# Save name in file, this will be used for fzf
-					echo "$name | $command_name | $generic_name" >>~/.cache/desktop-files
+					echo "$name | $command_name | $generic_name | $categories_names" >>~/.cache/desktop-files
 
 				fi
 
