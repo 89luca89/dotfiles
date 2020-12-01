@@ -44,7 +44,6 @@ rm -f ~/.aliases
 rm -f ~/.ansible.cfg
 rm -f ~/.bashrc
 rm -f ~/.config/keepassxc/keepassxc.ini
-rm -f ~/.config/libinput-gestures.conf
 rm -f ~/.config/mpv/mpv.conf
 rm -f ~/.config/touchegg/touchegg.conf
 rm -f ~/.ctags
@@ -65,7 +64,6 @@ ln -sf "$PWD"/.tmux.conf ~/.tmux.conf
 ln -sf "$PWD"/.vimrc ~/.vimrc
 ln -sf "$PWD"/.zshrc ~/.zshrc
 ln -sf "$PWD"/assh.yml ~/.ssh/assh.yml
-ln -sf "$PWD"/libinput-gestures.conf ~/.config/libinput-gestures.conf
 ln -sf "$PWD"/mpv.conf ~/.config/mpv/mpv.conf
 ln -sf "$PWD"/systemd/* ~/.config/systemd/user/
 ln -sf "$PWD"/touchegg.conf ~/.config/touchegg/touchegg.conf
