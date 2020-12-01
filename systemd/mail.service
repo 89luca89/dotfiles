@@ -3,7 +3,7 @@ Description=Claws-Mail
 
 [Service]
 Type=simple
-ExecStart=/bin/claws-mail --online
+ExecStart=/home/luca-linux/bin/geary_start
 Restart=always
 
 [Install]
