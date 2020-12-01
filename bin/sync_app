@@ -139,6 +139,7 @@ app_restore() {
 		nohup xfce4-power-manager &
 		nohup xfce4-panel &
 		nohup /usr/lib64/xfce4/notifyd/xfce4-notifyd &
+		nohup xfce4-volumed-pulse &
 		nohup xfwm4 --replace &
 		;;
 	"firefox")
