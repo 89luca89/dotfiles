@@ -134,6 +134,7 @@ declare -a ARCHIVE_PKG=(
 	"p7zip"
 	"p7zip-plugins"
 	"unzip"
+	"unrar"
 )
 
 declare -a TERM_PKG=(
