@@ -72,14 +72,6 @@ app_sync() {
 		shred -n 25 -u -z /tmp/thunderbird-profile.tar.xz
 		mv /tmp/thunderbird-profile.tar.xz.gpg ~/Syncthing/Secured/
 		;;
-	"sylpheed")
-		[ -d ~/.sylpheed-2.0 ] || (echo "No folder to backup" && exit 1)
-		cd ~ || exit 1
-		tar cf - .sylpheed-2.0/ | xz -T 0 -9e >/tmp/sylpheed-profile.tar.xz
-		gpg --passphrase "$password" --yes --batch --output /tmp/sylpheed-profile.tar.xz.gpg --symmetric /tmp/sylpheed-profile.tar.xz
-		shred -n 25 -u -z /tmp/sylpheed-profile.tar.xz
-		mv /tmp/sylpheed-profile.tar.xz.gpg ~/Syncthing/Secured/
-		;;
 	"geary")
 		[ -d ~/.config/geary ] || (echo "No folder to backup" && exit 1)
 		cd ~ || exit 1
@@ -88,13 +80,11 @@ app_sync() {
 		shred -n 25 -u -z /tmp/geary-profile.tar.xz
 		mv /tmp/geary-profile.tar.xz.gpg ~/Syncthing/Secured/
 		;;
-	"claws-mail")
-		[ -d ~/.claws-mail ] || (echo "No folder to backup" && exit 1)
+	"syncthing")
+		[ -d ~/.config/syncthing ] || (echo "No folder to backup" && exit 1)
 		cd ~ || exit 1
-		tar cf - --exclude=imapcache --exclude=*.bak .claws-mail | xz -T 0 -9e >/tmp/claws-profile.tar.xz
-		gpg --passphrase "$password" --yes --batch --output /tmp/claws-profile.tar.xz.gpg --symmetric /tmp/claws-profile.tar.xz
-		shred -n 25 -u -z /tmp/claws-profile.tar.xz
-		mv /tmp/claws-profile.tar.xz.gpg ~/Syncthing/Secured/
+		tar cf - .config/syncthing/ | xz -T 0 -9e >/tmp/syncthing-profile-$(hostname).tar.xz
+		mv /tmp/syncthing-profile-$(hostname).tar.xz ~/Syncthing/Secured/
 		;;
 	esac
 }
@@ -178,26 +168,6 @@ app_restore() {
 		rm -rf ~/.thunderbird
 		xz -T 0 -dc /tmp/thunderbird-profile.tar.xz | tar x -C ~/
 		shred -n 25 -u -z /tmp/thunderbird-profile.tar.xz
-		;;
-	"sylpheed")
-		gpg --output /tmp/sylpheed-profile.tar.xz --decrypt ~/Syncthing/Secured/sylpheed-profile.tar.xz.gpg
-		if [ ! -f /tmp/sylpheed-profile.tar.xz ]; then
-			echo "Failed to decrypt"
-			exit 1
-		fi
-		rm -rf ~/.sylpheed-2.0
-		xz -T 0 -dc /tmp/sylpheed-profile.tar.xz | tar x -C ~/
-		shred -n 25 -u -z /tmp/sylpheed-profile.tar.xz
-		;;
-	"claws-mail")
-		gpg --output /tmp/claws-profile.tar.xz --decrypt ~/Syncthing/Secured/claws-profile.tar.xz.gpg
-		if [ ! -f /tmp/claws-profile.tar.xz ]; then
-			echo "Failed to decrypt"
-			exit 1
-		fi
-		rm -rf ~/.claws-mail
-		xz -T 0 -dc /tmp/claws-profile.tar.xz | tar x -C ~/
-		shred -n 25 -u -z /tmp/claws-profile.tar.xz
 		;;
 	"geary")
 		gpg --output /tmp/geary-profile.tar.xz --decrypt ~/Syncthing/Secured/geary-profile.tar.xz.gpg
