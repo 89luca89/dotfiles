@@ -140,6 +140,7 @@ declare -a ARCHIVE_PKG=(
 declare -a TERM_PKG=(
 	"NetworkManager-tui"
 	"ShellCheck"
+	"acpi"
 	"android-tools"
 	"bash-completion"
 	"ccze"
@@ -152,7 +153,8 @@ declare -a TERM_PKG=(
 	"git-credential-libsecret"
 	"golang"
 	"htop"
-	"libvirt-client"
+	"libappindicator"
+	"libappindicator-gtk3"
 	"lsof"
 	"make"
 	"ncdu"
@@ -207,7 +209,6 @@ declare -a DESKTOP_PKG=(
 	"purple-telegram"
 	"simplescreenrecorder"
 	"syncthing"
-	"virt-manager"
 	"https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm"
 	"https://github.com/JoseExposito/touchegg/releases/download/2.0.0/touchegg-2.0.0-1.x86_64.rpm"
 )
@@ -647,6 +648,7 @@ fi
 
 # Install Terraform Provider for Libvirt 0.6.2
 if [ ! -f ~/.terraform.d/plugins/linux_amd64/terraform-provider-libvirt ]; then
+	sudo dnf install -y libvirt libvirt-client virt-manager qemu-kvm qemu-user libvirt-daemon-kvm libvirt-daemon-qemu
 	mkdir -p ~/.terraform.d/plugins/linux_amd64
 	curl -sLo /tmp/terraform-provider-libvirt.tar.gz https://github.com/dmacvicar/terraform-provider-libvirt/releases/download/v"$TERRAFORM_PROVIDER_VERSION"/terraform-provider-libvirt-"$TERRAFORM_PROVIDER_RELEASE".Ubuntu_18.04.amd64.tar.gz
 	tar zxvf /tmp/terraform-provider-libvirt.tar.gz
@@ -751,4 +753,5 @@ EndSection' | sudo tee /etc/X11/xorg.conf.d/20-intel.conf
 fi
 
 clean
+
 # sudo dnf install gnome-shell-extension-topicons-plus gnome-shell-extension-workspace-indicator gnome-tweaks

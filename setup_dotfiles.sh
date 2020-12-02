@@ -129,5 +129,3 @@ curl -fsLo ~/.vim/autoload/plug.vim --create-dirs \
 	https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 vim -E +PlugInstall! +qall 2>/dev/null
 gnome-terminal -- tmux "uname -a" 2>/dev/null || true
-
-"$PWD"/bin/sync_app restore xfce4
