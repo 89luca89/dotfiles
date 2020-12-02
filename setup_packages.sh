@@ -181,12 +181,14 @@ declare -a TERM_PKG=(
 )
 
 declare -a DESKTOP_PKG=(
-	"baobab"
-	"evince"
-	"file-roller"
+	"NetworkManager-fortisslvpn-gnome"
+	"NetworkManager-iodine-gnome"
+	"NetworkManager-l2tp-gnome"
+	"NetworkManager-libreswan-gnome"
+	"NetworkManager-sstp-gnome"
+	"NetworkManager-strongswan-gnome"
 	"geary"
 	"gimp"
-	"gnome-disk-utility"
 	"libpurple-devel"
 	"libreoffice-calc"
 	"libreoffice-draw"
@@ -194,7 +196,7 @@ declare -a DESKTOP_PKG=(
 	"libreoffice-impress"
 	"libreoffice-writer"
 	"mpv"
-	"numix-gtk-theme"
+	"nautilus-sendto"
 	"papirus-icon-theme"
 	"pidgin"
 	"pidgin-libnotify"
