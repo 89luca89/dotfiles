@@ -8,7 +8,7 @@ if [[ $- == *i* ]]; then
 	export EDITOR=vim
 
 	# HISTORY SIZE
-	export HISTFILE=~/Syncthing/Conf/.histfile
+	export HISTFILE=~/.histfile
 	export HISTCONTROL=ignoredups:erasedups # no duplicate entries
 	export HISTSIZE=100000                  # big big history
 	export HISTFILESIZE=100000              # big big history
@@ -31,6 +31,11 @@ if [[ $- == *i* ]]; then
 	fi
 	[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
+	if type rg &>/dev/null; then
+		export FZF_DEFAULT_COMMAND="rg --files --hidden --follow --no-ignore-vcs"
+		export FZF_DEFAULT_OPTS='-m --height 50% --border'
+	fi
+
 	# setup a simple PROMPT/PS1
 	export TERM="xterm-256color"
 	BGREEN='\[\033[01;32m\]'
@@ -38,18 +43,13 @@ if [[ $- == *i* ]]; then
 	PS_CLEAR='\[\033[0m\]'
 	PS1="${BGREEN}\u@\h${BBLUE} \W \$${PS_CLEAR} "
 
-	if [ ! -S ~/.ssh/ssh_auth_sock ]; then
-		eval $(ssh-agent)
-		ln -sf "$SSH_AUTH_SOCK" ~/.ssh/ssh_auth_sock
-	fi
-	export SSH_AUTH_SOCK=~/.ssh/ssh_auth_sock
-	ssh-add -l >/dev/null || ssh-add
-	ssh-add -l >/dev/null || ssh-add ~/.ssh/id_rsa_ext
-
-	if type rg &>/dev/null; then
-		export FZF_DEFAULT_COMMAND="rg --files --hidden --follow --no-ignore-vcs"
-		export FZF_DEFAULT_OPTS='-m --height 50% --border'
-	fi
+	# if [ ! -S ~/.ssh/ssh_auth_sock ]; then
+	# 	eval $(ssh-agent)
+	# 	ln -sf "$SSH_AUTH_SOCK" ~/.ssh/ssh_auth_sock
+	# fi
+	# export SSH_AUTH_SOCK=~/.ssh/ssh_auth_sock
+	# ssh-add -l >/dev/null || ssh-add
+	# ssh-add -l >/dev/null || ssh-add ~/.ssh/id_rsa_ext
 
 fi
 if [ -f $HOME/.aliases ]; then
