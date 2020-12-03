@@ -517,9 +517,9 @@ declare -a PACKAGES_REMOVE=(
 )
 
 declare -a MASK_SERVICES=(
-	"evolution-addressbook-factory.service"
-	"evolution-calendar-factory.service"
-	"evolution-source-registry.service"
+#	"evolution-addressbook-factory.service"
+#	"evolution-calendar-factory.service"
+#	"evolution-source-registry.service"
 	"goa-daemon.service"
 	"goa-identity-service.service"
 	"gvfs-goa-volume-monitor.service"

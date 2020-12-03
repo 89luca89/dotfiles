@@ -37,6 +37,16 @@ app_sync() {
 		tar cf - .config/xfce4/ .config/Thunar .config/Mousepad | xz -T 0 -9e >~/dotfiles/xfce/xfce4-setup.tar.xz
 		git -C ~/dotfiles commit -m "xfce4: update settings" xfce/xfce4-setup.tar.xz
 		;;
+	"gnome")
+		mkdir /tmp/bkp
+		cd /tmp/bkp || exit 1
+		for f in $(dconf list /org/gnome/ | grep -v login); do
+			dconf dump /org/gnome/$f >org.gnome.$(echo $f | cut -d'/' -f1).conf
+		done
+		tar cf - /tmp/bkp | xz -T 0 -9e > ~/dotfiles/gnome/gnome-setup.tar.xz
+		rm -rf /tmp/bkp
+		git -C ~/dotfiles commit -m "xfce4: update settings" gnome/gnome-setup.tar.xz
+		;;
 	"pidgin")
 		[ -d ~/.purple ] || (echo "No folder to backup" && exit 1)
 		cd ~ || exit 1
@@ -54,14 +64,6 @@ app_sync() {
 		gpg --passphrase "$password" --yes --batch --output /tmp/firefox-profile.tar.xz.gpg --symmetric /tmp/firefox-profile.tar.xz
 		shred -n 25 -u -z /tmp/firefox-profile.tar.xz
 		mv /tmp/firefox-profile.tar.xz.gpg ~/Syncthing/Secured/
-		;;
-	"chromium")
-		[ -d ~/.config/chromium ] || (echo "No folder to backup" && exit 1)
-		cd ~ || exit 1
-		tar cf - .config/chromium | xz -T 0 -9e >/tmp/chromium-profile.tar.xz
-		gpg --passphrase "$password" --yes --batch --output /tmp/chromium-profile.tar.xz.gpg --symmetric /tmp/chromium-profile.tar.xz
-		shred -n 25 -u -z /tmp/chromium-profile.tar.xz
-		mv /tmp/chromium-profile.tar.xz.gpg ~/Syncthing/Secured/
 		;;
 	"thunderbird")
 		[ -d ~/.thunderbird ] || (echo "No folder to backup" && exit 1)
@@ -123,6 +125,16 @@ app_restore() {
 		xz -T 0 -dc /tmp/pidgin-profile.tar.xz | tar x -C ~/
 		shred -n 25 -u -z /tmp/pidgin-profile.tar.xz
 		;;
+	"gnome")
+		rm -rf /tmp/bkp
+		xz -T 0 -dc ~/dotfiles/gnome/gnome-setup.tar.xz | tar x -C /
+		cd /tmp/bkp || exit 1
+		for file in *; do
+			dconf_path=$(echo '/'$file | sed 's/\.conf/\//g' | sed 's/\./\//g')
+			dconf load $dconf_path < $file
+		done
+		rm -rf /tmp/bkp
+		;;
 	"xfce4")
 		rm -rf ~/.config/xfce4 ~/.config/Thunar ~/.config/Mousepad
 		xz -T 0 -dc ~/dotfiles/xfce/xfce4-setup.tar.xz | tar x -C ~/
@@ -148,16 +160,6 @@ app_restore() {
 		rm -rf ~/.mozilla
 		xz -T 0 -dc /tmp/firefox-profile.tar.xz | tar x -C ~/
 		shred -n 25 -u -z /tmp/firefox-profile.tar.xz
-		;;
-	"chromium")
-		gpg --output /tmp/chromium-profile.tar.xz --decrypt ~/Syncthing/Secured/chromium-profile.tar.xz.gpg
-		if [ ! -f /tmp/chromium-profile.tar.xz ]; then
-			echo "Failed to decrypt"
-			exit 1
-		fi
-		rm -rf ~/.config/chromium
-		xz -T 0 -dc /tmp/chromium-profile.tar.xz | tar x -C ~/
-		shred -n 25 -u -z /tmp/chromium-profile.tar.xz
 		;;
 	"thunderbird")
 		gpg --output /tmp/thunderbird-profile.tar.xz --decrypt ~/Syncthing/Secured/thunderbird-profile.tar.xz.gpg
