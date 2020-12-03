@@ -11,6 +11,15 @@ app_sync() {
 		echo -n Password:
 		read -s password
 		echo
+		echo -n Retype Password:
+		read -s password_2
+		echo
+
+		if [ "$password" != "$password_2" ]; then
+			echo pass mismatch
+			exit 1
+		fi
+
 	else
 		password=$2
 	fi
@@ -43,7 +52,7 @@ app_sync() {
 		for f in $(dconf list /org/gnome/ | grep -v login); do
 			dconf dump /org/gnome/$f >org.gnome.$(echo $f | cut -d'/' -f1).conf
 		done
-		tar cf - /tmp/bkp | xz -T 0 -9e > ~/dotfiles/gnome/gnome-setup.tar.xz
+		tar cf - /tmp/bkp | xz -T 0 -9e >~/dotfiles/gnome/gnome-setup.tar.xz
 		rm -rf /tmp/bkp
 		git -C ~/dotfiles commit -m "xfce4: update settings" gnome/gnome-setup.tar.xz
 		;;
@@ -131,7 +140,7 @@ app_restore() {
 		cd /tmp/bkp || exit 1
 		for file in *; do
 			dconf_path=$(echo '/'$file | sed 's/\.conf/\//g' | sed 's/\./\//g')
-			dconf load $dconf_path < $file
+			dconf load $dconf_path <$file
 		done
 		rm -rf /tmp/bkp
 		;;

@@ -202,6 +202,7 @@ declare -a DESKTOP_PKG=(
 	"papirus-icon-theme"
 	"pidgin"
 	"pidgin-libnotify"
+	"pidgin-window-merge"
 	"purple-plugin_pack"
 	"purple-plugin_pack-pidgin"
 	"purple-plugin_pack-pidgin-xmms"
