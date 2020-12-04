@@ -1,4 +1,5 @@
 " Miscellaneous
+let &t_ut=''
 let g:python3_host_prog = '/usr/bin/python3'
 let g:python_host_prog  = '/usr/bin/python2'
 set autoindent smartindent copyindent smarttab expandtab

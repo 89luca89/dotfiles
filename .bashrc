@@ -33,7 +33,6 @@ if [[ $- == *i* ]]; then
 
 	if type rg &>/dev/null; then
 		export FZF_DEFAULT_COMMAND="rg --files --hidden --follow --no-ignore-vcs"
-		export FZF_DEFAULT_OPTS='-m --height 50% --border'
 	fi
 
 	# setup a simple PROMPT/PS1
