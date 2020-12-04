@@ -54,7 +54,7 @@ app_sync() {
 		done
 		tar cf - /tmp/bkp | xz -T 0 -9e >~/dotfiles/gnome/gnome-setup.tar.xz
 		rm -rf /tmp/bkp
-		git -C ~/dotfiles commit -m "xfce4: update settings" gnome/gnome-setup.tar.xz
+		git -C ~/dotfiles commit -m "gnome: update settings" gnome/gnome-setup.tar.xz
 		;;
 	"pidgin")
 		[ -d ~/.purple ] || (echo "No folder to backup" && exit 1)
