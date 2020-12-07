@@ -1,6 +1,6 @@
 #!/bin/sh
 # Sync target app via syncthing.
-# Create tar.xz of app config/data folder and protect it with gpg.
+# Create tar.gz of app config/data folder and protect it with gpg.
 
 set -o errexit
 # set -o nounset
@@ -27,24 +27,24 @@ app_sync() {
 	"gpg")
 		[ -d ~/.gnupg ] || (echo "No folder to backup" && exit 1)
 		cd ~ || exit 1
-		tar cf - .gnupg | xz -T 0 -9e >/tmp/gnupg-keys.tar.xz
-		gpg --passphrase "$password" --yes --batch --output /tmp/gnupg-keys.tar.xz.gpg --symmetric /tmp/gnupg-keys.tar.xz
-		shred -n 25 -u -z /tmp/gnupg-keys.tar.xz
-		mv /tmp/gnupg-keys.tar.xz.gpg ~/Syncthing/Secured/
+		tar -czf /tmp/gnupg-keys.tar.gz .gnupg
+		gpg --passphrase "$password" --yes --batch --output /tmp/gnupg-keys.tar.gz.gpg --symmetric /tmp/gnupg-keys.tar.gz
+		shred -n 25 -u -z /tmp/gnupg-keys.tar.gz
+		mv /tmp/gnupg-keys.tar.gz.gpg ~/Syncthing/Secured/
 		;;
 	"pass")
 		[ -d ~/.password-store ] || (echo "No folder to backup" && exit 1)
 		cd ~ || exit 1
-		tar cf - .password-store | xz -T 0 -9e >/tmp/pass-store.tar.xz
-		gpg --passphrase "$password" --yes --batch --output /tmp/pass-store.tar.xz.gpg --symmetric /tmp/pass-store.tar.xz
-		shred -n 25 -u -z /tmp/pass-store.tar.xz
-		mv /tmp/pass-store.tar.xz.gpg ~/Syncthing/Secured/
+		tar -czf /tmp/pass-store.tar.gz .password-store
+		gpg --passphrase "$password" --yes --batch --output /tmp/pass-store.tar.gz.gpg --symmetric /tmp/pass-store.tar.gz
+		shred -n 25 -u -z /tmp/pass-store.tar.gz
+		mv /tmp/pass-store.tar.gz.gpg ~/Syncthing/Secured/
 		;;
 	"xfce4")
 		[ -d ~/.config/xfce4 ] || (echo "No folder to backup" && exit 1)
 		cd ~ || exit 1
-		tar cf - .config/xfce4/ .config/Thunar .config/Mousepad | xz -T 0 -9e >~/dotfiles/xfce/xfce4-setup.tar.xz
-		git -C ~/dotfiles commit -m "xfce4: update settings" xfce/xfce4-setup.tar.xz
+		tar -czf ~/dotfiles/xfce/xfce4-setup.tar.gz .config/xfce4/ .config/Thunar .config/Mousepad
+		git -C ~/dotfiles commit -m "xfce4: update settings" xfce/xfce4-setup.tar.gz
 		;;
 	"gnome")
 		mkdir /tmp/bkp
@@ -52,50 +52,50 @@ app_sync() {
 		for f in $(dconf list /org/gnome/ | grep -v login); do
 			dconf dump /org/gnome/$f >org.gnome.$(echo $f | cut -d'/' -f1).conf
 		done
-		tar cf - /tmp/bkp | xz -T 0 -9e >~/dotfiles/gnome/gnome-setup.tar.xz
+		tar -czf ~/dotfiles/gnome/gnome-setup.tar.gz /tmp/bkp
 		rm -rf /tmp/bkp
-		git -C ~/dotfiles commit -m "gnome: update settings" gnome/gnome-setup.tar.xz
+		git -C ~/dotfiles commit -m "gnome: update settings" gnome/gnome-setup.tar.gz
 		;;
 	"pidgin")
 		[ -d ~/.purple ] || (echo "No folder to backup" && exit 1)
 		cd ~ || exit 1
-		tar --exclude=*downloads* --exclude=.git --exclude=icons -c -f - .purple | xz -T 1 -9e >/tmp/pidgin-profile.tar.xz
-		gpg --passphrase "$password" --yes --batch --output /tmp/pidgin-profile.tar.xz.gpg --symmetric /tmp/pidgin-profile.tar.xz
-		shred -n 25 -u -z /tmp/pidgin-profile.tar.xz
-		mv /tmp/pidgin-profile.tar.xz.gpg ~/Syncthing/Secured/
+		tar --exclude=*downloads* --exclude=.git --exclude=icons -c -z -f /tmp/pidgin-profile.tar.gz .purple
+		gpg --passphrase "$password" --yes --batch --output /tmp/pidgin-profile.tar.gz.gpg --symmetric /tmp/pidgin-profile.tar.gz
+		shred -n 25 -u -z /tmp/pidgin-profile.tar.gz
+		mv /tmp/pidgin-profile.tar.gz.gpg ~/Syncthing/Secured/
 		;;
 	"firefox")
 		[ -d ~/.mozilla ] || (echo "No folder to backup" && exit 1)
 		find ~/.mozilla/ -iname "*cache*" | xargs rm -rf
 		find .mozilla/firefox/*/storage/default/http* -iname "*.files" | xargs rm -rf
 		cd ~ || exit 1
-		tar cf - .mozilla | xz -T 0 -9e >/tmp/firefox-profile.tar.xz
-		gpg --passphrase "$password" --yes --batch --output /tmp/firefox-profile.tar.xz.gpg --symmetric /tmp/firefox-profile.tar.xz
-		shred -n 25 -u -z /tmp/firefox-profile.tar.xz
-		mv /tmp/firefox-profile.tar.xz.gpg ~/Syncthing/Secured/
+		tar -czf /tmp/firefox-profile.tar.gz .mozilla
+		gpg --passphrase "$password" --yes --batch --output /tmp/firefox-profile.tar.gz.gpg --symmetric /tmp/firefox-profile.tar.gz
+		shred -n 25 -u -z /tmp/firefox-profile.tar.gz
+		mv /tmp/firefox-profile.tar.gz.gpg ~/Syncthing/Secured/
 		;;
 	"thunderbird")
 		[ -d ~/.thunderbird ] || (echo "No folder to backup" && exit 1)
 		find ~/.thunderbird/ -iname "*cache*" | xargs rm -rf
 		cd ~ || exit 1
-		tar cf - --exclude=.thunderbird/*/extensions/lang* --exclude=.thunderbird/*-default/ImapMail .thunderbird/ | xz -T 0 -9e >/tmp/thunderbird-profile.tar.xz
-		gpg --passphrase "$password" --yes --batch --output /tmp/thunderbird-profile.tar.xz.gpg --symmetric /tmp/thunderbird-profile.tar.xz
-		shred -n 25 -u -z /tmp/thunderbird-profile.tar.xz
-		mv /tmp/thunderbird-profile.tar.xz.gpg ~/Syncthing/Secured/
+		tar -c -z -f /tmp/thunderbird-profile.tar.gz --exclude=.thunderbird/*/extensions/lang* --exclude=.thunderbird/*-default/ImapMail .thunderbird/
+		gpg --passphrase "$password" --yes --batch --output /tmp/thunderbird-profile.tar.gz.gpg --symmetric /tmp/thunderbird-profile.tar.gz
+		shred -n 25 -u -z /tmp/thunderbird-profile.tar.gz
+		mv /tmp/thunderbird-profile.tar.gz.gpg ~/Syncthing/Secured/
 		;;
 	"geary")
 		[ -d ~/.config/geary ] || (echo "No folder to backup" && exit 1)
 		cd ~ || exit 1
-		tar cf - .config/geary/ | xz -T 0 -9e >/tmp/geary-profile.tar.xz
-		gpg --passphrase "$password" --yes --batch --output /tmp/geary-profile.tar.xz.gpg --symmetric /tmp/geary-profile.tar.xz
-		shred -n 25 -u -z /tmp/geary-profile.tar.xz
-		mv /tmp/geary-profile.tar.xz.gpg ~/Syncthing/Secured/
+		tar -czf /tmp/geary-profile.tar.gz .config/geary/
+		gpg --passphrase "$password" --yes --batch --output /tmp/geary-profile.tar.gz.gpg --symmetric /tmp/geary-profile.tar.gz
+		shred -n 25 -u -z /tmp/geary-profile.tar.gz
+		mv /tmp/geary-profile.tar.gz.gpg ~/Syncthing/Secured/
 		;;
 	"syncthing")
 		[ -d ~/.config/syncthing ] || (echo "No folder to backup" && exit 1)
 		cd ~ || exit 1
-		tar cf - .config/syncthing/ | xz -T 0 -9e >/tmp/syncthing-profile-$(hostname).tar.xz
-		mv /tmp/syncthing-profile-$(hostname).tar.xz ~/Syncthing/Secured/
+		tar -czf /tmp/syncthing-profile-$(hostname).tar.gz .config/syncthing/
+		mv /tmp/syncthing-profile-$(hostname).tar.gz ~/Syncthing/Secured/
 		;;
 	esac
 }
@@ -105,38 +105,38 @@ app_restore() {
 	TARGET=$1
 	case "$TARGET" in
 	"gpg")
-		gpg --output /tmp/gnupg-keys.tar.xz --decrypt ~/Syncthing/Secured/gnupg-keys.tar.xz.gpg
-		if [ ! -f /tmp/gnupg-keys.tar.xz ]; then
+		gpg --output /tmp/gnupg-keys.tar.gz --decrypt ~/Syncthing/Secured/gnupg-keys.tar.gz.gpg
+		if [ ! -f /tmp/gnupg-keys.tar.gz ]; then
 			echo "Failed to decrypt"
 			exit 1
 		fi
 		rm -rf ~/.gnupg
-		xz -T 0 -dc /tmp/gnupg-keys.tar.xz | tar x -C ~/
-		shred -n 25 -u -z /tmp/gnupg-keys.tar.xz
+		tar -xzf /tmp/gnupg-keys.tar.gz -C ~/
+		shred -n 25 -u -z /tmp/gnupg-keys.tar.gz
 		;;
 	"pass")
-		gpg --output /tmp/pass-store.tar.xz --decrypt ~/Syncthing/Secured/pass-store.tar.xz.gpg
-		if [ ! -f /tmp/pass-store.tar.xz ]; then
+		gpg --output /tmp/pass-store.tar.gz --decrypt ~/Syncthing/Secured/pass-store.tar.gz.gpg
+		if [ ! -f /tmp/pass-store.tar.gz ]; then
 			echo "Failed to decrypt"
 			exit 1
 		fi
 		rm -rf ~/.password-store
-		xz -T 0 -dc /tmp/pass-store.tar.xz | tar x -C ~/
-		shred -n 25 -u -z /tmp/pass-store.tar.xz
+		tar -xzf /tmp/pass-store.tar.gz -C ~/
+		shred -n 25 -u -z /tmp/pass-store.tar.gz
 		;;
 	"pidgin")
-		gpg --output /tmp/pidgin-profile.tar.xz --decrypt ~/Syncthing/Secured/pidgin-profile.tar.xz.gpg
-		if [ ! -f /tmp/pidgin-profile.tar.xz ]; then
+		gpg --output /tmp/pidgin-profile.tar.gz --decrypt ~/Syncthing/Secured/pidgin-profile.tar.gz.gpg
+		if [ ! -f /tmp/pidgin-profile.tar.gz ]; then
 			echo "Failed to decrypt"
 			exit 1
 		fi
 		rm -rf ~/.purple
-		xz -T 0 -dc /tmp/pidgin-profile.tar.xz | tar x -C ~/
-		shred -n 25 -u -z /tmp/pidgin-profile.tar.xz
+		tar -xzf /tmp/pidgin-profile.tar.gz -C ~/
+		shred -n 25 -u -z /tmp/pidgin-profile.tar.gz
 		;;
 	"gnome")
 		rm -rf /tmp/bkp
-		xz -T 0 -dc ~/dotfiles/gnome/gnome-setup.tar.xz | tar x -C /
+		tar -xzf ~/dotfiles/gnome/gnome-setup.tar.gz -C /
 		cd /tmp/bkp || exit 1
 		for file in *; do
 			dconf_path=$(echo '/'$file | sed 's/\.conf/\//g' | sed 's/\./\//g')
@@ -146,7 +146,7 @@ app_restore() {
 		;;
 	"xfce4")
 		rm -rf ~/.config/xfce4 ~/.config/Thunar ~/.config/Mousepad
-		xz -T 0 -dc ~/dotfiles/xfce/xfce4-setup.tar.xz | tar x -C ~/
+		tar -xzf ~/dotfiles/xfce/xfce4-setup.tar.gz -C ~/
 		killall -9 xfconfd || true
 		killall -9 xfce4-panel || true
 		killall -9 thunar || true
@@ -161,34 +161,34 @@ app_restore() {
 		nohup xfwm4 --replace &
 		;;
 	"firefox")
-		gpg --output /tmp/firefox-profile.tar.xz --decrypt ~/Syncthing/Secured/firefox-profile.tar.xz.gpg
-		if [ ! -f /tmp/firefox-profile.tar.xz ]; then
+		gpg --output /tmp/firefox-profile.tar.gz --decrypt ~/Syncthing/Secured/firefox-profile.tar.gz.gpg
+		if [ ! -f /tmp/firefox-profile.tar.gz ]; then
 			echo "Failed to decrypt"
 			exit 1
 		fi
 		rm -rf ~/.mozilla
-		xz -T 0 -dc /tmp/firefox-profile.tar.xz | tar x -C ~/
-		shred -n 25 -u -z /tmp/firefox-profile.tar.xz
+		tar -xzf /tmp/firefox-profile.tar.gz -C ~/
+		shred -n 25 -u -z /tmp/firefox-profile.tar.gz
 		;;
 	"thunderbird")
-		gpg --output /tmp/thunderbird-profile.tar.xz --decrypt ~/Syncthing/Secured/thunderbird-profile.tar.xz.gpg
-		if [ ! -f /tmp/thunderbird-profile.tar.xz ]; then
+		gpg --output /tmp/thunderbird-profile.tar.gz --decrypt ~/Syncthing/Secured/thunderbird-profile.tar.gz.gpg
+		if [ ! -f /tmp/thunderbird-profile.tar.gz ]; then
 			echo "Failed to decrypt"
 			exit 1
 		fi
 		rm -rf ~/.thunderbird
-		xz -T 0 -dc /tmp/thunderbird-profile.tar.xz | tar x -C ~/
-		shred -n 25 -u -z /tmp/thunderbird-profile.tar.xz
+		tar -xzf  /tmp/thunderbird-profile.tar.gz -C ~/
+		shred -n 25 -u -z /tmp/thunderbird-profile.tar.gz
 		;;
 	"geary")
-		gpg --output /tmp/geary-profile.tar.xz --decrypt ~/Syncthing/Secured/geary-profile.tar.xz.gpg
-		if [ ! -f /tmp/geary-profile.tar.xz ]; then
+		gpg --output /tmp/geary-profile.tar.gz --decrypt ~/Syncthing/Secured/geary-profile.tar.gz.gpg
+		if [ ! -f /tmp/geary-profile.tar.gz ]; then
 			echo "Failed to decrypt"
 			exit 1
 		fi
 		rm -rf ~/.config/geary
-		xz -T 0 -dc /tmp/geary-profile.tar.xz | tar x -C ~/
-		shred -n 25 -u -z /tmp/geary-profile.tar.xz
+		tar -xzf /tmp/geary-profile.tar.gz -C ~/
+		shred -n 25 -u -z /tmp/geary-profile.tar.gz
 		;;
 	esac
 }
