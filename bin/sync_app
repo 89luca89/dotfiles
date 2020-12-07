@@ -59,7 +59,7 @@ app_sync() {
 	"pidgin")
 		[ -d ~/.purple ] || (echo "No folder to backup" && exit 1)
 		cd ~ || exit 1
-		tar --exclude=*downloads* --exclude=.git --exclude=icons --exclude=logs -c -f - .purple | xz -T 0 -9e >/tmp/pidgin-profile.tar.xz
+		tar --exclude=*downloads* --exclude=.git --exclude=icons -c -f - .purple | xz -T 1 -9e >/tmp/pidgin-profile.tar.xz
 		gpg --passphrase "$password" --yes --batch --output /tmp/pidgin-profile.tar.xz.gpg --symmetric /tmp/pidgin-profile.tar.xz
 		shred -n 25 -u -z /tmp/pidgin-profile.tar.xz
 		mv /tmp/pidgin-profile.tar.xz.gpg ~/Syncthing/Secured/
