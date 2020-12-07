@@ -64,16 +64,6 @@ hosts:
         Gateways:
             - direct
 
-    failover:
-        Hostname: failover-luca-lan.mooo.com
-        User: bastion
-        Port: 50362
-        ForwardAgent: yes
-        IdentityFile: /home/luca-linux/.ssh/id_rsa_ext
-        GatewayConnectTimeout: 2
-        Gateways:
-            - direct
-
     management:
         Hostname: luca-lan.mooo.com
         User: bastion
