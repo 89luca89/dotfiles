@@ -8,10 +8,10 @@ set -o errexit
 app_sync() {
 	TARGET=$1
 	if [ -z $2 ]; then
-		echo -n Password:
+		echo -n "Password: "
 		read -s password
 		echo
-		echo -n Retype Password:
+		echo -n "Retype Password: "
 		read -s password_2
 		echo
 
