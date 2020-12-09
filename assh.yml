@@ -34,7 +34,7 @@ hosts:
             - luca-lan
 
     tunnel:
-        Hostname: luca-lan.mooo.com
+        Hostname: luca-lan.privatedns.org
         Port: 50363
         User: bastion
         ForwardAgent: yes
@@ -45,7 +45,7 @@ hosts:
             - direct
 
     fileserver:
-        Hostname: luca-lan.mooo.com
+        Hostname: luca-lan.privatedns.org
         Port: 50364
         User: fileserver
         ForwardAgent: yes
@@ -65,7 +65,7 @@ hosts:
             - direct
 
     management:
-        Hostname: luca-lan.mooo.com
+        Hostname: luca-lan.privatedns.org
         User: bastion
         Port: 50365
         ForwardAgent: yes
