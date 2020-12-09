@@ -83,19 +83,13 @@ app_sync() {
 		shred -n 25 -u -z /tmp/thunderbird-profile.tar.gz
 		mv /tmp/thunderbird-profile.tar.gz.gpg ~/Syncthing/Secured/
 		;;
-	"geary")
-		[ -d ~/.config/geary ] || (echo "No folder to backup" && exit 1)
-		cd ~ || exit 1
-		tar -czf /tmp/geary-profile.tar.gz .config/geary/
-		gpg --passphrase "$password" --yes --batch --output /tmp/geary-profile.tar.gz.gpg --symmetric /tmp/geary-profile.tar.gz
-		shred -n 25 -u -z /tmp/geary-profile.tar.gz
-		mv /tmp/geary-profile.tar.gz.gpg ~/Syncthing/Secured/
-		;;
 	"syncthing")
 		[ -d ~/.config/syncthing ] || (echo "No folder to backup" && exit 1)
 		cd ~ || exit 1
 		tar -czf /tmp/syncthing-profile-$(hostname).tar.gz .config/syncthing/
-		mv /tmp/syncthing-profile-$(hostname).tar.gz ~/Syncthing/Secured/
+		gpg --passphrase "$password" --yes --batch --output /tmp/syncthing-profile-$(hostname).tar.gz.gpg --symmetric /tmp/syncthing-profile-$(hostname).tar.gz
+		shred -n 25 -u -z /tmp/syncthing-profile-$(hostname).tar.gz
+		mv /tmp/syncthing-profile-$(hostname).tar.gz.gpg ~/Syncthing/Secured/
 		;;
 	esac
 }
@@ -124,26 +118,6 @@ app_restore() {
 		tar -xzf /tmp/pass-store.tar.gz -C ~/
 		shred -n 25 -u -z /tmp/pass-store.tar.gz
 		;;
-	"pidgin")
-		gpg --output /tmp/pidgin-profile.tar.gz --decrypt ~/Syncthing/Secured/pidgin-profile.tar.gz.gpg
-		if [ ! -f /tmp/pidgin-profile.tar.gz ]; then
-			echo "Failed to decrypt"
-			exit 1
-		fi
-		rm -rf ~/.purple
-		tar -xzf /tmp/pidgin-profile.tar.gz -C ~/
-		shred -n 25 -u -z /tmp/pidgin-profile.tar.gz
-		;;
-	"gnome")
-		rm -rf /tmp/bkp
-		tar -xzf ~/dotfiles/gnome/gnome-setup.tar.gz -C /
-		cd /tmp/bkp || exit 1
-		for file in *; do
-			dconf_path=$(echo '/'$file | sed 's/\.conf/\//g' | sed 's/\./\//g')
-			dconf load $dconf_path <$file
-		done
-		rm -rf /tmp/bkp
-		;;
 	"xfce4")
 		rm -rf ~/.config/xfce4 ~/.config/Thunar ~/.config/Mousepad
 		tar -xzf ~/dotfiles/xfce/xfce4-setup.tar.gz -C ~/
@@ -159,6 +133,26 @@ app_restore() {
 		nohup /usr/lib64/xfce4/notifyd/xfce4-notifyd &
 		nohup xfce4-volumed-pulse &
 		nohup xfwm4 --replace &
+		;;
+	"gnome")
+		rm -rf /tmp/bkp
+		tar -xzf ~/dotfiles/gnome/gnome-setup.tar.gz -C /
+		cd /tmp/bkp || exit 1
+		for file in *; do
+			dconf_path=$(echo '/'$file | sed 's/\.conf/\//g' | sed 's/\./\//g')
+			dconf load $dconf_path <$file
+		done
+		rm -rf /tmp/bkp
+		;;
+	"pidgin")
+		gpg --output /tmp/pidgin-profile.tar.gz --decrypt ~/Syncthing/Secured/pidgin-profile.tar.gz.gpg
+		if [ ! -f /tmp/pidgin-profile.tar.gz ]; then
+			echo "Failed to decrypt"
+			exit 1
+		fi
+		rm -rf ~/.purple
+		tar -xzf /tmp/pidgin-profile.tar.gz -C ~/
+		shred -n 25 -u -z /tmp/pidgin-profile.tar.gz
 		;;
 	"firefox")
 		gpg --output /tmp/firefox-profile.tar.gz --decrypt ~/Syncthing/Secured/firefox-profile.tar.gz.gpg
@@ -180,15 +174,17 @@ app_restore() {
 		tar -xzf  /tmp/thunderbird-profile.tar.gz -C ~/
 		shred -n 25 -u -z /tmp/thunderbird-profile.tar.gz
 		;;
-	"geary")
-		gpg --output /tmp/geary-profile.tar.gz --decrypt ~/Syncthing/Secured/geary-profile.tar.gz.gpg
-		if [ ! -f /tmp/geary-profile.tar.gz ]; then
+	"syncthing")
+		systemctl stop --user syncthing
+		gpg --output /tmp/syncthing-profile-$(hostname).tar.gz --decrypt ~/Syncthing/Secured/syncthing-profile-$(hostname).tar.gz.gpg
+		if [ ! -f /tmp/syncthing-profile-$(hostname).tar.gz ]; then
 			echo "Failed to decrypt"
 			exit 1
 		fi
-		rm -rf ~/.config/geary
-		tar -xzf /tmp/geary-profile.tar.gz -C ~/
-		shred -n 25 -u -z /tmp/geary-profile.tar.gz
+		rm -rf ~/.config/syncthing
+		tar -xzf  /tmp/syncthing-profile-$(hostname).tar.gz -C ~/
+		shred -n 25 -u -z /tmp/syncthing-profile-$(hostname).tar.gz
+		systemctl restart --user syncthing
 		;;
 	esac
 }
