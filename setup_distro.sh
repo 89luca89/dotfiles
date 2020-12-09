@@ -287,7 +287,4 @@ if glxinfo | grep Device | grep -q Intel; then
 EndSection' | sudo tee /etc/X11/xorg.conf.d/20-intel.conf
 fi
 
-# sudo dnf install gnome-shell-extension-topicons-plus gnome-shell-extension-workspace-indicator gnome-tweaks
-# sudo dnf install libvirt libvirt-client virt-manager qemu-kvm qemu-user libvirt-daemon-kvm libvirt-daemon-qemu podman
-
 ~/dotfiles/setup_packages_"$(cat /etc/os-release | grep ^NAME | cut -d"=" -f2 | tr '[:upper:]' '[:lower:]')".sh
