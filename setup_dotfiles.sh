@@ -82,19 +82,31 @@ for user_service in $(ls -1 "$PWD"/systemd/); do
 	systemctl --user enable --now "$user_service"
 done
 
-# Srtup gnome!
+declare -a MASK_SERVICES=(
+	"evolution-addressbook-factory.service"
+	"evolution-calendar-factory.service"
+	"evolution-source-registry.service"
+	"goa-daemon.service"
+	"goa-identity-service.service"
+	"gvfs-goa-volume-monitor.service"
+	"tracker-extract.service"
+	"tracker-miner-fs.service"
+	"tracker-miner-fs-3.service"
+	"tracker-miner-rss.service"
+	"tracker-store.service"
+	"tracker-writeback.service"
+)
 
-Logger "Setup Keybindings..."
-gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/', '/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom1/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom2/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom3/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom4/','/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom5/']" || true
-dconf reset -f /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/
-dconf load /org/gnome/desktop/wm/keybindings/ <"$PWD"/gnome/gnome-mutter-keybindings.conf
-dconf load /org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/ <"$PWD"/gnome/gnome-keybindings.conf
-dconf load /org/gnome/shell/keybindings/ <"$PWD"/gnome/gnome-shell-keybindings.conf
+Logger "Remove bloat services..."
+for service in "${MASK_SERVICES[@]}"; do
+	# add || true to allow them to fail, in case they are already masked
+	systemctl --user disable --now "$service" 2>/dev/null || true
+	systemctl --user mask "$service" 2>/dev/null || true
+done
 
 Logger "Setup gnome preferences..."
 gsettings set org.gnome.nautilus.preferences always-use-location-entry true || true
 gsettings set org.gnome.mutter center-new-windows true || true
-dconf load /org/gnome/terminal/ <"$PWD"/gnome/gnome-terminal.conf
 dconf write /org/gnome/desktop/input-sources/xkb-options "['caps:ctrl_modifier']"
 dconf write /org/gnome/desktop/interface/cursor-blink 'false'
 dconf write /org/gnome/desktop/interface/show-battery-percentage 'true'
