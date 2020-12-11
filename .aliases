@@ -52,6 +52,7 @@ alias diff="diff --color=always"
 alias gogetsys="export GOPATH=~/.local/go; go get"
 alias gnome-reload='DISPLAY=:0 xdotool key Alt+F2; sleep 1; DISPLAY=:0 xdotool key r;DISPLAY=:0  xdotool key Return'
 alias git-clean="git fetch -p && git branch -vv | awk '/: gone]/{print $1}' | xargs git branch -d"
+alias htop="top -o %CPU"
 export PATH=/bin:$PATH
 export PATH=$HOME/bin:$PATH
 export PATH=$HOME/dotfiles/bin:$PATH
