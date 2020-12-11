@@ -71,7 +71,7 @@ app_sync() {
 	"pidgin")
 		[ -d ~/.purple ] || (echo "No folder to backup" && exit 1)
 		cd ~ || exit 1
-		tar --exclude=*downloads* --exclude=.git --exclude=icons -c -z -f /tmp/pidgin-profile.tar.gz .purple
+		tar --exclude=certificates --exclude=*downloads* --exclude=icons -c -z -f /tmp/pidgin-profile.tar.gz .purple
 		gpg --passphrase "$password" --yes --batch --output /tmp/pidgin-profile.tar.gz.gpg --symmetric /tmp/pidgin-profile.tar.gz
 		shred -n 25 -u -z /tmp/pidgin-profile.tar.gz
 		mv /tmp/pidgin-profile.tar.gz.gpg ~/Syncthing/Secured/
@@ -162,7 +162,6 @@ app_restore() {
 			echo "Failed to decrypt"
 			exit 1
 		fi
-		rm -rf ~/.purple
 		tar -xzf /tmp/pidgin-profile.tar.gz -C ~/
 		shred -n 25 -u -z /tmp/pidgin-profile.tar.gz
 		;;
