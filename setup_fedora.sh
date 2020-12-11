@@ -134,7 +134,6 @@ declare -a DESKTOP_PKG=(
 	"libreoffice-impress"
 	"libreoffice-writer"
 	"mpv"
-	"papirus-icon-theme"
 	"pass"
 	"pass-otp"
 	"pass-pwned"
@@ -183,6 +182,7 @@ declare -a PACKAGES_REMOVE=(
 	"setroubleshoot*"
 	"tracker"
 	"tracker-miners"
+	"yelp*"
 )
 
 declare -a DNF_FLAGS=(
