@@ -31,6 +31,10 @@ update-all() {
 	vim +PlugUpdate +PlugInstall! +qall
 	popd || exit 1
 }
+rclone_clear_mount() {
+    mkdir -p $2
+    rclone mount Local-Crypt:$1 $2
+}
 # BASIC ALIASES
 alias update_ssh="assh config build | sed 's/%h$/%h 2> \/dev\/null/g' > ~/.ssh/config"
 alias rsyncthingD='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync -av --delete --progress -e "ssh -J luca-lan -p 2223" --exclude={.stversions,*.tmp} fileserver@raspberrypi-1.lan:/data/Syncthing/ ~/Syncthing/ && cd -'
