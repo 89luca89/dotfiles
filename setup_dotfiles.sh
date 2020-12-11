@@ -60,6 +60,7 @@ ln -sf "$PWD"/.ansible.cfg ~/.ansible.cfg
 ln -sf "$PWD"/.bashrc ~/.bashrc
 ln -sf "$PWD"/.ctags ~/.ctags
 ln -sf "$PWD"/.tmux.conf ~/.tmux.conf
+ln -sf "$PWD"/.toprc ~/.toprc
 ln -sf "$PWD"/.vimrc ~/.vimrc
 ln -sf "$PWD"/.zshrc ~/.zshrc
 ln -sf "$PWD"/assh.yml ~/.ssh/assh.yml
