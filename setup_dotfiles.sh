@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 set -o errexit
 set -o nounset
@@ -126,15 +126,6 @@ dconf write /org/gnome/nautilus/preferences/show-delete-permanently 'true'
 
 # Restore app grid alphabetically
 gsettings reset org.gnome.shell app-picker-layout || true # allow it to fail on older gnome versions
-
-if rpm -qa | grep papirus >/dev/null; then
-	Logger "Setting Icon theme..."
-	gsettings set org.gnome.desktop.interface icon-theme "Papirus-Dark"
-fi
-if rpm -qa | grep arc-theme >/dev/null; then
-	Logger "Setting GTK theme..."
-	gsettings set org.gnome.desktop.interface gtk-theme "Arc-Dark-solid"
-fi
 
 Logger "Setup Vim..."
 curl -fsLo ~/.vim/autoload/plug.vim --create-dirs \

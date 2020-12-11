@@ -123,13 +123,6 @@ for line in "${GLOBAL_VARIABLES[@]}"; do
 	fi
 done
 
-Logger "Add dnf flags..."
-for line in "${DNF_FLAGS[@]}"; do
-	if ! grep -q "$line" /etc/dnf/dnf.conf 2>/dev/null; then
-		echo "$line" | sudo tee -a /etc/dnf/dnf.conf
-	fi
-done
-
 Logger "Remove bloat services..."
 for service in "${MASK_SERVICES[@]}"; do
 	# add || true to allow them to fail, in case they are already masked
@@ -137,7 +130,7 @@ for service in "${MASK_SERVICES[@]}"; do
 	systemctl --user mask "$service" 2>/dev/null || true
 done
 
-Logger "Install user flathub..."
+# Logger "Install user flathub..."
 flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
 Logger "Install golang user packages..."
@@ -286,5 +279,3 @@ if glxinfo | grep Device | grep -q Intel; then
   Option "TearFree" "true"
 EndSection' | sudo tee /etc/X11/xorg.conf.d/20-intel.conf
 fi
-
-~/dotfiles/setup_packages_"$(cat /etc/os-release | grep ^NAME | cut -d"=" -f2 | tr '[:upper:]' '[:lower:]')".sh

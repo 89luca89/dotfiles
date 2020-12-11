@@ -219,13 +219,13 @@ sudo dnf --setopt=install_weak_deps=False --best install -y -q "${TERM_PKG[@]}"
 Logger "Install desktop tools..."
 sudo dnf --setopt=install_weak_deps=False --best install -y -q "${DESKTOP_PKG[@]}"
 
-if rpm -qa | grep papirus >/dev/null; then
-	Logger "Install gnome-shell packages..."
-	sudo dnf --setopt=install_weak_deps=False --best install -y -q \
-		gnome-shell-extension-topicons-plus \
-		gnome-shell-extension-workspace-indicator \
-		gnome-tweaks
-fi
-# sudo dnf install libvirt libvirt-client virt-manager qemu-kvm qemu-user libvirt-daemon-kvm libvirt-daemon-qemu podman
+Logger "Install gnome-shell packages..."
+sudo dnf --setopt=install_weak_deps=False --best install -y -q \
+	gnome-shell-extension-topicons-plus \
+	gnome-shell-extension-workspace-indicator \
+	gnome-tweaks
 
+~/dotfiles/setup_distro.sh
 ~/dotfiles/setup_dotfiles.sh
+
+# sudo dnf install libvirt libvirt-client virt-manager qemu-kvm qemu-user libvirt-daemon-kvm libvirt-daemon-qemu podman
