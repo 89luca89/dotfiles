@@ -24,13 +24,25 @@ app_sync() {
 		password=$2
 	fi
 	case "$TARGET" in
+	"ssh")
+		[ -d ~/.ssh ] || (echo "No folder to backup" && exit 1)
+		cd ~ || exit 1
+		tar -czf /tmp/ssh-keys.tar.gz .ssh
+		gpg --passphrase "$password" --yes --batch --output /tmp/ssh-keys.tar.gz.gpg --symmetric /tmp/ssh-keys.tar.gz
+		shred -n 25 -u -z /tmp/ssh-keys.tar.gz
+		cp /tmp/ssh-keys.tar.gz.gpg ~/Syncthing/Secured/
+		mv /tmp/ssh-keys.tar.gz.gpg ~/.password-store/
+		git -C ~/.password-store commit -m "Update" ssh-keys.tar.gz.gpg
+		;;
 	"gpg")
 		[ -d ~/.gnupg ] || (echo "No folder to backup" && exit 1)
 		cd ~ || exit 1
 		tar -czf /tmp/gnupg-keys.tar.gz .gnupg
 		gpg --passphrase "$password" --yes --batch --output /tmp/gnupg-keys.tar.gz.gpg --symmetric /tmp/gnupg-keys.tar.gz
 		shred -n 25 -u -z /tmp/gnupg-keys.tar.gz
-		mv /tmp/gnupg-keys.tar.gz.gpg ~/Syncthing/Secured/
+		cp /tmp/gnupg-keys.tar.gz.gpg ~/Syncthing/Secured/
+		mv /tmp/gnupg-keys.tar.gz.gpg ~/.password-store/
+		git -C ~/.password-store commit -m "Update" gnupg-keys.tar.gz.gpg
 		;;
 	"pass")
 		[ -d ~/.password-store ] || (echo "No folder to backup" && exit 1)
