@@ -1,10 +1,6 @@
 #!/bin/bash
 # Using bash instead of posix sh, to use arrays
 
-# nvidia: sudo dnf install kmod-nvidia akmod-nvidia xorg-x11-drv-nvidia nvidia-settings nvidia-modprobe nvidia-xconfig
-# sudo cp /usr/share/X11/xorg.conf.d/nvidia.conf /etc/X11/xorg.conf.d/
-# sudo sed -i '/^EndSection/i \\tOption "PrimaryGPU" "yes"' /etc/X11/xorg.conf.d/nvidia.conf
-
 set -o errexit
 set -o nounset
 set -o pipefail
@@ -121,13 +117,6 @@ for line in "${GLOBAL_VARIABLES[@]}"; do
 	if ! grep -q "$line" /etc/profile 2>/dev/null; then
 		echo "$line" | sudo tee -a /etc/profile
 	fi
-done
-
-Logger "Remove bloat services..."
-for service in "${MASK_SERVICES[@]}"; do
-	# add || true to allow them to fail, in case they are already masked
-	systemctl --user disable --now "$service" 2>/dev/null || true
-	systemctl --user mask "$service" 2>/dev/null || true
 done
 
 # Logger "Install user flathub..."

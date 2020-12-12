@@ -100,11 +100,9 @@ declare -a DEV_PKG=(
 )
 
 declare -a TERM_PKG=(
-	"NetworkManager-tui"
 	"acpi"
 	"bash-completion"
 	"flatpak"
-	"htop"
 	"libappindicator"
 	"libappindicator-gtk3"
 	"net-tools"
@@ -138,20 +136,14 @@ declare -a DESKTOP_PKG=(
 	"pass-otp"
 	"pass-pwned"
 	"pidgin"
-	"pidgin-libnotify"
-	"pidgin-window-merge"
 	"purple-plugin_pack"
 	"purple-plugin_pack-pidgin"
 	"purple-plugin_pack-pidgin-xmms"
-	"purple-skypeweb"
-	"purple-telegram"
 	"rsync"
 	"simplescreenrecorder"
 	"syncthing"
 	"tmux"
 	"vim"
-	"vim-X11"
-	"vim-enhanced"
 	"https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm"
 	"https://github.com/JoseExposito/touchegg/releases/download/2.0.0/touchegg-2.0.0-1.x86_64.rpm"
 )
@@ -198,7 +190,7 @@ for line in "${DNF_FLAGS[@]}"; do
 	fi
 done
 
-# Logger "Remove bloat packages..."
+Logger "Remove bloat packages..."
 sudo dnf remove "${PACKAGES_REMOVE[@]}"
 
 Logger "Install rpmfusion..."
@@ -224,6 +216,9 @@ sudo dnf --setopt=install_weak_deps=False --best install -y -q \
 	gnome-shell-extension-topicons-plus \
 	gnome-shell-extension-workspace-indicator \
 	gnome-tweaks
+
+Logger "Remove leftovers..."
+sudo dnf autoremove
 
 ~/dotfiles/setup_distro.sh
 ~/dotfiles/setup_dotfiles.sh

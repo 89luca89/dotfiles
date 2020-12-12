@@ -1,7 +1,9 @@
 #!/bin/bash
+# Using bash instead of posix sh, to use arrays
 
 set -o errexit
 set -o nounset
+set -o pipefail
 
 for v in "$@"; do
 	if [ "$v" = "-v" ]; then
@@ -106,11 +108,13 @@ for service in "${MASK_SERVICES[@]}"; do
 done
 
 Logger "Setup gnome preferences..."
-gsettings set org.gnome.nautilus.preferences always-use-location-entry true || true
-gsettings set org.gnome.mutter center-new-windows true || true
 dconf write /org/gnome/desktop/input-sources/xkb-options "['caps:ctrl_modifier']"
 dconf write /org/gnome/desktop/interface/cursor-blink 'false'
 dconf write /org/gnome/desktop/interface/show-battery-percentage 'true'
+dconf write /org/gnome/desktop/peripherals/mouse/accel-profile "'adaptive'"
+dconf write /org/gnome/desktop/peripherals/touchpad/natural-scroll 'true'
+dconf write /org/gnome/desktop/peripherals/touchpad/tap-to-click 'true'
+dconf write /org/gnome/desktop/peripherals/touchpad/two-finger-scrolling-enabled 'true'
 dconf write /org/gnome/desktop/privacy/disable-camera 'true'
 dconf write /org/gnome/desktop/privacy/disable-microphone 'true'
 dconf write /org/gnome/desktop/privacy/recent-files-max-age '7'
@@ -119,12 +123,16 @@ dconf write /org/gnome/desktop/privacy/remove-old-trash-files 'true'
 dconf write /org/gnome/desktop/privacy/report-technical-problems 'false'
 dconf write /org/gnome/desktop/privacy/send-software-usage-stats 'false'
 dconf write /org/gnome/desktop/wm/preferences/action-middle-click-titlebar "'minimize'"
+dconf write /org/gnome/desktop/wm/preferences/button-layout "':close'"
+dconf write /org/gnome/mutter/center-new-windows 'true'
 dconf write /org/gnome/mutter/experimental-features "['rt-scheduler']"
-dconf write /org/gnome/nautilus/list-view/default-visible-columns "['name', 'size', 'type', 'owner', 'group', 'permissions', 'date_modified', 'starred', 'detailed_type']"
-dconf write /org/gnome/nautilus/preferences/default-folder-viewer "'list-view'"
-dconf write /org/gnome/nautilus/preferences/show-create-link 'true'
+dconf write /org/gnome/nautilus/list-view/use-tree-view 'true'
+dconf write /org/gnome/nautilus/preferences/always-use-location-entry 'true'
 dconf write /org/gnome/nautilus/preferences/show-delete-permanently 'true'
-
+dconf write /org/gnome/settings-daemon/plugins/power/sleep-inactive-ac-type "'nothing'"
+dconf write /org/gnome/shell/overrides/workspaces-only-on-primary 'true'
+dconf write /org/gtk/settings/file-chooser/sort-directories-first 'true'
+dconf write /org/freedesktop/tracker/miner/files/index-on-battery 'false'
 # Restore app grid alphabetically
 gsettings reset org.gnome.shell app-picker-layout || true # allow it to fail on older gnome versions
 
@@ -133,3 +141,5 @@ curl -fsLo ~/.vim/autoload/plug.vim --create-dirs \
 	https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 vim -E +PlugInstall! +qall 2>/dev/null
 gnome-terminal -- tmux "uname -a" 2>/dev/null || true
+
+Logger "DONE"

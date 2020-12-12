@@ -1,10 +1,6 @@
 #!/bin/bash
 # Using bash instead of posix sh, to use arrays
 
-# nvidia: sudo dnf install kmod-nvidia akmod-nvidia xorg-x11-drv-nvidia nvidia-settings nvidia-modprobe nvidia-xconfig
-# sudo cp /usr/share/X11/xorg.conf.d/nvidia.conf /etc/X11/xorg.conf.d/
-# sudo sed -i '/^EndSection/i \\tOption "PrimaryGPU" "yes"' /etc/X11/xorg.conf.d/nvidia.conf
-
 set -o errexit
 set -o nounset
 set -o pipefail
@@ -56,7 +52,7 @@ declare -a CODECS_PKG=(
 declare -a ARCHIVE_PKG=(
 	"cabextract"
 	"lzip"
-	"p7zip"
+	"p7zip-full"
 	"unzip"
 	"unrar"
 )
@@ -78,7 +74,6 @@ declare -a TERM_PKG=(
 	"acpi"
 	"bash-completion"
 	"flatpak"
-	"htop"
 	"libappindicator1"
 	"libappindicator3-1"
 	"net-tools"
@@ -92,7 +87,9 @@ declare -a TERM_PKG=(
 	"zbar-tools"
 )
 
+cd /tmp || exit 1
 wget -c https://github.com/JoseExposito/touchegg/releases/download/2.0.4/touchegg_2.0.4_amd64.deb
+cd - || exit 1
 
 declare -a DESKTOP_PKG=(
 	"gimp"
@@ -110,23 +107,16 @@ declare -a DESKTOP_PKG=(
 	"pass"
 	"pass-extension-otp"
 	"pidgin"
-	# "pidgin-libnotify"
-	# "pidgin-window-merge"
-	# "pidgin-plugin_pack"
-	# "purple-skypeweb"
-	"telegram-purple"
 	"rsync"
 	"simplescreenrecorder"
 	"syncthing"
 	"tmux"
 	"vim"
-	"vim-gtk3"
 	"ttf-mscorefonts-installer"
-	"./touchegg_2.0.4_amd64.deb"
+	"/tmp/touchegg_2.0.4_amd64.deb"
 )
 
 declare -a PACKAGES_REMOVE=(
-	"packagekit*"
 	"evolution"
 	"evolution-ews"
 	"gnome-boxes"
@@ -145,34 +135,39 @@ declare -a PACKAGES_REMOVE=(
 	"gnome-user-share"
 	"gnome-video-effects"
 	"gnome-weather"
+	"packagekit*"
 	"snapd"
 	"update-manager"
+	"yelp*"
 )
 
 Logger "Remove bloat packages..."
 if which snap; then
 	sudo snap remove -y snap-store
 fi
-sudo apt remove --purge "${PACKAGES_REMOVE[@]}"
+sudo apt-get remove --purge "${PACKAGES_REMOVE[@]}"
 
 Logger "Install codecs..."
-sudo apt install -y --no-install-recommends  "${CODECS_PKG[@]}"
+sudo apt-get -qq install -y --no-install-recommends "${CODECS_PKG[@]}"
 
 Logger "Install archives..."
-sudo apt install -y --no-install-recommends  "${ARCHIVE_PKG[@]}"
+sudo apt-get -qq install -y --no-install-recommends "${ARCHIVE_PKG[@]}"
 
 Logger "Install devel tools..."
-sudo apt install -y --no-install-recommends  "${DEV_PKG[@]}"
+sudo apt-get -qq install -y --no-install-recommends "${DEV_PKG[@]}"
 
 Logger "Install term utils..."
-sudo apt install -y --no-install-recommends  "${TERM_PKG[@]}"
+sudo apt-get -qq install -y --no-install-recommends "${TERM_PKG[@]}"
 
 Logger "Install desktop tools..."
-sudo apt install -y --no-install-recommends  "${DESKTOP_PKG[@]}"
+sudo apt-get -qq install -y --no-install-recommends "${DESKTOP_PKG[@]}"
 
 Logger "Install gnome-shell packages..."
-sudo apt install -y --no-install-recommends  \
+sudo apt-get -qq install -y --no-install-recommends \
 	gnome-tweaks
+
+Logger "Remove leftovers..."
+sudo apt-get autoremove --purge
 
 ~/dotfiles/setup_distro.sh
 ~/dotfiles/setup_dotfiles.sh
