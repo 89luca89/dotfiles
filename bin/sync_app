@@ -5,6 +5,13 @@
 set -o errexit
 # set -o nounset
 
+declare -a GNOME_BACKUP=(
+	"desktop"
+	"settings-daemon"
+	"shell"
+	"terminal"
+)
+
 app_sync() {
 	TARGET=$1
 	if [ -z $2 ]; then
@@ -61,8 +68,8 @@ app_sync() {
 	"gnome")
 		mkdir /tmp/bkp
 		cd /tmp/bkp || exit 1
-		for f in $(dconf list /org/gnome/ | grep -v login); do
-			dconf dump /org/gnome/$f >org.gnome.$(echo $f | cut -d'/' -f1).conf
+		for f in ${GNOME_BACKUP[@]}; do
+			dconf dump /org/gnome/$f/ >org.gnome.$f.conf
 		done
 		tar -czf ~/dotfiles/gnome/gnome-setup.tar.gz /tmp/bkp
 		rm -rf /tmp/bkp
@@ -182,7 +189,7 @@ app_restore() {
 			exit 1
 		fi
 		rm -rf ~/.thunderbird
-		tar -xzf  /tmp/thunderbird-profile.tar.gz -C ~/
+		tar -xzf /tmp/thunderbird-profile.tar.gz -C ~/
 		shred -n 25 -u -z /tmp/thunderbird-profile.tar.gz
 		;;
 	"syncthing")
@@ -193,7 +200,7 @@ app_restore() {
 			exit 1
 		fi
 		rm -rf ~/.config/syncthing
-		tar -xzf  /tmp/syncthing-profile-$(hostname).tar.gz -C ~/
+		tar -xzf /tmp/syncthing-profile-$(hostname).tar.gz -C ~/
 		shred -n 25 -u -z /tmp/syncthing-profile-$(hostname).tar.gz
 		systemctl restart --user syncthing
 		;;

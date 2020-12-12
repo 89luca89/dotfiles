@@ -23,9 +23,8 @@ wget "https://someonewhocares.org/hosts/hosts" -O hostfile5
 #
 cat hostfile* | sed "s/127\.0\.0\.1/0\.0\.0\.0/g" | sed "s/^#.*//g" | sed "s/https:\/\///g" | sed "s/http:\/\///g" | awk 'NF' >new_hostfile
 
-
 # All sources are pure hosts list -> convert to 0.0.0.0 host
-curl -s "http://mirror1.malwaredomains.com/files/domains.txt" | awk '{print $1}' | sort -u > simplefile0
+curl -s "http://mirror1.malwaredomains.com/files/domains.txt" | awk '{print $1}' | sort -u >simplefile0
 wget "https://gitlab.com/quidsup/notrack-blocklists/raw/master/notrack-blocklist.txt" -O simplefile1
 wget "https://gitlab.com/quidsup/notrack-blocklists/raw/master/notrack-malware.txt" -O simplefile2
 wget "https://s3.amazonaws.com/lists.disconnect.me/simple_ad.txt" -O simplefile3
@@ -42,7 +41,7 @@ cat simplefile* | sed "s/^Mal.*//g" | sed "s/#.*//g" | sed "s/https:\/\///g" | s
 ###############################################################################
 #
 # Scrape exodus-privacy.org project to pull all the android trackers known
-TRACKERS=$(curl -s 'https://reports.exodus-privacy.eu.org/en/trackers/' | grep -Eo "href=\"/en/trackers/[0-9].*/" | sort -u)
+TRACKERS=$(curl -s 'https://reports.exodus-privacy.eu.org/en/trackers/' | grep -Eo 'href="/en/trackers/[0-9].*/' | sort -u)
 FILE=/tmp/trackers.list
 [ -f $FILE ] && rm -f $FILE
 
@@ -72,9 +71,9 @@ cat new_simplefile new_hostfile new_trackerfile |
 	sed '/^$/d' |
 	sort -u >>tmp_hosts
 
-cat tmp_hosts > hosts
+cat tmp_hosts >hosts
 # Make it also IPV6
-cat tmp_hosts | sed 's/0\.0\.0\.0/::1/g' >> hosts
+cat tmp_hosts | sed 's/0\.0\.0\.0/::1/g' >>hosts
 
 # Cleanup
 rm -f new_simplefile new_hostfile new_trackerfile tmp_hosts simplefile* hostfile*
