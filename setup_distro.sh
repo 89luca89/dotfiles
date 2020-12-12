@@ -162,12 +162,12 @@ fi
 # Install Terraform Provider for Libvirt 0.6.2
 Logger "Install terraform provider libvirt user packages..."
 if [ ! -f ~/.terraform.d/plugins/linux_amd64/terraform-provider-libvirt ]; then
-	sudo dnf install -y libvirt libvirt-client virt-manager qemu-kvm qemu-user libvirt-daemon-kvm libvirt-daemon-qemu
+	# sudo dnf install -y libvirt libvirt-client virt-manager qemu-kvm qemu-user libvirt-daemon-kvm libvirt-daemon-qemu
 	mkdir -p ~/.terraform.d/plugins/linux_amd64
 	curl -sLo /tmp/terraform-provider-libvirt.tar.gz https://github.com/dmacvicar/terraform-provider-libvirt/releases/download/v"$TERRAFORM_PROVIDER_VERSION"/terraform-provider-libvirt-"$TERRAFORM_PROVIDER_RELEASE".Ubuntu_18.04.amd64.tar.gz
 	tar zxvf /tmp/terraform-provider-libvirt.tar.gz
 	mv terraform-provider-libvirt ~/.terraform.d/plugins/linux_amd64/
-	~/.terraform.d/plugins/linux_amd64/terraform-provider-libvirt -version
+	# ~/.terraform.d/plugins/linux_amd64/terraform-provider-libvirt -version
 fi
 
 Logger "Enable touchegg..."
@@ -200,8 +200,6 @@ Logger "Enable power management - grub..."
 line="quiet nmi_watchdog=0 pcie_aspm.policy=powersupersave pcie_aspm=force drm.debug=0 drm.vblankoffdelay=1 scsi_mod.use_blk_mq=1 mmc_mod.use_blk_mq=1"
 if ! grep -q "$line" /etc/default/grub 2>/dev/null; then
 	sudo sed -i "s/quiet/quiet $line/g" /etc/default/grub
-	sudo grub2-mkconfig -o /boot/grub2/grub.cfg
-	sudo dracut --force --regenerate-all -v
 fi
 
 Logger "Enable power management - udev..."

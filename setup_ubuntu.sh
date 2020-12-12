@@ -57,10 +57,12 @@ declare -a ARCHIVE_PKG=(
 	"unrar"
 )
 declare -a DEV_PKG=(
+	"build-essential"
 	"shellcheck"
 	"clang"
 	"clang-tools"
 	"exuberant-ctags"
+	"gcc"
 	"git"
 	"golang"
 	"lsof"
@@ -73,6 +75,7 @@ declare -a DEV_PKG=(
 declare -a TERM_PKG=(
 	"acpi"
 	"bash-completion"
+	"curl"
 	"flatpak"
 	"libappindicator1"
 	"libappindicator3-1"
@@ -88,7 +91,7 @@ declare -a TERM_PKG=(
 )
 
 cd /tmp || exit 1
-wget -c https://github.com/JoseExposito/touchegg/releases/download/2.0.4/touchegg_2.0.4_amd64.deb
+wget -q -c https://github.com/JoseExposito/touchegg/releases/download/2.0.4/touchegg_2.0.4_amd64.deb
 cd - || exit 1
 
 declare -a DESKTOP_PKG=(
@@ -141,9 +144,12 @@ declare -a PACKAGES_REMOVE=(
 	"yelp*"
 )
 
+Logger "Update repos..."
+sudo apt-get -qq update
+
 Logger "Remove bloat packages..."
 if which snap; then
-	sudo snap remove -y snap-store
+	sudo snap remove snap-store
 fi
 sudo apt-get remove --purge "${PACKAGES_REMOVE[@]}"
 
@@ -170,6 +176,9 @@ Logger "Remove leftovers..."
 sudo apt-get autoremove --purge
 
 ~/dotfiles/setup_distro.sh
+
+sudo update-grub
+
 ~/dotfiles/setup_dotfiles.sh
 
 # sudo dnf install libvirt libvirt-client virt-manager qemu-kvm qemu-user libvirt-daemon-kvm libvirt-daemon-qemu podman

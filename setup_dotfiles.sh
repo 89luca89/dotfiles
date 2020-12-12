@@ -81,7 +81,7 @@ fi
 
 Logger "Install services..."
 systemctl --user daemon-reload
-for user_service in $(ls -1 "$PWD"/systemd/); do
+for user_service in "$PWD"/systemd/*; do
 	systemctl --user enable --now "$user_service"
 done
 
@@ -108,6 +108,7 @@ for service in "${MASK_SERVICES[@]}"; do
 done
 
 Logger "Setup gnome preferences..."
+dconf write /org/freedesktop/tracker/miner/files/index-on-battery 'false'
 dconf write /org/gnome/desktop/input-sources/xkb-options "['caps:ctrl_modifier']"
 dconf write /org/gnome/desktop/interface/cursor-blink 'false'
 dconf write /org/gnome/desktop/interface/show-battery-percentage 'true'
@@ -132,7 +133,6 @@ dconf write /org/gnome/nautilus/preferences/show-delete-permanently 'true'
 dconf write /org/gnome/settings-daemon/plugins/power/sleep-inactive-ac-type "'nothing'"
 dconf write /org/gnome/shell/overrides/workspaces-only-on-primary 'true'
 dconf write /org/gtk/settings/file-chooser/sort-directories-first 'true'
-dconf write /org/freedesktop/tracker/miner/files/index-on-battery 'false'
 # Restore app grid alphabetically
 gsettings reset org.gnome.shell app-picker-layout || true # allow it to fail on older gnome versions
 

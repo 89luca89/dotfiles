@@ -221,6 +221,11 @@ Logger "Remove leftovers..."
 sudo dnf autoremove
 
 ~/dotfiles/setup_distro.sh
+
+
+sudo grub-mkconfig -o /boot/grub2/grub.cfg
+sudo dracut --force --regenerate-all -v
+
 ~/dotfiles/setup_dotfiles.sh
 
 # sudo dnf install libvirt libvirt-client virt-manager qemu-kvm qemu-user libvirt-daemon-kvm libvirt-daemon-qemu podman
