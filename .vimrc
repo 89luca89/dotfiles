@@ -82,12 +82,10 @@ map <Tab>   :<C-u>bn!<CR>
 map <S-Tab> :<C-u>bp!<CR>
 " C-c close buffer
 map <C-c> :<C-u>bp<BAR>sp<BAR>bn<BAR>bd<CR>
+" Visual mode, C-c copy line
+vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 " Leader map
 let mapleader = ' '
-" leader y/p to use system clipboard, C-c in vmode for xclip
-map <leader>y "+y
-map <leader>p "+p
-vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 " " Resize split window horizontally and vertically
 map <S-M-Down>  :<C-u>2winc-<CR>
 map <S-M-Left>  :<C-u>2winc<<CR>
