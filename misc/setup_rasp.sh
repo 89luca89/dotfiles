@@ -15,7 +15,6 @@ yes | sensors-detect
 sed -i 's/^.*PermitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config
 systemctl restart sshd
 
-
 echo '#!/bin/sh
 
         if ! ls /dev/mapper/secret; then
@@ -38,7 +37,7 @@ ln -s /usr/local/mnt/Vault/Syncthing/Bin /root/bin
 
 apt install -y stunnel
 ln -sf /bin/bash /bin/rbash
-echo /bin/rbash >> /etc/shells
+echo /bin/rbash >>/etc/shells
 
 userdel pi
 
