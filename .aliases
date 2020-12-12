@@ -47,7 +47,6 @@ alias ll='ls -Ahl --group-directories-first --color'
 alias open='xdg-open'
 alias cp='cp --reflink=auto --sparse=always'
 alias vi='vim -u ~/dotfiles/.vimrc-minimal'
-alias vim='vimx'
 alias diff="diff --color=always"
 alias gogetsys="export GOPATH=~/.local/go; go get"
 alias gnome-reload='DISPLAY=:0 xdotool key Alt+F2; sleep 1; DISPLAY=:0 xdotool key r;DISPLAY=:0  xdotool key Return'
