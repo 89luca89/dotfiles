@@ -23,11 +23,6 @@ else:
     path = pathlib.Path.home().joinpath('.mozilla/firefox')
 files = path.glob('*default*/sessionstore-backups/recovery.js*')
 
-try:
-    template = sys.argv[1]
-except IndexError:
-    template = '%s'
-
 for f in files:
     b = f.read_bytes()
     if b[:8] == b'mozLz40\0':
@@ -36,4 +31,4 @@ for f in files:
     for w in j['windows']:
         for t in w['tabs']:
             i = t['index'] - 1
-            print(template % (t['entries'][i]['url']))
+            print('['+t['entries'][i]['title']+']('+t['entries'][i]['url']+')  ')
