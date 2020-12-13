@@ -18,7 +18,7 @@ filetype off
 call plug#begin('~/.vim/plugged')
 " utilities
 Plug 'mhinz/vim-signify'
-Plug 'vim-airline/vim-airline'
+Plug 'ap/vim-buftabline'
 Plug 'yggdroot/indentLine'
 " Fzf
 Plug 'junegunn/fzf.vim'
@@ -43,9 +43,12 @@ augroup customsyntax
     autocmd Syntax * highlight myFunction       guifg=#fabd2f ctermfg=214
     autocmd Syntax * highlight myDeclaration    guifg=#83a598 ctermfg=109
 augroup end
-" airline
-let g:airline#extensions#tabline#enabled = 1
-set laststatus=2
+" bufline
+let g:buftabline_indicators = 1
+let g:buftabline_separators = 1
+let g:buftabline_plug_max   = 0
+set noshowmode noshowcmd laststatus=0 ruler   " hide statusline
+set rulerformat=%20(%m%r%w\ %y\ %l/%c%)\        " Modified+FileType+Ruler
 " themes
 let g:gruvbox_contrast_dark = "hard"
 let g:gruvbox_contrast_light = "hard"
