@@ -56,67 +56,73 @@ EOF
 prepare_data() {
 	# Find all files using ripgrep
 	# Exclude some of the unwanted folders
-	DATA="$DATA
+	if [ "$QUERY" = " " ] || echo "$QUERY" | grep -q Files; then
+		DATA="$DATA
 $(
-		cd ~ || exit
-		rg --files --follow \
-			-g '!{.git,*cache*,flatpak,.cache,site-packages}' 2>/dev/null |
-			sed 's/^/Files: /g'
-	)"
-
+			cd ~ || exit
+			rg --files --follow \
+				-g '!{.git,*cache*,flatpak,.cache,site-packages}' 2>/dev/null |
+				sed 's/^/Files: /g'
+		)"
+	fi
 	# Fetch password list
-	DATA="$DATA
+	if [ "$QUERY" = " " ] || echo "$QUERY" | grep -q Password; then
+		DATA="$DATA
 $(
-		cd ~ || exit
-		rg --files --follow $PASSWORD_STORE \
-			-g '!{node_modules,.git,*cache*,flatpak,.cache,.local/lib,.local/share}' 2>/dev/null |
-			sed 's/^/Password: /g' |
-			sed "s/$PASSWORD_STORE\///g" |
-			sed "s/\.gpg//g"
-	)"
+			cd ~ || exit
+			rg --files --follow $PASSWORD_STORE \
+				-g '!{node_modules,.git,*cache*,flatpak,.cache,.local/lib,.local/share}' 2>/dev/null |
+				sed 's/^/Password: /g' |
+				sed "s/$PASSWORD_STORE\///g" |
+				sed "s/\.gpg//g"
+		)"
+	fi
 
-	# Fetch executables from PATH
-	if [ ! -f ~/.cache/desktop-files ]; then
+	if [ "$QUERY" = " " ] || echo "$QUERY" | grep -q Program; then
+		# Fetch executables from PATH
+		if [ ! -f ~/.cache/desktop-files ]; then
 
-		# We do not have a cache file, let's create it!
-		for file in $(rg --files --dfa-size-limit 1G --hidden \
-			~/.local/share/applications \
-			~/.local/share/flatpak/app/*/current/active/export/ \
-			~/Programs \
-			/usr/share/applications/ \
-			-g '*.desktop' \
-			-g '!xdg' \
-			-g '!session' \
-			-g '!autostart' \
-			-g '!.stversions' 2>/dev/null | sort -u); do
+			# We do not have a cache file, let's create it!
+			for file in $(rg --files --hidden \
+				~/.local/share/applications \
+				~/.local/share/flatpak/app/*/current/active/export/ \
+				~/Programs \
+				/usr/share/applications/ \
+				-g '*.desktop' \
+				-g '!xdg' \
+				-g '!session' \
+				-g '!autostart' \
+				-g '!.stversions' 2>/dev/null | sort -u); do
 
-			if [ -f "$file" ]; then
+				if [ -f "$file" ]; then
 
-				if ! grep -q 'NoDisplay=true' "$file"; then
+					if ! grep -q 'NoDisplay=true' "$file"; then
 
-					name=$(grep '^Name=' "$file" | head -1 | sed 's/^Name=//g')
-					generic_name=$(grep '^GenericName=' "$file" | head -1 | sed 's/^GenericName=//g' | sed 's/%.*//g')
-					categories_names=$(grep '^Categories=' "$file" | head -1 | sed 's/^Categories=//g' | sed 's/%.*//g' | sed 's/;/ /g')
-					command_name=$(grep '^Exec=' "$file" | head -1 | sed 's/^Exec=//g' | sed 's/%.*//g')
-					# Save name in file, this will be used for fzf
-					echo "$name | $command_name | $generic_name | $categories_names" >>~/.cache/desktop-files
+						name=$(grep '^Name=' "$file" | head -1 | sed 's/^Name=//g')
+						generic_name=$(grep '^GenericName=' "$file" | head -1 | sed 's/^GenericName=//g' | sed 's/%.*//g')
+						categories_names=$(grep '^Categories=' "$file" | head -1 | sed 's/^Categories=//g' | sed 's/%.*//g' | sed 's/;/ /g')
+						command_name=$(grep '^Exec=' "$file" | head -1 | sed 's/^Exec=//g' | sed 's/%.*//g')
+						# Save name in file, this will be used for fzf
+						echo "$name | $command_name | $generic_name | $categories_names" >>~/.cache/desktop-files
+
+					fi
 
 				fi
+				echo "Refresh Apps | " >>~/.cache/desktop-files
 
-			fi
-			echo "Refresh Apps | " >>~/.cache/desktop-files
+			done
 
-		done
-
+		fi
+		# Aggregate with other data
+		DATA="$DATA
+	$(cat ~/.cache/desktop-files | sort -u | sed 's/^/Program: /g')"
 	fi
-	# Aggregate with other data
-	DATA="$DATA
-$(cat ~/.cache/desktop-files | sort -u | sed 's/^/Program: /g')"
 
-	# Fetch open windows
-	DATA="$DATA
+	if [ "$QUERY" = " " ] || echo "$QUERY" | grep -Eq "Window|Program"; then
+		# Fetch open windows
+		DATA="$DATA
 $(wmctrl -l | grep -o "$(hostname).*" | sed "s/$(hostname) /Window: /g")"
-
+	fi
 }
 
 main() {
