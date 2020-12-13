@@ -124,7 +124,6 @@ declare -a DESKTOP_PKG=(
 	"NetworkManager-sstp-gnome"
 	"NetworkManager-strongswan-gnome"
 	"gimp"
-	"kitty"
 	"libpurple-devel"
 	"libreoffice-calc"
 	"libreoffice-draw"

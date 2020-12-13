@@ -96,7 +96,6 @@ cd - || exit 1
 
 declare -a DESKTOP_PKG=(
 	"gimp"
-	"kitty"
 	"libpurple-dev"
 	"libreoffice-calc"
 	"libreoffice-draw"

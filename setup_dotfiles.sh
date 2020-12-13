@@ -44,7 +44,6 @@ Logger "Remove target folders..."
 rm -f ~/.aliases
 rm -f ~/.ansible.cfg
 rm -f ~/.bashrc
-rm -f ~/.config/kitty
 rm -f ~/.config/mpv/mpv.conf
 rm -f ~/.config/touchegg/touchegg.conf
 rm -f ~/.ctags
@@ -68,7 +67,6 @@ ln -sf "$PWD"/.vimrc ~/.vimrc
 ln -sf "$PWD"/.zshrc ~/.zshrc
 ln -sf "$PWD"/applications ~/.local/share/applications
 ln -sf "$PWD"/assh.yml ~/.ssh/assh.yml
-ln -sf "$PWD"/kitty ~/.config/kitty
 ln -sf "$PWD"/mpv.conf ~/.config/mpv/mpv.conf
 ln -sf "$PWD"/systemd/* ~/.config/systemd/user/
 ln -sf "$PWD"/touchegg.conf ~/.config/touchegg/touchegg.conf
