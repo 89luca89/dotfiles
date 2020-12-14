@@ -222,7 +222,7 @@ sudo dnf autoremove
 ~/dotfiles/setup_distro.sh
 
 
-sudo grub-mkconfig -o /boot/grub2/grub.cfg
+sudo grub2-mkconfig -o /boot/grub2/grub.cfg
 sudo dracut --force --regenerate-all -v
 
 ~/dotfiles/setup_dotfiles.sh
