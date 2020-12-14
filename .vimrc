@@ -50,6 +50,7 @@ let g:buftabline_plug_max   = 0
 set noshowmode noshowcmd laststatus=0 ruler   " hide statusline
 set rulerformat=%20(%m%r%w\ %y\ %l/%c%)\        " Modified+FileType+Ruler
 " themes
+set termguicolors
 let g:gruvbox_contrast_dark = "hard"
 let g:gruvbox_contrast_light = "hard"
 set background=dark
@@ -96,9 +97,11 @@ map <S-M-Right> :<C-u>2winc><CR>
 map <S-M-Up>    :<C-u>2winc+<CR>
 " Utility shortcuts with leader:
 " map <leader><leader>  :<C-u>cgete system("ls -1 --group-directories-first<BAR>xargs -I{} find {} -type f<BAR>xargs -I{} echo '{}:1:1: '")<CR>:copen<CR>G//<backspace>
+" map <leader>b  :<C-u>buffers<CR>:buffer<space>
+" map <leader>t  :<C-u>cgete system("grep -v '^!_' tags<BAR>sort -ru<BAR>awk -F'\t' '{split($5,line,\":\");print $2\":\"line[2]\":0: \"$1}'")<CR>:copen<CR>G//<backspace>
 map <leader><leader>  :<C-u>Files<CR>
-map <leader>b  :<C-u>buffers<CR>:buffer<space>
-map <leader>t  :<C-u>cgete system("grep -v '^!_' tags<BAR>sort -ru<BAR>awk -F'\t' '{split($5,line,\":\");print $2\":\"line[2]\":0: \"$1}'")<CR>:copen<CR>G//<backspace>
+map <leader>b  :<C-u>Buffers<CR>
+map <leader>t  :<C-u>Tags<CR>
 " set filetype shortcut
 nnoremap <leader>j :<C-u>set ft=.jinja2<C-left><right><right><right>
 " Code help using external scripts: Lint, Format, DeepTags, Grep, vert-copen
@@ -178,9 +181,6 @@ function! ToggleTheme()
         highlight myFunction      guifg=#fabd2f ctermfg=214
     else
         set background=light
-        highlight ColorColumn     guibg=#dddddd ctermbg=253
-        highlight CursorLine      guibg=#dddddd ctermbg=253
-        highlight Normal          guibg=#ffffff ctermbg=255
         highlight myDeclaration   guifg=#076678 ctermfg=24
         highlight myFunction      guifg=#427b58 ctermfg=136
     endif
