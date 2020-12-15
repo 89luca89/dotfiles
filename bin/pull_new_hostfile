@@ -33,6 +33,7 @@ wget "https://s3.amazonaws.com/lists.disconnect.me/simple_malware.txt" -O simple
 wget "https://s3.amazonaws.com/lists.disconnect.me/simple_tracking.txt" -O simplefile6
 wget "https://v.firebog.net/hosts/Easylist.txt" -O simplefile7
 wget "https://v.firebog.net/hosts/Easyprivacy.txt" -O simplefile8
+curl https://services.disconnect.me/disconnect.json | jq -S '.' | grep -Ev "http|:|/|\\\\" | grep '"' | sed 's/\"//g'  | sed 's/,//g' | sed -r 's/\s+//g' | sort -u  > simplefile9
 #
 cat simplefile* | sed "s/^Mal.*//g" | sed "s/#.*//g" | sed "s/https:\/\///g" | sed "s/http:\/\///g" | awk 'NF' | awk '{print "0.0.0.0 " $0}' >new_simplefile
 
