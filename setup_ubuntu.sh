@@ -143,6 +143,34 @@ declare -a PACKAGES_REMOVE=(
 	"yelp*"
 )
 
+# DEBIAN PACKAGES
+# declare -a test=(
+#         "evolution"
+#         "evolution-ews"
+#         "gnome-boxes"
+#         "gnome-calendar"
+#         "gnome-contacts"
+#         "gnome-dictionary"
+#         "gnome-documents"
+#         "gnome-getting-started-docs"
+#         "gnome-initial-setup"
+#         "gnome-maps"
+#         "gnome-music"
+#         "gnome-online-miners"
+#         "gnome-photos"
+#         "gnome-software"
+#         "gnome-user-docs"
+#         "gnome-user-share"
+#         "gnome-video-effects"
+#         "gnome-weather"
+#         "packagekit*"
+#         "yelp*"
+#         "gnome-todo" 
+#         "gnome-sound-recorder"
+#         "transmission* 
+# )
+
+
 Logger "Update repos..."
 sudo apt-get -qq update
 
