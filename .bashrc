@@ -31,10 +31,6 @@ if [[ $- == *i* ]]; then
 	fi
 	[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
-	if type rg &>/dev/null; then
-		export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --no-ignore-vcs -g "!{node_modules/*,.git/*}"'
-	fi
-
 	# setup a simple PROMPT/PS1
 	export TERM="xterm-256color"
 	BGREEN='\[\033[01;32m\]'

@@ -6,7 +6,6 @@ set -o nounset
 
 # Default pass password store directory
 PASSWORD_STORE=".password-store"
-DATA=""
 
 # Preload incoming queries
 if [ $# -eq 0 ]; then
@@ -18,9 +17,9 @@ fi
 handle_password() {
 	RESP_PASS=$(
 		cat <<EOF | ~/.local/bin/fzf/bin/fzf
-OTP
-Password
 Username
+Password
+OTP
 EOF
 	)
 
@@ -30,19 +29,19 @@ EOF
 
 		PASSDATA=$(/bin/pass "$RESULT")
 		USRNAME="$(echo "$PASSDATA" | grep -Ei "login:|username:|user:" | head -1 | cut -d' ' -f2-)"
-		echo -n "$USRNAME" | nohup xclip -loops 0 -sel p -sel s -sel c &
+		printf '%s' "$USRNAME" | nohup xclip -loops 0 -sel p -sel s -sel c &
 		;;
 
 	Password)
 
 		PASSDATA=$(/bin/pass "$RESULT" | head -n1)
-		echo -n "$PASSDATA" | nohup xclip -loops 0 -sel p -sel s -sel c &
+		printf '%s' "$PASSDATA" | nohup xclip -loops 0 -sel p -sel s -sel c &
 		;;
 
 	OTP)
 
 		PASSDATA=$(/bin/pass otp "$RESULT" | head -n1)
-		echo -n "$PASSDATA" | nohup xclip -loops 0 -sel p -sel s -sel c &
+		printf '%s' "$PASSDATA" | nohup xclip -loops 0 -sel p -sel s -sel c &
 		;;
 
 	*)
@@ -57,42 +56,39 @@ prepare_data() {
 	# Find all files using ripgrep
 	# Exclude some of the unwanted folders
 	if [ "$QUERY" = " " ] || echo "$QUERY" | grep -q Files; then
-		DATA="$DATA
-$(
-			cd ~ || exit
-			rg --files --follow \
-				-g '!{.git,*cache*,flatpak,.cache,site-packages}' 2>/dev/null |
-				sed 's/^/Files: /g'
-		)"
+		cd ~ || exit
+		find . -type f \
+			-not -path '**/.git/*' \
+			-not -path '**/flatpak/*' \
+			-not -path '**/site-packages/*' \
+			-not -path '**/*cache/*' \
+			-not -path '**/containers/*' 2>/dev/null |
+			sed 's/^/Files: /g'
 	fi
+
 	# Fetch password list
 	if [ "$QUERY" = " " ] || echo "$QUERY" | grep -q Password; then
-		DATA="$DATA
-$(
-			cd ~ || exit
-			rg --files --follow $PASSWORD_STORE \
-				-g '!{node_modules,.git,*cache*,flatpak,.cache,.local/lib,.local/share}' 2>/dev/null |
-				sed 's/^/Password: /g' |
-				sed "s/$PASSWORD_STORE\///g" |
-				sed "s/\.gpg//g"
-		)"
+		cd ~ || exit
+		find $PASSWORD_STORE/ -type f -name "*.gpg" 2>/dev/null |
+			grep -Ev 'node_modules|.git|flatpak|.cache|.local/lib|.local/share' |
+			sed 's/^/Password: /g' |
+			sed "s/$PASSWORD_STORE\///g" |
+			sed "s/\.gpg//g"
 	fi
 
 	if [ "$QUERY" = " " ] || echo "$QUERY" | grep -q Program; then
 		# Fetch executables from PATH
-		if [ ! -f ~/.cache/desktop-files ]; then
+		if [ ! -f ~/.cache/desktop-files ] || test "$(find ~/.cache/desktop-files -mmin +30)"; then
 
 			# We do not have a cache file, let's create it!
-			for file in $(rg --files --hidden \
+			for file in $(find \
 				~/.local/share/applications \
 				~/.local/share/flatpak/app/*/current/active/export/ \
 				~/Programs \
 				/usr/share/applications/ \
-				-g '*.desktop' \
-				-g '!xdg' \
-				-g '!session' \
-				-g '!autostart' \
-				-g '!.stversions' 2>/dev/null | sort -u); do
+				-iname '*.desktop' 2>/dev/null |
+				grep -Ev 'xdg|session|autostart|.stversions' |
+				sort -u); do
 
 				if [ -f "$file" ]; then
 
@@ -104,6 +100,7 @@ $(
 						command_name=$(grep '^Exec=' "$file" | head -1 | sed 's/^Exec=//g' | sed 's/%.*//g')
 						# Save name in file, this will be used for fzf
 						echo "$name | $command_name | $generic_name | $categories_names" >>~/.cache/desktop-files
+						echo "Program: $name | $command_name | $generic_name | $categories_names"
 
 					fi
 
@@ -112,22 +109,21 @@ $(
 
 			done
 
+		else
+			# Aggregate with other data
+			sort -u ~/.cache/desktop-files | sed 's/^/Program: /g'
 		fi
-		# Aggregate with other data
-		DATA="$DATA
-	$(cat ~/.cache/desktop-files | sort -u | sed 's/^/Program: /g')"
 	fi
 
 	if [ "$QUERY" = " " ] || echo "$QUERY" | grep -Eq "Window|Program"; then
 		# Fetch open windows
-		DATA="$DATA
-$(wmctrl -l | grep -o "$(hostname).*" | sed "s/$(hostname) /Window: /g")"
+		wmctrl -l | grep -o "$(hostname).*" | sed "s/$(hostname) /Window: /g"
 	fi
 }
 
 main() {
 	# Present on fzf
-	RESULT=$(printf '%s\n' "$DATA" | ~/.local/bin/fzf/bin/fzf --border -q "'$QUERY")
+	RESULT=$(prepare_data | ~/.local/bin/fzf/bin/fzf --border  -q "'") #$QUERY")
 	if [ -z "$RESULT" ]; then
 		exit 0
 	fi
@@ -141,16 +137,16 @@ main() {
 	elif echo "$RESULT" | grep -q "^Program"; then
 
 		### Execute the file
-		RESULT=$(echo $RESULT | cut -d":" -f2 | awk '{$1=$1};1')
+		RESULT=$(echo "$RESULT" | cut -d":" -f2 | awk '{$1=$1};1')
 		echo "*$RESULT*"
 		if [ "$RESULT" = "Refresh Apps |" ]; then
 			rm ~/.cache/desktop-files
 			return
 		fi
 		# Retrieve original file name
-		command_exec=$(echo $RESULT | cut -d"|" -f2 | awk '{$1=$1};1')
+		command_exec=$(echo "$RESULT" | cut -d"|" -f2 | awk '{$1=$1};1')
 		# Exec
-		setsid -f $command_exec >/dev/null 2>&1 &
+		setsid -f "$command_exec" >/dev/null 2>&1 &
 
 	elif echo "$RESULT" | grep -q "^Password"; then
 
@@ -167,5 +163,4 @@ main() {
 	sleep 0.3
 }
 
-prepare_data
 main
