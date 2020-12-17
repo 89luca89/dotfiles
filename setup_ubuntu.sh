@@ -165,9 +165,9 @@ declare -a PACKAGES_REMOVE=(
 #         "gnome-weather"
 #         "packagekit*"
 #         "yelp*"
-#         "gnome-todo" 
+#         "gnome-todo"
 #         "gnome-sound-recorder"
-#         "transmission* 
+#         "transmission*
 # )
 
 
@@ -204,6 +204,7 @@ sudo apt-get autoremove --purge
 
 ~/dotfiles/setup_distro.sh
 
+Logger "Update grub..."
 sudo update-grub
 
 ~/dotfiles/setup_dotfiles.sh

@@ -119,7 +119,7 @@ for line in "${GLOBAL_VARIABLES[@]}"; do
 	fi
 done
 
-# Logger "Install user flathub..."
+Logger "Install user flathub..."
 flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
 Logger "Install golang user packages..."
@@ -140,10 +140,10 @@ Logger "Install python user pagkages..."
 /usr/bin/python3 -m pip install --no-input --no-cache --user -U pip
 /usr/bin/python3 -m pip -q install --no-input --no-cache --user -U "${PIP_PACKAGES[@]}"
 
-TERRAFORM_VERSION=0.12.0
+TERRAFORM_VERSION=0.13.0
 TERRAFORM_LS_VERSION=0.8.0
-TERRAFORM_PROVIDER_VERSION=0.6.2
-TERRAFORM_PROVIDER_RELEASE=0.6.2+git.1585292411.8cbe9ad0
+TERRAFORM_PROVIDER_VERSION=0.6.3
+TERRAFORM_PROVIDER_RELEASE=0.6.3+git.1604843676.67f4f2aa
 
 Logger "Install terraform user packages..."
 if ! command -v terraform 2>/dev/null; then
@@ -161,13 +161,11 @@ fi
 
 # Install Terraform Provider for Libvirt 0.6.2
 Logger "Install terraform provider libvirt user packages..."
-if [ ! -f ~/.terraform.d/plugins/linux_amd64/terraform-provider-libvirt ]; then
-	# sudo dnf install -y libvirt libvirt-client virt-manager qemu-kvm qemu-user libvirt-daemon-kvm libvirt-daemon-qemu
-	mkdir -p ~/.terraform.d/plugins/linux_amd64
-	curl -sLo /tmp/terraform-provider-libvirt.tar.gz https://github.com/dmacvicar/terraform-provider-libvirt/releases/download/v"$TERRAFORM_PROVIDER_VERSION"/terraform-provider-libvirt-"$TERRAFORM_PROVIDER_RELEASE".Ubuntu_18.04.amd64.tar.gz
+if [ ! -f ~/.local/share/terraform/plugins/registry.terraform.io/dmacvicar/libvirt/"$TERRAFORM_PROVIDER_VERSION"/linux_amd64 ]; then
+	mkdir -p ~/.local/share/terraform/plugins/registry.terraform.io/dmacvicar/libvirt/"$TERRAFORM_PROVIDER_VERSION"/
+	curl -sLo /tmp/terraform-provider-libvirt.tar.gz https://github.com/dmacvicar/terraform-provider-libvirt/releases/download/v"$TERRAFORM_PROVIDER_VERSION"/terraform-provider-libvirt-"$TERRAFORM_PROVIDER_RELEASE".Fedora_32.x86_64.tar.gz
 	tar zxvf /tmp/terraform-provider-libvirt.tar.gz
-	mv terraform-provider-libvirt ~/.terraform.d/plugins/linux_amd64/
-	# ~/.terraform.d/plugins/linux_amd64/terraform-provider-libvirt -version
+	mv terraform-provider-libvirt ~/.local/share/terraform/plugins/registry.terraform.io/dmacvicar/libvirt/"$TERRAFORM_PROVIDER_VERSION"/linux_amd64/terraform-provider-libvirt_v"$TERRAFORM_PROVIDER_VERSION"
 fi
 
 Logger "Enable touchegg..."

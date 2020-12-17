@@ -124,7 +124,6 @@ declare -a DESKTOP_PKG=(
 	"NetworkManager-sstp-gnome"
 	"NetworkManager-strongswan-gnome"
 	"gimp"
-	"libpurple-devel"
 	"libreoffice-calc"
 	"libreoffice-draw"
 	"libreoffice-gtk3"
@@ -133,7 +132,6 @@ declare -a DESKTOP_PKG=(
 	"mpv"
 	"pass"
 	"pass-otp"
-	"pass-pwned"
 	"pidgin"
 	"purple-plugin_pack"
 	"purple-plugin_pack-pidgin"
@@ -190,7 +188,7 @@ for line in "${DNF_FLAGS[@]}"; do
 done
 
 Logger "Remove bloat packages..."
-sudo dnf remove "${PACKAGES_REMOVE[@]}"
+sudo dnf remove "${PACKAGES_REMOVE[@]}" 2> /dev/null
 
 Logger "Install rpmfusion..."
 sudo dnf --setopt=install_weak_deps=False --best install -y -q "${RPMFUSION_PKG[@]}"
@@ -216,15 +214,16 @@ sudo dnf --setopt=install_weak_deps=False --best install -y -q \
 	gnome-shell-extension-workspace-indicator \
 	gnome-tweaks
 
+Logger "Install gnome-shell packages..."
+sudo dnf --best install -y -q @virtualization
+
 Logger "Remove leftovers..."
 sudo dnf autoremove
 
 ~/dotfiles/setup_distro.sh
 
-
+Logger "Update grub..."
 sudo grub2-mkconfig -o /boot/grub2/grub.cfg
-sudo dracut --force --regenerate-all -v
+sudo dracut --force --regenerate-all
 
 ~/dotfiles/setup_dotfiles.sh
-
-# sudo dnf install libvirt libvirt-client virt-manager qemu-kvm qemu-user libvirt-daemon-kvm libvirt-daemon-qemu podman
