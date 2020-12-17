@@ -57,12 +57,7 @@ prepare_data() {
 	# Exclude some of the unwanted folders
 	if [ "$QUERY" = " " ] || echo "$QUERY" | grep -q Files; then
 		cd ~ || exit
-		find . -type f \
-			-not -path '**/.git/*' \
-			-not -path '**/flatpak/*' \
-			-not -path '**/site-packages/*' \
-			-not -path '**/*cache/*' \
-			-not -path '**/containers/*' 2>/dev/null |
+		find * -type f |
 			sed 's/^/Files: /g'
 	fi
 
@@ -82,9 +77,9 @@ prepare_data() {
 
 			# We do not have a cache file, let's create it!
 			for file in $(find \
-				~/.local/share/applications \
+				~/.local/share/applications/ \
 				~/.local/share/flatpak/app/*/current/active/export/ \
-				~/Programs \
+				~/Programs/ \
 				/usr/share/applications/ \
 				-iname '*.desktop' 2>/dev/null |
 				grep -Ev 'xdg|session|autostart|.stversions' |
@@ -101,14 +96,12 @@ prepare_data() {
 						# Save name in file, this will be used for fzf
 						echo "$name | $command_name | $generic_name | $categories_names" >>~/.cache/desktop-files
 						echo "Program: $name | $command_name | $generic_name | $categories_names"
-
 					fi
 
 				fi
-				echo "Refresh Apps | " >>~/.cache/desktop-files
-
 			done
-
+			echo "Program: Refresh Apps | "
+			echo "Refresh Apps | " >>~/.cache/desktop-files
 		else
 			# Aggregate with other data
 			sort -u ~/.cache/desktop-files | sed 's/^/Program: /g'
@@ -123,7 +116,7 @@ prepare_data() {
 
 main() {
 	# Present on fzf
-	RESULT=$(prepare_data | ~/.local/bin/fzf/bin/fzf --border  -q "'") #$QUERY")
+	RESULT=$(prepare_data | ~/.local/bin/fzf/bin/fzf)
 	if [ -z "$RESULT" ]; then
 		exit 0
 	fi
