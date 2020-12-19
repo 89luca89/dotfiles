@@ -6,6 +6,7 @@ set -o nounset
 
 # Default pass password store directory
 PASSWORD_STORE=".password-store"
+BOOKMARK_FILE="$PASSWORD_STORE/bookmarks/bookmarks.html"
 
 # Preload incoming queries
 if [ $# -eq 0 ]; then
@@ -69,6 +70,17 @@ prepare_data() {
 			sed 's/^/Password: /g' |
 			sed "s/$PASSWORD_STORE\///g" |
 			sed "s/\.gpg//g"
+	fi
+
+	if [ "$QUERY" = " " ] || echo "$QUERY" | grep -Eq "Bookmarks|Password"; then
+		cd ~ || exit
+		for line in $(cat "$BOOKMARK_FILE"); do
+			bookmark=$(echo $line | grep -oP 'HREF="\Khttp[^"]+' ||:)
+			if [ "$bookmark" != "" ]; then
+				title=$(grep "$bookmark" "$BOOKMARK_FILE" | grep -Eo '">.*</A>' | grep -oP '>\K[^<]+' | grep -v 'Recent Tags')
+				echo "Bookmarks: $title | $bookmark "
+			fi
+		done
 	fi
 
 	if [ "$QUERY" = " " ] || echo "$QUERY" | grep -q Program; then
@@ -146,6 +158,11 @@ main() {
 		### Handle the password
 		RESULT=$(echo "$RESULT" | cut -d":" -f2 | awk '{$1=$1};1')
 		handle_password
+
+	elif echo "$RESULT" | grep -q "^Bookmark"; then
+
+		RESULT=$(echo "$RESULT" | cut -d"|" -f2 | awk '{$1=$1};1')
+		setsid -f xdg-open "$RESULT" >/dev/null 2>&1 &
 
 	else
 
