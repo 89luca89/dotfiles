@@ -94,6 +94,7 @@ declare -a DEV_PKG=(
 	"golang"
 	"lsof"
 	"make"
+	"python3-devel"
 	"python3-pip"
 	"ripgrep"
 	"ncdu"
@@ -214,7 +215,7 @@ sudo dnf --setopt=install_weak_deps=False --best install -y -q \
 	gnome-shell-extension-workspace-indicator \
 	gnome-tweaks
 
-Logger "Install gnome-shell packages..."
+Logger "Install virtualization packages..."
 sudo dnf --best install -y -q @virtualization
 
 Logger "Remove leftovers..."
