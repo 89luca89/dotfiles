@@ -164,8 +164,8 @@ Logger "Install terraform provider libvirt user packages..."
 if [ ! -f ~/.local/share/terraform/plugins/registry.terraform.io/dmacvicar/libvirt/"$TERRAFORM_PROVIDER_VERSION"/linux_amd64 ]; then
 	mkdir -p ~/.local/share/terraform/plugins/registry.terraform.io/dmacvicar/libvirt/"$TERRAFORM_PROVIDER_VERSION"/
 	curl -sLo /tmp/terraform-provider-libvirt.tar.gz https://github.com/dmacvicar/terraform-provider-libvirt/releases/download/v"$TERRAFORM_PROVIDER_VERSION"/terraform-provider-libvirt-"$TERRAFORM_PROVIDER_RELEASE".Fedora_32.x86_64.tar.gz
-	tar zxvf /tmp/terraform-provider-libvirt.tar.gz
-	mv terraform-provider-libvirt ~/.local/share/terraform/plugins/registry.terraform.io/dmacvicar/libvirt/"$TERRAFORM_PROVIDER_VERSION"/linux_amd64/terraform-provider-libvirt_v"$TERRAFORM_PROVIDER_VERSION"
+	tar zxvf /tmp/terraform-provider-libvirt.tar.gz -C /tmp/
+
 fi
 
 Logger "Enable touchegg..."
@@ -264,3 +264,7 @@ if glxinfo | grep Device | grep -q Intel; then
   Option "TearFree" "true"
 EndSection' | sudo tee /etc/X11/xorg.conf.d/20-intel.conf
 fi
+
+Logger "Setup font rendering..."
+sudo ln -sf /usr/share/fontconfig/conf.avail/11-lcdfilter-default.conf /etc/fonts/conf.d
+dconf write /org/gnome/settings-daemon/plugins/xsettings/antialiasing "'rgba'"
