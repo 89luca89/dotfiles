@@ -17,7 +17,7 @@ fi
 
 handle_password() {
 	RESP_PASS=$(
-		cat <<EOF | ~/.local/bin/fzf/bin/fzf
+		cat <<EOF | rofi -i -dmenu -theme android_notification
 Username
 Password
 OTP
@@ -128,7 +128,7 @@ prepare_data() {
 
 main() {
 	# Present on fzf
-	RESULT=$(prepare_data | ~/.local/bin/fzf/bin/fzf)
+	RESULT=$(prepare_data | rofi -i -dmenu -theme android_notification)
 	if [ -z "$RESULT" ]; then
 		exit 0
 	fi
