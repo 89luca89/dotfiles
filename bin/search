@@ -58,7 +58,7 @@ prepare_data() {
 	# Exclude some of the unwanted folders
 	if [ "$QUERY" = " " ] || echo "$QUERY" | grep -q Files; then
 		cd ~ || exit
-		find * -type f |
+		find -- * -type f |
 			sed 's/^/Files: /g'
 	fi
 
@@ -75,7 +75,7 @@ prepare_data() {
 	if [ "$QUERY" = " " ] || echo "$QUERY" | grep -Eq "Bookmarks|Password"; then
 		cd ~ || exit
 		for line in $(cat "$BOOKMARK_FILE"); do
-			bookmark=$(echo $line | grep -oP 'HREF="\Khttp[^"]+' ||:)
+			bookmark=$(echo "$line" | grep -oP 'HREF="\Khttp[^"]+' || :)
 			if [ "$bookmark" != "" ]; then
 				title=$(grep "$bookmark" "$BOOKMARK_FILE" | grep -Eo '">.*</A>' | grep -oP '>\K[^<]+' | grep -v 'Recent Tags')
 				echo "Bookmarks: $title | $bookmark "
@@ -128,7 +128,7 @@ prepare_data() {
 
 main() {
 	# Present on fzf
-	RESULT=$(prepare_data | rofi -i -dmenu -theme android_notification)
+	RESULT=$(prepare_data | rofi -dmenu -theme android_notification)
 	if [ -z "$RESULT" ]; then
 		exit 0
 	fi
@@ -143,7 +143,6 @@ main() {
 
 		### Execute the file
 		RESULT=$(echo "$RESULT" | cut -d":" -f2 | awk '{$1=$1};1')
-		echo "*$RESULT*"
 		if [ "$RESULT" = "Refresh Apps |" ]; then
 			rm ~/.cache/desktop-files
 			return
@@ -151,7 +150,7 @@ main() {
 		# Retrieve original file name
 		command_exec=$(echo "$RESULT" | cut -d"|" -f2 | awk '{$1=$1};1')
 		# Exec
-		setsid -f "$command_exec" >/dev/null 2>&1 &
+		setsid -f $command_exec >/dev/null 2>&1 &
 
 	elif echo "$RESULT" | grep -q "^Password"; then
 
