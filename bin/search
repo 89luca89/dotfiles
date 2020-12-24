@@ -17,7 +17,7 @@ fi
 
 handle_password() {
 	RESP_PASS=$(
-		cat <<EOF | rofi -i -dmenu -theme android_notification
+		cat <<EOF | /home/luca-linux/.local/bin/fzf/bin/fzf --reverse
 Username
 Password
 OTP
@@ -128,7 +128,7 @@ prepare_data() {
 
 main() {
 	# Present on fzf
-	RESULT=$(prepare_data | rofi -dmenu -theme android_notification)
+	RESULT=$(prepare_data | /home/luca-linux/.local/bin/fzf/bin/fzf --reverse)
 	if [ -z "$RESULT" ]; then
 		exit 0
 	fi
