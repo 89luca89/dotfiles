@@ -139,4 +139,7 @@ curl -fsLo ~/.vim/autoload/plug.vim --create-dirs \
 vim -E +PlugInstall! +qall 2>/dev/null
 gnome-terminal -- tmux "uname -a" 2>/dev/null || true
 
+Logger "Restoring Wallpapers"
+git clone -–depth 1 https://gitlab.com/dwt1/wallpapers ~/Pictures/wallpapers
+
 Logger "DONE"
