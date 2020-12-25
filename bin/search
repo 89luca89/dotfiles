@@ -15,9 +15,11 @@ else
 	QUERY=$1
 fi
 
+FZF="/home/luca-linux/.local/bin/fzf/bin/fzf --color=bw --prompt=$QUERY --border --reverse"
+
 handle_password() {
 	RESP_PASS=$(
-		cat <<EOF | /home/luca-linux/.local/bin/fzf/bin/fzf --reverse
+		cat <<EOF | $FZF
 Username
 Password
 OTP
@@ -66,7 +68,7 @@ prepare_data() {
 	if [ "$QUERY" = " " ] || echo "$QUERY" | grep -q Password; then
 		cd ~ || exit
 		find $PASSWORD_STORE/ -type f -name "*.gpg" 2>/dev/null |
-			grep -Ev 'node_modules|.git|flatpak|.cache|.local/lib|.local/share' |
+			grep -Ev 'node_modules|\.git|flatpak|\.cache|\.local/lib|\.local/share' |
 			sed 's/^/Password: /g' |
 			sed "s/$PASSWORD_STORE\///g" |
 			sed "s/\.gpg//g"
@@ -94,7 +96,7 @@ prepare_data() {
 				~/Programs/ \
 				/usr/share/applications/ \
 				-iname '*.desktop' 2>/dev/null |
-				grep -Ev 'xdg|session|autostart|.stversions' |
+				grep -Ev 'xdg|session|autostart|\.stversions' |
 				sort -u); do
 
 				if [ -f "$file" ]; then
@@ -128,7 +130,7 @@ prepare_data() {
 
 main() {
 	# Present on fzf
-	RESULT=$(prepare_data | /home/luca-linux/.local/bin/fzf/bin/fzf --reverse)
+	RESULT=$(prepare_data | $FZF)
 	if [ -z "$RESULT" ]; then
 		exit 0
 	fi
