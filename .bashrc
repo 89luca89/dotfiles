@@ -4,9 +4,6 @@ if [[ $- == *i* ]]; then
 		git clone --depth 1 https://github.com/junegunn/fzf.git "$HOME/.local/bin/fzf"
 		"$HOME/.local/bin/fzf/install" --all
 	fi
-
-	export EDITOR=vim
-
 	# HISTORY SIZE
 	export HISTFILE=~/.histfile
 	export HISTCONTROL=ignoredups:erasedups # no duplicate entries
@@ -25,12 +22,6 @@ if [[ $- == *i* ]]; then
 		shopt -s checkwinsize
 	fi
 
-	# include custom files
-	if [ -f $HOME/.localrc ]; then
-		source $HOME/.localrc
-	fi
-	[ -f ~/.fzf.bash ] && source ~/.fzf.bash
-
 	# setup a simple PROMPT/PS1
 	export TERM="xterm-256color"
 	BGREEN='\[\033[01;32m\]'
@@ -38,15 +29,21 @@ if [[ $- == *i* ]]; then
 	PS_CLEAR='\[\033[0m\]'
 	PS1="${BGREEN}\u@\h${BBLUE} \W \$${PS_CLEAR} "
 
-	# if [ ! -S ~/.ssh/ssh_auth_sock ]; then
-	# 	eval $(ssh-agent)
-	# 	ln -sf "$SSH_AUTH_SOCK" ~/.ssh/ssh_auth_sock
-	# fi
-	# export SSH_AUTH_SOCK=~/.ssh/ssh_auth_sock
-	# ssh-add -l >/dev/null || ssh-add
-	# ssh-add -l >/dev/null || ssh-add ~/.ssh/id_rsa_ext
+	# Manage the ssh keys
+	if [ -z "$SSH_AUTH_SOCK" ]; then
+		eval $(ssh-agent -s)
+		ssh-add ~/.ssh/id_rsa
+		ssh-add ~/.ssh/id_rsa_ext
+	fi
+
+	# include custom files
+	if [ -f "$HOME/.localrc" ]; then
+		source "$HOME/.localrc"
+	fi
+	[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
 fi
-if [ -f $HOME/.aliases ]; then
-	source $HOME/.aliases
+
+if [ -f "$HOME/.aliases" ]; then
+	source "$HOME/.aliases"
 fi

@@ -29,12 +29,10 @@ if [ ! -d "$HOME/.local/bin/fzf" ]; then
     "$HOME/.local/bin/fzf/install" --all
 fi
 
-export EDITOR=vim
-
 # Manage history
 unsetopt EXTENDEDHISTORY
 SAVEHIST=100000
-HISTFILE=~/Syncthing/Conf/.histfile
+HISTFILE=~/.histfile
 setopt NO_HIST_VERIFY
 setopt APPEND_HISTORY                       # adds history
 setopt INC_APPEND_HISTORY
