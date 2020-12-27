@@ -16,8 +16,10 @@ set splitright splitbelow
 set undodir=$HOME/.vim/undo undofile undolevels=1000 updatetime=300
 filetype off
 call plug#begin('~/.vim/plugged')
-" utilities
+" Git
 Plug 'mhinz/vim-signify'
+Plug 'tpope/vim-fugitive'
+" utilities
 Plug 'ap/vim-buftabline'
 Plug 'yggdroot/indentLine'
 " Fzf
@@ -26,7 +28,8 @@ Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 " Lang Packs
 Plug 'sheerun/vim-polyglot', { 'tag': 'v4.9.2' }
 " Aestetics
-Plug 'gruvbox-community/gruvbox'
+Plug 'acarapetis/vim-colors-github'
+Plug '89luca89/vim-code-dark'
 " LSP
 Plug 'dense-analysis/ale'
 Plug 'natebosch/vim-lsc'
@@ -37,11 +40,9 @@ syntax on
 augroup customsyntax
     autocmd! customsyntax
     " Custom syntax highlight
-    autocmd Syntax * syntax match myFunction    '\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\ze\%(\s*(\)'
     autocmd Syntax * syntax match myDeclaration '\v[_.[:alnum:]]+(,\s*[_.[:alnum:]]+)*\ze(\s*([-^+|^\/%&]|\*|\<\<|\>\>|\&\^)?\=[^=])'
     autocmd Syntax * syntax match myDeclaration '\v\w+(,\s*\w+)*\ze(\s*:\=)'
-    autocmd Syntax * highlight myFunction       guifg=#fabd2f ctermfg=214
-    autocmd Syntax * highlight myDeclaration    guifg=#83a598 ctermfg=109
+    autocmd Syntax * syntax match myFunction    '\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\ze\%(\s*(\)'
 augroup end
 " bufline
 let g:buftabline_indicators = 1
@@ -51,10 +52,10 @@ set noshowmode noshowcmd laststatus=0 ruler   " hide statusline
 set rulerformat=%20(%m%r%w\ %y\ %l/%c%)\        " Modified+FileType+Ruler
 " themes
 set termguicolors
-let g:gruvbox_contrast_dark = "hard"
-let g:gruvbox_contrast_light = "hard"
 set background=dark
-colorscheme gruvbox
+colorscheme codedark
+highlight myDeclaration    ctermfg=117 guifg=#9CDCFE
+highlight myFunction       ctermfg=187 guifg=#DCDCAA
 " indentline
 let g:indentLine_char = '|'
 let g:indentLine_concealcursor = ''
@@ -89,7 +90,8 @@ map <C-c> :<C-u>bp<BAR>sp<BAR>bn<BAR>bd<CR>
 " Visual mode, C-c copy line
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 " Leader map
-let mapleader = ' '
+let g:mapleader = "\<Space>"
+nnoremap <silent> <leader> :WhichKey '<Space>'<CR>
 " " Resize split window horizontally and vertically
 map <S-M-Down>  :<C-u>2winc-<CR>
 map <S-M-Left>  :<C-u>2winc<<CR>
@@ -102,6 +104,9 @@ map <S-M-Up>    :<C-u>2winc+<CR>
 map <leader><leader>  :<C-u>Files<CR>
 map <leader>b  :<C-u>Buffers<CR>
 map <leader>t  :<C-u>Tags<CR>
+" Git diff
+map <leader>gd :<C-u>vert Gdiffsplit<CR>
+map <leader>gb :<C-u>Git blame<CR>
 " set filetype shortcut
 nnoremap <leader>j :<C-u>set ft=.jinja2<C-left><right><right><right>
 " Code help using external scripts: Lint, Format, DeepTags, Grep, vert-copen
@@ -177,12 +182,15 @@ let g:lsc_server_commands  = {
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        highlight myDeclaration   guifg=#83a598 ctermfg=109
-        highlight myFunction      guifg=#fabd2f ctermfg=214
+        colorscheme codedark
+        highlight myDeclaration     ctermfg=117 guifg=#9CDCFE
+        highlight myFunction        ctermfg=187 guifg=#DCDCAA
     else
         set background=light
-        highlight myDeclaration   guifg=#076678 ctermfg=24
-        highlight myFunction      guifg=#427b58 ctermfg=136
+        colorscheme github
+        highlight SpecialKey        guibg=NONE guifg=#CCCCCC ctermbg=NONE ctermfg=252
+        highlight myDeclaration     ctermfg=28 guifg=#159828
+        highlight myFunction        ctermfg=88 guifg=#990000
     endif
 endfunction
 " Lint the entire project using filetype as reference. out to quickfix
