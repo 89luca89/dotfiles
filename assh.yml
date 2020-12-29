@@ -25,6 +25,15 @@ hosts:
             - management
             - tunnel
 
+    yoga-wifi:
+        Hostname: yoga-wifi.lan
+        Port: 22
+        User: root
+        ForwardAgent: yes
+        Gateways:
+            - luca-lan
+
+
     w540:
         Hostname: localhost
         Port: 3333

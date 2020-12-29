@@ -30,11 +30,11 @@ if [[ $- == *i* ]]; then
 	PS1="${BGREEN}\u@\h${BBLUE} \W \$${PS_CLEAR} "
 
 	# Manage the ssh keys
-	if [ -z "$SSH_AUTH_SOCK" ]; then
-		eval $(ssh-agent -s)
-		ssh-add ~/.ssh/id_rsa
-		ssh-add ~/.ssh/id_rsa_ext
-	fi
+	# if [ -z "$SSH_AUTH_SOCK" ]; then
+	# 	eval $(ssh-agent -s)
+	# 	ssh-add ~/.ssh/id_rsa
+	# 	ssh-add ~/.ssh/id_rsa_ext
+	# fi
 
 	# include custom files
 	if [ -f "$HOME/.localrc" ]; then
