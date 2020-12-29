@@ -1,0 +1,7 @@
+# main.yml
+
+---
+
+- name: Include distro setup
+  include: distro.yml
+  tags: distro

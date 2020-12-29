@@ -1,0 +1,102 @@
+---
+# tasks file to setup distro to my liking
+
+- name: Update fstab /btrfs
+  replace:
+    path: /etc/fstab
+    regexp: 'subvol '
+    replace: 'subvol,noatime,nodiratime,compress=lzo,ssd,inode_cache,space_cache '
+    backup: true
+  become: true
+
+- name: Update fstab /ext4-xfs
+  replace:
+    path: /etc/fstab
+    regexp: 'defaults '
+    replace: 'defaults,lazytime,noatime,nodiratime '
+    backup: true
+  become: true
+
+- name: Update fstab /tmpfs
+  lineinfile:
+    path: /etc/fstab
+    regexp: '{{ item }}'
+    line: '{{ item }}'
+    state: present
+    backup: true
+  with_items:
+    - tmpfs /tmp tmpfs defaults,lazytime,noatime,nodiratime
+  become: true
+
+- name: Update the profiles file with personal variables
+  lineinfile:
+    path: /etc/profile
+    regexp: '{{ item }}'
+    line: '{{ item }}'
+    state: present
+    backup: true
+  with_items: "{{ global_vars }}"
+  become: true
+
+# Mask systemd services to free up memory
+- name: Mask services /1
+  systemd:
+    name: "{{ item }}"
+    state: stopped
+    enabled: false
+    masked: true
+    daemon_reload: true
+    scope: user
+  with_items: "{{ systemd_user_mask_services }}"
+  become: false
+  tags: never, extreme_debloat
+
+# Mask systemd services to free up memory
+- name: Mask services /2
+  systemd:
+    name: "{{ item }}"
+    state: stopped
+    enabled: false
+    masked: true
+    daemon_reload: true
+  with_items: "{{ systemd_root_mask_services }}"
+  become: true
+  tags: never, extreme_debloat
+
+- name: Improve Intel Tearfree on xorg
+  blockinfile:
+    path: /etc/X11/xorg.conf.d/20-intel.conf
+    create: yes
+    block: |
+      Section "Device"
+        Identifier "Intel Graphics"
+        Driver "intel"
+        Option "TearFree" "true"
+      EndSection
+  become: true
+
+- name: Deploy Grub Flags
+  replace:
+    path: /etc/default/grub
+    regexp: '^(GRUB_CMDLINE_LINUX=(?:(?![" ]{{ item.option | regex_escape }}=).)*)(?:[" ]{{ item.option | regex_escape }}=\S+)?(.*")$'
+    replace: '\1 {{ item.option }}={{ item.value }}\2'
+    backup: true
+  with_items:
+    - {option: drm.debug, value: 0}
+    - {option: drm.vblankoffdelay, value: 1}
+    - {option: mitigations, value: 'off'}
+    - {option: mmc_mod.use_blk_mq, value: 1}
+    - {option: nmi_watchdog, value: 0}
+    - {option: pcie_aspm, value: force}
+    - {option: pcie_aspm.policy, value: powersupersave}
+    - {option: scsi_mod.use_blk_mq, value: 1}
+  register: grub_setup
+  become: true
+
+- name: Update Grub and Initramfs
+  command: '{{ item }}'
+  with_items:
+    - 'grub2-mkconfig -o /boot/grub2/grub.cfg'
+    - 'dracut --force --regenerate-all -v'
+  when: grub_setup.changed
+  become: true

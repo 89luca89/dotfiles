@@ -1,0 +1,147 @@
+---
+# tasks file for dotfiles
+
+- name: Check if Baseline folder is present
+  file:
+    path: '{{ item }}'
+    state: directory
+  with_items:
+    - '{{ ansible_env.HOME }}/.config/keepassxc'
+    - '{{ ansible_env.HOME }}/.config/mpv'
+    - '{{ ansible_env.HOME }}/.config/systemd'
+    - '{{ ansible_env.HOME }}/.config/systemd/user'
+    - '{{ ansible_env.HOME }}/.config/touchegg'
+    - '{{ ansible_env.HOME }}/.local/go'
+    - '{{ ansible_env.HOME }}/.local/rust'
+    - '{{ ansible_env.HOME }}/.local/share'
+    - '{{ ansible_env.HOME }}/.ssh/'
+    - '{{ ansible_env.HOME }}/.vim'
+    - '{{ ansible_env.HOME }}/.vim/autoload'
+    - '{{ ansible_env.HOME }}/.vim/swap'
+    - '{{ ansible_env.HOME }}/.vim/syntax'
+    - '{{ ansible_env.HOME }}/.vim/undo'
+    - '{{ ansible_env.HOME }}/.vim/view'
+    - '{{ ansible_env.HOME }}/Programs'
+  register: firstrun
+
+- name: Install vim-plug
+  get_url:
+    url: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+    mode: 0755
+  with_items:
+    - {src: "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim", dest: '{{ ansible_env.HOME }}/.vim/autoload'}
+
+- name: Prepare to link dotfiles
+  file:
+    path: '{{ item }}'
+    state: absent
+  with_items:
+    - '{{ ansible_env.HOME }}/.aliases'
+    - '{{ ansible_env.HOME }}/.ansible.cfg'
+    - '{{ ansible_env.HOME }}/.bashrc'
+    - '{{ ansible_env.HOME }}/.config/keepassxc/keepassxc.ini'
+    - '{{ ansible_env.HOME }}/.config/libinput-gestures.conf'
+    - '{{ ansible_env.HOME }}/.config/mpv/mpv.conf'
+    - '{{ ansible_env.HOME }}/.config/touchegg/touchegg.conf'
+    - '{{ ansible_env.HOME }}/.ctags'
+    - '{{ ansible_env.HOME }}/.gitconfig'
+    - '{{ ansible_env.HOME }}/.histfile'
+    - '{{ ansible_env.HOME }}/.local/share/applications'
+    - '{{ ansible_env.HOME }}/.ssh/assh.yml'
+    - '{{ ansible_env.HOME }}/.tmux.conf'
+    - '{{ ansible_env.HOME }}/.vimrc'
+    - '{{ ansible_env.HOME }}/.zshrc'
+  when: firstrun.changed
+
+- name: link dotfiles
+  file:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+    state: link
+  with_items:
+    - {src: '{{ ansible_env.HOME }}/dotfiles/.aliases', dest: '{{ ansible_env.HOME }}/.aliases'}
+    - {src: '{{ ansible_env.HOME }}/dotfiles/.ansible.cfg', dest: '{{ ansible_env.HOME }}/.ansible.cfg'}
+    - {src: '{{ ansible_env.HOME }}/dotfiles/.bashrc', dest: '{{ ansible_env.HOME }}/.bashrc'}
+    - {src: '{{ ansible_env.HOME }}/dotfiles/.ctags', dest: '{{ ansible_env.HOME }}/.ctags'}
+    - {src: '{{ ansible_env.HOME }}/dotfiles/.gitconfig', dest: '{{ ansible_env.HOME }}/.gitconfig'}
+    - {src: '{{ ansible_env.HOME }}/dotfiles/.tmux.conf', dest: '{{ ansible_env.HOME }}/.tmux.conf'}
+    - {src: '{{ ansible_env.HOME }}/dotfiles/.toprc', dest: '{{ ansible_env.HOME }}/.toprc'}
+    - {src: '{{ ansible_env.HOME }}/dotfiles/.vimrc', dest: '{{ ansible_env.HOME }}/.vimrc'}
+    - {src: '{{ ansible_env.HOME }}/dotfiles/.zshrc', dest: '{{ ansible_env.HOME }}/.zshrc'}
+    - {src: '{{ ansible_env.HOME }}/dotfiles/applications', dest: '{{ ansible_env.HOME }}/.local/share/applications'}
+    - {src: '{{ ansible_env.HOME }}/dotfiles/assh.yml', dest: '{{ ansible_env.HOME }}/.ssh/assh.yml'}
+    - {src: '{{ ansible_env.HOME }}/dotfiles/mpv.conf', dest: '{{ ansible_env.HOME }}/.config/mpv/mpv.conf'}
+    - {src: '{{ ansible_env.HOME }}/dotfiles/systemd/syncthing.service', dest: '{{ ansible_env.HOME }}/.config/systemd/user/syncthing.service'}
+    - {src: '{{ ansible_env.HOME }}/dotfiles/systemd/touchegg-user.service', dest: '{{ ansible_env.HOME }}/.config/systemd/user/touchegg-user.service'}
+    - {src: '{{ ansible_env.HOME }}/dotfiles/touchegg.conf', dest: '{{ ansible_env.HOME }}/.config/touchegg/touchegg.conf'}
+    - {src: '{{ ansible_env.HOME }}/Syncthing/Conf/.histfile', dest: '{{ ansible_env.HOME }}/.histfile'}
+  when: firstrun.changed
+
+- name: Enable systemd user services
+  systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+    scope: user
+  with_items:
+    - syncthing.service
+    - touchegg-user.service
+
+- name: Copy fixed touchegg daemon
+  copy:
+    src: '{{ ansible_env.HOME }}/dotfiles/touchegg.service'
+    dest: /usr/lib/systemd/system/touchegg.service
+    owner: root
+    group: root
+    mode: 0644
+  become: true
+
+- name: Enable systemd user services
+  systemd:
+    name: touchegg.service
+    state: started
+    enabled: yes
+    daemon_reload: yes
+  become: true
+
+- name: Configure Dconf Options
+  dconf:
+    key: '{{ item.key }}'
+    value: '{{ item.value }}'
+    state: present
+  with_items:
+    - {key: /org/freedesktop/tracker/miner/files/index-on-battery , value: 'false'}
+    - {key: /org/gnome/desktop/input-sources/xkb-options, value: "['caps:ctrl_modifier']"}
+    - {key: /org/gnome/desktop/interface/cursor-blink, value: 'false'}
+    - {key: /org/gnome/desktop/interface/show-battery-percentage, value: 'true'}
+    - {key: /org/gnome/desktop/notifications/show-in-lock-screen, value: 'false'}
+    - {key: /org/gnome/desktop/peripherals/mouse/accel-profile, value: "'adaptive'"}
+    - {key: /org/gnome/desktop/peripherals/touchpad/natural-scroll, value: 'true'}
+    - {key: /org/gnome/desktop/peripherals/touchpad/tap-to-click, value: 'true'}
+    - {key: /org/gnome/desktop/peripherals/touchpad/two-finger-scrolling-enabled, value: 'true'}
+    - {key: /org/gnome/desktop/privacy/disable-camera, value: 'true'}
+    - {key: /org/gnome/desktop/privacy/disable-microphone, value: 'true'}
+    - {key: /org/gnome/desktop/privacy/recent-files-max-age, value: '7'}
+    - {key: /org/gnome/desktop/privacy/remove-old-temp-files, value: 'true'}
+    - {key: /org/gnome/desktop/privacy/remove-old-trash-files, value: 'true'}
+    - {key: /org/gnome/desktop/privacy/report-technical-problems, value: 'false'}
+    - {key: /org/gnome/desktop/privacy/send-software-usage-stats, value: 'false'}
+    - {key: /org/gnome/desktop/wm/preferences/action-middle-click-titleba, value: "'minimize'"}
+    - {key: /org/gnome/desktop/wm/preferences/button-layout, value: "':close'"}
+    - {key: /org/gnome/mutter/center-new-windows, value: 'true'}
+    - {key: /org/gnome/mutter/experimental-features, value: "['rt-scheduler']"}
+    - {key: /org/gnome/nautilus/list-view/use-tree-view, value: 'true'}
+    - {key: /org/gnome/nautilus/preferences/always-use-location-entry, value: 'true'}
+    - {key: /org/gnome/nautilus/preferences/show-delete-permanently, value: 'true'}
+    - {key: /org/gnome/settings-daemon/plugins/power/sleep-inactive-ac-type, value: "'nothing'"}
+    - {key: /org/gnome/settings-daemon/plugins/xsettings/antialiasing, value: "'rgba'"}
+    - {key: /org/gnome/shell/overrides/workspaces-only-on-primary, value: 'true'}
+    - {key: /org/gtk/settings/file-chooser/sort-directories-first, value: 'true'}
+
+
+- name: Download Wallpapers
+  git:
+    repo: 'https://gitlab.com/dwt1/wallpapers'
+    dest: "{{ ansible_env.HOME }}/Pictures/wallpapers"
+    update: no

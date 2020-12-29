@@ -1,0 +1,68 @@
+---
+# vars file for my_apps
+#
+
+terraform_version: 0.13.0
+terraform_ls_version: 0.8.0
+terraform_provider_libvirt_version: 0.6.3
+terraform_provider_libvirt_release: 0.6.3+git.1604843676.67f4f2aa
+
+
+python_packages:
+    - python2-devel
+    - python3-devel
+
+python_modules:
+    - 'python-language-server[all]'
+    - ansible
+    - ansible-later
+    - ansible-lint
+    - astroid
+    - autopep8
+    - demjson
+    - flake8
+    - flake8-awesome
+    - flake8-docstrings
+    - flake8-eradicate
+    - flake8-mypy
+    - indicator-syncthing
+    - isort
+    - jedi
+    - lazy-object-proxy
+    - lz4
+    - mccabe
+    - molecule
+    - neovim
+    - pass-import
+    - pluggy
+    - psutil
+    - pycodestyle
+    - pydocstyle
+    - pyflakes
+    - pylint
+    - python-jsonrpc-server
+    - rope
+    - setuptools
+    - six
+    - snowballstemmer
+    - toml
+    - ujson
+    - upass
+    - wrapt
+    - yamllint
+    - yapf
+    - youtube-dl
+
+golang_packages:
+    - golang
+
+golang_modules:
+    - github.com/go-delve/delve/cmd/dlv
+    - golang.org/x/lint/golint
+    - golang.org/x/tools/cmd/goimports
+    - golang.org/x/tools/cmd/gorename
+    - golang.org/x/tools/cmd/guru
+    - golang.org/x/tools/gopls
+    - mvdan.cc/sh/cmd/shfmt
+    - mvdan.cc/gofumpt/gofumports
+    - mvdan.cc/gofumpt

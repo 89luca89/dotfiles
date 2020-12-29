@@ -1,0 +1,7 @@
+# main.yml
+
+---
+
+- name: Include myApps
+  include: packages.yml
+  tags: packages

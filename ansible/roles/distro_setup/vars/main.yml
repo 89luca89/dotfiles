@@ -1,0 +1,32 @@
+---
+# vars file for debloat
+#
+
+global_vars:
+    - export MOZ_ACCELLERATED=1
+    - export MOZ_USE_XINPUT2=1
+    - export MOZ_WEBRENDER=1
+    - export MOZ_X11_EGL=1
+    - export QT_QPA_PLATFORM=xcb
+
+systemd_user_mask_services:
+    - evolution-addressbook-factory
+    - evolution-calendar-factory
+    - evolution-source-registry
+    - goa-daemon
+    - goa-identity-service
+    - gvfs-goa-volume-monitor
+    - tracker-extract
+    - tracker-miner-fs
+    - tracker-miner-fs-3
+    - tracker-miner-rss
+    - tracker-store
+    - tracker-writeback
+
+systemd_root_mask_services:
+    - livesys.service
+    - livesys-late.sevice
+    - dnf-makecache.timer
+    - lm_sensors.service
+    - switcheroo-control.service
+    - systemd-homed.service
