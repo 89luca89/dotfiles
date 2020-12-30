@@ -48,6 +48,9 @@ my_packages:
   - NetworkManager-sstp-gnome
   - NetworkManager-strongswan-gnome
   - gimp
+  - gnome-shell-extension-appindicator
+  - gnome-shell-extension-workspace-indicator
+  - gnome-tweaks
   - libreoffice-calc
   - libreoffice-draw
   - libreoffice-gtk3
@@ -57,6 +60,7 @@ my_packages:
   - pass
   - pass-otp
   - pidgin
+  - pidgin-indicator
   - purple-plugin_pack
   - purple-plugin_pack-pidgin
   - purple-plugin_pack-pidgin-xmms
