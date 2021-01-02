@@ -108,6 +108,7 @@ debloat_pkg:
   - gnome-video-effects
   - gnome-weather
   - httpd
+  - open-vm-tools-desktop
   - setroubleshoot*
   - tracker
   - tracker-miners

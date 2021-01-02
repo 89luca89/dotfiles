@@ -1,33 +1,6 @@
 ---
 # tasks file to setup distro to my liking
 
-- name: Update fstab /btrfs
-  replace:
-    path: /etc/fstab
-    regexp: 'subvol '
-    replace: 'subvol,noatime,nodiratime,compress=lzo,ssd,inode_cache,space_cache '
-    backup: true
-  become: true
-
-- name: Update fstab /ext4-xfs
-  replace:
-    path: /etc/fstab
-    regexp: 'defaults '
-    replace: 'defaults,lazytime,noatime,nodiratime '
-    backup: true
-  become: true
-
-- name: Update fstab /tmpfs
-  lineinfile:
-    path: /etc/fstab
-    regexp: '{{ item }}'
-    line: '{{ item }}'
-    state: present
-    backup: true
-  with_items:
-    - tmpfs /tmp tmpfs defaults,lazytime,noatime,nodiratime
-  become: true
-
 - name: Update the profiles file with personal variables
   lineinfile:
     path: /etc/profile
@@ -84,7 +57,6 @@
   with_items:
     - {option: drm.debug, value: 0}
     - {option: drm.vblankoffdelay, value: 1}
-    - {option: mitigations, value: 'off'}
     - {option: mmc_mod.use_blk_mq, value: 1}
     - {option: nmi_watchdog, value: 0}
     - {option: pcie_aspm, value: force}
