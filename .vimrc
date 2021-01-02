@@ -185,12 +185,14 @@ function! ToggleTheme()
         colorscheme codedark
         highlight myDeclaration     ctermfg=117 guifg=#9CDCFE
         highlight myFunction        ctermfg=187 guifg=#DCDCAA
+        edit
     else
         set background=light
         colorscheme github
         highlight SpecialKey        guibg=NONE guifg=#CCCCCC ctermbg=NONE ctermfg=252
         highlight myDeclaration     ctermfg=28 guifg=#159828
         highlight myFunction        ctermfg=88 guifg=#990000
+        edit
     endif
 endfunction
 " Lint the entire project using filetype as reference. out to quickfix
