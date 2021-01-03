@@ -47,10 +47,11 @@ my_packages:
   - NetworkManager-libreswan-gnome
   - NetworkManager-sstp-gnome
   - NetworkManager-strongswan-gnome
+  - baobab
+  - evince
+  - file-roller
   - gimp
-  - gnome-shell-extension-appindicator
-  - gnome-shell-extension-workspace-indicator
-  - gnome-tweaks
+  - gnome-disk-utility
   - libreoffice-calc
   - libreoffice-draw
   - libreoffice-gtk3
