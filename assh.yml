@@ -47,7 +47,7 @@ hosts:
         Port: 50363
         User: bastion
         ForwardAgent: yes
-        IdentityFile: /home/luca-linux/.ssh/id_rsa_ext
+        IdentityFile: /home/luca-linux/.ssh/id_ecdsa
         Aliases:
             - jump
         Gateways:
@@ -58,7 +58,7 @@ hosts:
         Port: 50364
         User: fileserver
         ForwardAgent: yes
-        IdentityFile: /home/luca-linux/.ssh/id_rsa_ext
+        IdentityFile: /home/luca-linux/.ssh/id_ecdsa
         Aliases:
             - sftp
         Gateways:
