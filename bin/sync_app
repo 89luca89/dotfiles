@@ -14,7 +14,7 @@ declare -a GNOME_BACKUP=(
 
 app_sync() {
 	TARGET=$1
-	if [ -z $2 ]; then
+	if [ -z $2 ] && [ "$TARGET" != "xfce4" ] && [ "$TARGET" != "gnome" ]; then
 		echo -n "Password: "
 		read -s password
 		echo
@@ -62,7 +62,7 @@ app_sync() {
 	"xfce4")
 		[ -d ~/.config/xfce4 ] || (echo "No folder to backup" && exit 1)
 		cd ~ || exit 1
-		tar -czf ~/dotfiles/xfce/xfce4-setup.tar.gz .config/xfce4/ .config/Thunar .config/Mousepad
+		tar -czf ~/dotfiles/xfce/xfce4-setup.tar.gz .config/xfce4/ .config/Thunar .config/Mousepad .local/share/themes
 		git -C ~/dotfiles commit -m "xfce4: update settings" xfce/xfce4-setup.tar.gz
 		;;
 	"gnome")
