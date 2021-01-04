@@ -70,5 +70,12 @@
   with_items:
     - 'grub2-mkconfig -o /boot/grub2/grub.cfg'
     - 'dracut --force --regenerate-all -v'
-  when: grub_setup.changed
+  when: grub_setup.changed and ansible_os_family == "Redhat"
+  become: true
+
+- name: Update Grub and Initramfs
+  command: '{{ item }}'
+  with_items:
+    - 'update-grub'
+  when: grub_setup.changed and ansible_os_family == "Debian"
   become: true

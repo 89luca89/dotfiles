@@ -6,7 +6,6 @@
     path: '{{ item }}'
     state: directory
   with_items:
-    - '{{ ansible_env.HOME }}/.config/keepassxc'
     - '{{ ansible_env.HOME }}/.config/mpv'
     - '{{ ansible_env.HOME }}/.config/systemd'
     - '{{ ansible_env.HOME }}/.config/systemd/user'
@@ -40,7 +39,6 @@
     - '{{ ansible_env.HOME }}/.aliases'
     - '{{ ansible_env.HOME }}/.ansible.cfg'
     - '{{ ansible_env.HOME }}/.bashrc'
-    - '{{ ansible_env.HOME }}/.config/keepassxc/keepassxc.ini'
     - '{{ ansible_env.HOME }}/.config/libinput-gestures.conf'
     - '{{ ansible_env.HOME }}/.config/mpv/mpv.conf'
     - '{{ ansible_env.HOME }}/.config/touchegg/touchegg.conf'
