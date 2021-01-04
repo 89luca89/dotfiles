@@ -7,6 +7,13 @@ terraform_ls_version: 0.8.0
 terraform_provider_libvirt_version: 0.6.3
 terraform_provider_libvirt_release: 0.6.3+git.1604843676.67f4f2aa
 
+flatpak_packages:
+    - com.github.tchx84.Flatseal
+    - im.pidgin.Pidgin
+    - io.typora.Typora
+    - org.mozilla.Thunderbird
+    - us.zoom.Zoom
+
 
 python_packages:
     - python2-devel

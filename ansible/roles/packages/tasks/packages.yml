@@ -121,6 +121,7 @@
   dnf:
     name: '{{ item }}'
     state: present
+    disable_gpg_check: true
   become: true
   with_items:
     - https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
@@ -140,3 +141,11 @@
     state: present
     flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
     method: user
+
+- name: Install Flatpak Packages
+  community.general.flatpak:
+    name: "{{ item }}"
+    state: present
+    remote: flathub
+    method: user
+  with_items: "{{ flatpak_packages }}"
