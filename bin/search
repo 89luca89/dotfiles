@@ -60,7 +60,8 @@ prepare_data() {
 	# Exclude some of the unwanted folders
 	if [ "$QUERY" = " " ] || echo "$QUERY" | grep -q Files; then
 		cd ~ || exit
-		find -- * |
+		find -L -- * 2> /dev/null |
+			grep -Ev 'node_modules|\.git|flatpak|\.cache|\.local/lib|\.local/share' |
 			sed 's/^/Files: /g'
 	fi
 
