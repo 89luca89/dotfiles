@@ -71,7 +71,7 @@ app_sync() {
 		for f in ${GNOME_BACKUP[@]}; do
 			dconf dump /org/gnome/$f/ >org.gnome.$f.conf
 		done
-		tar -czf ~/dotfiles/gnome/gnome-setup.tar.gz /tmp/bkp
+		tar -czf ~/dotfiles/gnome/gnome-setup.tar.gz /tmp/bkp "$HOME"/.local/share/gnome-shell/extensions/
 		rm -rf /tmp/bkp
 		git -C ~/dotfiles commit -m "gnome: update settings" gnome/gnome-setup.tar.gz
 		;;
@@ -154,7 +154,7 @@ app_restore() {
 		nohup xfwm4 --replace &
 		;;
 	"gnome")
-		rm -rf /tmp/bkp
+		rm -rf /tmp/bkp "$HOME"/.local/share/gnome-shell/extensions/
 		tar -xzf ~/dotfiles/gnome/gnome-setup.tar.gz -C /
 		cd /tmp/bkp || exit 1
 		for file in *; do
