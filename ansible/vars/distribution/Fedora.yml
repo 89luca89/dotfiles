@@ -61,7 +61,6 @@ my_packages:
   - pass
   - pass-otp
   - rsync
-  - simplescreenrecorder
   - syncthing
   - tmux
   - vim

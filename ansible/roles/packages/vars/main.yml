@@ -9,6 +9,7 @@ terraform_provider_libvirt_release: 0.6.3+git.1604843676.67f4f2aa
 
 flatpak_packages:
     - com.github.tchx84.Flatseal
+    - com.uploadedlobster.peek
     - im.pidgin.Pidgin
     - io.typora.Typora
     - org.mozilla.Thunderbird

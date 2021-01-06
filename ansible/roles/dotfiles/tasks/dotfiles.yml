@@ -84,24 +84,6 @@
     scope: user
   with_items:
     - syncthing.service
-    - touchegg-user.service
-
-- name: Copy fixed touchegg daemon
-  copy:
-    src: '{{ ansible_env.HOME }}/dotfiles/touchegg.service'
-    dest: /usr/lib/systemd/system/touchegg.service
-    owner: root
-    group: root
-    mode: 0644
-  become: true
-
-- name: Enable systemd user services
-  systemd:
-    name: touchegg.service
-    state: started
-    enabled: yes
-    daemon_reload: yes
-  become: true
 
 - name: Configure Dconf Options
   dconf:

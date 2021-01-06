@@ -46,7 +46,6 @@ terminal_packages:
 
 my_packages:
   - gimp
-  - libpurple-dev
   - libreoffice-calc
   - libreoffice-draw
   - libreoffice-gtk3
@@ -58,9 +57,7 @@ my_packages:
   - network-manager-l2tp-gnome
   - pass
   - pass-extension-otp
-  - pidgin
   - rsync
-  - simplescreenrecorder
   - syncthing
   - tmux
   - vim
