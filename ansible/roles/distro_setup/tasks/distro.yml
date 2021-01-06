@@ -11,6 +11,16 @@
   with_items: "{{ global_vars }}"
   become: true
 
+- name: Setup TLP blacklist
+  lineinfile:
+    path: /etc/tlp.conf
+    regexp: '{{ item }}'
+    line: '{{ item }}'
+    state: present
+    backup: true
+  with_items: "{{ tlp_blacklist }}"
+  become: true
+
 # Mask systemd services to free up memory
 - name: Mask services /1
   systemd:

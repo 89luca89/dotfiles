@@ -2,6 +2,9 @@
 # vars file for debloat
 #
 
+tlp_blacklist:
+    - USB_BLACKLIST="8087:07dc"
+
 global_vars:
     - export MOZ_ACCELLERATED=1
     - export MOZ_USE_XINPUT2=1
