@@ -40,7 +40,7 @@
     - '{{ ansible_env.HOME }}/.ansible.cfg'
     - '{{ ansible_env.HOME }}/.bashrc'
     - '{{ ansible_env.HOME }}/.config/libinput-gestures.conf'
-    - '{{ ansible_env.HOME }}/.config/mpv/mpv.conf'
+    - '{{ ansible_env.HOME }}/.config/mpv'
     - '{{ ansible_env.HOME }}/.config/touchegg/touchegg.conf'
     - '{{ ansible_env.HOME }}/.ctags'
     - '{{ ansible_env.HOME }}/.gitconfig'
@@ -69,7 +69,7 @@
     - {src: '{{ ansible_env.HOME }}/dotfiles/.zshrc', dest: '{{ ansible_env.HOME }}/.zshrc'}
     - {src: '{{ ansible_env.HOME }}/dotfiles/applications', dest: '{{ ansible_env.HOME }}/.local/share/applications'}
     - {src: '{{ ansible_env.HOME }}/dotfiles/assh.yml', dest: '{{ ansible_env.HOME }}/.ssh/assh.yml'}
-    - {src: '{{ ansible_env.HOME }}/dotfiles/mpv.conf', dest: '{{ ansible_env.HOME }}/.config/mpv/mpv.conf'}
+    - {src: '{{ ansible_env.HOME }}/dotfiles/mpv', dest: '{{ ansible_env.HOME }}/.config/mpv/mpv'}
     - {src: '{{ ansible_env.HOME }}/dotfiles/systemd/syncthing.service', dest: '{{ ansible_env.HOME }}/.config/systemd/user/syncthing.service'}
     - {src: '{{ ansible_env.HOME }}/dotfiles/systemd/touchegg-user.service', dest: '{{ ansible_env.HOME }}/.config/systemd/user/touchegg-user.service'}
     - {src: '{{ ansible_env.HOME }}/dotfiles/touchegg.conf', dest: '{{ ansible_env.HOME }}/.config/touchegg/touchegg.conf'}
