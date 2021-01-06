@@ -20,8 +20,8 @@ FZF="/home/luca-linux/.local/bin/fzf/bin/fzf --color=bw --prompt=$QUERY --border
 handle_password() {
 	RESP_PASS=$(
 		cat <<EOF | $FZF
-Username
 Password
+Username
 OTP
 EOF
 	)
