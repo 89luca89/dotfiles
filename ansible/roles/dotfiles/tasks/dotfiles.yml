@@ -104,6 +104,7 @@
     - {key: /org/gnome/desktop/privacy/remove-old-trash-files, value: 'true'}
     - {key: /org/gnome/desktop/privacy/report-technical-problems, value: 'false'}
     - {key: /org/gnome/desktop/privacy/send-software-usage-stats, value: 'false'}
+    - {key: /org/gnome/desktop/wm/preferences/resize-with-right-button, value: 'true'}
     - {key: /org/gnome/desktop/wm/keybindings/begin-resize, value: "['<Super>r']"}
     - {key: /org/gnome/desktop/wm/keybindings/close, value: "['<Primary><Shift>q']"}
     - {key: /org/gnome/desktop/wm/keybindings/switch-input-source, value: "['<Super>1']"}
