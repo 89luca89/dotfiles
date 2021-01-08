@@ -9,7 +9,6 @@
     - '{{ ansible_env.HOME }}/.config/mpv'
     - '{{ ansible_env.HOME }}/.config/systemd'
     - '{{ ansible_env.HOME }}/.config/systemd/user'
-    - '{{ ansible_env.HOME }}/.config/touchegg'
     - '{{ ansible_env.HOME }}/.local/go'
     - '{{ ansible_env.HOME }}/.local/rust'
     - '{{ ansible_env.HOME }}/.local/share'
@@ -41,7 +40,6 @@
     - '{{ ansible_env.HOME }}/.bashrc'
     - '{{ ansible_env.HOME }}/.config/libinput-gestures.conf'
     - '{{ ansible_env.HOME }}/.config/mpv'
-    - '{{ ansible_env.HOME }}/.config/touchegg/touchegg.conf'
     - '{{ ansible_env.HOME }}/.ctags'
     - '{{ ansible_env.HOME }}/.gitconfig'
     - '{{ ansible_env.HOME }}/.histfile'
@@ -69,10 +67,8 @@
     - {src: '{{ ansible_env.HOME }}/dotfiles/.zshrc', dest: '{{ ansible_env.HOME }}/.zshrc'}
     - {src: '{{ ansible_env.HOME }}/dotfiles/applications', dest: '{{ ansible_env.HOME }}/.local/share/applications'}
     - {src: '{{ ansible_env.HOME }}/dotfiles/assh.yml', dest: '{{ ansible_env.HOME }}/.ssh/assh.yml'}
-    - {src: '{{ ansible_env.HOME }}/dotfiles/mpv', dest: '{{ ansible_env.HOME }}/.config/mpv/mpv'}
+    - {src: '{{ ansible_env.HOME }}/dotfiles/mpv', dest: '{{ ansible_env.HOME }}/.config/mpv'}
     - {src: '{{ ansible_env.HOME }}/dotfiles/systemd/syncthing.service', dest: '{{ ansible_env.HOME }}/.config/systemd/user/syncthing.service'}
-    - {src: '{{ ansible_env.HOME }}/dotfiles/systemd/touchegg-user.service', dest: '{{ ansible_env.HOME }}/.config/systemd/user/touchegg-user.service'}
-    - {src: '{{ ansible_env.HOME }}/dotfiles/touchegg.conf', dest: '{{ ansible_env.HOME }}/.config/touchegg/touchegg.conf'}
     - {src: '{{ ansible_env.HOME }}/Syncthing/Conf/.histfile', dest: '{{ ansible_env.HOME }}/.histfile'}
   when: firstrun.changed
 
@@ -92,6 +88,7 @@
     state: present
   with_items:
     - {key: /org/freedesktop/tracker/miner/files/index-on-battery , value: 'false'}
+    - {key: /org/gnome/desktop/app-folders/folder-children, value: "['Utilities', 'Sundry', 'Games', 'Office', 'Multimedia']"}
     - {key: /org/gnome/desktop/input-sources/xkb-options, value: "['caps:ctrl_modifier']"}
     - {key: /org/gnome/desktop/interface/cursor-blink, value: 'false'}
     - {key: /org/gnome/desktop/interface/show-battery-percentage, value: 'true'}
@@ -107,14 +104,24 @@
     - {key: /org/gnome/desktop/privacy/remove-old-trash-files, value: 'true'}
     - {key: /org/gnome/desktop/privacy/report-technical-problems, value: 'false'}
     - {key: /org/gnome/desktop/privacy/send-software-usage-stats, value: 'false'}
-    - {key: /org/gnome/desktop/wm/preferences/action-middle-click-titleba, value: "'minimize'"}
+    - {key: /org/gnome/desktop/wm/keybindings/begin-resize, value: "['<Super>r']"}
+    - {key: /org/gnome/desktop/wm/keybindings/close, value: "['<Primary><Shift>q']"}
+    - {key: /org/gnome/desktop/wm/keybindings/switch-input-source, value: "['<Super>1']"}
+    - {key: /org/gnome/desktop/wm/keybindings/switch-input-source-backward, value: "['<Shift><Super>1']"}
+    - {key: /org/gnome/desktop/wm/keybindings/toggle-fullscreen, value: "['<Super>f']"}
+    - {key: /org/gnome/desktop/wm/preferences/action-middle-click-titlebar, value: "'minimize'"}
     - {key: /org/gnome/desktop/wm/preferences/button-layout, value: "':close'"}
+    - {key: /org/gnome/gedit/preferences/editor/highlight-current-line, value: "false"}
     - {key: /org/gnome/mutter/center-new-windows, value: 'true'}
-    - {key: /org/gnome/mutter/experimental-features, value: "['rt-scheduler']"}
     - {key: /org/gnome/nautilus/list-view/use-tree-view, value: 'true'}
     - {key: /org/gnome/nautilus/preferences/always-use-location-entry, value: 'true'}
     - {key: /org/gnome/nautilus/preferences/show-delete-permanently, value: 'true'}
     - {key: /org/gnome/settings-daemon/plugins/power/sleep-inactive-ac-type, value: "'nothing'"}
     - {key: /org/gnome/settings-daemon/plugins/xsettings/antialiasing, value: "'rgba'"}
+    - {key: /org/gnome/shell/keybindings/toggle-application-view, value: "['<Super>x']"}
     - {key: /org/gnome/shell/overrides/workspaces-only-on-primary, value: 'true'}
+    - {key: /org/gnome/terminal/legacy/default-show-menubar, value: "false"}
+    - {key: /org/gnome/terminal/legacy/headerbar, value: "@mb false"}
+    - {key: /org/gnome/terminal/legacy/menu-accelerator-enabled, value: "false"}
+    - {key: /org/gnome/terminal/legacy/theme-variant, value: "'dark'"}
     - {key: /org/gtk/settings/file-chooser/sort-directories-first, value: 'true'}

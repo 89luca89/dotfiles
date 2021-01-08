@@ -7,6 +7,7 @@ gnome-background() {
 	gsettings set org.gnome.desktop.background secondary-color "$COLOR"
 	gsettings set org.gnome.desktop.background color-shading-type 'solid'
 	gsettings set org.gnome.desktop.background picture-options 'none'
+	gsettings set org.gnome.desktop.background picture-uri ''
 }
 update-grub() {
 	CONFS=$(sudo find /boot -name "grub.cfg")
