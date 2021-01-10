@@ -32,7 +32,10 @@
     scope: user
   with_items: "{{ systemd_user_mask_services }}"
   become: false
-  tags: never, extreme_debloat
+  retries: 3
+  delay: 3
+  register: result
+  until: result is not failed
 
 # Mask systemd services to free up memory
 - name: Mask services /2
@@ -44,7 +47,10 @@
     daemon_reload: true
   with_items: "{{ systemd_root_mask_services }}"
   become: true
-  tags: never, extreme_debloat
+  retries: 3
+  delay: 3
+  register: result
+  until: result is not failed
 
 - name: Improve Intel Tearfree on xorg
   blockinfile:
