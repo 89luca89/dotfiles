@@ -20,7 +20,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'mhinz/vim-signify'
 Plug 'tpope/vim-fugitive'
 " utilities
-Plug 'ap/vim-buftabline'
+Plug 'vim-airline/vim-airline'
 Plug 'yggdroot/indentLine'
 " Fzf
 Plug 'junegunn/fzf.vim'
@@ -45,11 +45,11 @@ augroup customsyntax
     autocmd Syntax * syntax match myFunction    '\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\ze\%(\s*(\)'
 augroup end
 " bufline
-let g:buftabline_indicators = 1
-let g:buftabline_separators = 1
-let g:buftabline_plug_max   = 0
-set noshowmode noshowcmd laststatus=0 ruler   " hide statusline
-set rulerformat=%20(%m%r%w\ %y\ %l/%c%)\        " Modified+FileType+Ruler
+if !exists('g:airline_symbols')
+  let g:airline_symbols = {}
+endif
+let g:airline_symbols.branch = ''
+let g:airline#extensions#tabline#enabled = 1
 " themes
 set termguicolors
 set background=dark
