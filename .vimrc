@@ -12,8 +12,10 @@ set lazyredraw ttyfast
 set nobackup nocompatible nomodeline noswapfile nowrap nowritebackup
 set number title
 set path+=.,** wildmenu wildmode=list:longest,full wildignore+=tags
+set scrolloff=8
 set splitright splitbelow
-set undodir=$HOME/.vim/undo undofile undolevels=1000 updatetime=300
+set undodir=$HOME/.vim/undo undofile undolevels=10000
+set updatetime=100
 filetype off
 call plug#begin('~/.vim/plugged')
 " Git
@@ -46,7 +48,7 @@ augroup customsyntax
 augroup end
 " bufline
 if !exists('g:airline_symbols')
-  let g:airline_symbols = {}
+    let g:airline_symbols = {}
 endif
 let g:airline_symbols.branch = ''
 let g:airline#extensions#tabline#enabled = 1
@@ -123,7 +125,7 @@ nnoremap <leader>m  :<C-u>vimgrep "<c-r>=expand("<cword>")<CR> **/*<CR>:copen<CR
 nnoremap <leader>r  :<C-u>!grep --exclude tags -Rl <c-r>=expand("<cword>")<CR><BAR>xargs sed -i 's/<c-r>=expand("<cword>")<CR>//g'<Left><Left><Left>
 " Override <leader>l formatting with corresponding formatter for each lang
 augroup autoformat_settings
-    autocmd! autoformat_settings
+    autocmd!
     autocmd FileType c,cpp        nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!clang-format -style=file %<CR>:loadview<CR>
     autocmd FileType go           nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!gofmt -s %<CR>:%!goimports %<CR>:loadview<CR>
     autocmd FileType json         nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!jsonlint -f %<CR>:loadview<CR>
@@ -134,7 +136,7 @@ augroup end
 " LSP SETUP --------------------------------------------------------------------
 " Override IDE-Style keybindings EDMRL, errors, definition, references, rename, format
 augroup lspbindings
-    autocmd! lspbindings
+    autocmd!
     " IDE-like keybindings
     autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>d :<C-u>vert LSClientGoToDefinitionSplit<CR>
     autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>m :<C-u>LSClientFindReferences<CR>
@@ -142,7 +144,7 @@ augroup lspbindings
     autocmd Filetype c,cpp,python,go nnoremap <buffer> K  :<C-u>LSClientShowHover<CR>
 augroup end
 augroup misc
-    autocmd! misc
+    autocmd!
     " Refresh tags on save
     autocmd BufWritePost * silent! :call GenTags()
 augroup end
