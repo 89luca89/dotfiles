@@ -22,7 +22,6 @@ call plug#begin('~/.vim/plugged')
 Plug 'mhinz/vim-signify'
 Plug 'tpope/vim-fugitive'
 " utilities
-Plug 'vim-airline/vim-airline'
 Plug 'yggdroot/indentLine'
 " Fzf
 Plug 'junegunn/fzf.vim'
@@ -46,12 +45,6 @@ augroup customsyntax
     autocmd Syntax * syntax match myDeclaration '\v\w+(,\s*\w+)*\ze(\s*:\=)'
     autocmd Syntax * syntax match myFunction    '\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\ze\%(\s*(\)'
 augroup end
-" bufline
-if !exists('g:airline_symbols')
-    let g:airline_symbols = {}
-endif
-let g:airline_symbols.branch = ''
-let g:airline#extensions#tabline#enabled = 1
 " themes
 set termguicolors
 set background=dark
