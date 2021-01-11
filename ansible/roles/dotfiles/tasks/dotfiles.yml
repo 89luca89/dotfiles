@@ -83,6 +83,7 @@
     scope: user
   with_items:
     - syncthing.service
+  when: ansible_os_family != "Darwin"
 
 - name: Configure Dconf Options
   dconf:
