@@ -129,6 +129,7 @@
     - {key: /org/gnome/settings-daemon/plugins/power/sleep-inactive-ac-type, value: "'nothing'"}
     - {key: /org/gnome/settings-daemon/plugins/xsettings/antialiasing, value: "'rgba'"}
     - {key: /org/gnome/shell/keybindings/toggle-application-view, value: "['<Super>x']"}
+    - {key: /org/gnome/shell/keybindings/toggle-overview, value: "@as []"}
     - {key: /org/gnome/shell/overrides/workspaces-only-on-primary, value: 'true'}
     - {key: /org/gnome/terminal/legacy/default-show-menubar, value: "false"}
     - {key: /org/gnome/terminal/legacy/headerbar, value: "@mb false"}
