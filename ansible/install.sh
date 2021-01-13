@@ -1,3 +1,5 @@
 #!/bin/sh
 
-ansible-playbook -i localhost, -c local -K main.yml $@
+DIR="$(dirname $0)"
+
+ansible-playbook -i localhost, -c local -K "$DIR"/main.yml --diff $@
