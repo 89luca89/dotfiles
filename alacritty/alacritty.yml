@@ -1,0 +1,78 @@
+---
+
+colors:
+  primary:
+    background: '0x1E1E1E'
+    foreground: '0xD0CFCC'
+  normal:
+    black: '0x171421'
+    red: '0xC01C28'
+    green: '0x26A269'
+    yellow: '0xA2734C'
+    blue: '0x12488B'
+    magenta: '0xA347BA'
+    cyan: '0x2AA1B3'
+    white: '0xD0CFCC'
+  bright:
+    black: '0x5E5C64'
+    red: '0xF66151'
+    green: '0x33DA7A'
+    yellow: '0xE9AD0C'
+    blue: '0x2A7BDE'
+    magenta: '0xC061CB'
+    cyan: '0x33C7DE'
+    white: '0xFFFFFF'
+  dim:
+    black: '0x333333'
+    red: '0xf2777a'
+    green: '0x99cc99'
+    yellow: '0xffcc66'
+    blue: '0x6699cc'
+    magenta: '0xcc99cc'
+    cyan: '0x66cccc'
+    white: '0xdddddd'
+
+font:
+  normal:
+    family: 'monospace'
+    style: Regular
+  bold:
+    family: 'monospace'
+    style: Bold
+  italis:
+    family: 'monospace'
+    style: Italic
+
+  size: 9.5
+  use_thin_strokes: true
+
+  offset:
+    x: 0
+    y: 0
+  glyph_offset:
+    x: 0
+    y: 0
+
+draw_bold_text_with_bright_colors: false
+
+background_opacity: 1
+
+
+selection:
+  semantic_escape_chars: ",│`|:\"' ()[]{}<>"
+
+key_bindings:
+  - {key: C, mods: Control|Shift, action: Copy}
+  - {key: N, mods: Control|Shift, action: SpawnNewInstance}
+  - {key: Return, mods: Control|Shift, action: ToggleFullscreen}
+  - {key: V, mods: Control|Shift, action: Paste}
+
+window:
+  padding:
+    x: 0
+    y: 0
+  dynamic_padding: false
+  decorations: none
+
+scrolling:
+  history: 0

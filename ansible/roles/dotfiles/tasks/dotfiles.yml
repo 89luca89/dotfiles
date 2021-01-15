@@ -6,7 +6,7 @@
     path: '{{ item }}'
     state: directory
   with_items:
-    - '{{ ansible_env.HOME }}/.config/kitty'
+    - '{{ ansible_env.HOME }}/.config/alacritty'
     - '{{ ansible_env.HOME }}/.config/mpv'
     - '{{ ansible_env.HOME }}/.config/systemd'
     - '{{ ansible_env.HOME }}/.config/systemd/user'
@@ -39,7 +39,7 @@
     - '{{ ansible_env.HOME }}/.aliases'
     - '{{ ansible_env.HOME }}/.ansible.cfg'
     - '{{ ansible_env.HOME }}/.bashrc'
-    - '{{ ansible_env.HOME }}/.config/kitty'
+    - '{{ ansible_env.HOME }}/.config/alacritty'
     - '{{ ansible_env.HOME }}/.config/libinput-gestures.conf'
     - '{{ ansible_env.HOME }}/.config/mpv'
     - '{{ ansible_env.HOME }}/.ctags'
@@ -70,7 +70,7 @@
     - {src: '{{ ansible_env.HOME }}/dotfiles/.zshrc', dest: '{{ ansible_env.HOME }}/.zshrc'}
     - {src: '{{ ansible_env.HOME }}/dotfiles/applications', dest: '{{ ansible_env.HOME }}/.local/share/applications'}
     - {src: '{{ ansible_env.HOME }}/dotfiles/assh.yml', dest: '{{ ansible_env.HOME }}/.ssh/assh.yml'}
-    - {src: '{{ ansible_env.HOME }}/dotfiles/kitty', dest: '{{ ansible_env.HOME }}/.config/kitty'}
+    - {src: '{{ ansible_env.HOME }}/dotfiles/alacritty', dest: '{{ ansible_env.HOME }}/.config/alacritty'}
     - {src: '{{ ansible_env.HOME }}/dotfiles/mpv', dest: '{{ ansible_env.HOME }}/.config/mpv'}
     - {src: '{{ ansible_env.HOME }}/dotfiles/systemd/syncthing.service', dest: '{{ ansible_env.HOME }}/.config/systemd/user/syncthing.service'}
   when: firstrun.changed
