@@ -83,7 +83,6 @@
     scope: user
   with_items:
     - syncthing.service
-  when: ansible_os_family != "Darwin"
 
 - name: Configure Dconf Options
   dconf:
@@ -100,6 +99,7 @@
     - {key: /org/gnome/desktop/background/secondary-color, value: "'#007575'"}
     - {key: /org/gnome/desktop/input-sources/xkb-options, value: "['caps:ctrl_modifier']"}
     - {key: /org/gnome/desktop/interface/cursor-blink, value: 'false'}
+    - {key: /org/gnome/desktop/interface/monospace-font-name, value: "'Monospace 9.5'"}
     - {key: /org/gnome/desktop/interface/show-battery-percentage, value: 'true'}
     - {key: /org/gnome/desktop/notifications/show-in-lock-screen, value: 'false'}
     - {key: /org/gnome/desktop/peripherals/mouse/accel-profile, value: "'adaptive'"}
@@ -128,7 +128,8 @@
     - {key: /org/gnome/nautilus/preferences/default-folder-viewer, value: "'list-view'"}
     - {key: /org/gnome/nautilus/preferences/show-delete-permanently, value: 'true'}
     - {key: /org/gnome/settings-daemon/plugins/power/sleep-inactive-ac-type, value: "'nothing'"}
-    - {key: /org/gnome/settings-daemon/plugins/xsettings/antialiasing, value: "'rgba'"}
+    - {key: /org/gnome/settings-daemon/plugins/xsettings/antialiasing, value: "'grayscale'"}
+    - {key: /org/gnome/settings-daemon/plugins/xsettings/hinting, value: "'slight'"}
     - {key: /org/gnome/shell/keybindings/toggle-application-view, value: "['<Super>x']"}
     - {key: /org/gnome/shell/keybindings/toggle-overview, value: "@as []"}
     - {key: /org/gnome/shell/overrides/workspaces-only-on-primary, value: 'true'}

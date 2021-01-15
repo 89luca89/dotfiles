@@ -69,7 +69,7 @@
     path: /etc/udev/rules.d/powersave.rules
     create: yes
     block: |
-      SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="0",RUN+="/bin/cpupower frequency-set -g conservative -u 1500MHz"
+      SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="0",RUN+="/bin/cpupower frequency-set -g ondemand -u 1500MHz"
       SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="1",RUN+="/bin/cpupower frequency-set -g performance -u 4500MHz"
     marker: "# {mark} ANSIBLE MANAGED BLOCK BY DOTFILES"
   become: yes

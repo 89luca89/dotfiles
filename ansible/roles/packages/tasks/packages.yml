@@ -2,79 +2,75 @@
 
 ---
 
-- name: Setup packages (Linux)
-  when: ansible_os_family != "Darwin"
-  block:
+- name: Remove bloat packages
+  package:
+    state: absent
+    name: "{{ debloat_pkg }}"
+  become: true
 
-  - name: Remove bloat packages
-    package:
-      state: absent
-      name: "{{ debloat_pkg }}"
-    become: true
+- name: Install Programs (clang)
+  package:
+    state: latest
+    name: "{{ clang_packages }}"
+  become: true
 
-  - name: Install Programs (clang)
-    package:
-      state: latest
-      name: "{{ clang_packages }}"
-    become: true
+- name: Install Programs (python)
+  package:
+    state: latest
+    name: "{{ python_packages }}"
+  become: true
 
-  - name: Install Programs (python)
-    package:
-      state: latest
-      name: "{{ python_packages }}"
-    become: true
+- name: Install Programs (PIP Packages) - pip
+  pip:
+    state: latest
+    executable: pip3
+    extra_args: --user
+    name: "{{ python_modules }}"
+  become: false
 
-  - name: Install Programs (PIP Packages) - pip
-    pip:
-      state: latest
-      executable: pip3
-      extra_args: --user
-      name: "{{ python_modules }}"
-    become: false
+- name: Install Programs (golang)
+  package:
+    state: latest
+    name: "{{ golang_packages }}"
+  become: true
 
-  - name: Install Programs (golang)
-    package:
-      state: latest
-      name: "{{ golang_packages }}"
-    become: true
+- name: Install Programs (Programming Packages)
+  package:
+    state: latest
+    name: "{{ terminal_packages }}"
+  become: true
 
-  - name: Install Programs (Programming Packages)
-    package:
-      state: latest
-      name: "{{ terminal_packages }}"
-    become: true
+- name: Instal additional packages
+  dnf:
+    name: '{{ item }}'
+    state: present
+    disable_gpg_check: true
+  become: true
+  with_items:
+    - https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
+    - "@virtualization"
+  when: ansible_facts['os_family'] == "RedHat"
 
-  - name: Instal additional packages
-    dnf:
-      name: '{{ item }}'
-      state: present
-      disable_gpg_check: true
-    become: true
-    with_items:
-      - https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
-      - "@virtualization"
-    when: ansible_facts['os_family'] == "RedHat"
+- name: Install Programs (GUI Programs)
+  package:
+    state: latest
+    name: "{{ my_packages }}"
+  become: true
 
-  - name: Install Programs (GUI Programs)
-    package:
-      state: latest
-      name: "{{ my_packages }}"
-    become: true
+- name: Add the flathub flatpak repository remote to the user installation
+  flatpak_remote:
+    name: flathub
+    state: present
+    flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
+    method: user
 
-  - name: Add the flathub flatpak repository remote to the user installation
-    flatpak_remote:
-      name: flathub
-      state: present
-      flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
-      method: user
-
-  - name: Install Flatpak Packages
-    community.general.flatpak:
-      name: "{{ item }}"
-      state: present
-      remote: flathub
-      method: user
-    with_items: "{{ flatpak_packages }}"
+- name: Install Flatpak Packages
+  community.general.flatpak:
+    name: "{{ item }}"
+    state: present
+    remote: flathub
+    method: user
+  with_items: "{{ flatpak_packages }}"
 
 
 - name: Check that golang exists
