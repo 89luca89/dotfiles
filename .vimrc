@@ -95,11 +95,6 @@ vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 " Leader map
 let g:mapleader = "\<Space>"
 nnoremap <silent> <leader> :WhichKey '<Space>'<CR>
-" " Resize split window horizontally and vertically
-map <S-M-Down>  :<C-u>2winc-<CR>
-map <S-M-Left>  :<C-u>2winc<<CR>
-map <S-M-Right> :<C-u>2winc><CR>
-map <S-M-Up>    :<C-u>2winc+<CR>
 " Utility shortcuts with leader:
 " map <leader><leader>  :<C-u>cgete system("ls -1 --group-directories-first<BAR>xargs -I{} find {} -type f<BAR>xargs -I{} echo '{}:1:1: '")<CR>:copen<CR>G//<backspace>
 " map <leader>b  :<C-u>buffers<CR>:buffer<space>
@@ -143,11 +138,6 @@ augroup lspbindings
     autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>m :<C-u>LSClientFindReferences<CR>
     autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>r :<C-u>LSClientRename<CR>
     autocmd Filetype c,cpp,python,go nnoremap <buffer> K  :<C-u>LSClientShowHover<CR>
-augroup end
-augroup misc
-    autocmd!
-    " Refresh tags on save
-    autocmd BufWritePost * silent! :call GenTags()
 augroup end
 " Fix ansible file detection
 augroup ansible_vim_fthosts
@@ -217,12 +207,4 @@ endfun
 function! TagsProject()
     silent!
     call system('lint-project ' . &filetype . " . tags")
-endfun
-" Generate tags
-function! GenTags()
-    if isdirectory(".git") || filereadable(".project")
-        silent!
-        exec "!ctags -R . -a"
-        redraw!
-    endif
 endfun
