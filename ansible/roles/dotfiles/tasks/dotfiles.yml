@@ -68,9 +68,9 @@
     - {src: '{{ ansible_env.HOME }}/dotfiles/.toprc', dest: '{{ ansible_env.HOME }}/.toprc'}
     - {src: '{{ ansible_env.HOME }}/dotfiles/.vimrc', dest: '{{ ansible_env.HOME }}/.vimrc'}
     - {src: '{{ ansible_env.HOME }}/dotfiles/.zshrc', dest: '{{ ansible_env.HOME }}/.zshrc'}
+    - {src: '{{ ansible_env.HOME }}/dotfiles/alacritty', dest: '{{ ansible_env.HOME }}/.config/alacritty'}
     - {src: '{{ ansible_env.HOME }}/dotfiles/applications', dest: '{{ ansible_env.HOME }}/.local/share/applications'}
     - {src: '{{ ansible_env.HOME }}/dotfiles/assh.yml', dest: '{{ ansible_env.HOME }}/.ssh/assh.yml'}
-    - {src: '{{ ansible_env.HOME }}/dotfiles/alacritty', dest: '{{ ansible_env.HOME }}/.config/alacritty'}
     - {src: '{{ ansible_env.HOME }}/dotfiles/mpv', dest: '{{ ansible_env.HOME }}/.config/mpv'}
     - {src: '{{ ansible_env.HOME }}/dotfiles/systemd/syncthing.service', dest: '{{ ansible_env.HOME }}/.config/systemd/user/syncthing.service'}
   when: firstrun.changed

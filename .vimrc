@@ -22,7 +22,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'mhinz/vim-signify'
 Plug 'tpope/vim-fugitive'
 " utilities
-Plug 'vim-airline/vim-airline'
+Plug 'ap/vim-buftabline'
 Plug 'yggdroot/indentLine'
 " Fzf
 Plug 'junegunn/fzf.vim'
@@ -31,7 +31,7 @@ Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 Plug 'sheerun/vim-polyglot', { 'tag': 'v4.9.2' }
 " Aestetics
 Plug 'acarapetis/vim-colors-github'
-Plug '89luca89/vim-code-dark'
+Plug 'gruvbox-community/gruvbox'
 " LSP
 Plug 'dense-analysis/ale'
 Plug 'natebosch/vim-lsc'
@@ -47,15 +47,16 @@ augroup customsyntax
     autocmd Syntax * syntax match myFunction    '\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\ze\%(\s*(\)'
 augroup end
 " bufline
-if !exists('g:airline_symbols')
-    let g:airline_symbols = {}
-endif
-let g:airline_symbols.branch = ''
-let g:airline#extensions#tabline#enabled = 1
+let g:buftabline_indicators = 1
+let g:buftabline_separators = 1
+let g:buftabline_plug_max   = 0
+set noshowmode noshowcmd laststatus=0 ruler   " hide statusline
+set rulerformat=%20(%m%r%w\ %y\ %l/%c%)\        " Modified+FileType+Ruler
 " themes
+let g:gruvbox_contrast_dark = "hard"
 set termguicolors
 set background=dark
-colorscheme codedark
+colorscheme gruvbox
 highlight myDeclaration    ctermfg=117 guifg=#9CDCFE
 highlight myFunction       ctermfg=187 guifg=#DCDCAA
 " indentline
@@ -184,7 +185,7 @@ let g:lsc_server_commands  = {
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        colorscheme codedark
+        colorscheme gruvbox
         highlight myDeclaration     ctermfg=117 guifg=#9CDCFE
         highlight myFunction        ctermfg=187 guifg=#DCDCAA
         edit
