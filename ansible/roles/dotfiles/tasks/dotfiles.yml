@@ -95,8 +95,8 @@
     - {key: /org/gnome/desktop/background/color-shading-type, value: "'solid'"}
     - {key: /org/gnome/desktop/background/picture-options, value: "'none'"}
     - {key: /org/gnome/desktop/background/picture-uri, value: "''"}
-    - {key: /org/gnome/desktop/background/primary-color, value: "'#007575'"}
-    - {key: /org/gnome/desktop/background/secondary-color, value: "'#007575'"}
+    - {key: /org/gnome/desktop/background/primary-color, value: "'#008080'"}
+    - {key: /org/gnome/desktop/background/secondary-color, value: "'#008080'"}
     - {key: /org/gnome/desktop/input-sources/xkb-options, value: "['caps:ctrl_modifier']"}
     - {key: /org/gnome/desktop/interface/cursor-blink, value: 'false'}
     - {key: /org/gnome/desktop/interface/monospace-font-name, value: "'Monospace 9.5'"}

@@ -169,6 +169,10 @@ let g:lsc_server_commands  = {
             \   'name': 'c',
             \   'command': 'clangd',
             \ },
+            \ 'terraform' : {
+            \   'name': 'terraform',
+            \   'command': 'terraform-ls',
+            \ },
             \}
 " FUNCTIONS --------------------------------------------------------------------
 " Toggle Theme
