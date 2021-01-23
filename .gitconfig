@@ -3,3 +3,5 @@
 	name = 89luca89
 [credential]
 	helper = libsecret
+[core]
+	askpass = 
