@@ -1,7 +1,7 @@
 [user]
 	email = luca.dimaio1@gmail.com
 	name = 89luca89
-[credential]
-	helper = libsecret
+#[credential]
+#	helper = libsecret
 [core]
-	askpass = 
+	askpass = ""
