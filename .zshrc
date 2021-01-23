@@ -60,7 +60,7 @@ fi
 if [ -z "$SSH_AUTH_SOCK" ] ; then
     eval `ssh-agent -s`
     ssh-add ~/.ssh/id_rsa
-    ssh-add ~/.ssh/id_rsa_ext
+    ssh-add ~/.ssh/id_ecdsa
 fi
 # Zsh completion
 fpath=(/usr/local/share/zsh-completions $fpath)

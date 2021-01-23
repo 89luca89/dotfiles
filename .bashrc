@@ -23,24 +23,27 @@ if [[ $- == *i* ]]; then
 	fi
 
 	# setup a simple PROMPT/PS1
-	export TERM="xterm-256color"
 	BGREEN='\[\033[01;32m\]'
 	BBLUE='\[\033[01;34m\]'
 	PS_CLEAR='\[\033[0m\]'
 	PS1="${BGREEN}\u@\h${BBLUE} \W \$${PS_CLEAR} "
 
 	# Manage the ssh keys
-	# if [ -z "$SSH_AUTH_SOCK" ]; then
-	# 	eval $(ssh-agent -s)
-	# 	ssh-add ~/.ssh/id_rsa
-	# 	ssh-add ~/.ssh/id_rsa_ext
-	# fi
+	if [ -z "$SSH_AUTH_SOCK" ]; then
+		eval $(ssh-agent -s)
+		ssh-add ~/.ssh/id_rsa
+		ssh-add ~/.ssh/id_ecdsa
+	fi
 
 	# include custom files
 	if [ -f "$HOME/.localrc" ]; then
 		source "$HOME/.localrc"
 	fi
 	[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+	# use tmux split with FZF
+	if [ "${TMUX}" ]; then
+		export FZF_TMUX=1
+	fi
 
 fi
 
