@@ -56,11 +56,6 @@ fi
 if [ "${TMUX}" ]; then
     export FZF_TMUX=1
 fi
-# Manage the ssh keys
-if [ -z "$SSH_AUTH_SOCK" ] ; then
-    eval `ssh-agent -s`
-    ssh-add ~/.ssh/id_rsa
-fi
 # Zsh completion
 fpath=(/usr/local/share/zsh-completions $fpath)
 source $ZSH/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
