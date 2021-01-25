@@ -57,7 +57,6 @@ let g:gruvbox_contrast_dark = "hard"
 set background=dark
 set termguicolors
 colorscheme gruvbox
-highlight SpecialKey       guibg=NONE guifg=#444444 ctermbg=NONE ctermfg=8
 highlight myDeclaration    ctermfg=117 guifg=#9CDCFE
 highlight myFunction       ctermfg=187 guifg=#DCDCAA
 " indentline
@@ -180,8 +179,7 @@ let g:lsc_server_commands  = {
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        colorscheme codedark
-        highlight SpecialKey        guibg=NONE guifg=#444444 ctermbg=NONE ctermfg=8
+        colorscheme gruvbox
         highlight myDeclaration     ctermfg=117 guifg=#9CDCFE
         highlight myFunction        ctermfg=187 guifg=#DCDCAA
         edit
