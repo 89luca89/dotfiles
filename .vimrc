@@ -31,7 +31,7 @@ Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 Plug 'sheerun/vim-polyglot', { 'tag': 'v4.9.2' }
 " Aestetics
 Plug 'acarapetis/vim-colors-github'
-Plug 'gruvbox-community/gruvbox'
+Plug 'tomasiser/vim-code-dark'
 " LSP
 Plug 'dense-analysis/ale'
 Plug 'natebosch/vim-lsc'
@@ -44,7 +44,7 @@ augroup customsyntax
     " Custom syntax highlight
     autocmd Syntax * syntax match myDeclaration '\v[_.[:alnum:]]+(,\s*[_.[:alnum:]]+)*\ze(\s*([-^+|^\/%&]|\*|\<\<|\>\>|\&\^)?\=[^=])'
     autocmd Syntax * syntax match myDeclaration '\v\w+(,\s*\w+)*\ze(\s*:\=)'
-    autocmd Syntax * syntax match myFunction    '\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\ze\%(\s*(\)'
+    autocmd Syntax * syntax match myFunction    '\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\ze\%([a-zA-Z0-9]*(\)'
 augroup end
 " bufline
 let g:buftabline_indicators = 1
@@ -53,10 +53,10 @@ let g:buftabline_plug_max   = 0
 set noshowmode noshowcmd laststatus=0 ruler   " hide statusline
 set rulerformat=%20(%m%r%w\ %y\ %l/%c%)\        " Modified+FileType+Ruler
 " themes
-let g:gruvbox_contrast_dark = "hard"
 set termguicolors
 set background=dark
-colorscheme gruvbox
+colorscheme codedark
+highlight SpecialKey       guibg=NONE guifg=#444444 ctermbg=NONE ctermfg=8
 highlight myDeclaration    ctermfg=117 guifg=#9CDCFE
 highlight myFunction       ctermfg=187 guifg=#DCDCAA
 " indentline
@@ -179,7 +179,8 @@ let g:lsc_server_commands  = {
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        colorscheme gruvbox
+        colorscheme codedark
+        highlight SpecialKey        guibg=NONE guifg=#444444 ctermbg=NONE ctermfg=8
         highlight myDeclaration     ctermfg=117 guifg=#9CDCFE
         highlight myFunction        ctermfg=187 guifg=#DCDCAA
         edit
