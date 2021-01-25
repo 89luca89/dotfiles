@@ -57,8 +57,8 @@ let g:gruvbox_contrast_dark = "hard"
 set background=dark
 set termguicolors
 colorscheme gruvbox
-highlight myDeclaration    ctermfg=117 guifg=#9CDCFE
-highlight myFunction       ctermfg=187 guifg=#DCDCAA
+highlight myDeclaration     ctermfg=117 guifg=#9CDCFE
+highlight myFunction        ctermfg=208 guifg=#fe8019
 " indentline
 let g:indentLine_char = '|'
 let g:indentLine_concealcursor = ''
@@ -181,7 +181,7 @@ function! ToggleTheme()
         set background=dark
         colorscheme gruvbox
         highlight myDeclaration     ctermfg=117 guifg=#9CDCFE
-        highlight myFunction        ctermfg=187 guifg=#DCDCAA
+        highlight myFunction        ctermfg=208 guifg=#fe8019
         edit
     else
         set background=light
