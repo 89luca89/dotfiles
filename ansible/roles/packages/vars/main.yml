@@ -32,7 +32,6 @@ python_modules:
     - flake8-awesome
     - flake8-docstrings
     - flake8-eradicate
-    - flake8-mypy
     - indicator-syncthing
     - isort
     - jedi
