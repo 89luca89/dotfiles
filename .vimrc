@@ -31,7 +31,7 @@ Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 Plug 'sheerun/vim-polyglot', { 'tag': 'v4.9.2' }
 " Aestetics
 Plug 'acarapetis/vim-colors-github'
-Plug 'tomasiser/vim-code-dark'
+Plug 'morhetz/gruvbox'
 " LSP
 Plug 'dense-analysis/ale'
 Plug 'natebosch/vim-lsc'
@@ -53,9 +53,10 @@ let g:buftabline_plug_max   = 0
 set noshowmode noshowcmd laststatus=0 ruler   " hide statusline
 set rulerformat=%20(%m%r%w\ %y\ %l/%c%)\        " Modified+FileType+Ruler
 " themes
-set termguicolors
+let g:gruvbox_contrast_dark = "hard"
 set background=dark
-colorscheme codedark
+set termguicolors
+colorscheme gruvbox
 highlight SpecialKey       guibg=NONE guifg=#444444 ctermbg=NONE ctermfg=8
 highlight myDeclaration    ctermfg=117 guifg=#9CDCFE
 highlight myFunction       ctermfg=187 guifg=#DCDCAA
