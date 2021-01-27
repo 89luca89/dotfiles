@@ -15,7 +15,8 @@ if [[ $- == *i* ]]; then
 	shopt -s cmdhist
 
 	export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
-	bind '"\e[A": history-search-backward'
+	# Complete using arrow up/down
+    bind '"\e[A": history-search-backward'
 	bind '"\e[B": history-search-forward'
 
 	if [ "$(shopt | grep checkwinsize | awk '{print $2}')" = "off" ]; then
@@ -30,7 +31,7 @@ if [[ $- == *i* ]]; then
 
 	# include custom files
 	if [ -f "$HOME/.localrc" ]; then
-		source "$HOME/.localrc"
+		source ~/.localrc
 	fi
 	[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 	# use tmux split with FZF
@@ -40,6 +41,6 @@ if [[ $- == *i* ]]; then
 
 fi
 
-if [ -f "$HOME/.aliases" ]; then
-	source "$HOME/.aliases"
+if [ -f ~/.aliases ]; then
+	source ~/.aliases
 fi
