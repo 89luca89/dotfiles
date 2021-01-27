@@ -1,21 +1,57 @@
 " Miscellaneous
-let &t_ut=''
 let g:python3_host_prog = '/usr/bin/python3'
 let g:python_host_prog  = '/usr/bin/python2'
-set autoindent smartindent smarttab copyindent expandtab shiftwidth=4 tabstop=4 softtabstop=4
-set colorcolumn=80 cursorline
+set autoindent
+set autoread
+set backspace=indent,eol,start
+set colorcolumn=80
+set copyindent
+set cursorline
+set encoding=utf8
+set expandtab
+set formatoptions=tcqj
 set grepprg=rg\ --vimgrep\ --smart-case\ --follow
-set guioptions=d mouse=a
-set hidden backspace=indent,eol,start
-set hlsearch incsearch ignorecase smartcase
-set lazyredraw ttyfast
-set nobackup nocompatible nomodeline noswapfile nowrap nowritebackup
-set number title
-set path+=.,** wildmenu wildmode=list:longest,full wildignore+=tags
+set guioptions=d
+set hidden
+set hlsearch
+set ignorecase
+set incsearch
+set langnoremap
+set langremap
+set lazyredraw
+set mouse=a
+set nobackup
+set nocompatible
+set nofsync
+set nomodeline
+set noswapfile
+set nowrap
+set nowritebackup
+set number
+set path+=.,**
 set scrolloff=8
-set splitright splitbelow
-set undodir=$HOME/.vim/undo undofile undolevels=10000
-set updatetime=100
+set shiftwidth=4
+set sidescroll=1
+set smartcase
+set smartindent
+set smarttab
+set softtabstop=4
+set splitbelow
+set splitright
+set tabstop=4
+set title
+set ttyfast
+set undodir=$HOME/.vim/undo
+set undofile
+set undolevels=10000
+set updatetime=50
+set wildignore+=tags
+set wildmenu
+set wildmode=list:longest,full
+set ttimeoutlen=50
+" Bottom bar
+set noshowmode noshowcmd laststatus=0 ruler   " hide statusline
+set rulerformat=%20(%m%r%w\ %y\ %l/%c%)\        " Modified+FileType+Ruler
 filetype off
 call plug#begin('~/.vim/plugged')
 " Git
@@ -50,8 +86,6 @@ augroup end
 let g:buftabline_indicators = 1
 let g:buftabline_separators = 1
 let g:buftabline_plug_max   = 0
-set noshowmode noshowcmd laststatus=0 ruler   " hide statusline
-set rulerformat=%20(%m%r%w\ %y\ %l/%c%)\        " Modified+FileType+Ruler
 " themes
 let g:gruvbox_contrast_dark = "hard"
 set background=dark
@@ -102,11 +136,8 @@ nnoremap <silent> <leader> :WhichKey '<Space>'<CR>
 map <leader><leader>  :<C-u>Files<CR>
 map <leader>b  :<C-u>Buffers<CR>
 map <leader>t  :<C-u>Tags<CR>
-" Git diff
-map <leader>gd :<C-u>vert Gdiffsplit<CR>
-map <leader>gb :<C-u>Git blame<CR>
 " set filetype shortcut
-nnoremap <leader>j :<C-u>set ft=.jinja2<C-left><right><right><right>
+nnoremap <leader>ft :<C-u>set ft=
 " Code help using external scripts: Lint, Format, DeepTags, Grep, vert-copen
 nnoremap <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 nnoremap <leader>A  :<C-u>call LintProject()<CR>:copen<CR>
@@ -116,18 +147,18 @@ nnoremap <leader>a  :<C-u>call LintFile()<CR>:copen<CR>
 nnoremap <leader>f  :<C-u>vimgrep "" **/*<BAR>copen<C-Left><C-Left><Right>
 " Default IDE-Style keybindings EDMRL, errors, definition, references, rename, format
 nnoremap <leader>d  :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
-nnoremap <leader>l  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>
 nnoremap <leader>m  :<C-u>vimgrep "<c-r>=expand("<cword>")<CR> **/*<CR>:copen<CR>
 nnoremap <leader>r  :<C-u>!grep --exclude tags -Rl <c-r>=expand("<cword>")<CR><BAR>xargs sed -i 's/<c-r>=expand("<cword>")<CR>//g'<Left><Left><Left>
-" Override <leader>l formatting with corresponding formatter for each lang
+nnoremap <leader>i  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>
+" Override <leader>i formatting with corresponding formatter for each lang
 augroup autoformat_settings
     autocmd!
-    autocmd FileType c,cpp        nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!clang-format -style=file %<CR>:loadview<CR>
-    autocmd FileType go           nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!gofmt -s %<CR>:%!goimports %<CR>:loadview<CR>
-    autocmd FileType json         nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!jsonlint -f %<CR>:loadview<CR>
-    autocmd FileType python       nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!yapf --style=facebook %<CR>:w<CR>:%!isort --ac --float-to-top -d %<CR>:loadview<CR>
-    autocmd FileType sh           nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:%!shfmt -s %<CR>:loadview<CR>
-    autocmd FileType terraform    nnoremap <buffer> <leader>l <Esc>:w<CR>:mkview<CR>:!terraform fmt %<CR>:loadview<CR><CR>
+    autocmd FileType c,cpp        nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!clang-format -style=file %<CR>:loadview<CR>
+    autocmd FileType go           nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!gofmt -s %<CR>:%!goimports %<CR>:loadview<CR>
+    autocmd FileType json         nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!jsonlint -f %<CR>:loadview<CR>
+    autocmd FileType python       nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!yapf --style=facebook %<CR>:w<CR>:%!isort --ac --float-to-top -d %<CR>:loadview<CR>
+    autocmd FileType sh           nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!shfmt -s %<CR>:loadview<CR>
+    autocmd FileType terraform    nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:!terraform fmt %<CR>:loadview<CR><CR>
 augroup end
 " LSP SETUP --------------------------------------------------------------------
 " Override IDE-Style keybindings EDMRL, errors, definition, references, rename, format
