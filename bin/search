@@ -15,7 +15,7 @@ else
 	QUERY=$1
 fi
 
-FZF="/home/luca-linux/.local/bin/fzf/bin/fzf --color=bw --prompt=$QUERY --border --reverse --query '"
+FZF="/home/luca-linux/.local/bin/fzf/bin/fzf --color=bw --prompt=$QUERY --reverse --query '"
 
 handle_password() {
 	RESP_PASS=$(
@@ -88,28 +88,35 @@ prepare_data() {
 
 	if [ "$QUERY" = " " ] || echo "$QUERY" | grep -q Program; then
 		# Fetch executables from PATH
-		# We do not have a cache file, let's create it!
-		for file in $(find \
-			~/.local/share/applications/ \
-			~/.local/share/flatpak/app/*/current/active/export/ \
-			~/Programs/ \
-			/usr/share/applications/ \
-			-iname '*.desktop' 2>/dev/null |
-			grep -Ev 'xdg|session|autostart|\.stversions' |
-			sort -u); do
+		if [ ! -f ~/.cache/desktop-files ] || test "$(find ~/.cache/desktop-files -mmin +30)"; then
+			# We do not have a cache file, let's create it!
+			echo "Program: Refresh Apps | "
+			echo "Refresh Apps | " >>~/.cache/desktop-files
+			for file in $(find \
+				~/.local/share/applications/ \
+				~/.local/share/flatpak/app/*/current/active/export/ \
+				~/Programs/ \
+				/usr/share/applications/ \
+				-iname '*.desktop' 2>/dev/null |
+				grep -Ev 'xdg|session|autostart|\.stversions' |
+				sort -u); do
 
-			if [ -f "$file" ]; then
+				if [ -f "$file" ]; then
 
-				name=$(grep '^Name=' "$file" | head -1 | sed 's/^Name=//g')
-				generic_name=$(grep '^GenericName=' "$file" | head -1 | sed 's/^GenericName=//g' | sed 's/%.*//g')
-				categories_names=$(grep '^Categories=' "$file" | head -1 | sed 's/^Categories=//g' | sed 's/%.*//g' | sed 's/;/ /g')
-				command_name=$(grep '^Exec=' "$file" | head -1 | sed 's/^Exec=//g' | sed 's/%.*//g')
-				# Save name in file, this will be used for fzf
-				echo "$name | $command_name | $generic_name | $categories_names" >>~/.cache/desktop-files
-				echo "Program: $name | $command_name | $generic_name | $categories_names"
+					name=$(grep '^Name=' "$file" | head -1 | sed 's/^Name=//g')
+					generic_name=$(grep '^GenericName=' "$file" | head -1 | sed 's/^GenericName=//g' | sed 's/%.*//g')
+					categories_names=$(grep '^Categories=' "$file" | head -1 | sed 's/^Categories=//g' | sed 's/%.*//g' | sed 's/;/ /g')
+					command_name=$(grep '^Exec=' "$file" | head -1 | sed 's/^Exec=//g' | sed 's/%.*//g')
+					# Save name in file, this will be used for fzf
+					echo "$name | $command_name | $generic_name | $categories_names" >>~/.cache/desktop-files
+					echo "Program: $name | $command_name | $generic_name | $categories_names"
 
-			fi
-		done
+				fi
+			done
+		else
+			# Aggregate with other data
+			sort -u ~/.cache/desktop-files | sed 's/^/Program: /g'
+		fi
 	fi
 
 	if [ "$QUERY" = " " ] || echo "$QUERY" | grep -Eq "Window|Program"; then
@@ -135,6 +142,10 @@ main() {
 
 		### Execute the file
 		RESULT=$(echo "$RESULT" | cut -d":" -f2 | awk '{$1=$1};1')
+		if [ "$RESULT" = "Refresh Apps |" ]; then
+			rm ~/.cache/desktop-files
+			return
+		fi
 		# Retrieve original file name
 		command_exec=$(echo "$RESULT" | cut -d"|" -f2 | awk '{$1=$1};1')
 		# Exec
