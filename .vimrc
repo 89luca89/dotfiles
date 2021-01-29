@@ -75,7 +75,7 @@ call plug#end()
 filetype plugin indent on
 syntax on
 " Theming
-autocmd! FocusGained,BufEnter,CursorHold,CursorHoldI * if mode() != 'c' | call SetTheme() | endif
+autocmd! FocusGained,BufEnter * call SetTheme()
 augroup customsyntax
     autocmd! customsyntax
     " Custom syntax highlight
