@@ -58,9 +58,12 @@
     create: yes
     block: |
       Section "Device"
-        Identifier "Intel Graphics"
+        Identifier "intel"
+        MatchDriver "i915"
         Driver "intel"
+        Option "AccelMethod" "sna"
         Option "TearFree" "true"
+        Option "DRI" "3"
       EndSection
   become: true
 

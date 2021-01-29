@@ -127,8 +127,7 @@ map <C-c> :<C-u>bp<BAR>sp<BAR>bn<BAR>bd<CR>
 " Visual mode, C-c copy line
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 " Leader map
-let g:mapleader = "\<Space>"
-nnoremap <silent> <leader> :WhichKey '<Space>'<CR>
+let mapleader = ' '
 " Utility shortcuts with leader:
 " map <leader><leader>  :<C-u>cgete system("ls -1 --group-directories-first<BAR>xargs -I{} find {} -type f<BAR>xargs -I{} echo '{}:1:1: '")<CR>:copen<CR>G//<backspace>
 " map <leader>b  :<C-u>buffers<CR>:buffer<space>
