@@ -61,7 +61,7 @@ schemes:
         white:   '#ffffff'
 
 
-colors: *dark
+colors: *light
 
 
 font:
