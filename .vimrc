@@ -75,6 +75,7 @@ call plug#end()
 filetype plugin indent on
 syntax on
 " Theming
+autocmd! FocusGained,BufEnter,CursorHold,CursorHoldI * if mode() != 'c' | call SetTheme() | endif
 augroup customsyntax
     autocmd! customsyntax
     " Custom syntax highlight
@@ -220,6 +221,17 @@ function! ToggleTheme()
         highlight myDeclaration     ctermfg=28 guifg=#159828
         highlight myFunction        ctermfg=88 guifg=#990000
         edit
+    endif
+endfunction
+function! SetTheme()
+    if system("gsettings get org.gnome.desktop.interface gtk-theme") =~ 'dark'
+        if &background == 'light'
+            call ToggleTheme()
+        endif
+    else
+        if &background == 'dark'
+            call ToggleTheme()
+        endif
     endif
 endfunction
 " Lint the entire project using filetype as reference. out to quickfix
