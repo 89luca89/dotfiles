@@ -1,36 +1,68 @@
 ---
 
-colors:
-  primary:
-    background: '0x1C1C1C'
-    foreground: '0xD0CFCC'
-  normal:
-    black: '0x171421'
-    red: '0xC01C28'
-    green: '0x26A269'
-    yellow: '0xA2734C'
-    blue: '0x12488B'
-    magenta: '0xA347BA'
-    cyan: '0x2AA1B3'
-    white: '0xD0CFCC'
-  bright:
-    black: '0x5E5C64'
-    red: '0xF66151'
-    green: '0x33DA7A'
-    yellow: '0xE9AD0C'
-    blue: '0x2A7BDE'
-    magenta: '0xC061CB'
-    cyan: '0x33C7DE'
-    white: '0xFFFFFF'
-  dim:
-    black: '0x333333'
-    red: '0xf2777a'
-    green: '0x99cc99'
-    yellow: '0xffcc66'
-    blue: '0x6699cc'
-    magenta: '0xcc99cc'
-    cyan: '0x66cccc'
-    white: '0xdddddd'
+schemes:
+  dark: &dark
+    primary:
+      background: '0x1C1C1C'
+      foreground: '0xD0CFCC'
+    normal:
+      black: '0x171421'
+      red: '0xC01C28'
+      green: '0x26A269'
+      yellow: '0xA2734C'
+      blue: '0x12488B'
+      magenta: '0xA347BA'
+      cyan: '0x2AA1B3'
+      white: '0xD0CFCC'
+    bright:
+      black: '0x5E5C64'
+      red: '0xF66151'
+      green: '0x33DA7A'
+      yellow: '0xE9AD0C'
+      blue: '0x2A7BDE'
+      magenta: '0xC061CB'
+      cyan: '0x33C7DE'
+      white: '0xFFFFFF'
+    dim:
+      black: '0x333333'
+      red: '0xf2777a'
+      green: '0x99cc99'
+      yellow: '0xffcc66'
+      blue: '0x6699cc'
+      magenta: '0xcc99cc'
+      cyan: '0x66cccc'
+      white: '0xdddddd'
+
+    light: &light
+      # Default colors
+      primary:
+        background: '#ffffff'
+        foreground: '#000000'
+      # Normal colors
+      normal:
+        black:   '#000000'
+        red:     '#cd0000'
+        green:   '#00cd00'
+        yellow:  '#cdcd00'
+        blue:    '#0000ee'
+        magenta: '#cd00cd'
+        cyan:    '#00adad'
+        white:   '#c5c5c5'
+
+      # Bright colors
+      bright:
+        black:   '#7f7f7f'
+        red:     '#ff0000'
+        green:   '#00ff00'
+        yellow:  '#ffff00'
+        blue:    '#5c5cff'
+        magenta: '#ff00ff'
+        cyan:    '#00ffff'
+        white:   '#ffffff'
+
+
+colors: *dark
+
 
 font:
   normal:
