@@ -39,6 +39,7 @@ hosts:
         Port: 3333
         User: luca-linux
         ForwardAgent: yes
+        IdentityFile: /home/luca-linux/.ssh/id_ecdsa
         Gateways:
             - luca-lan
 
@@ -69,7 +70,7 @@ hosts:
         Port: 2200
         User: bastion
         ForwardAgent: yes
-        IdentityFile: /home/luca-linux/.ssh/id_rsa_ext
+        IdentityFile: /home/luca-linux/.ssh/id_ecdsa
         Gateways:
             - direct
 
@@ -78,7 +79,7 @@ hosts:
         User: bastion
         Port: 50365
         ForwardAgent: yes
-        IdentityFile: /home/luca-linux/.ssh/id_rsa_ext
+        IdentityFile: /home/luca-linux/.ssh/id_ecdsa
         GatewayConnectTimeout: 2
         Gateways:
             - direct
