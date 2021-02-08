@@ -49,7 +49,7 @@ alias cp='cp --reflink=auto --sparse=always'
 alias vi='vim -u ~/dotfiles/.vimrc-minimal'
 alias gogetsys="export GOPATH=~/.local/go; go get"
 alias gnome-reload='DISPLAY=:0 xdotool key Alt+F2; sleep 1; DISPLAY=:0 xdotool key r;DISPLAY=:0  xdotool key Return'
-alias git-clean="git fetch -p && git branch -vv | awk '/: gone]/{print $1}' | xargs git branch -d"
+alias git-clean="git fetch -p && git branch -vv | awk '/: gone]/{print $1}' | xargs -I{} git branch -d {}"
 export EDITOR=vim
 export PATH=/bin:$PATH
 export PATH=$HOME/bin:$PATH
