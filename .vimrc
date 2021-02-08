@@ -71,6 +71,10 @@ Plug 'morhetz/gruvbox'
 " LSP
 Plug 'dense-analysis/ale'
 Plug 'natebosch/vim-lsc'
+" Snippets
+Plug 'sirver/ultisnips'
+Plug 'honza/vim-snippets'
+Plug 'phenomenes/ansible-snippets'
 call plug#end()
 filetype plugin indent on
 syntax on
@@ -116,6 +120,10 @@ let g:go_highlight_generate_tags     = 1
 let g:go_highlight_operators         = 1
 let g:go_highlight_types             = 1
 let g:python_highlight_all  = 1
+" UltiSnips
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 """     Shortcuts   "
 " do last action on a visual selection
 vnoremap . :'<,'>:normal .<CR>
@@ -133,8 +141,9 @@ let mapleader = ' '
 " map <leader>b  :<C-u>buffers<CR>:buffer<space>
 " map <leader>t  :<C-u>cgete system("grep -v '^!_' tags<BAR>sort -ru<BAR>awk -F'\t' '{split($5,line,\":\");print $2\":\"line[2]\":0: \"$1}'")<CR>:copen<CR>G//<backspace>
 map <leader><leader>  :<C-u>Files<CR>
-map <leader>b  :<C-u>Buffers<CR>
+map <leader><tab>  :<C-u>Buffers<CR>
 map <leader>t  :<C-u>Tags<CR>
+map <leader>s  :<C-u>Snippets<CR>
 " set filetype shortcut
 nnoremap <leader>ft :<C-u>set ft=
 " Code help using external scripts: Lint, Format, DeepTags, Grep, vert-copen
@@ -168,15 +177,18 @@ augroup lspbindings
     autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>m :<C-u>LSClientFindReferences<CR>
     autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>r :<C-u>LSClientRename<CR>
     autocmd Filetype c,cpp,python,go nnoremap <buffer> K  :<C-u>LSClientShowHover<CR>
+    " Ansible-doc
+    autocmd Filetype yaml.ansible nnoremap <buffer> K  :<C-u>!ansible-doc <c-r>=expand("<cword>")<CR><bar>less<CR>
 augroup end
 " Fix ansible file detection
 augroup ansible_vim_fthosts
     autocmd!
     autocmd BufNewFile,BufRead */*.j2 set filetype=jinja2
-    autocmd BufNewFile,BufRead */*inventory*.y*ml set filetype=yaml.ansible
-    autocmd BufNewFile,BufRead */roles/**/*.y*ml set filetype=yaml.ansible
-    autocmd BufNewFile,BufRead */vars/*/**.y*ml set filetype=yaml.ansible
-    autocmd BufNewFile,BufRead *main*.y*ml set filetype=yaml.ansible
+    autocmd BufNewFile,BufRead */*inventory*.yml set filetype=yaml.ansible
+    autocmd BufNewFile,BufRead */roles/**/*.yml set filetype=yaml.ansible
+    autocmd BufNewFile,BufRead */tasks/**/*.yml set filetype=yaml.ansible
+    autocmd BufNewFile,BufRead */vars/*/**.yml set filetype=yaml.ansible
+    autocmd BufNewFile,BufRead *main*.yml set filetype=yaml.ansible
     autocmd BufNewFile,BufRead hosts set filetype=ini.ansible
 augroup END
 " ALE + LSP -------------------------------------------------------------------
