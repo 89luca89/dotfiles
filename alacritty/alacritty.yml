@@ -33,35 +33,87 @@ schemes:
       cyan: '0x66cccc'
       white: '0xdddddd'
 
-    light: &light
-      # Default colors
-      primary:
-        background: '#ffffff'
-        foreground: '#000000'
-      # Normal colors
-      normal:
-        black:   '#000000'
-        red:     '#cd0000'
-        green:   '#00cd00'
-        yellow:  '#cdcd00'
-        blue:    '#0000ee'
-        magenta: '#cd00cd'
-        cyan:    '#00adad'
-        white:   '#c5c5c5'
+  light: &light
+    # Default colors
+    primary:
+      background: '#ffffff'
+      foreground: '#000000'
+    # Normal colors
+    normal:
+      black:   '#000000'
+      red:     '#cd0000'
+      green:   '#00cd00'
+      yellow:  '#cdcd00'
+      blue:    '#0000ee'
+      magenta: '#cd00cd'
+      cyan:    '#00adad'
+      white:   '#c5c5c5'
 
-      # Bright colors
-      bright:
-        black:   '#7f7f7f'
-        red:     '#ff0000'
-        green:   '#00ff00'
-        yellow:  '#ffff00'
-        blue:    '#5c5cff'
-        magenta: '#ff00ff'
-        cyan:    '#00ffff'
-        white:   '#ffffff'
+    # Bright colors
+    bright:
+      black:   '#7f7f7f'
+      red:     '#ff0000'
+      green:   '#00ff00'
+      yellow:  '#ffff00'
+      blue:    '#5c5cff'
+      magenta: '#ff00ff'
+      cyan:    '#00ffff'
+      white:   '#ffffff'
 
 
-colors: *dark
+  codedark: &codedark
+    # Default colors
+    primary:
+      background: '#1e1e1e'
+      foreground: '#d4d4d4'
+    # Normal colors
+    normal:
+      black:   '#1e1e1e'
+      red:     '#f44747'
+      green:   '#608b4e'
+      yellow:  '#dcdcaa'
+      blue:    '#569cd6'
+      magenta: '#c678dd'
+      cyan:    '#56b6c2'
+      white:   '#d4d4d4'
+
+    # Bright colors
+    bright:
+      black:   '#808080'
+      red:     '#f44747'
+      green:   '#608b4e'
+      yellow:  '#dcdcaa'
+      blue:    '#569cd6'
+      magenta: '#c678dd'
+      cyan:    '#56b6c2'
+      white:   '#d4d4d4'
+
+  tangodark: &tangodark
+    primary:
+      background: '0x1C1C1C'
+      foreground: '0xD0CFCC'
+
+    normal:
+      black: '0x2e3436'
+      red: '0xcc0000'
+      green: '0x4e9a06'
+      yellow: '0xc4a000'
+      blue: '0x3465a4'
+      magenta: '0x75507b'
+      cyan: '0x06989a'
+      white: '0xd3d7cf'
+
+    bright:
+      black: '0x555753'
+      red: '0xef2929'
+      green: '0x8ae234'
+      yellow: '0xfce94f'
+      blue: '0x729fcf'
+      magenta: '0xad7fa8'
+      cyan: '0x34e2e2'
+      white: '0xeeeeec'
+
+colors: *tangodark
 
 
 font:
