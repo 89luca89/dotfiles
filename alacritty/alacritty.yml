@@ -40,25 +40,25 @@ schemes:
       foreground: '#000000'
     # Normal colors
     normal:
-      black:   '#000000'
-      red:     '#cd0000'
-      green:   '#00cd00'
-      yellow:  '#cdcd00'
-      blue:    '#0000ee'
+      black: '#000000'
+      red: '#cd0000'
+      green: '#00cd00'
+      yellow: '#cdcd00'
+      blue: '#0000ee'
       magenta: '#cd00cd'
-      cyan:    '#00adad'
-      white:   '#c5c5c5'
+      cyan: '#00adad'
+      white: '#c5c5c5'
 
     # Bright colors
     bright:
-      black:   '#7f7f7f'
-      red:     '#ff0000'
-      green:   '#00ff00'
-      yellow:  '#ffff00'
-      blue:    '#5c5cff'
+      black: '#7f7f7f'
+      red: '#ff0000'
+      green: '#00ff00'
+      yellow: '#ffff00'
+      blue: '#5c5cff'
       magenta: '#ff00ff'
-      cyan:    '#00ffff'
-      white:   '#ffffff'
+      cyan: '#00ffff'
+      white: '#ffffff'
 
 
   codedark: &codedark
@@ -68,30 +68,30 @@ schemes:
       foreground: '#d4d4d4'
     # Normal colors
     normal:
-      black:   '#1e1e1e'
-      red:     '#f44747'
-      green:   '#608b4e'
-      yellow:  '#dcdcaa'
-      blue:    '#569cd6'
+      black: '#1e1e1e'
+      red: '#f44747'
+      green: '#608b4e'
+      yellow: '#dcdcaa'
+      blue: '#569cd6'
       magenta: '#c678dd'
-      cyan:    '#56b6c2'
-      white:   '#d4d4d4'
+      cyan: '#56b6c2'
+      white: '#d4d4d4'
 
     # Bright colors
     bright:
-      black:   '#808080'
-      red:     '#f44747'
-      green:   '#608b4e'
-      yellow:  '#dcdcaa'
-      blue:    '#569cd6'
+      black: '#808080'
+      red: '#f44747'
+      green: '#608b4e'
+      yellow: '#dcdcaa'
+      blue: '#569cd6'
       magenta: '#c678dd'
-      cyan:    '#56b6c2'
-      white:   '#d4d4d4'
+      cyan: '#56b6c2'
+      white: '#d4d4d4'
 
   tangodark: &tangodark
     primary:
       background: '0x1C1C1C'
-      foreground: '0xD0CFCC'
+      foreground: '0xD3D7CF'
 
     normal:
       black: '0x2e3436'
