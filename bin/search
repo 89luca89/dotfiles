@@ -15,7 +15,20 @@ else
 	QUERY=$1
 fi
 
-FZF="/home/luca-linux/.local/bin/fzf/bin/fzf --color=bw --prompt=$QUERY --reverse --query '"
+FZF="$HOME/.local/bin/fzf/bin/fzf --color=bw --prompt=$QUERY --reverse --query '"
+
+if [ "$(uname)" = "Darwin" ]; then
+	GREP="/usr/local/bin/ggrep"
+	PASS="/usr/local/bin/pass"
+	CLIP="pbcopy"
+elif [ "$(uname)" = "Darwin" ]; then
+	GREP="/bin/grep"
+	PASS="/bin/pass"
+	CLIP="xclip -loops 0 -sel p -sel s -sel c"
+else
+	echo "Unsupported OS"
+	exit 1
+fi
 
 handle_password() {
 	RESP_PASS=$(
@@ -30,21 +43,21 @@ EOF
 
 	Username)
 
-		PASSDATA=$(/bin/pass "$RESULT")
-		USRNAME="$(echo "$PASSDATA" | grep -Ei "login:|username:|user:" | head -1 | cut -d' ' -f2-)"
-		printf '%s' "$USRNAME" | nohup xclip -loops 0 -sel p -sel s -sel c &
+		PASSDATA=$($PASS "$RESULT")
+		USRNAME="$(echo "$PASSDATA" | $GREP -Ei "login:|username:|user:" | head -1 | cut -d' ' -f2-)"
+		printf '%s' "$USRNAME" | nohup $CLIP &
 		;;
 
 	Password)
 
-		PASSDATA=$(/bin/pass "$RESULT" | head -n1)
-		printf '%s' "$PASSDATA" | nohup xclip -loops 0 -sel p -sel s -sel c &
+		PASSDATA=$($PASS "$RESULT" | head -n1)
+		printf '%s' "$PASSDATA" | nohup $CLIP &
 		;;
 
 	OTP)
 
-		PASSDATA=$(/bin/pass otp "$RESULT" | head -n1)
-		printf '%s' "$PASSDATA" | nohup xclip -loops 0 -sel p -sel s -sel c &
+		PASSDATA=$($PASS otp "$RESULT" | head -n1)
+		printf '%s' "$PASSDATA" | nohup $CLIP &
 		;;
 
 	*)
@@ -58,35 +71,35 @@ EOF
 prepare_data() {
 	# Find all files using ripgrep
 	# Exclude some of the unwanted folders
-	if [ "$QUERY" = " " ] || echo "$QUERY" | grep -q Files; then
+	if [ "$QUERY" = " " ] || echo "$QUERY" | $GREP -q Files; then
 		cd ~ || exit
 		find -L -- * 2>/dev/null |
-			grep -Ev 'node_modules|\.git|flatpak|\.cache|\.local/lib|\.local/share' |
+			$GREP -Ev 'node_modules|\.git|flatpak|\.cache|\.local/lib|\.local/share' |
 			sed 's/^/Files: /g'
 	fi
 
 	# Fetch password list
-	if [ "$QUERY" = " " ] || echo "$QUERY" | grep -q Password; then
+	if [ "$QUERY" = " " ] || echo "$QUERY" | $GREP -q Password; then
 		cd ~ || exit
 		find $PASSWORD_STORE/ -type f -name "*.gpg" 2>/dev/null |
-			grep -Ev 'node_modules|\.git|flatpak|\.cache|\.local/lib|\.local/share' |
+			$GREP -Ev 'node_modules|\.git|flatpak|\.cache|\.local/lib|\.local/share' |
 			sed 's/^/Password: /g' |
 			sed "s/$PASSWORD_STORE\///g" |
 			sed "s/\.gpg//g"
 	fi
 
-	if [ "$QUERY" = " " ] || echo "$QUERY" | grep -Eq "Bookmarks|Password"; then
+	if [ "$QUERY" = " " ] || echo "$QUERY" | $GREP -Eq "Bookmarks|Password"; then
 		cd ~ || exit
 		for line in $(cat "$BOOKMARK_FILE"); do
-			bookmark=$(echo "$line" | grep -oP 'HREF="\Khttp[^"]+' || :)
+			bookmark=$(echo "$line" | $GREP -oP 'HREF="\Khttp[^"]+' || :)
 			if [ "$bookmark" != "" ]; then
-				title=$(grep "$bookmark" "$BOOKMARK_FILE" | grep -Eo '">.*</A>' | grep -oP '>\K[^<]+' | grep -v 'Recent Tags')
+				title=$($GREP "$bookmark" "$BOOKMARK_FILE" | $GREP -Eo '">.*</A>' | $GREP -oP '>\K[^<]+' | $GREP -v 'Recent Tags')
 				echo "Bookmarks: $title | $bookmark "
 			fi
 		done
 	fi
 
-	if [ "$QUERY" = " " ] || echo "$QUERY" | grep -q Program; then
+	if [ "$QUERY" = " " ] || echo "$QUERY" | $GREP -q Program; then
 		# Fetch executables from PATH
 		if [ ! -f ~/.cache/desktop-files ] || test "$(find ~/.cache/desktop-files -mmin +30)"; then
 			# We do not have a cache file, let's create it!
@@ -98,15 +111,15 @@ prepare_data() {
 				~/Programs/ \
 				/usr/share/applications/ \
 				-iname '*.desktop' 2>/dev/null |
-				grep -Ev 'xdg|session|autostart|\.stversions' |
+				$GREP -Ev 'xdg|session|autostart|\.stversions' |
 				sort -u); do
 
 				if [ -f "$file" ]; then
 
-					name=$(grep '^Name=' "$file" | head -1 | sed 's/^Name=//g')
-					generic_name=$(grep '^GenericName=' "$file" | head -1 | sed 's/^GenericName=//g' | sed 's/%.*//g')
-					categories_names=$(grep '^Categories=' "$file" | head -1 | sed 's/^Categories=//g' | sed 's/%.*//g' | sed 's/;/ /g')
-					command_name=$(grep '^Exec=' "$file" | head -1 | sed 's/^Exec=//g' | sed 's/%.*//g')
+					name=$($GREP '^Name=' "$file" | head -1 | sed 's/^Name=//g')
+					generic_name=$($GREP '^GenericName=' "$file" | head -1 | sed 's/^GenericName=//g' | sed 's/%.*//g')
+					categories_names=$($GREP '^Categories=' "$file" | head -1 | sed 's/^Categories=//g' | sed 's/%.*//g' | sed 's/;/ /g')
+					command_name=$($GREP '^Exec=' "$file" | head -1 | sed 's/^Exec=//g' | sed 's/%.*//g')
 					# Save name in file, this will be used for fzf
 					echo "$name | $command_name | $generic_name | $categories_names" >>~/.cache/desktop-files
 					echo "Program: $name | $command_name | $generic_name | $categories_names"
@@ -119,9 +132,9 @@ prepare_data() {
 		fi
 	fi
 
-	if [ "$QUERY" = " " ] || echo "$QUERY" | grep -Eq "Window|Program"; then
+	if [ "$QUERY" = " " ] || echo "$QUERY" | $GREP -Eq "Window|Program"; then
 		# Fetch open windows
-		wmctrl -l | grep -o "$(hostname).*" | sed "s/$(hostname) /Window: /g"
+		wmctrl -l | $GREP -o "$(hostname).*" | sed "s/$(hostname) /Window: /g"
 	fi
 }
 
@@ -132,13 +145,13 @@ main() {
 		exit 0
 	fi
 
-	if echo "$RESULT" | grep -q "^Window"; then
+	if echo "$RESULT" | $GREP -q "^Window"; then
 
 		### Focus target window
 		RESULT=$(echo "$RESULT" | cut -d":" -f2 | awk '{$1=$1};1')
 		wmctrl -a "$RESULT"
 
-	elif echo "$RESULT" | grep -q "^Program"; then
+	elif echo "$RESULT" | $GREP -q "^Program"; then
 
 		### Execute the file
 		RESULT=$(echo "$RESULT" | cut -d":" -f2 | awk '{$1=$1};1')
@@ -151,13 +164,13 @@ main() {
 		# Exec
 		setsid -f $command_exec >/dev/null 2>&1 &
 
-	elif echo "$RESULT" | grep -q "^Password"; then
+	elif echo "$RESULT" | $GREP -q "^Password"; then
 
 		### Handle the password
 		RESULT=$(echo "$RESULT" | cut -d":" -f2 | awk '{$1=$1};1')
 		handle_password
 
-	elif echo "$RESULT" | grep -q "^Bookmark"; then
+	elif echo "$RESULT" | $GREP -q "^Bookmark"; then
 
 		RESULT=$(echo "$RESULT" | cut -d"|" -f2 | awk '{$1=$1};1')
 		setsid -f xdg-open "$RESULT" >/dev/null 2>&1 &
