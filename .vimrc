@@ -1,4 +1,6 @@
 " Miscellaneous
+" exluding vim-yaml from polyglot as it's not working
+let g:polyglot_disabled = ['yaml']
 let g:python3_host_prog = '/usr/bin/python3'
 let g:python_host_prog  = '/usr/bin/python2'
 set autoindent
@@ -64,7 +66,8 @@ Plug 'yggdroot/indentLine'
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 " Lang Packs
-Plug 'sheerun/vim-polyglot', { 'tag': 'v4.9.2' }
+Plug 'sheerun/vim-polyglot'
+Plug 'stephpy/vim-yaml'
 " Aestetics
 Plug 'acarapetis/vim-colors-github'
 Plug 'morhetz/gruvbox'
@@ -86,17 +89,16 @@ augroup customsyntax
     autocmd Syntax * syntax match myDeclaration '\v\w+(,\s*\w+)*\ze(\s*:\=)'
     autocmd Syntax * syntax match myFunction    '\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\ze\%([a-zA-Z0-9]*(\)'
 augroup end
-" bufline
-let g:buftabline_indicators = 1
-let g:buftabline_separators = 1
-let g:buftabline_plug_max   = 0
-" themes
 let g:gruvbox_contrast_dark = "hard"
 set background=dark
 set termguicolors
 colorscheme gruvbox
 highlight myDeclaration     ctermfg=117 guifg=#9CDCFE
-highlight myFunction        ctermfg=208 guifg=#fe8019
+highlight myFunction        ctermfg=214 guifg=#fabd2f
+" bufline
+let g:buftabline_indicators = 1
+let g:buftabline_separators = 1
+let g:buftabline_plug_max   = 0
 " indentline
 let g:indentLine_char = '|'
 let g:indentLine_concealcursor = ''
@@ -107,8 +109,9 @@ set list lcs=tab:\|\  " here is a space
 let g:ansible_attribute_highlight       = 'ab'
 let g:ansible_extra_keywords_highlight  = 1
 let g:ansible_name_highlight            = 'd'
-let g:ansible_normal_keywords_highlight = 'Special'
-let g:ansible_with_keywords_highlight = 'Keyword'
+let g:ansible_normal_keywords_highlight = 'Constant'
+let g:ansible_unindent_after_newline  = 1
+let g:ansible_with_keywords_highlight = 'Conditional'
 let g:ansible_yamlKeyName = 'yamlKey'
 let g:go_highlight_build_constraints = 1
 let g:go_highlight_extra_types       = 1
@@ -119,7 +122,10 @@ let g:go_highlight_functions         = 1
 let g:go_highlight_generate_tags     = 1
 let g:go_highlight_operators         = 1
 let g:go_highlight_types             = 1
+let g:java_highlight_all             = 1
+let g:java_highlight_java_lang_ids   = 1
 let g:python_highlight_all  = 1
+let g:yaml_limit_spell      = 1
 " UltiSnips
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
@@ -148,14 +154,14 @@ map <leader>s  :<C-u>Snippets<CR>
 nnoremap <leader>ft :<C-u>set ft=
 " Code help using external scripts: Lint, Format, DeepTags, Grep, vert-copen
 nnoremap <silent> <C-e> :<C-u>call ToggleTheme()<CR>
-nnoremap <leader>A  :<C-u>call LintProject()<CR>:copen<CR>
-nnoremap <leader>L  :<C-u>call FormatProject()<CR>
-nnoremap <leader>T  :<C-u>call TagsProject()<CR>
-nnoremap <leader>a  :<C-u>call LintFile()<CR>:copen<CR>
+nnoremap <leader>A  :<C-u>cgete system('lint-project ' . &filetype . " . lint<bar>sort -u")<CR>:copen<CR>
+nnoremap <leader>I  :<C-u>call  system('lint-project ' . &filetype . " . format")<CR>
+nnoremap <leader>T  :<C-u>call  system('lint-project ' . &filetype . " . tags")<CR>
+nnoremap <leader>a  :<C-u>cgete system('lint-project ' . &filetype . " " .  expand('%') . " lint<bar>sort -u")<CR>:copen<CR>
 nnoremap <leader>f  :<C-u>vimgrep "" **/*<BAR>copen<C-Left><C-Left><Right>
 " Default IDE-Style keybindings EDMRL, errors, definition, references, rename, format
 nnoremap <leader>d  :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
-nnoremap <leader>m  :<C-u>vimgrep "<c-r>=expand("<cword>")<CR> **/*<CR>:copen<CR>
+nnoremap <leader>rf :<C-u>vimgrep "<c-r>=expand("<cword>")<CR> **/*<CR>:copen<CR>
 nnoremap <leader>r  :<C-u>!grep --exclude tags -Rl <c-r>=expand("<cword>")<CR><BAR>xargs sed -i 's/<c-r>=expand("<cword>")<CR>//g'<Left><Left><Left>
 nnoremap <leader>i  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>
 " Override <leader>i formatting with corresponding formatter for each lang
@@ -194,6 +200,7 @@ augroup END
 " ALE + LSP -------------------------------------------------------------------
 let g:ale_enabled           = 1
 let g:ale_fix_on_save       = 1
+let g:ale_set_highlights    = 1
 let g:ale_fixers = {'*': ['remove_trailing_lines', 'trim_whitespace'],}
 let g:ale_yaml_yamllint_options     = '-d "{extends: default, rules: {line-length: disable, truthy: disable}}"'
 let g:lsc_auto_completeopt='menu,menuone,popup,noselect,noinsert'
@@ -223,34 +230,14 @@ function! ToggleTheme()
         set background=dark
         colorscheme gruvbox
         highlight myDeclaration     ctermfg=117 guifg=#9CDCFE
-        highlight myFunction        ctermfg=208 guifg=#fe8019
+        highlight myFunction        ctermfg=214 guifg=#fabd2f
         edit
     else
         set background=light
         colorscheme github
         highlight SpecialKey        guibg=NONE guifg=#CCCCCC ctermbg=NONE ctermfg=252
-        highlight myDeclaration     ctermfg=28 guifg=#159828
-        highlight myFunction        ctermfg=88 guifg=#990000
+        highlight myDeclaration     term=bold gui=bold cterm=bold ctermfg=28 guifg=#159828
+        highlight myFunction        ctermfg=31 guifg=#0086B3
         edit
     endif
 endfunction
-" Lint the entire project using filetype as reference. out to quickfix
-function! LintFile()
-    silent!
-    cgete system('lint-project ' . &filetype . " " .  expand('%') . " lint | sort -u")
-endfun
-" Lint the entire project using filetype as reference. out to quickfix
-function! LintProject()
-    silent!
-    cgete system('lint-project ' . &filetype . " . lint | sort -u")
-endfun
-" Lint the entire project using filetype as reference. out to quickfix
-function! FormatProject()
-    silent!
-    call system('lint-project ' . &filetype . " . format")
-endfun
-" Lint the entire project using filetype as reference. out to quickfix
-function! TagsProject()
-    silent!
-    call system('lint-project ' . &filetype . " . tags")
-endfun
