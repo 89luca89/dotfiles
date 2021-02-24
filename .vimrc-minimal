@@ -1,11 +1,14 @@
-""" Ctrl-C copy visual selection to clipboard
-vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
+" Miscellaneous
+let g:python3_host_prog = '/usr/bin/python3'
+let g:python_host_prog  = '/usr/bin/python2'
 set autoindent
 set autoread
+set background=dark
 set backspace=indent,eol,start
 set colorcolumn=80
 set copyindent
 set cursorline
+set encoding=utf8
 set expandtab
 set formatoptions=tcqj
 set grepprg=rg\ --vimgrep\ --smart-case\ --follow
@@ -23,6 +26,7 @@ set nocompatible
 set nofsync
 set nomodeline
 set noswapfile
+set notermguicolors
 set nowrap
 set nowritebackup
 set number
@@ -38,29 +42,28 @@ set splitbelow
 set splitright
 set tabstop=4
 set title
+set ttimeoutlen=50
 set ttyfast
 set undodir=$HOME/.vim/undo
 set undofile
 set undolevels=10000
-set updatetime=100
+set updatetime=50
 set wildignore+=tags
 set wildmenu
 set wildmode=list:longest,full
-set ttimeoutlen=50
+" Bottom bar
+set noshowmode noshowcmd laststatus=0 ruler   " hide statusline
+set rulerformat=%20(%m%r%w\ %y\ %l/%c%)\        " Modified+FileType+Ruler
 syntax on
-" play nicely with modern graphics
-set encoding=utf8
-set background=dark
 """     Shortcuts   "
 " do last action on a visual selection
 vnoremap . :'<,'>:normal .<CR>
 " navigate tabs Tab (fw) S-Tab (prev)
 map <Tab>   :<C-u>bn!<CR>
 map <S-Tab> :<C-u>bp!<CR>
-" C-c close buffer
+ """ Ctrl-C  close buffer in normal mode
 map <C-c> :<C-u>bp<BAR>sp<BAR>bn<BAR>bd<CR>
-" Visual mode, C-c copy line
+""" Ctrl-C copy visual selection to clipboard
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 " Leader map
-let g:mapleader = "\<Space>"
-nnoremap <silent> <leader> :WhichKey '<Space>'<CR>
+let mapleader = ' '
