@@ -37,6 +37,42 @@ case "$COMMAND" in
 		done
 		;;
 
+	"objc")
+
+		files=$(find "$DIR" -type f -name '*.cpp' -o -name '*.h')
+
+		for f in $files; do
+			clang-format -i -style=Chromium "$f"
+		done
+		;;
+
+	"objcpp")
+
+		files=$(find "$DIR" -type f -name '*.cpp' -o -name '*.h')
+
+		for f in $files; do
+			clang-format -i -style=Chromium "$f"
+		done
+		;;
+
+	"cc")
+
+		files=$(find "$DIR" -type f -name '*.cpp' -o -name '*.h')
+
+		for f in $files; do
+			clang-format -i -style=Chromium "$f"
+		done
+		;;
+
+	"java")
+
+		files=$(find "$DIR" -type f -name '*.cpp' -o -name '*.h')
+
+		for f in $files; do
+			clang-format -i -style=Chromium "$f"
+		done
+		;;
+
 	"go")
 
 		files=$(find "$DIR" -type f -name '*.go' -not -path "./vendor/*")
@@ -114,7 +150,7 @@ case "$COMMAND" in
 		if [ -d "$DIR" ]; then
 			find "$DIR" -name -0 "*.go" | xargs -I{} go vet {} 2>&1 | grep -v "#"
 		else
-			go vet "$DIR" 2>&1 | grep -v "#"
+			go vet "$DIR" 2>&1 | grep -v "#" | sed 's/vet: //g'
 		fi
 
 		;;
@@ -127,25 +163,33 @@ case "$COMMAND" in
 
 	*"ansible"*)
 
-		yamllint -d "{extends: default, rules: {line-length: disable, truthy: disable}}" --format parsable "$DIR"/roles
+		DIR=$(realpath --relative-to=$(pwd) "$DIR")
 
-		ansible-lint -p --nocolor
-		cd "$DIR" >/dev/null || exit
-		LINES=$(ansible-later tasks 2>&1)
+		if [ -d "$DIR" ]; then
+			yamllint -d "{extends: default, rules: {line-length: disable, truthy: disable}}" --format parsable "$DIR"/roles
+		else
+			yamllint -d "{extends: default, rules: {line-length: disable, truthy: disable}}" --format parsable "$DIR"
+		fi
+		ansible-lint -p --nocolor "$DIR"
 
-		while IFS= read -r line; do
-			if [ "$(echo "$line" | wc -c)" -lt 2 ]; then
-				continue
-			else
-				if ! echo "$line" | grep -q ERROR; then
-					if ! echo "$line" | grep -q WARN; then
-						echo "$line" | cut -c5-
+		if [ -d "$DIR" ]; then
+			cd "$DIR" >/dev/null || exit
+			LINES=$(ansible-later tasks 2>&1)
+		else
+			LINES=$(ansible-later "$DIR" 2>&1)
+		fi
+
+			while IFS= read -r line; do
+				if [ "$(echo "$line" | wc -c)" -lt 2 ]; then
+					continue
+				else
+					if ! echo "$line" | grep -q ERROR; then
+						if ! echo "$line" | grep -q WARN; then
+							echo "$line" | cut -c5-
+						fi
 					fi
 				fi
-			fi
-		done <<<"$LINES"
-
-		cd - >/dev/null || exit
+			done <<<"$LINES"
 		;;
 
 	"sh")

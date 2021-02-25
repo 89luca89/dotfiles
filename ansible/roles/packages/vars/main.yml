@@ -73,3 +73,4 @@ golang_modules:
     - mvdan.cc/sh/cmd/shfmt
     - mvdan.cc/gofumpt/gofumports
     - mvdan.cc/gofumpt
+    - github.com/mattn/efm-langserver

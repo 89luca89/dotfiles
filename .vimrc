@@ -57,7 +57,6 @@ set rulerformat=%20(%m%r%w\ %y\ %l/%c%)\        " Modified+FileType+Ruler
 filetype off
 call plug#begin('~/.vim/plugged')
 " Git
-Plug 'mhinz/vim-signify'
 Plug 'tpope/vim-fugitive'
 " utilities
 Plug 'ap/vim-buftabline'
@@ -72,8 +71,12 @@ Plug 'stephpy/vim-yaml'
 Plug 'acarapetis/vim-colors-github'
 Plug 'morhetz/gruvbox'
 " LSP
-Plug 'dense-analysis/ale'
-Plug 'natebosch/vim-lsc'
+Plug 'prabirshrestha/async.vim'
+Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'prabirshrestha/asyncomplete-file.vim'
+Plug 'prabirshrestha/asyncomplete-tags.vim'
+Plug 'prabirshrestha/asyncomplete-lsp.vim'
+Plug 'prabirshrestha/vim-lsp'
 " Snippets
 Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
@@ -134,8 +137,8 @@ let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 " do last action on a visual selection
 vnoremap . :'<,'>:normal .<CR>
 " navigate tabs Tab (fw) S-Tab (prev)
-map <Tab>   :<C-u>bn!<CR>
-map <S-Tab> :<C-u>bp!<CR>
+map <Tab>   :<C-u>bn<CR>
+map <S-Tab> :<C-u>bp<CR>
 " C-c close buffer
 map <C-c> :<C-u>bp<BAR>sp<BAR>bn<BAR>bd<CR>
 " Visual mode, C-c copy line
@@ -143,9 +146,6 @@ vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 " Leader map
 let mapleader = ' '
 " Utility shortcuts with leader:
-" map <leader><leader>  :<C-u>cgete system("ls -1 --group-directories-first<BAR>xargs -I{} find {} -type f<BAR>xargs -I{} echo '{}:1:1: '")<CR>:copen<CR>G//<backspace>
-" map <leader>b  :<C-u>buffers<CR>:buffer<space>
-" map <leader>t  :<C-u>cgete system("grep -v '^!_' tags<BAR>sort -ru<BAR>awk -F'\t' '{split($5,line,\":\");print $2\":\"line[2]\":0: \"$1}'")<CR>:copen<CR>G//<backspace>
 map <leader><leader>  :<C-u>Files<CR>
 map <leader><tab>  :<C-u>Buffers<CR>
 map <leader>t  :<C-u>Tags<CR>
@@ -167,9 +167,9 @@ nnoremap <leader>i  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>
 " Override <leader>i formatting with corresponding formatter for each lang
 augroup autoformat_settings
     autocmd!
-    autocmd FileType c,cpp        nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!clang-format -style=file %<CR>:loadview<CR>
+    autocmd FileType c,cpp,objc,objcpp,cc,java nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!clang-format -style=file %<CR>:loadview<CR>
     autocmd FileType go           nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!gofmt -s %<CR>:%!goimports %<CR>:loadview<CR>
-    autocmd FileType json         nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!jsonlint -f %<CR>:loadview<CR>
+    autocmd FileType json         nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!jq .<CR>
     autocmd FileType python       nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!yapf --style=facebook %<CR>:w<CR>:%!isort --ac --float-to-top -d %<CR>:loadview<CR>
     autocmd FileType sh           nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!shfmt -s %<CR>:loadview<CR>
     autocmd FileType terraform    nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:!terraform fmt %<CR>:loadview<CR><CR>
@@ -179,12 +179,11 @@ augroup end
 augroup lspbindings
     autocmd!
     " IDE-like keybindings
-    autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>d :<C-u>vert LSClientGoToDefinitionSplit<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>m :<C-u>LSClientFindReferences<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <buffer> <leader>r :<C-u>LSClientRename<CR>
-    autocmd Filetype c,cpp,python,go nnoremap <buffer> K  :<C-u>LSClientShowHover<CR>
-    " Ansible-doc
-    autocmd Filetype yaml.ansible nnoremap <buffer> K  :<C-u>!ansible-doc <c-r>=expand("<cword>")<CR><bar>less<CR>
+    autocmd Filetype c,cpp,objc,objcpp,cc,python,go,terraform nnoremap <buffer> <leader>d :<C-u>vsplit<BAR>LspDefinition<CR>
+    autocmd Filetype c,cpp,objc,objcpp,cc,python,go,terraform nnoremap <buffer> <leader>m :<C-u>LspReferences<CR>
+    autocmd Filetype c,cpp,objc,objcpp,cc,python,go,terraform nnoremap <buffer> <leader>r :<C-u>LspRename<CR>
+    " Add shell and ansible on this one
+    autocmd Filetype c,cpp,objc,objcpp,cc,python,go,terraform,sh,yaml.ansible nnoremap <buffer> K  :<C-u>LspHover<CR>
 augroup end
 " Fix ansible file detection
 augroup ansible_vim_fthosts
@@ -197,32 +196,6 @@ augroup ansible_vim_fthosts
     autocmd BufNewFile,BufRead *main*.yml set filetype=yaml.ansible
     autocmd BufNewFile,BufRead hosts set filetype=ini.ansible
 augroup END
-" ALE + LSP -------------------------------------------------------------------
-let g:ale_enabled           = 1
-let g:ale_fix_on_save       = 1
-let g:ale_set_highlights    = 1
-let g:ale_fixers = {'*': ['remove_trailing_lines', 'trim_whitespace'],}
-let g:ale_yaml_yamllint_options     = '-d "{extends: default, rules: {line-length: disable, truthy: disable}}"'
-let g:lsc_auto_completeopt='menu,menuone,popup,noselect,noinsert'
-let g:lsc_server_commands  = {
-            \ "python": "pyls",
-            \ "go": {
-            \    "command": "gopls serve",
-            \    "log_level": -1,
-            \ },
-            \ 'cpp' : {
-            \   'name': 'cpp',
-            \   'command': 'clangd',
-            \ },
-            \ 'c' : {
-            \   'name': 'c',
-            \   'command': 'clangd',
-            \ },
-            \ 'terraform' : {
-            \   'name': 'terraform',
-            \   'command': 'terraform-ls',
-            \ },
-            \}
 " FUNCTIONS --------------------------------------------------------------------
 " Toggle Theme
 function! ToggleTheme()
@@ -235,9 +208,88 @@ function! ToggleTheme()
     else
         set background=light
         colorscheme github
-        highlight SpecialKey        guibg=NONE guifg=#CCCCCC ctermbg=NONE ctermfg=252
         highlight myDeclaration     term=bold gui=bold cterm=bold ctermfg=28 guifg=#159828
         highlight myFunction        ctermfg=31 guifg=#0086B3
         edit
     endif
 endfunction
+" Generate tags
+function! GenTags()
+    if isdirectory(".git") || filereadable(".project")
+        silent!
+        exec "!ctags -R . -a"
+        redraw!
+    endif
+endfun
+" Remove Trailing Spaces and empty lines
+function! StripTrailingWhiteSpace()
+    " don't strip on these filetypes
+    if &ft =~ 'markdown'
+        return
+    endif
+    " Strip trailing spaces
+    %s/\s\+$//e
+    " Strip ending white lines
+    %s/\($\n\s*\)\+\%$//e
+    redraw!
+endfun
+augroup misc
+    autocmd! misc
+    " Remove trailing whitespaces and lines
+    autocmd BufWritePre * silent! :call StripTrailingWhiteSpace()
+    " Refresh tags on save
+    autocmd BufWritePost * silent! :call GenTags()
+augroup end
+" LSP -------------------------------------------------------------------
+set completeopt=noinsert,noselect,menu,popup
+set completepopup=align:menu,border:off,highlight:Pmenu
+let g:asyncomplete_smart_completion  = 1
+let g:lsp_auto_enable                = 1
+let g:lsp_diagnostics_echo_cursor    = 1
+let g:lsp_diagnostics_enabled        = 1
+let g:lsp_highlights_enabled         = 1
+let g:lsp_highlight_references_enabled = 1
+let g:lsp_log_file  = expand('/dev/null')
+let g:lsp_semantic_enabled     = 1
+let g:lsp_signs_enabled        = 1
+let g:lsp_virtual_text_enabled = 1
+augroup asyncompleteregister
+    autocmd! asyncompleteregister
+    autocmd VimEnter * call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
+                \ 'name': 'file',
+                \ 'whitelist': ['*'],
+                \ 'completor': function('asyncomplete#sources#file#completor')
+                \ }))
+    autocmd VimEnter * call asyncomplete#register_source(asyncomplete#sources#tags#get_source_options({
+                \ 'name': 'tags',
+                \ 'whitelist': ['*'],
+                \ 'blacklist': ['c', 'cpp', 'objc', 'objcpp', 'cc','go'],
+                \ 'completor': function('asyncomplete#sources#tags#completor'),
+                \ }))
+    autocmd VimEnter * call lsp#register_server({
+                \ 'name': 'efm-langserver',
+                \ 'whitelist': ['json', 'sh', 'yaml', 'yaml.ansible'],
+                \ 'cmd': {server_info->['efm-langserver', '-c=/home/luca-linux/dotfiles/efm-config.yml',
+                \'-logfile=/tmp/lsp.log', '-loglevel=5']},
+                \ })
+    autocmd VimEnter * call lsp#register_server({
+                \ 'name': 'clangd',
+                \ 'whitelist': ['c', 'cpp', 'objc', 'objcpp', 'cc'],
+                \ 'cmd': {server_info->['clangd', '-background-index']},
+                \ })
+    autocmd VimEnter * call lsp#register_server({
+                \ 'name': 'gopls',
+                \ 'whitelist': ['go'],
+                \ 'cmd': {server_info->['gopls']},
+                \ })
+    autocmd VimEnter * call lsp#register_server({
+                \ 'name': 'pyls',
+                \ 'whitelist': ['python'],
+                \ 'cmd': {server_info->['pyls']},
+                \ })
+    autocmd VimEnter * call lsp#register_server({
+                \ 'name': 'terraform',
+                \ 'whitelist': ['terraform'],
+                \ 'cmd': {server_info->['terraform-ls', 'serve']},
+                \ })
+augroup end
