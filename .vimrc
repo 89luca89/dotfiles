@@ -57,6 +57,7 @@ set rulerformat=%20(%m%r%w\ %y\ %l/%c%)\        " Modified+FileType+Ruler
 filetype off
 call plug#begin('~/.vim/plugged')
 " Git
+Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 " utilities
 Plug 'ap/vim-buftabline'
@@ -152,6 +153,10 @@ map <leader>t  :<C-u>Tags<CR>
 map <leader>s  :<C-u>Snippets<CR>
 " set filetype shortcut
 nnoremap <leader>ft :<C-u>set ft=
+" Git shortcut
+nnoremap <leader>gd  :<C-u>GitGutterQuickFix<CR>:<C-u>copen<CR>
+nnoremap <leader>gdd  :<C-u>Git diff<CR>
+nnoremap <leader>gb  :<C-u>Git blame<CR>
 " Code help using external scripts: Lint, Format, DeepTags, Grep, vert-copen
 nnoremap <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 nnoremap <leader>A  :<C-u>cgete system('lint-project ' . &filetype . " . lint<bar>sort -u")<CR>:copen<CR>
