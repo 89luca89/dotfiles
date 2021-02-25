@@ -63,8 +63,8 @@ Plug 'tpope/vim-fugitive'
 Plug 'ap/vim-buftabline'
 Plug 'yggdroot/indentLine'
 " Fzf
-Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
 " Lang Packs
 Plug 'sheerun/vim-polyglot'
 Plug 'stephpy/vim-yaml'
@@ -79,9 +79,9 @@ Plug 'prabirshrestha/asyncomplete-tags.vim'
 Plug 'prabirshrestha/asyncomplete-lsp.vim'
 Plug 'prabirshrestha/vim-lsp'
 " Snippets
-Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'phenomenes/ansible-snippets'
+Plug 'sirver/ultisnips'
 call plug#end()
 filetype plugin indent on
 syntax on
@@ -95,7 +95,7 @@ augroup customsyntax
 augroup end
 let g:gruvbox_contrast_dark = "hard"
 set background=dark
-set termguicolors
+" set termguicolors
 colorscheme gruvbox
 highlight myDeclaration     ctermfg=117 guifg=#9CDCFE
 highlight myFunction        ctermfg=214 guifg=#fabd2f
@@ -153,10 +153,6 @@ map <leader>t  :<C-u>Tags<CR>
 map <leader>s  :<C-u>Snippets<CR>
 " set filetype shortcut
 nnoremap <leader>ft :<C-u>set ft=
-" Git shortcut
-nnoremap <leader>gd  :<C-u>GitGutterQuickFix<CR>:<C-u>copen<CR>
-nnoremap <leader>gdd  :<C-u>Git diff<CR>
-nnoremap <leader>gb  :<C-u>Git blame<CR>
 " Code help using external scripts: Lint, Format, DeepTags, Grep, vert-copen
 nnoremap <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 nnoremap <leader>A  :<C-u>cgete system('lint-project ' . &filetype . " . lint<bar>sort -u")<CR>:copen<CR>
@@ -168,7 +164,7 @@ nnoremap <leader>f  :<C-u>vimgrep "" **/*<BAR>copen<C-Left><C-Left><Right>
 nnoremap <leader>d  :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
 nnoremap <leader>rf :<C-u>vimgrep "<c-r>=expand("<cword>")<CR> **/*<CR>:copen<CR>
 nnoremap <leader>r  :<C-u>!grep --exclude tags -Rl <c-r>=expand("<cword>")<CR><BAR>xargs sed -i 's/<c-r>=expand("<cword>")<CR>//g'<Left><Left><Left>
-nnoremap <leader>i  :<C-u>mkview<CR>ggVG=:<C-u>loadview<CR>
+nnoremap <leader>i  :<C-u>mkview<CR>:%s/\($\n\s*\)\+\%$//e<CR>:%s/\s\+$//e<CR>ggVG=:loadview<CR>
 " Override <leader>i formatting with corresponding formatter for each lang
 augroup autoformat_settings
     autocmd!
@@ -188,6 +184,7 @@ augroup lspbindings
     autocmd Filetype c,cpp,objc,objcpp,cc,python,go,terraform nnoremap <buffer> <leader>m :<C-u>LspReferences<CR>
     autocmd Filetype c,cpp,objc,objcpp,cc,python,go,terraform nnoremap <buffer> <leader>r :<C-u>LspRename<CR>
     " Add shell and ansible on this one
+    autocmd Filetype yaml,yaml.ansible nnoremap <leader>i  :<C-u>mkview<CR>:%s/\($\n\s*\)\+\%$//e<CR>:%s/\s\+$//e<CR>:loadview<CR>
     autocmd Filetype c,cpp,objc,objcpp,cc,python,go,terraform,sh,yaml.ansible nnoremap <buffer> K  :<C-u>LspHover<CR>
 augroup end
 " Fix ansible file detection
@@ -195,10 +192,10 @@ augroup ansible_vim_fthosts
     autocmd!
     autocmd BufNewFile,BufRead */*.j2 set filetype=jinja2
     autocmd BufNewFile,BufRead */*inventory*.yml set filetype=yaml.ansible
+    autocmd BufNewFile,BufRead */*vars/*/**.yml set filetype=yaml.ansible
     autocmd BufNewFile,BufRead */roles/**/*.yml set filetype=yaml.ansible
-    autocmd BufNewFile,BufRead */tasks/**/*.yml set filetype=yaml.ansible
-    autocmd BufNewFile,BufRead */vars/*/**.yml set filetype=yaml.ansible
     autocmd BufNewFile,BufRead *main*.yml set filetype=yaml.ansible
+    autocmd BufNewFile,BufRead *role*.yml set filetype=yaml.ansible
     autocmd BufNewFile,BufRead hosts set filetype=ini.ansible
 augroup END
 " FUNCTIONS --------------------------------------------------------------------
@@ -213,38 +210,12 @@ function! ToggleTheme()
     else
         set background=light
         colorscheme github
+        highlight SpecialKey        guibg=NONE guifg=#CCCCCC ctermbg=NONE ctermfg=252
         highlight myDeclaration     term=bold gui=bold cterm=bold ctermfg=28 guifg=#159828
         highlight myFunction        ctermfg=31 guifg=#0086B3
         edit
     endif
 endfunction
-" Generate tags
-function! GenTags()
-    if isdirectory(".git") || filereadable(".project")
-        silent!
-        exec "!ctags -R . -a"
-        redraw!
-    endif
-endfun
-" Remove Trailing Spaces and empty lines
-function! StripTrailingWhiteSpace()
-    " don't strip on these filetypes
-    if &ft =~ 'markdown'
-        return
-    endif
-    " Strip trailing spaces
-    %s/\s\+$//e
-    " Strip ending white lines
-    %s/\($\n\s*\)\+\%$//e
-    redraw!
-endfun
-augroup misc
-    autocmd! misc
-    " Remove trailing whitespaces and lines
-    autocmd BufWritePre * silent! :call StripTrailingWhiteSpace()
-    " Refresh tags on save
-    autocmd BufWritePost * silent! :call GenTags()
-augroup end
 " LSP -------------------------------------------------------------------
 set completeopt=noinsert,noselect,menu,popup
 set completepopup=align:menu,border:off,highlight:Pmenu

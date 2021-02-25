@@ -179,17 +179,17 @@ case "$COMMAND" in
 			LINES=$(ansible-later "$DIR" 2>&1)
 		fi
 
-			while IFS= read -r line; do
-				if [ "$(echo "$line" | wc -c)" -lt 2 ]; then
-					continue
-				else
-					if ! echo "$line" | grep -q ERROR; then
-						if ! echo "$line" | grep -q WARN; then
-							echo "$line" | cut -c5-
-						fi
+		while IFS= read -r line; do
+			if [ "$(echo "$line" | wc -c)" -lt 2 ]; then
+				continue
+			else
+				if ! echo "$line" | grep -q ERROR; then
+					if ! echo "$line" | grep -q WARN; then
+						echo "$line" | cut -c5-
 					fi
 				fi
-			done <<<"$LINES"
+			fi
+		done <<<"$LINES"
 		;;
 
 	"sh")
@@ -274,6 +274,9 @@ case "$COMMAND" in
 
 		TOOLCHAIN=$(rustup toolchain list | grep default | awk '{print $1}')
 		ctags -R ~/.local/rust/toolchains/"$TOOLCHAIN" -a
+		;;
+	"*")
+		ctags -R . -a
 		;;
 
 	esac
