@@ -46,11 +46,6 @@ zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
 bindkey "^[[A" up-line-or-beginning-search # Up
 bindkey "^[[B" down-line-or-beginning-search # Down
-
-# include custom files
-if [ -f $HOME/.localrc ]; then
-    source $HOME/.localrc
-fi
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 # use tmux split with FZF
 if [ "${TMUX}" ]; then
@@ -75,3 +70,8 @@ zstyle ':vcs_info:git:*' actionformats '%F{yellow}(%b (%a)%f%c%u%F{yellow})'
 setopt PROMPT_PERCENT
 setopt PROMPT_SUBST
 PROMPT='%B%F{green}%n@%m:%F{blue}%30<..<%~%f%<< %b$vcs_info_msg_0_%b%b%F{white}$ '
+
+# include custom files
+if [ -f $HOME/.localrc ]; then
+    source $HOME/.localrc
+fi

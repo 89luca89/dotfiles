@@ -28,11 +28,6 @@ if [[ $- == *i* ]]; then
 	BBLUE='\[\033[01;34m\]'
 	PS_CLEAR='\[\033[0m\]'
 	PS1="${BGREEN}\u@\h${BBLUE} \W \$${PS_CLEAR} "
-
-	# include custom files
-	if [ -f "$HOME/.localrc" ]; then
-		source ~/.localrc
-	fi
 	[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 	# use tmux split with FZF
 	if [ "${TMUX}" ]; then
@@ -43,4 +38,9 @@ fi
 
 if [ -f ~/.aliases ]; then
 	source ~/.aliases
+fi
+
+# include custom files
+if [ -f "$HOME/.localrc" ]; then
+	source ~/.localrc
 fi
