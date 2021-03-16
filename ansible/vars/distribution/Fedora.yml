@@ -57,6 +57,15 @@ my_packages:
   - libreoffice-gtk3
   - libreoffice-impress
   - libreoffice-writer
+  - evolution
+  - evolution-ews
+  - pidgin
+  - purple-plugin_pack
+  - purple-plugin_pack-pidgin
+  - purple-plugin_pack-pidgin-xmms
+  - marker
+  - materia-gtk-theme
+  - papirus-icon-theme
   - mpv
   - pass
   - pass-otp
@@ -84,8 +93,6 @@ debloat_pkg:
   - abrt-plugin-bodhi
   - abrt-retrace-client
   - abrt-tui
-  - evolution
-  - evolution-ews
   - gnome-boxes
   - gnome-calendar
   - gnome-contacts

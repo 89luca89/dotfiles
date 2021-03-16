@@ -8,12 +8,12 @@ terraform_provider_libvirt_version: 0.6.3
 terraform_provider_libvirt_release: 0.6.3+git.1604843676.67f4f2aa
 
 flatpak_packages:
-    - com.github.tchx84.Flatseal
-    - com.uploadedlobster.peek
-    - im.pidgin.Pidgin
-    - io.typora.Typora
-    - org.mozilla.Thunderbird
-    - us.zoom.Zoom
+  - com.github.tchx84.Flatseal
+    #    - com.uploadedlobster.peek
+    #    - im.pidgin.Pidgin
+    #  - io.typora.Typora
+    #    - org.mozilla.Thunderbird
+    #    - us.zoom.Zoom
 
 
 python_packages:
@@ -71,6 +71,6 @@ golang_modules:
     - golang.org/x/tools/cmd/guru
     - golang.org/x/tools/gopls
     - mvdan.cc/sh/cmd/shfmt
-    - mvdan.cc/gofumpt/gofumports
-    - mvdan.cc/gofumpt
+    # - mvdan.cc/gofumpt/gofumports
+    # - mvdan.cc/gofumpt
     - github.com/mattn/efm-langserver
