@@ -40,6 +40,7 @@ setopt SHARE_HISTORY     # adds history incrementally and share it across sessio
 setopt HIST_IGNORE_ALL_DUPS                 # don't record dupes in history
 setopt HIST_IGNORE_SPACE
 setopt HIST_REDUCE_BLANKS
+setopt nullglob
 autoload -U up-line-or-beginning-search
 autoload -U down-line-or-beginning-search
 zle -N up-line-or-beginning-search

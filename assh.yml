@@ -33,10 +33,33 @@ hosts:
         Gateways:
             - luca-lan
 
-
     w540:
+        Hostname: 192.168.43.169
+        Port: 22
+        User: luca-linux
+        ForwardAgent: yes
+        IdentityFile: /home/luca-linux/.ssh/id_ecdsa
+        Gateways:
+            - direct
+    w540-1:
         Hostname: localhost
         Port: 3333
+        User: luca-linux
+        ForwardAgent: yes
+        IdentityFile: /home/luca-linux/.ssh/id_ecdsa
+        Gateways:
+            - luca-lan
+    w540-2:
+        Hostname: localhost
+        Port: 3334
+        User: luca-linux
+        ForwardAgent: yes
+        IdentityFile: /home/luca-linux/.ssh/id_ecdsa
+        Gateways:
+            - luca-lan
+    w540-3:
+        Hostname: localhost
+        Port: 3335
         User: luca-linux
         ForwardAgent: yes
         IdentityFile: /home/luca-linux/.ssh/id_ecdsa
