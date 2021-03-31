@@ -10,12 +10,13 @@ BOOKMARK_FILE="$PASSWORD_STORE/bookmarks/bookmarks.html"
 
 # Preload incoming queries
 if [ $# -eq 0 ]; then
-	QUERY=" "
+	QUERY="Search"
 else
 	QUERY=$1
 fi
 
-FZF="$HOME/.local/bin/fzf/bin/fzf --color=bw --prompt=$QUERY --reverse --query '"
+# FUZZER="$HOME/.local/bin/fzf/bin/fzf --color=bw --prompt=$QUERY --reverse --query '"
+FUZZER="rofi -dmenu -i -theme Arc-Dark -p $QUERY"
 
 if [ "$(uname)" = "Darwin" ]; then
 	GREP="/usr/local/bin/ggrep"
@@ -32,7 +33,7 @@ fi
 
 handle_password() {
 	RESP_PASS=$(
-		cat <<EOF | $FZF
+		cat <<EOF | $FUZZER
 Password
 Username
 OTP
@@ -71,15 +72,15 @@ EOF
 prepare_data() {
 	# Find all files using ripgrep
 	# Exclude some of the unwanted folders
-	if [ "$QUERY" = " " ] || echo "$QUERY" | $GREP -q Files; then
+	if [ "$QUERY" = "Search" ] || echo "$QUERY" | $GREP -q Files; then
 		cd ~ || exit
-		find -L -- * 2>/dev/null |
+		find -L -- ~ 2>/dev/null |
 			$GREP -Ev 'node_modules|\.git|flatpak|\.cache|\.local/lib|\.local/share' |
 			sed 's/^/Files: /g'
 	fi
 
 	# Fetch password list
-	if [ "$QUERY" = " " ] || echo "$QUERY" | $GREP -q Password; then
+	if [ "$QUERY" = "Search" ] || echo "$QUERY" | $GREP -q Password; then
 		cd ~ || exit
 		find $PASSWORD_STORE/ -type f -name "*.gpg" 2>/dev/null |
 			$GREP -Ev 'node_modules|\.git|flatpak|\.cache|\.local/lib|\.local/share' |
@@ -88,18 +89,18 @@ prepare_data() {
 			sed "s/\.gpg//g"
 	fi
 
-	if [ "$QUERY" = " " ] || echo "$QUERY" | $GREP -Eq "Bookmarks|Password"; then
+	if [ "$QUERY" = "Search" ] || echo "$QUERY" | $GREP -Eq "Bookmarks|Password"; then
 		cd ~ || exit
 		for line in $(cat "$BOOKMARK_FILE"); do
 			bookmark=$(echo "$line" | $GREP -oP 'HREF="\Khttp[^"]+' || :)
 			if [ "$bookmark" != "" ]; then
-				title=$($GREP "$bookmark" "$BOOKMARK_FILE" | $GREP -Eo '">.*</A>' | $GREP -oP '>\K[^<]+' | $GREP -v 'Recent Tags')
+				title=$($GREP "$bookmark"Search"$BOOKMARK_FILE" | $GREP -Eo '">.*</A>' | $GREP -oP '>\K[^<]+' | $GREP -v 'Recent Tags')
 				echo "Bookmarks: $title | $bookmark "
 			fi
 		done
 	fi
 
-	if [ "$QUERY" = " " ] || echo "$QUERY" | $GREP -q Program; then
+	if [ "$QUERY" = "Search" ] || echo "$QUERY" | $GREP -q Program; then
 		# Fetch executables from PATH
 		if [ ! -f ~/.cache/desktop-files ] || test "$(find ~/.cache/desktop-files -mmin +30)"; then
 			# We do not have a cache file, let's create it!
@@ -132,7 +133,7 @@ prepare_data() {
 		fi
 	fi
 
-	if [ "$QUERY" = " " ] || echo "$QUERY" | $GREP -Eq "Window|Program"; then
+	if [ "$QUERY" = "Search" ] || echo "$QUERY" | $GREP -Eq "Window|Program"; then
 		# Fetch open windows
 		wmctrl -l | $GREP -o "$(hostname).*" | sed "s/$(hostname) /Window: /g"
 	fi
@@ -140,7 +141,7 @@ prepare_data() {
 
 main() {
 	# Present on fzf
-	RESULT=$(prepare_data | $FZF)
+	RESULT=$(prepare_data | $FUZZER)
 	if [ -z "$RESULT" ]; then
 		exit 0
 	fi
