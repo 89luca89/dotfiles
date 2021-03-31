@@ -103,10 +103,10 @@ app_sync() {
 		mv /tmp/thunderbird-profile.tar.gz.gpg ~/Syncthing/Secured/
 		;;
 	"chromium")
-		[ -d ~/.mozilla ] || (echo "No folder to backup" && exit 1)
+		[ -d ~/.config/chromium ] || (echo "No folder to backup" && exit 1)
 		pgrep chromium > /dev/null && (echo "Shutdown chrome before backup" && exit 1)
 		cd ~ || exit 1
-		tar -czf /tmp/chromium-profile.tar.gz .config/chromium .local/share/applications/chromium-freeworld.desktop bin/chromium-freeworld
+		tar --exclude=*Cache* -czf /tmp/chromium-profile.tar.gz .config/chromium .local/share/applications/chromium-freeworld.desktop bin/chromium-freeworld
 		gpg --passphrase "$password" --yes --batch --output /tmp/chromium-profile.tar.gz.gpg --symmetric --cipher-algo AES256 /tmp/chromium-profile.tar.gz
 		shred -n 25 -u -z /tmp/chromium-profile.tar.gz
 		mv /tmp/chromium-profile.tar.gz.gpg ~/Syncthing/Secured/
@@ -142,6 +142,15 @@ app_sync() {
 app_restore() {
 	TARGET=$1
 	case "$TARGET" in
+	"ssh")
+		gpg --output /tmp/ssh-keys.tar.gz --decrypt ~/Syncthing/Secured/ssh-keys.tar.gz.gpg
+		if [ ! -f /tmp/ssh-keys.tar.gz ]; then
+			echo "Failed to decrypt"
+			exit 1
+		fi
+		tar -xzf /tmp/ssh-keys.tar.gz -C ~/
+		shred -n 25 -u -z /tmp/ssh-keys.tar.gz
+		;;
 	"gpg")
 		gpg --output /tmp/gnupg-keys.tar.gz --decrypt ~/Syncthing/Secured/gnupg-keys.tar.gz.gpg
 		if [ ! -f /tmp/gnupg-keys.tar.gz ]; then
