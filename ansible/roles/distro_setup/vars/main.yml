@@ -13,9 +13,9 @@ global_vars:
     - export QT_QPA_PLATFORM=xcb
 
 systemd_user_mask_services:
-  #    - evolution-addressbook-factory
-  #    - evolution-calendar-factory
-  #    - evolution-source-registry
+    - evolution-addressbook-factory
+    - evolution-calendar-factory
+    - evolution-source-registry
     - goa-daemon
     - goa-identity-service
     - gvfs-goa-volume-monitor

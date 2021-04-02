@@ -41,12 +41,6 @@ terminal_packages:
   - ripgrep
 
 my_packages:
-  - NetworkManager-fortisslvpn-gnome
-  - NetworkManager-iodine-gnome
-  - NetworkManager-l2tp-gnome
-  - NetworkManager-libreswan-gnome
-  - NetworkManager-sstp-gnome
-  - NetworkManager-strongswan-gnome
   - baobab
   - evince
   - file-roller
@@ -57,11 +51,12 @@ my_packages:
   - libreoffice-gtk3
   - libreoffice-impress
   - libreoffice-writer
-  - evolution
-  - evolution-ews
-  - marker
-  - materia-gtk-theme
-  - papirus-icon-theme
+  - weechat
+  # - evolution
+  # - evolution-ews
+  # - marker
+  # - materia-gtk-theme
+  # - papirus-icon-theme
   - mpv
   - pass
   - pass-otp
