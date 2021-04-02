@@ -71,6 +71,7 @@
     remote: flathub
     method: user
   with_items: "{{ flatpak_packages }}"
+  when: flatpak_packages is defined
 
 
 - name: Check that golang exists
