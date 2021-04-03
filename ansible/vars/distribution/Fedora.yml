@@ -51,19 +51,22 @@ my_packages:
   - libreoffice-gtk3
   - libreoffice-impress
   - libreoffice-writer
-  - weechat
+  - marker
   # - evolution
   # - evolution-ews
-  # - marker
   # - materia-gtk-theme
   # - papirus-icon-theme
+  - aria2
   - mpv
   - pass
   - pass-otp
+  - ranger
   - rsync
   - syncthing
   - tmux
   - vim
+  - w3m
+  - weechat
 
 debloat_pkg:
   - PackageKit
