@@ -72,12 +72,8 @@ Plug 'stephpy/vim-yaml'
 Plug 'acarapetis/vim-colors-github'
 Plug 'morhetz/gruvbox'
 " LSP
-Plug 'prabirshrestha/async.vim'
-Plug 'prabirshrestha/asyncomplete.vim'
-Plug 'prabirshrestha/asyncomplete-file.vim'
-Plug 'prabirshrestha/asyncomplete-tags.vim'
-Plug 'prabirshrestha/asyncomplete-lsp.vim'
-Plug 'prabirshrestha/vim-lsp'
+Plug 'dense-analysis/ale'
+Plug 'natebosch/vim-lsc'
 " Snippets
 Plug 'honza/vim-snippets'
 Plug 'phenomenes/ansible-snippets'
@@ -89,7 +85,7 @@ syntax on
 augroup customsyntax
     autocmd! customsyntax
     " Strip whitespaces
-    autocmd BufWritePre * %s/\s\+$//e  
+    autocmd BufWritePre * %s/\s\+$//e
     autocmd BufWritePre * %s/\($\n\s*\)\+\%$//e
     " Custom syntax highlight
     autocmd Syntax * syntax match myDeclaration '\v[_.[:alnum:]]+(,\s*[_.[:alnum:]]+)*\ze(\s*([-^+|^\/%&]|\*|\<\<|\>\>|\&\^)?\=[^=])'
@@ -137,7 +133,9 @@ let g:yaml_limit_spell      = 1
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
-"""     Shortcuts   "
+"""""""""""""""""""""
+"       Shortcuts   "
+"""""""""""""""""""""
 " do last action on a visual selection
 vnoremap . :'<,'>:normal .<CR>
 " navigate tabs Tab (fw) S-Tab (prev)
@@ -178,18 +176,19 @@ augroup autoformat_settings
     autocmd FileType sh           nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!shfmt -s %<CR>:loadview<CR>
     autocmd FileType terraform    nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:!terraform fmt %<CR>:loadview<CR><CR>
     autocmd FileType yaml         nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:!yamlfmt -w %<CR>:loadview<CR><CR>
+    autocmd FileType yaml.ansible nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:!yamlfmt -w %<CR>:loadview<CR><CR>
 augroup end
 " LSP SETUP --------------------------------------------------------------------
 " Override IDE-Style keybindings EDMRL, errors, definition, references, rename, format
 augroup lspbindings
     autocmd!
     " IDE-like keybindings
-    autocmd Filetype c,cpp,objc,objcpp,cc,python,go,terraform nnoremap <buffer> <leader>d :<C-u>vsplit<BAR>LspDefinition<CR>
-    autocmd Filetype c,cpp,objc,objcpp,cc,python,go,terraform nnoremap <buffer> <leader>m :<C-u>LspReferences<CR>
-    autocmd Filetype c,cpp,objc,objcpp,cc,python,go,terraform nnoremap <buffer> <leader>r :<C-u>LspRename<CR>
+    autocmd Filetype c,cc,cpp,python,go,terraform nnoremap <buffer> <leader>d :<C-u>vert LSClientGoToDefinitionSplit<CR>
+    autocmd Filetype c,cc,cpp,python,go,terraform nnoremap <buffer> <leader>m :<C-u>LSClientFindReferences<CR>
+    autocmd Filetype c,cc,cpp,python,go,terraform nnoremap <buffer> <leader>r :<C-u>LSClientRename<CR>
     " Add shell and ansible on this one
-    autocmd Filetype yaml,yaml.ansible nnoremap <leader>i  :<C-u>mkview<CR>:%s/\($\n\s*\)\+\%$//e<CR>:%s/\s\+$//e<CR>:loadview<CR>
-    autocmd Filetype c,cpp,objc,objcpp,cc,python,go,terraform,sh,yaml.ansible nnoremap <buffer> K  :<C-u>LspHover<CR>
+    autocmd Filetype yaml.ansible nnoremap <buffer> K  :<C-u>!ansible-doc <c-r>=expand("<cword>")<CR><bar>less<CR>
+    autocmd Filetype c,cc,cpp,python,go,terraform nnoremap <buffer> K  :<C-u>LSClientShowHover<CR>
 augroup end
 " Fix ansible file detection
 augroup ansible_vim_fthosts
@@ -220,56 +219,21 @@ function! ToggleTheme()
         edit
     endif
 endfunction
-" LSP -------------------------------------------------------------------
-set completeopt=noinsert,noselect,menu,popup
-set completepopup=align:menu,border:off,highlight:Pmenu
-let g:asyncomplete_smart_completion  = 1
-let g:lsp_auto_enable                = 1
-let g:lsp_diagnostics_echo_cursor    = 1
-let g:lsp_diagnostics_enabled        = 1
-let g:lsp_highlights_enabled         = 1
-let g:lsp_highlight_references_enabled = 1
-let g:lsp_log_file  = expand('/dev/null')
-let g:lsp_semantic_enabled     = 1
-let g:lsp_signs_enabled        = 1
-let g:lsp_virtual_text_enabled = 1
-augroup asyncompleteregister
-    autocmd! asyncompleteregister
-    autocmd VimEnter * call asyncomplete#register_source(asyncomplete#sources#file#get_source_options({
-                \ 'name': 'file',
-                \ 'whitelist': ['*'],
-                \ 'completor': function('asyncomplete#sources#file#completor')
-                \ }))
-    autocmd VimEnter * call asyncomplete#register_source(asyncomplete#sources#tags#get_source_options({
-                \ 'name': 'tags',
-                \ 'whitelist': ['*'],
-                \ 'blacklist': ['c', 'cpp', 'objc', 'objcpp', 'cc','go'],
-                \ 'completor': function('asyncomplete#sources#tags#completor'),
-                \ }))
-    autocmd VimEnter * call lsp#register_server({
-                \ 'name': 'efm-langserver',
-                \ 'whitelist': ['json', 'sh', 'yaml', 'yaml.ansible'],
-                \ 'cmd': {server_info->['efm-langserver', '-c=/home/luca-linux/dotfiles/efm-config.yml',
-                \'-logfile=/tmp/lsp.log', '-loglevel=5']},
-                \ })
-    autocmd VimEnter * call lsp#register_server({
-                \ 'name': 'clangd',
-                \ 'whitelist': ['c', 'cpp', 'objc', 'objcpp', 'cc'],
-                \ 'cmd': {server_info->['clangd', '-background-index']},
-                \ })
-    autocmd VimEnter * call lsp#register_server({
-                \ 'name': 'gopls',
-                \ 'whitelist': ['go'],
-                \ 'cmd': {server_info->['gopls']},
-                \ })
-    autocmd VimEnter * call lsp#register_server({
-                \ 'name': 'pyls',
-                \ 'whitelist': ['python'],
-                \ 'cmd': {server_info->['pyls']},
-                \ })
-    autocmd VimEnter * call lsp#register_server({
-                \ 'name': 'terraform',
-                \ 'whitelist': ['terraform'],
-                \ 'cmd': {server_info->['terraform-ls', 'serve']},
-                \ })
-augroup end
+" ALE + LSP -------------------------------------------------------------------
+let g:ale_enabled           = 1
+let g:ale_fix_on_save       = 1
+let g:ale_set_highlights    = 1
+let g:ale_fixers = {'*': ['remove_trailing_lines', 'trim_whitespace'],}
+let g:ale_yaml_yamllint_options     = '-d "{extends: default, rules: {line-length: disable, truthy: disable}}"'
+let g:lsc_auto_completeopt='menu,menuone,popup,noselect,noinsert'
+let g:lsc_server_commands  = {
+            \ 'c' : 'clangd',
+            \ 'cc' : 'clangd',
+            \ 'cpp' : 'clangd',
+            \ 'python': 'pyls',
+            \ 'terraform' : 'terraform-ls',
+            \ "go": {
+            \    "command": "gopls serve",
+            \    "log_level": -1,
+            \ },
+            \}
