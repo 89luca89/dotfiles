@@ -59,7 +59,6 @@
     block: |
       Section "Device"
         Identifier "intel"
-        MatchDriver "i915"
         Driver "intel"
         Option "AccelMethod" "sna"
         Option "TearFree" "true"
