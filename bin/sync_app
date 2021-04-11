@@ -104,7 +104,7 @@ app_sync() {
 		;;
 	"chromium")
 		[ -d ~/.config/chromium ] || (echo "No folder to backup" && exit 1)
-		pgrep chromium > /dev/null && (echo "Shutdown chrome before backup" && exit 1)
+		# pgrep chromium > /dev/null && (echo "Shutdown chrome before backup" && exit 1)
 		cd ~ || exit 1
 		tar --exclude=*Cache* -czf /tmp/chromium-profile.tar.gz .config/chromium .local/share/applications/chromium-freeworld.desktop bin/chromium-freeworld
 		gpg --passphrase "$password" --yes --batch --output /tmp/chromium-profile.tar.gz.gpg --symmetric --cipher-algo AES256 /tmp/chromium-profile.tar.gz

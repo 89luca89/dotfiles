@@ -1,9 +1,16 @@
-Host w540.lan
-  HostName localhost
+#Host w540.lan
+#  HostName localhost
+#  IdentityFile /home/luca-linux/.ssh/id_ecdsa
+#  Port 3333
+#  ProxyJump luca-lan
+#  User luca-linux
+
+Host yoga.lan
+  HostName yoga-wifi.lan
   IdentityFile /home/luca-linux/.ssh/id_ecdsa
-  Port 3333
-  ProxyJump luca-lan
-  User luca-linux
+  Port 22
+  ProxyJump management
+  User root
 
 Host fileserver
   HostName luca-lan.privatedns.org
@@ -18,12 +25,14 @@ Host sftp
   User fileserver
 
 Host luca-lan
+  ForwardAgent yes
   HostName luca-lan.lan
   Port 22
   ProxyJump tunnel
   User root
 
 Host luca-lan-roma
+  ForwardAgent yes
   HostName localhost
   IdentityFile /home/luca-linux/.ssh/id_ecdsa
   Port 3344
@@ -31,18 +40,21 @@ Host luca-lan-roma
   User root
 
 Host management
+  ForwardAgent yes
   HostName luca-lan.privatedns.org
   IdentityFile /home/luca-linux/.ssh/id_ecdsa
   Port 50365
   User bastion
 
 Host tunnel
+  ForwardAgent yes
   HostName luca-lan.privatedns.org
   IdentityFile /home/luca-linux/.ssh/id_ecdsa
   Port 50363
   User bastion
 
 Host emergency-tunnel
+  ForwardAgent yes
   HostName localhost
   IdentityFile /home/luca-linux/.ssh/id_ecdsa
   Port 2200
@@ -50,11 +62,9 @@ Host emergency-tunnel
 
 # global configuration
 Host *
-  ForwardAgent yes
   Compression yes
   ConnectTimeout 5
-  ControlMaster yes
-  ControlPath ~/tmp/.ssh/cm/%h-%p-%r.sock
-  ControlPersist yes
+  # ControlMaster no
+  # ControlPath ~/tmp/.ssh/cm/%h-%p-%r.sock
+  # ControlPersist no
   GSSAPIAuthentication no
-  MACs hmac-sha2-256

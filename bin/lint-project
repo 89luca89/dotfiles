@@ -165,11 +165,8 @@ case "$COMMAND" in
 
 		DIR=$(realpath --relative-to=$(pwd) "$DIR")
 
-		if [ -d "$DIR" ]; then
-			yamllint -d "{extends: default, rules: {line-length: disable, truthy: disable}}" --format parsable "$DIR"/roles
-		else
-			yamllint -d "{extends: default, rules: {line-length: disable, truthy: disable}}" --format parsable "$DIR"
-		fi
+		yamllint -d "{extends: default, rules: {line-length: disable, truthy: disable}}" --format parsable "$DIR"
+
 		ansible-lint -p --nocolor "$DIR"
 
 		if [ -d "$DIR" ]; then

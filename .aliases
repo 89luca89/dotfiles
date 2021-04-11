@@ -37,8 +37,8 @@ rclone_clear_mount() {
     rclone mount Local-Crypt:$1 $2
 }
 # BASIC ALIASES
-alias rsyncthingD='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync -av --delete --progress -e "ssh -J luca-lan -p 2223" --exclude={.stversions,*.tmp} fileserver@raspberrypi-1.lan:/data/Syncthing/ ~/Syncthing/ && cd -'
-alias rsyncthingS='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync -av --delete --progress -e "ssh -J luca-lan -p 2223" --exclude={.stversions,*.tmp} ~/Syncthing/ fileserver@raspberrypi-1.lan:/data/Syncthing/ && cd -'
+alias rsyncthingD='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync -av --delete --progress -e "ssh -J management -p 2223" --exclude={.stversions,*.tmp} fileserver@raspberrypi-1.lan:/data/Syncthing/ ~/Syncthing/ && cd -'
+alias rsyncthingS='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync -av --delete --progress -e "ssh -J management -p 2223" --exclude={.stversions,*.tmp} ~/Syncthing/ fileserver@raspberrypi-1.lan:/data/Syncthing/ && cd -'
 alias firefoxSync='~/dotfiles/bin/get_firefox_tabs.py > ~/Syncthing/Notes/open_tabs.md'
 alias firefoxRestore="cat ~/Syncthing/Notes/open_tabs.md | cut -d ']' -f2  | sed 's/(//g' | sed 's/)//g' | xargs firefox --new-tab &"
 alias ll='ls -Ahl --group-directories-first --color'
