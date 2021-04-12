@@ -6,7 +6,7 @@ set -o nounset
 
 # Default pass password store directory
 PASSWORD_STORE=".password-store"
-BOOKMARK_FILE="$PASSWORD_STORE/bookmarks/bookmarks.html"
+BOOKMARK_FILE="$HOME/Syncthing/Browsers/bookmarks/index.html"
 
 # Preload incoming queries
 if [ $# -eq 0 ]; then
@@ -80,7 +80,7 @@ prepare_data() {
 	fi
 
 	# Fetch password list
-	if [ "$QUERY" = "Search" ] || echo "$QUERY" | $GREP -q Password; then
+	if [ "$QUERY" = "Search" ] || echo "$QUERY" | $GREP -Eq "Password|Bookmarks"; then
 		cd ~ || exit
 		find $PASSWORD_STORE/ -type f -name "*.gpg" 2>/dev/null |
 			$GREP -Ev 'node_modules|\.git|flatpak|\.cache|\.local/lib|\.local/share' |
@@ -94,7 +94,7 @@ prepare_data() {
 		for line in $(cat "$BOOKMARK_FILE"); do
 			bookmark=$(echo "$line" | $GREP -oP 'HREF="\Khttp[^"]+' || :)
 			if [ "$bookmark" != "" ]; then
-				title=$($GREP "$bookmark"Search"$BOOKMARK_FILE" | $GREP -Eo '">.*</A>' | $GREP -oP '>\K[^<]+' | $GREP -v 'Recent Tags')
+				title=$($GREP "$bookmark" "$BOOKMARK_FILE" | $GREP -Eo '">.*</A>' | $GREP -oP '>\K[^<]+' | $GREP -v 'Recent Tags')
 				echo "Bookmarks: $title | $bookmark "
 			fi
 		done
@@ -142,9 +142,6 @@ prepare_data() {
 main() {
 	# Present on fzf
 	RESULT=$(prepare_data | $FUZZER)
-	if [ -z "$RESULT" ]; then
-		exit 0
-	fi
 
 	if echo "$RESULT" | $GREP -q "^Window"; then
 
@@ -176,11 +173,15 @@ main() {
 		RESULT=$(echo "$RESULT" | cut -d"|" -f2 | awk '{$1=$1};1')
 		setsid -f xdg-open "$RESULT" >/dev/null 2>&1 &
 
-	else
+	elif echo "$RESULT" | $GREP -q "^Files"; then
 
 		### Open the file using MIME recognition
 		RESULT=$(echo "$RESULT" | cut -d":" -f2 | awk '{$1=$1};1')
 		setsid -f xdg-open "$RESULT" >/dev/null 2>&1 &
+	else
+
+		### Open the file using MIME recognition
+		setsid -f xdg-open "https://$RESULT" >/dev/null 2>&1 &
 	fi
 	sleep 0.3
 }

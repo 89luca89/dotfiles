@@ -62,7 +62,7 @@ app_sync() {
 	"xfce4")
 		[ -d ~/.config/xfce4 ] || (echo "No folder to backup" && exit 1)
 		cd ~ || exit 1
-		tar -czf ~/dotfiles/xfce/xfce4-setup.tar.gz .config/xfce4/ .config/Thunar .config/Mousepad .local/share/themes
+		tar -czf ~/dotfiles/xfce/xfce4-setup.tar.gz .config/xfce4/ .config/Thunar .local/share/themes .xscreensaver
 		git -C ~/dotfiles commit -m "xfce4: update settings" xfce/xfce4-setup.tar.gz
 		;;
 	"gnome")
