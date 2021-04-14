@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Version=0.9.4
+Type=Application
+Name=devilspie2
+Comment=devilspie2
+Exec=devilspie2
+RunHook=0
+StartupNotify=false
+Terminal=false
+Hidden=false

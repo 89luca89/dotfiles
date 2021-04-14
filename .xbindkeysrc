@@ -1,0 +1,66 @@
+# Common shortcuts for all
+#
+"xdg-open https://about:blank"
+    m:0x40 + c:25
+    Mod4 + w
+
+"xdg-open $HOME"
+    m:0x40 + c:26
+    Mod4 + e
+
+"xfce4-terminal -e tmux"
+    m:0x40 + c:28
+    Mod4 + t
+
+"xfce4-terminal --tab -e tmux"
+    m:0xc + c:28
+    Control+Alt + t
+
+"rofi  -combi-modi window,drun,run -show combi -modi combi -modi run -theme Arc-Dark"
+    m:0x40 + c:38
+    Mod4 + a
+
+"search Passwords"
+    m:0x40 + c:39
+    Mod4 + s
+
+"search"
+    m:0x40 + c:65
+    Mod4 + space
+
+"switch-theme"
+    m:0x40 + c:40
+    Mod4 + d
+
+"mpv_play"
+    m:0x40 + c:45
+    Mod4 + k
+
+"xscreensaver-command -lock"
+    m:0x40 + c:46
+    Mod4 + l
+
+"xdotool key Page_Up"
+    b:9
+
+"xdotool key Page_Down"
+    b:8
+
+"wmctrl -c :ACTIVE:"
+    m:0x40 + c:24
+    Mod4 + q
+
+### Media Management
+#
+# "amixer -q set Master toggle"
+#   XF86AudioMute
+
+"gnome-screenshot -i"
+    m:0x0 + c:107
+    Print
+"sleep 1; gnome-screenshot -a"
+    m:0x1 + c:107
+    Shift + Print
+"gnome-screenshot -w"
+    m:0x8 + c:107
+    Alt + Print
