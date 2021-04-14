@@ -100,17 +100,6 @@ done
 shopt -u dotglob
 popd || exit 1
 
-pushd ~/.var/app || exit 127
-APPS=$(flatpak list --all)
-if [ ! -z $APP ]; then
-	for dir in *; do
-		if ! echo "$APPS" | grep -q "$dir"; then
-			clean_folder "$dir"
-		fi
-	done
-fi
-popd || exit 1
-
 CONFIG_FOLDERS=("autostart"
 	"galculator"
 	"GIMP"

@@ -99,70 +99,13 @@ prepare_data() {
 			fi
 		done
 	fi
-
-	if [ "$QUERY" = "Search" ] || echo "$QUERY" | $GREP -q Program; then
-		# Fetch executables from PATH
-		if [ ! -f ~/.cache/desktop-files ] || test "$(find ~/.cache/desktop-files -mmin +30)"; then
-			# We do not have a cache file, let's create it!
-			echo "Program: Refresh Apps | "
-			echo "Refresh Apps | " >>~/.cache/desktop-files
-			for file in $(find \
-				~/.local/share/applications/ \
-				~/.local/share/flatpak/app/*/current/active/export/ \
-				~/Programs/ \
-				/usr/share/applications/ \
-				-iname '*.desktop' 2>/dev/null |
-				$GREP -Ev 'xdg|session|autostart|\.stversions' |
-				sort -u); do
-
-				if [ -f "$file" ]; then
-
-					name=$($GREP '^Name=' "$file" | head -1 | sed 's/^Name=//g')
-					generic_name=$($GREP '^GenericName=' "$file" | head -1 | sed 's/^GenericName=//g' | sed 's/%.*//g')
-					categories_names=$($GREP '^Categories=' "$file" | head -1 | sed 's/^Categories=//g' | sed 's/%.*//g' | sed 's/;/ /g')
-					command_name=$($GREP '^Exec=' "$file" | head -1 | sed 's/^Exec=//g' | sed 's/%.*//g')
-					# Save name in file, this will be used for fzf
-					echo "$name | $command_name | $generic_name | $categories_names" >>~/.cache/desktop-files
-					echo "Program: $name | $command_name | $generic_name | $categories_names"
-
-				fi
-			done
-		else
-			# Aggregate with other data
-			sort -u ~/.cache/desktop-files | sed 's/^/Program: /g'
-		fi
-	fi
-
-	if [ "$QUERY" = "Search" ] || echo "$QUERY" | $GREP -Eq "Window|Program"; then
-		# Fetch open windows
-		wmctrl -l | $GREP -o "$(hostname).*" | sed "s/$(hostname) /Window: /g"
-	fi
 }
 
 main() {
 	# Present on fzf
 	RESULT=$(prepare_data | $FUZZER)
 
-	if echo "$RESULT" | $GREP -q "^Window"; then
-
-		### Focus target window
-		RESULT=$(echo "$RESULT" | cut -d":" -f2 | awk '{$1=$1};1')
-		wmctrl -a "$RESULT"
-
-	elif echo "$RESULT" | $GREP -q "^Program"; then
-
-		### Execute the file
-		RESULT=$(echo "$RESULT" | cut -d":" -f2 | awk '{$1=$1};1')
-		if [ "$RESULT" = "Refresh Apps |" ]; then
-			rm ~/.cache/desktop-files
-			return
-		fi
-		# Retrieve original file name
-		command_exec=$(echo "$RESULT" | cut -d"|" -f2 | awk '{$1=$1};1')
-		# Exec
-		setsid -f $command_exec >/dev/null 2>&1 &
-
-	elif echo "$RESULT" | $GREP -q "^Password"; then
+	if echo "$RESULT" | $GREP -q "^Password"; then
 
 		### Handle the password
 		RESULT=$(echo "$RESULT" | cut -d":" -f2 | awk '{$1=$1};1')
