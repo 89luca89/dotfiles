@@ -50,6 +50,15 @@
     m:0x40 + c:24
     Mod4 + q
 
+"winfocus left"
+    m:0x8 + c:113
+    Alt + Left
+
+"winfocus right"
+    m:0x8 + c:114
+    Alt + Right
+
+
 ### Media Management
 #
 # "amixer -q set Master toggle"
