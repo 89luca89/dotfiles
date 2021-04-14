@@ -22,7 +22,7 @@ python_packages:
 
 python_modules:
   - 'python-language-server[all]'
-  - ansible
+  - ansible==2.9
   - ansible-later
   - ansible-lint
   - demjson
