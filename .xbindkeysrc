@@ -50,6 +50,10 @@
     m:0x40 + c:24
     Mod4 + q
 
+"wmctrl -c :ACTIVE:"
+    m:0x8 + c:24
+    Alt + q
+
 "winfocus left"
     m:0x8 + c:113
     Alt + Left
