@@ -29,9 +29,6 @@ terminal_packages:
   - stunnel
   - tcpdump
   - tlp
-  - wmctrl
-  - xclip
-  - xdotool
   - zbar
 
 my_packages:
@@ -70,7 +67,10 @@ my_packages:
   # Generic X utility
   - devilspie2
   - setxkbmap
+  - wmctrl
   - xbindkeys
+  - xclip
+  - xdotool
   - xgamma
   - xinput
 
