@@ -8,10 +8,10 @@
     name: "{{ debloat_pkg }}"
   become: true
 
-- name: Install Programs (clang)
+- name: Install Programs (Programming Packages)
   package:
     state: latest
-    name: "{{ clang_packages }}"
+    name: "{{ terminal_packages }}"
   become: true
 
 - name: Install Programs (python)
@@ -34,12 +34,6 @@
     name: "{{ golang_packages }}"
   become: true
 
-- name: Install Programs (Programming Packages)
-  package:
-    state: latest
-    name: "{{ terminal_packages }}"
-  become: true
-
 - name: Instal additional packages
   dnf:
     name: '{{ item }}'
@@ -56,23 +50,6 @@
     state: latest
     name: "{{ my_packages }}"
   become: true
-
-- name: Add the flathub flatpak repository remote to the user installation
-  flatpak_remote:
-    name: flathub
-    state: present
-    flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
-    method: user
-
-- name: Install Flatpak Packages
-  community.general.flatpak:
-    name: "{{ item }}"
-    state: present
-    remote: flathub
-    method: user
-  with_items: "{{ flatpak_packages }}"
-  when: flatpak_packages is defined
-
 
 - name: Check that golang exists
   stat:

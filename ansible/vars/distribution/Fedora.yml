@@ -4,12 +4,8 @@
 
 terraform_provider_libvirt_url: "https://github.com/dmacvicar/terraform-provider-libvirt/releases/download/v{{ terraform_provider_libvirt_version }}/terraform-provider-libvirt-{{ terraform_provider_libvirt_release }}.Fedora_32.x86_64.tar.gz"
 
-clang_packages:
-  - make
-  - clang
-  - clang-tools-extra
-
 terminal_packages:
+  - ShellCheck
   - acpi
   - android-tools
   - bash-completion
@@ -25,11 +21,11 @@ terminal_packages:
   - libappindicator-gtk3
   - lsof
   - make
-  - ncdu
   - net-tools
   - powertop
   - python3-devel
   - python3-pip
+  - ripgrep
   - stunnel
   - tcpdump
   - tlp
@@ -37,27 +33,26 @@ terminal_packages:
   - xclip
   - xdotool
   - zbar
-  - ShellCheck
-  - ripgrep
 
 my_packages:
+  - arandr
   - chromium-freeworld
   - evince
   - file-roller
   - firefox
   - gimp
   - gnome-disk-utility
+  - gnome-screenshot
+  - gnome-terminal
   - gvim
   - libreoffice-calc
   - libreoffice-draw
   - libreoffice-gtk3
   - libreoffice-impress
   - libreoffice-writer
+  - nitrogen
   - pinta
-  # - evolution
-  # - evolution-ews
-  # - materia-gtk-theme
-  # - papirus-icon-theme
+  # Cli packages
   - aria2
   - mpv
   - ncdu
@@ -70,6 +65,14 @@ my_packages:
   - tmux
   - vim
   - w3m
+  - papirus-icon-theme
+  - pinentry-gtk
+  # Generic X utility
+  - devilspie2
+  - setxkbmap
+  - xbindkeys
+  - xgamma
+  - xinput
 
 debloat_pkg:
   - PackageKit
@@ -108,9 +111,13 @@ debloat_pkg:
   - gnome-weather
   - httpd
   - open-vm-tools-desktop
-  - setroubleshoot*
   - tracker
   - tracker-miners
   - yelp
   - yelp-libs
   - yelp-xsl
+  - mousepad
+  - xarchiver
+  - xfce4-screenshooter
+  - xfdashboard
+  - xfdesktop
