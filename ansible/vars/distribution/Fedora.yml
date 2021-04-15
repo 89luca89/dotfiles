@@ -41,6 +41,8 @@ my_packages:
   - gnome-disk-utility
   - gnome-screenshot
   - gnome-terminal
+  - gnome-keyring
+  - gnome-keyring-pam
   - gvim
   - libreoffice-calc
   - libreoffice-draw
@@ -116,8 +118,8 @@ debloat_pkg:
   - yelp
   - yelp-libs
   - yelp-xsl
-  - mousepad
   - xarchiver
   - xfce4-screenshooter
   - xfdashboard
   - xfdesktop
+  - rsyslog

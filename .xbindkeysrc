@@ -55,18 +55,17 @@
     Alt + q
 
 "winfocus left"
-    m:0x8 + c:113
-    Alt + Left
+    m:0x9 + c:113
+    Shift+Alt + Left
 
 "winfocus right"
-    m:0x8 + c:114
-    Alt + Right
-
+    m:0x9 + c:114
+    Shift+Alt + Right
 
 ### Media Management
-#
-# "amixer -q set Master toggle"
-#   XF86AudioMute
+
+"amixer -q set Master toggle"
+    XF86AudioMute
 
 "gnome-screenshot -i"
     m:0x0 + c:107
