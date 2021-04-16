@@ -16,7 +16,7 @@
     m:0xc + c:28
     Control+Alt + t
 
-"rofi  -combi-modi window,drun,run -show combi -modi combi -modi run -theme Arc-Dark"
+"rofi  -combi-modi window,drun,run -show combi -modi combi -modi run -theme Arc-Dark -show-icons  -theme-str 'element-icon { size: 2ch;}'"
     m:0x40 + c:38
     Mod4 + a
 
@@ -55,12 +55,12 @@
     Alt + q
 
 "winfocus left"
-    m:0x9 + c:113
-    Shift+Alt + Left
+    m:0x41 + c:113
+    Shift+Mod4 + Left
 
 "winfocus right"
-    m:0x9 + c:114
-    Shift+Alt + Right
+    m:0x41 + c:114
+    Shift+Mod4 + Right
 
 ### Media Management
 
