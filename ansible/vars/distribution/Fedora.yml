@@ -32,7 +32,6 @@ terminal_packages:
   - zbar
 
 my_packages:
-  - arandr
   - chromium-freeworld
   - evince
   - file-roller
@@ -49,9 +48,10 @@ my_packages:
   - libreoffice-gtk3
   - libreoffice-impress
   - libreoffice-writer
-  - nitrogen
   - pinta
   # Cli packages
+  # - arandr
+  # - nitrogen
   - aria2
   - mpv
   - ncdu
@@ -113,13 +113,11 @@ debloat_pkg:
   - gnome-weather
   - httpd
   - open-vm-tools-desktop
-  - tracker
-  - tracker-miners
-  - yelp
-  - yelp-libs
-  - yelp-xsl
+  - rsyslog
   - xarchiver
   - xfce4-screenshooter
   - xfdashboard
   - xfdesktop
-  - rsyslog
+  - yelp
+  - yelp-libs
+  - yelp-xsl
