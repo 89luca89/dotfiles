@@ -66,6 +66,22 @@
     m:0x41 + c:114
     Shift+Mod4 + Right
 
+"quicktile bottom-right"
+    m:0x5 + c:114
+    Control+Shift + Right
+
+"quicktile bottom-left"
+    m:0x5 + c:113
+    Control+Shift + Left
+
+"quicktile top-right"
+    m:0x9 + c:114
+    Alt+Shift + Right
+
+"quicktile top-left"
+    m:0x9 + c:113
+    Alt+Shift + Left
+
 ### Media Management
 
 "amixer -q set Master toggle"

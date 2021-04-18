@@ -39,6 +39,7 @@ python_modules:
   - six
   - yamllint
   - youtube-dl
+  - "https://github.com/ssokolow/quicktile/archive/master.zip"
 
 golang_packages:
   - golang
