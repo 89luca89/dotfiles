@@ -32,10 +32,9 @@ Host luca-lan
   User root
 
 Host luca-lan-roma
-  ForwardAgent yes
+  ForwardAgent no
   HostName localhost
-  IdentityFile /home/luca-linux/.ssh/id_ecdsa
-  Port 3344
+  Port 3345
   ProxyJump luca-lan
   User root
 

@@ -48,5 +48,5 @@ fi
 xgamma -gamma 0.9 2>/dev/null
 setxkbmap -layout us -variant altgr-intl
 setxkbmap -option ctrl:nocaps
-xinput set-prop 12 "$(xinput list-props 12 | grep "Click Method Enabled" | head -n1 | grep -Eo "([0-9][0-9][0-9])")" {0,1}
-xinput set-prop 12 "$(xinput list-props 12 | grep "Tapping Enabled" | head -n1 | grep -Eo "([0-9][0-9][0-9])")" 1
+# xinput set-prop 12 "$(xinput list-props 12 | grep "Click Method Enabled" | head -n1 | grep -Eo "([0-9][0-9][0-9])")" {0,1}
+# xinput set-prop 12 "$(xinput list-props 12 | grep "Tapping Enabled" | head -n1 | grep -Eo "([0-9][0-9][0-9])")" 1

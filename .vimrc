@@ -70,7 +70,7 @@ Plug 'sheerun/vim-polyglot'
 Plug 'stephpy/vim-yaml'
 " Aestetics
 Plug 'acarapetis/vim-colors-github'
-Plug 'morhetz/gruvbox'
+Plug 'tomasiser/vim-code-dark'
 " LSP
 Plug 'dense-analysis/ale'
 Plug 'natebosch/vim-lsc'
@@ -92,10 +92,9 @@ augroup customsyntax
     autocmd Syntax * syntax match myDeclaration '\v\w+(,\s*\w+)*\ze(\s*:\=)'
     autocmd Syntax * syntax match myFunction    '\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\ze\%([a-zA-Z0-9]*(\)'
 augroup end
-let g:gruvbox_contrast_dark = "hard"
 set background=dark
-" set termguicolors
-colorscheme gruvbox
+set termguicolors
+colorscheme codedark
 highlight myDeclaration     ctermfg=117 guifg=#9CDCFE
 highlight myFunction        ctermfg=214 guifg=#fabd2f
 " bufline
@@ -190,23 +189,12 @@ augroup lspbindings
     autocmd Filetype yaml.ansible nnoremap <buffer> K  :<C-u>!ansible-doc <c-r>=expand("<cword>")<CR><bar>less<CR>
     autocmd Filetype c,cc,cpp,python,go,terraform nnoremap <buffer> K  :<C-u>LSClientShowHover<CR>
 augroup end
-" Fix ansible file detection
-augroup ansible_vim_fthosts
-    autocmd!
-    autocmd BufNewFile,BufRead */*.j2 set filetype=jinja2
-    autocmd BufNewFile,BufRead */*inventory*.yml set filetype=yaml.ansible
-    autocmd BufNewFile,BufRead */*vars/*/**.yml set filetype=yaml.ansible
-    autocmd BufNewFile,BufRead */roles/**/*.yml set filetype=yaml.ansible
-    autocmd BufNewFile,BufRead *main*.yml set filetype=yaml.ansible
-    autocmd BufNewFile,BufRead *role*.yml set filetype=yaml.ansible
-    autocmd BufNewFile,BufRead hosts set filetype=ini.ansible
-augroup END
 " FUNCTIONS --------------------------------------------------------------------
 " Toggle Theme
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        colorscheme gruvbox
+        colorscheme codedark
         highlight myDeclaration     ctermfg=117 guifg=#9CDCFE
         highlight myFunction        ctermfg=214 guifg=#fabd2f
         edit
@@ -221,9 +209,6 @@ function! ToggleTheme()
 endfunction
 " ALE + LSP -------------------------------------------------------------------
 let g:ale_enabled           = 1
-let g:ale_fix_on_save       = 1
-let g:ale_set_highlights    = 1
-let g:ale_fixers = {'*': ['remove_trailing_lines', 'trim_whitespace'],}
 let g:ale_yaml_yamllint_options     = '-d "{extends: default, rules: {line-length: disable, truthy: disable}}"'
 let g:lsc_auto_completeopt='menu,menuone,popup,noselect,noinsert'
 let g:lsc_server_commands  = {
