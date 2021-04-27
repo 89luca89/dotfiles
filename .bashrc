@@ -37,7 +37,10 @@ if [[ $- == *i* ]]; then
 
 
 	export GIT_PS1_SHOWDIRTYSTATE=1
-	export PS1=${BGREEN}'\u@\h'${PS_CLEAR}':'${BBLUE}'\w'${PS_CLEAR}${RED}'$(__git_ps1)'${PS_CLEAR}'$ '
+	export GIT_PS1_SHOWSTASHSTATE=1
+	export GIT_PS1_SHOWUNTRACKEDFILES=1
+	export GIT_PS1_SHOWCOLORHINTS=1
+	export PS1=${BGREEN}'\u@\h'${PS_CLEAR}':'${BBLUE}'\w'${PS_CLEAR}${RED}'$(__git_ps1)'${PS_CLEAR}' $ '
 
 	[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 	# use tmux split with FZF
