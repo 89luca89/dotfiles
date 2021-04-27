@@ -4,6 +4,9 @@ if [[ $- == *i* ]]; then
 		git clone --depth 1 https://github.com/junegunn/fzf.git "$HOME/.local/bin/fzf"
 		"$HOME/.local/bin/fzf/install" --all
 	fi
+	if [ ! -f "$HOME/.local/bin/.git-prompt.sh" ]; then
+		curl -o "$HOME/.local/bin/.git-prompt.sh" https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
+	fi
 	# HISTORY SIZE
 	export HISTFILE=~/.histfile
 	export HISTCONTROL=ignoredups:erasedups # no duplicate entries
@@ -23,11 +26,19 @@ if [[ $- == *i* ]]; then
 		shopt -s checkwinsize
 	fi
 
+	source "$HOME/.local/bin/.git-prompt.sh"
+
 	# setup a simple PROMPT/PS1
 	BGREEN='\[\033[01;32m\]'
 	BBLUE='\[\033[01;34m\]'
+	RED='\[\033[01;30m\]'
 	PS_CLEAR='\[\033[0m\]'
-	PS1="${BGREEN}\u@\h${BBLUE} \W \$${PS_CLEAR} "
+
+
+
+	export GIT_PS1_SHOWDIRTYSTATE=1
+	export PS1=${BGREEN}'\u@\h'${PS_CLEAR}':'${BBLUE}'\w'${PS_CLEAR}${RED}'$(__git_ps1)'${PS_CLEAR}'$ '
+
 	[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 	# use tmux split with FZF
 	if [ "${TMUX}" ]; then
