@@ -60,7 +60,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 " utilities
-Plug 'ap/vim-buftabline'
+Plug 'vim-airline/vim-airline'
 Plug 'yggdroot/indentLine'
 " Fzf
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
@@ -70,7 +70,7 @@ Plug 'sheerun/vim-polyglot'
 Plug 'stephpy/vim-yaml'
 " Aestetics
 Plug 'acarapetis/vim-colors-github'
-Plug 'tomasiser/vim-code-dark'
+Plug 'tomasr/molokai'
 " LSP
 Plug 'dense-analysis/ale'
 Plug 'natebosch/vim-lsc'
@@ -94,13 +94,14 @@ augroup customsyntax
 augroup end
 set background=dark
 set termguicolors
-colorscheme codedark
+colorscheme molokai
 highlight myDeclaration     ctermfg=117 guifg=#9CDCFE
 highlight myFunction        ctermfg=214 guifg=#fabd2f
-" bufline
-let g:buftabline_indicators = 1
-let g:buftabline_separators = 1
-let g:buftabline_plug_max   = 0
+let g:airline_extensions = ['ale', 'tabline']
+let g:airline#extensions#tabline#left_sep = ' '
+let g:airline#extensions#tabline#left_alt_sep = '|'
+let g:airline#extensions#tabline#formatter = 'default'
+
 " indentline
 let g:indentLine_char = '|'
 let g:indentLine_concealcursor = ''
@@ -138,8 +139,8 @@ let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 " do last action on a visual selection
 vnoremap . :'<,'>:normal .<CR>
 " navigate tabs Tab (fw) S-Tab (prev)
-map <Tab>   :<C-u>bn<CR>
-map <S-Tab> :<C-u>bp<CR>
+map <M-PageDown>   :<C-u>bn<CR>
+map <M-PageUp> :<C-u>bp<CR>
 " C-c close buffer
 map <C-c> :<C-u>bp<BAR>sp<BAR>bn<BAR>bd<CR>
 " Visual mode, C-c copy line
@@ -147,10 +148,10 @@ vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 " Leader map
 let mapleader = ' '
 " Utility shortcuts with leader:
-map <leader><leader>  :<C-u>Files<CR>
-map <leader><tab>  :<C-u>Buffers<CR>
-map <leader>t  :<C-u>Tags<CR>
+map <leader><leader>  :<C-u>Buffers<CR>
+map <leader>p  :<C-u>Files<CR>
 map <leader>s  :<C-u>Snippets<CR>
+map <leader>t  :<C-u>Tags<CR>
 " set filetype shortcut
 nnoremap <leader>ft :<C-u>set ft=
 " Code help using external scripts: Lint, Format, DeepTags, Grep, vert-copen
@@ -189,12 +190,23 @@ augroup lspbindings
     autocmd Filetype yaml.ansible nnoremap <buffer> K  :<C-u>!ansible-doc <c-r>=expand("<cword>")<CR><bar>less<CR>
     autocmd Filetype c,cc,cpp,python,go,terraform nnoremap <buffer> K  :<C-u>LSClientShowHover<CR>
 augroup end
+" Fix ansible file detection
+augroup ansible_vim_fthosts
+    autocmd!
+    autocmd BufNewFile,BufRead */*.j2 set filetype=jinja2
+    autocmd BufNewFile,BufRead */*inventory*.yml set filetype=yaml.ansible
+    autocmd BufNewFile,BufRead */*vars/*/**.yml set filetype=yaml.ansible
+    autocmd BufNewFile,BufRead */roles/**/*.yml set filetype=yaml.ansible
+    autocmd BufNewFile,BufRead *main*.yml set filetype=yaml.ansible
+    autocmd BufNewFile,BufRead *role*.yml set filetype=yaml.ansible
+    autocmd BufNewFile,BufRead hosts set filetype=ini.ansible
+augroup END
 " FUNCTIONS --------------------------------------------------------------------
 " Toggle Theme
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        colorscheme codedark
+        colorscheme molokai
         highlight myDeclaration     ctermfg=117 guifg=#9CDCFE
         highlight myFunction        ctermfg=214 guifg=#fabd2f
         edit
@@ -209,6 +221,10 @@ function! ToggleTheme()
 endfunction
 " ALE + LSP -------------------------------------------------------------------
 let g:ale_enabled           = 1
+let g:ale_lint_on_enter     = 0
+let g:ale_lint_on_text_changed = 0
+let g:ale_lint_on_save = 1
+
 let g:ale_yaml_yamllint_options     = '-d "{extends: default, rules: {line-length: disable, truthy: disable}}"'
 let g:lsc_auto_completeopt='menu,menuone,popup,noselect,noinsert'
 let g:lsc_server_commands  = {
