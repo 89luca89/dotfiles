@@ -167,7 +167,7 @@ case "$COMMAND" in
 
 		yamllint -d "{extends: default, rules: {line-length: disable, truthy: disable}}" --format parsable "$DIR"
 
-		ansible-lint -p --nocolor "$DIR"
+		ansible-lint -p --nocolor -x yaml "$DIR"
 
 		if [ -d "$DIR" ]; then
 			cd "$DIR" >/dev/null || exit
