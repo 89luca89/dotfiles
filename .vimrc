@@ -3,57 +3,31 @@
 let g:polyglot_disabled = ['yaml']
 let g:python3_host_prog = '/usr/bin/python3'
 let g:python_host_prog  = '/usr/bin/python2'
-set autoindent
+set autoindent copyindent expandtab shiftwidth=4 softtabstop=4 tabstop=4
 set autoread
 set backspace=indent,eol,start
 set colorcolumn=80
-set copyindent
-set cursorline
 set encoding=utf8
-set expandtab
 set formatoptions=tcqj
 set grepprg=rg\ --vimgrep\ --smart-case\ --follow
 set guioptions=d
 set hidden
-set hlsearch
-set ignorecase
-set incsearch
-set langnoremap
-set langremap
-set lazyredraw
+set hlsearch ignorecase incsearch
+set langnoremap langremap
+set lazyredraw ttyfast ttimeoutlen=50 updatetime=50
+set list lcs=tab:\|\  " here is a space
 set mouse=a
-set nobackup
-set nocompatible
-set nofsync
-set nomodeline
-set noswapfile
+set nocompatible nomodeline nofsync
+set noswapfile nowritebackup nobackup
 set nowrap
-set nowritebackup
 set number
 set path+=.,**
-set scrolloff=8
-set shiftwidth=4
-set sidescroll=1
-set smartcase
-set smartindent
-set smarttab
-set softtabstop=4
-set splitbelow
-set splitright
-set tabstop=4
+set scrolloff=8 sidescroll=1
+set smartcase smartindent smarttab
+set splitbelow splitright
 set title
-set ttyfast
-set undodir=$HOME/.vim/undo
-set undofile
-set undolevels=10000
-set updatetime=50
-set wildignore+=tags
-set wildmenu
-set wildmode=list:longest,full
-set ttimeoutlen=50
-" Bottom bar
-set noshowmode noshowcmd laststatus=0 ruler   " hide statusline
-set rulerformat=%20(%m%r%w\ %y\ %l/%c%)\        " Modified+FileType+Ruler
+set undodir=$HOME/.vim/undo undofile undolevels=10000
+set wildignore+=tags wildmenu wildmode=list:longest,full
 filetype off
 call plug#begin('~/.vim/plugged')
 " Git
@@ -61,22 +35,17 @@ Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 " utilities
 Plug 'vim-airline/vim-airline'
-Plug 'yggdroot/indentLine'
 " Fzf
-Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
+Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 " Lang Packs
 Plug 'sheerun/vim-polyglot'
 Plug 'stephpy/vim-yaml'
-" Aestetics
-Plug 'acarapetis/vim-colors-github'
-Plug 'tomasr/molokai'
 " LSP
 Plug 'dense-analysis/ale'
 Plug 'natebosch/vim-lsc'
 " Snippets
 Plug 'honza/vim-snippets'
-Plug 'phenomenes/ansible-snippets'
 Plug 'sirver/ultisnips'
 call plug#end()
 filetype plugin indent on
@@ -85,29 +54,33 @@ syntax on
 augroup customsyntax
     autocmd! customsyntax
     " Strip whitespaces
-    autocmd BufWritePre * %s/\s\+$//e
     autocmd BufWritePre * %s/\($\n\s*\)\+\%$//e
+    autocmd BufWritePre * %s/\s\+$//e
     " Custom syntax highlight
     autocmd Syntax * syntax match myDeclaration '\v[_.[:alnum:]]+(,\s*[_.[:alnum:]]+)*\ze(\s*([-^+|^\/%&]|\*|\<\<|\>\>|\&\^)?\=[^=])'
     autocmd Syntax * syntax match myDeclaration '\v\w+(,\s*\w+)*\ze(\s*:\=)'
     autocmd Syntax * syntax match myFunction    '\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\ze\%([a-zA-Z0-9]*(\)'
 augroup end
 set background=dark
-set termguicolors
-colorscheme molokai
-highlight myDeclaration     ctermfg=117 guifg=#9CDCFE
-highlight myFunction        ctermfg=214 guifg=#fabd2f
-let g:airline_extensions = ['ale', 'tabline']
-let g:airline#extensions#tabline#left_sep = ' '
-let g:airline#extensions#tabline#left_alt_sep = '|'
+set notermguicolors t_Co=256
+" common
+highlight LineNr        ctermfg=240
+highlight Search        ctermfg=15 ctermbg=226
+highlight SignColumn    ctermbg=NONE
+" dark
+highlight ColorColumn   ctermbg=236
+highlight Comment       ctermfg=243
+highlight Normal        ctermbg=234 ctermfg=15
+highlight Pmenu         ctermbg=235 ctermfg=15
+highlight SpecialKey    ctermfg=240
+highlight VertSplit     ctermbg=235 ctermfg=234
+highlight myDeclaration ctermfg=117
+highlight myFunction    ctermfg=121
 let g:airline#extensions#tabline#formatter = 'default'
-
-" indentline
-let g:indentLine_char = '|'
-let g:indentLine_concealcursor = ''
-let g:indentLine_setConceal = 1
-let g:intendLine_faser = 1
-set list lcs=tab:\|\  " here is a space
+let g:airline#extensions#tabline#left_alt_sep = '|'
+let g:airline#extensions#tabline#left_sep = ' '
+let g:airline_extensions = ['ale', 'tabline']
+let g:airline_highlighting_cache = 1
 " Langs
 let g:ansible_attribute_highlight       = 'ab'
 let g:ansible_extra_keywords_highlight  = 1
@@ -128,7 +101,6 @@ let g:go_highlight_types             = 1
 let g:java_highlight_all             = 1
 let g:java_highlight_java_lang_ids   = 1
 let g:python_highlight_all  = 1
-let g:yaml_limit_spell      = 1
 " UltiSnips
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<tab>"
@@ -139,8 +111,8 @@ let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 " do last action on a visual selection
 vnoremap . :'<,'>:normal .<CR>
 " navigate tabs Tab (fw) S-Tab (prev)
-map <M-PageDown>   :<C-u>bn<CR>
-map <M-PageUp> :<C-u>bp<CR>
+map <Tab>   :<C-u>bn<CR>
+map <S-Tab> :<C-u>bp<CR>
 " C-c close buffer
 map <C-c> :<C-u>bp<BAR>sp<BAR>bn<BAR>bd<CR>
 " Visual mode, C-c copy line
@@ -163,9 +135,9 @@ nnoremap <leader>a  :<C-u>cgete system('lint-project ' . &filetype . " " .  expa
 nnoremap <leader>f  :<C-u>vimgrep "" **/*<BAR>copen<C-Left><C-Left><Right>
 " Default IDE-Style keybindings EDMRL, errors, definition, references, rename, format
 nnoremap <leader>d  :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
-nnoremap <leader>rf :<C-u>vimgrep "<c-r>=expand("<cword>")<CR> **/*<CR>:copen<CR>
-nnoremap <leader>r  :<C-u>!grep --exclude tags -Rl <c-r>=expand("<cword>")<CR><BAR>xargs sed -i 's/<c-r>=expand("<cword>")<CR>//g'<Left><Left><Left>
 nnoremap <leader>i  :<C-u>mkview<CR>:%s/\($\n\s*\)\+\%$//e<CR>:%s/\s\+$//e<CR>=G:loadview<CR>
+nnoremap <leader>r  :<C-u>!grep --exclude tags -Rl <c-r>=expand("<cword>")<CR><BAR>xargs sed -i 's/<c-r>=expand("<cword>")<CR>//g'<Left><Left><Left>
+nnoremap <leader>rf :<C-u>vimgrep "<c-r>=expand("<cword>")<CR> **/*<CR>:copen<CR>
 " Override <leader>i formatting with corresponding formatter for each lang
 augroup autoformat_settings
     autocmd!
@@ -197,25 +169,30 @@ augroup ansible_vim_fthosts
     autocmd BufNewFile,BufRead */*inventory*.yml set filetype=yaml.ansible
     autocmd BufNewFile,BufRead */*vars/*/**.yml set filetype=yaml.ansible
     autocmd BufNewFile,BufRead */roles/**/*.yml set filetype=yaml.ansible
-    autocmd BufNewFile,BufRead *main*.yml set filetype=yaml.ansible
-    autocmd BufNewFile,BufRead *role*.yml set filetype=yaml.ansible
-    autocmd BufNewFile,BufRead hosts set filetype=ini.ansible
 augroup END
 " FUNCTIONS --------------------------------------------------------------------
 " Toggle Theme
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        colorscheme molokai
-        highlight myDeclaration     ctermfg=117 guifg=#9CDCFE
-        highlight myFunction        ctermfg=214 guifg=#fabd2f
+        highlight ColorColumn   ctermbg=236
+        highlight Comment       ctermfg=243
+        highlight Normal        ctermbg=234 ctermfg=15
+        highlight Pmenu         ctermbg=235 ctermfg=15
+        highlight SpecialKey    ctermfg=240
+        highlight VertSplit     ctermbg=235 ctermfg=234
+        highlight myDeclaration ctermfg=117
+        highlight myFunction    ctermfg=121
         edit
     else
         set background=light
-        colorscheme github
-        highlight SpecialKey        guibg=NONE guifg=#CCCCCC ctermbg=NONE ctermfg=252
-        highlight myDeclaration     term=bold gui=bold cterm=bold ctermfg=28 guifg=#159828
-        highlight myFunction        ctermfg=31 guifg=#0086B3
+        highlight ColorColumn   ctermbg=250
+        highlight Normal        ctermbg=15      ctermfg=0
+        highlight Pmenu         ctermbg=250     ctermfg=0
+        highlight SpecialKey    ctermbg=NONE    ctermfg=250
+        highlight VertSplit     ctermbg=255     ctermfg=255
+        highlight myDeclaration term=bold   cterm=bold  ctermfg=28
+        highlight myFunction    ctermfg=31
         edit
     endif
 endfunction
@@ -224,7 +201,6 @@ let g:ale_enabled           = 1
 let g:ale_lint_on_enter     = 0
 let g:ale_lint_on_text_changed = 0
 let g:ale_lint_on_save = 1
-
 let g:ale_yaml_yamllint_options     = '-d "{extends: default, rules: {line-length: disable, truthy: disable}}"'
 let g:lsc_auto_completeopt='menu,menuone,popup,noselect,noinsert'
 let g:lsc_server_commands  = {
@@ -234,7 +210,7 @@ let g:lsc_server_commands  = {
             \ 'python': 'pyls',
             \ 'terraform' : 'terraform-ls',
             \ "go": {
-            \    "command": "gopls serve",
-            \    "log_level": -1,
-            \ },
-            \}
+                \    "command": "gopls serve",
+                \    "log_level": -1,
+                \ },
+                \}
