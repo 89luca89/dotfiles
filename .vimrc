@@ -65,8 +65,9 @@ set background=dark
 set notermguicolors t_Co=256
 " common
 highlight LineNr        ctermfg=240
-highlight Search        ctermfg=15 ctermbg=226
+highlight Search        ctermfg=0 ctermbg=226
 highlight SignColumn    ctermbg=NONE
+highlight SpellBad      ctermbg=NONE
 " dark
 highlight ColorColumn   ctermbg=236
 highlight Comment       ctermfg=243
