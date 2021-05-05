@@ -34,6 +34,8 @@ call plug#begin('~/.vim/plugged')
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 " utilities
+Plug 'acarapetis/vim-colors-github'
+Plug 'sainnhe/sonokai'
 Plug 'vim-airline/vim-airline'
 " Fzf
 Plug 'junegunn/fzf.vim'
@@ -51,8 +53,13 @@ call plug#end()
 filetype plugin indent on
 syntax on
 " Theming
-augroup customsyntax
-    autocmd! customsyntax
+augroup general
+    autocmd! general
+    "keep equal proportions when windows resized
+    autocmd VimResized * wincmd =
+    "save cursor position in a file
+    autocmd BufReadPost * if line("'\"") > 1 && line("'\"")
+                \ <= line("$") | exe "normal! g'\"" | endif
     " Strip whitespaces
     autocmd BufWritePre * %s/\($\n\s*\)\+\%$//e
     autocmd BufWritePre * %s/\s\+$//e
@@ -62,21 +69,11 @@ augroup customsyntax
     autocmd Syntax * syntax match myFunction    '\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\ze\%([a-zA-Z0-9]*(\)'
 augroup end
 set background=dark
-set notermguicolors t_Co=256
-" common
-highlight LineNr        ctermfg=240
-highlight Search        ctermfg=0 ctermbg=226
-highlight SignColumn    ctermbg=NONE
-highlight SpellBad      ctermbg=NONE
-" dark
-highlight ColorColumn   ctermbg=236
-highlight Comment       ctermfg=243
-highlight Normal        ctermbg=234 ctermfg=15
-highlight Pmenu         ctermbg=235 ctermfg=15
-highlight SpecialKey    ctermfg=240
-highlight VertSplit     ctermbg=235 ctermfg=234
-highlight myDeclaration ctermfg=117
-highlight myFunction    ctermfg=121
+set termguicolors
+colorscheme sonokai
+highlight myDeclaration     ctermfg=117 guifg=#9CDCFE
+highlight myFunction        ctermfg=107 guifg=#9ed072
+"set notermguicolors t_Co=256
 let g:airline#extensions#tabline#formatter = 'default'
 let g:airline#extensions#tabline#left_alt_sep = '|'
 let g:airline#extensions#tabline#left_sep = ' '
@@ -86,7 +83,7 @@ let g:airline_highlighting_cache = 1
 let g:ansible_attribute_highlight       = 'ab'
 let g:ansible_extra_keywords_highlight  = 1
 let g:ansible_name_highlight            = 'd'
-let g:ansible_normal_keywords_highlight = 'Constant'
+let g:ansible_normal_keywords_highlight = 'Function'
 let g:ansible_unindent_after_newline  = 1
 let g:ansible_with_keywords_highlight = 'Conditional'
 let g:ansible_yamlKeyName = 'yamlKey'
@@ -176,24 +173,16 @@ augroup END
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        highlight ColorColumn   ctermbg=236
-        highlight Comment       ctermfg=243
-        highlight Normal        ctermbg=234 ctermfg=15
-        highlight Pmenu         ctermbg=235 ctermfg=15
-        highlight SpecialKey    ctermfg=240
-        highlight VertSplit     ctermbg=235 ctermfg=234
-        highlight myDeclaration ctermfg=117
-        highlight myFunction    ctermfg=121
+        colorscheme sonokai
+        highlight myDeclaration     ctermfg=117 guifg=#9CDCFE
+        highlight myFunction        ctermfg=107 guifg=#9ed072
         edit
     else
         set background=light
-        highlight ColorColumn   ctermbg=250
-        highlight Normal        ctermbg=15      ctermfg=0
-        highlight Pmenu         ctermbg=250     ctermfg=0
-        highlight SpecialKey    ctermbg=NONE    ctermfg=250
-        highlight VertSplit     ctermbg=255     ctermfg=255
-        highlight myDeclaration term=bold   cterm=bold  ctermfg=28
-        highlight myFunction    ctermfg=31
+        colorscheme github
+        highlight SpecialKey        guibg=NONE guifg=#CCCCCC ctermbg=NONE ctermfg=252
+        highlight myDeclaration     term=bold gui=bold cterm=bold ctermfg=28 guifg=#159828
+        highlight myFunction        ctermfg=31 guifg=#0086B3
         edit
     endif
 endfunction
