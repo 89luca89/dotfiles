@@ -113,6 +113,9 @@ map <Tab>   :<C-u>bn<CR>
 map <S-Tab> :<C-u>bp<CR>
 " C-c close buffer
 map <C-c> :<C-u>bp<BAR>sp<BAR>bn<BAR>bd<CR>
+" split resixe
+map <M-Left>   :<C-u>vert resize -5<CR>
+map <M-Right> :<C-u>vert resize +6<CR>
 " Visual mode, C-c copy line
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 " Leader map

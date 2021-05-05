@@ -31,10 +31,8 @@ if [[ $- == *i* ]]; then
 	# setup a simple PROMPT/PS1
 	BGREEN='\[\033[01;32m\]'
 	BBLUE='\[\033[01;34m\]'
-	RED='\[\033[01;30m\]'
+	RED='\[\033[33m\]'
 	PS_CLEAR='\[\033[0m\]'
-
-
 
 	export GIT_PS1_SHOWDIRTYSTATE=1
 	export GIT_PS1_SHOWSTASHSTATE=1
