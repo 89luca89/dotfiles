@@ -121,3 +121,27 @@ debloat_pkg:
   - yelp
   - yelp-libs
   - yelp-xsl
+  - akregator
+  - dragonplayer
+  - juk
+  - kaddressbook
+  - kcolorchooser
+  - kget
+  - kgpg
+  - kmag
+  - kmahjongg
+  - kmail
+  - kmines
+  - kmousetool
+  - kmouth
+  - kolourpaint
+  - kontact
+  - konversation
+  - korganizer
+  - kpat
+  - krdc
+  - krfb
+  - kruler
+  - ktnef
+  - kwrite
+  - mediawriter
