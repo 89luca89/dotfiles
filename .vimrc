@@ -17,9 +17,8 @@ set langnoremap langremap
 set lazyredraw ttyfast ttimeoutlen=50 updatetime=50
 set list lcs=tab:\|\  " here is a space
 set mouse=a
-set nocompatible nomodeline nofsync
+set nocompatible nomodeline nofsync nowrap
 set noswapfile nowritebackup nobackup
-set nowrap
 set number
 set path+=.,**
 set scrolloff=8 sidescroll=1
@@ -34,9 +33,9 @@ call plug#begin('~/.vim/plugged')
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 " utilities
+Plug 'vim-airline/vim-airline'
 Plug 'acarapetis/vim-colors-github'
 Plug 'sainnhe/sonokai'
-Plug 'vim-airline/vim-airline'
 " Fzf
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
@@ -46,9 +45,6 @@ Plug 'stephpy/vim-yaml'
 " LSP
 Plug 'dense-analysis/ale'
 Plug 'natebosch/vim-lsc'
-" Snippets
-Plug 'honza/vim-snippets'
-Plug 'sirver/ultisnips'
 call plug#end()
 filetype plugin indent on
 syntax on
@@ -99,10 +95,6 @@ let g:go_highlight_types             = 1
 let g:java_highlight_all             = 1
 let g:java_highlight_java_lang_ids   = 1
 let g:python_highlight_all  = 1
-" UltiSnips
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 """""""""""""""""""""
 "       Shortcuts   "
 """""""""""""""""""""
@@ -123,7 +115,6 @@ let mapleader = ' '
 " Utility shortcuts with leader:
 map <leader><leader>  :<C-u>Buffers<CR>
 map <leader>p  :<C-u>Files<CR>
-map <leader>s  :<C-u>Snippets<CR>
 map <leader>t  :<C-u>Tags<CR>
 " set filetype shortcut
 nnoremap <leader>ft :<C-u>set ft=
@@ -148,20 +139,18 @@ augroup autoformat_settings
     autocmd FileType python       nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!yapf --style=facebook %<CR>:w<CR>:%!isort --ac --float-to-top -d %<CR>:loadview<CR>
     autocmd FileType sh           nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!shfmt -s %<CR>:loadview<CR>
     autocmd FileType terraform    nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:!terraform fmt %<CR>:loadview<CR><CR>
-    autocmd FileType yaml         nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:!yamlfmt -w %<CR>:loadview<CR><CR>
-    autocmd FileType yaml.ansible nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:!yamlfmt -w %<CR>:loadview<CR><CR>
 augroup end
 " LSP SETUP --------------------------------------------------------------------
 " Override IDE-Style keybindings EDMRL, errors, definition, references, rename, format
 augroup lspbindings
     autocmd!
     " IDE-like keybindings
-    autocmd Filetype c,cc,cpp,python,go,terraform nnoremap <buffer> <leader>d :<C-u>vert LSClientGoToDefinitionSplit<CR>
-    autocmd Filetype c,cc,cpp,python,go,terraform nnoremap <buffer> <leader>m :<C-u>LSClientFindReferences<CR>
-    autocmd Filetype c,cc,cpp,python,go,terraform nnoremap <buffer> <leader>r :<C-u>LSClientRename<CR>
+    autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>d :<C-u>vert LSClientGoToDefinitionSplit<CR>
+    autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>m :<C-u>LSClientFindReferences<CR>
+    autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>r :<C-u>LSClientRename<CR>
     " Add shell and ansible on this one
     autocmd Filetype yaml.ansible nnoremap <buffer> K  :<C-u>!ansible-doc <c-r>=expand("<cword>")<CR><bar>less<CR>
-    autocmd Filetype c,cc,cpp,python,go,terraform nnoremap <buffer> K  :<C-u>LSClientShowHover<CR>
+    autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> K  :<C-u>LSClientShowHover<CR>
 augroup end
 " Fix ansible file detection
 augroup ansible_vim_fthosts
@@ -183,8 +172,9 @@ function! ToggleTheme()
     else
         set background=light
         colorscheme github
-        highlight SpecialKey        guibg=NONE guifg=#CCCCCC ctermbg=NONE ctermfg=252
-        highlight myDeclaration     term=bold gui=bold cterm=bold ctermfg=28 guifg=#159828
+        highlight Normal            guibg=#FFFFFF
+        highlight SpecialKey        guibg=NONE guifg=#CCCCCC
+        highlight myDeclaration     gui=bold term=bold cterm=bold ctermfg=28 guifg=#159828
         highlight myFunction        ctermfg=31 guifg=#0086B3
         edit
     endif
@@ -201,7 +191,6 @@ let g:lsc_server_commands  = {
             \ 'cc' : 'clangd',
             \ 'cpp' : 'clangd',
             \ 'python': 'pyls',
-            \ 'terraform' : 'terraform-ls',
             \ "go": {
                 \    "command": "gopls serve",
                 \    "log_level": -1,
