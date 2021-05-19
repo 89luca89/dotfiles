@@ -23,9 +23,6 @@ set wildignore+=tags wildmenu wildmode=list:longest,full
 set grepprg=rg\ --vimgrep\ --smart-case\ --follow
 filetype off
 call plug#begin('~/.vim/plugged')
-" Git
-Plug 'airblade/vim-gitgutter'
-Plug 'tpope/vim-fugitive'
 " utilities
 Plug 'vim-airline/vim-airline'
 " Fzf

@@ -21,6 +21,7 @@ terminal_packages:
   - clang-tools
   - exuberant-ctags
   - gcc
+  - tig
   - git
   - golang
   - lsof
