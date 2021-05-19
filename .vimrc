@@ -1,8 +1,6 @@
-" Miscellaneous
-" exluding vim-yaml from polyglot as it's not working
-let g:polyglot_disabled = ['yaml']
-let g:python3_host_prog = '/usr/bin/python3'
-let g:python_host_prog  = '/usr/bin/python2'
+let g:polyglot_disabled = ['yaml'] " exluding vim-yaml from polyglot as it's not working
+" let g:python3_host_prog = '/usr/bin/python3'
+" let g:python_host_prog  = '/usr/bin/python2'
 set autoindent copyindent expandtab shiftwidth=4 softtabstop=4 tabstop=4
 set autoread hidden
 set backspace=indent,eol,start
@@ -30,8 +28,6 @@ Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 " utilities
 Plug 'vim-airline/vim-airline'
-Plug 'acarapetis/vim-colors-github'
-Plug 'sainnhe/sonokai'
 " Fzf
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
@@ -58,11 +54,21 @@ augroup general
     autocmd Syntax * syntax match myFunction    '\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\ze\%([a-zA-Z0-9]*(\)'
 augroup end
 set background=dark
-set termguicolors
-colorscheme sonokai
-highlight myDeclaration     ctermfg=117 guifg=#9CDCFE
-highlight myFunction        ctermfg=107 guifg=#9ed072
-"set notermguicolors t_Co=256
+set notermguicolors t_Co=256
+" common
+highlight LineNr        ctermfg=240
+highlight Search        ctermfg=0 ctermbg=226
+highlight SignColumn    ctermbg=NONE
+highlight SpellBad      ctermbg=NONE
+" dark
+highlight ColorColumn   ctermbg=236
+highlight Comment       ctermfg=243
+highlight Normal        ctermbg=234 ctermfg=15
+highlight Pmenu         ctermbg=235 ctermfg=15
+highlight SpecialKey    ctermfg=240
+highlight VertSplit     ctermbg=235 ctermfg=234
+highlight myDeclaration ctermfg=117
+highlight myFunction    ctermfg=121
 let g:airline_extensions = ['ale', 'quickfix', 'searchcount', 'tabline' ]
 let g:airline_highlighting_cache = 1
 " Langs
@@ -122,7 +128,7 @@ nnoremap <leader>i  :<C-u>mkview<CR>:%s/\($\n\s*\)\+\%$//e<CR>:%s/\s\+$//e<CR>=G
 augroup autoformat_settings
     autocmd!
     autocmd FileType c,cpp,objc,objcpp,cc,java nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!clang-format -style=file %<CR>:loadview<CR>
-    autocmd FileType css,html,javascript,markdown,typescript,yaml nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!prettier %<CR>:loadview<CR><CR>
+    autocmd FileType css,html,javascript,markdown,typescript,yaml,yaml.ansible nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!prettier %<CR>:loadview<CR><CR>
     autocmd FileType go           nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!gofmt -s %<CR>:%!goimports %<CR>:loadview<CR>
     autocmd FileType json         nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!jq .<CR>
     autocmd FileType python       nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!yapf --style=facebook %<CR>:w<CR>:%!isort --ac --float-to-top -d %<CR>:loadview<CR>
@@ -162,17 +168,24 @@ endfunction
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        colorscheme sonokai
-        highlight myDeclaration     ctermfg=117 guifg=#9CDCFE
-        highlight myFunction        ctermfg=107 guifg=#9ed072
+        highlight ColorColumn   ctermbg=236
+        highlight Comment       ctermfg=243
+        highlight Normal        ctermbg=234 ctermfg=15
+        highlight Pmenu         ctermbg=235 ctermfg=15
+        highlight SpecialKey    ctermfg=240
+        highlight VertSplit     ctermbg=235 ctermfg=234
+        highlight myDeclaration ctermfg=117
+        highlight myFunction    ctermfg=121
         edit
     else
         set background=light
-        colorscheme github
-        highlight Normal            guibg=#FFFFFF
-        highlight SpecialKey        guibg=NONE guifg=#CCCCCC
-        highlight myDeclaration     gui=bold term=bold cterm=bold ctermfg=28 guifg=#159828
-        highlight myFunction        ctermfg=31 guifg=#0086B3
+        highlight ColorColumn   ctermbg=250
+        highlight Normal        ctermbg=15      ctermfg=0
+        highlight Pmenu         ctermbg=250     ctermfg=0
+        highlight SpecialKey    ctermbg=NONE    ctermfg=250
+        highlight VertSplit     ctermbg=255     ctermfg=255
+        highlight myDeclaration term=bold   cterm=bold  ctermfg=28
+        highlight myFunction    ctermfg=31
         edit
     endif
 endfunction
