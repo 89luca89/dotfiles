@@ -106,8 +106,6 @@ let mapleader = ' '
 map <leader><leader>  :<C-u>Buffers<CR>
 map <leader>p  :<C-u>Files<CR>
 map <leader>t  :<C-u>Tags<CR>
-" set filetype shortcut
-nnoremap <leader>ft :<C-u>set ft=.jinja2<C-Left><Right><Right><Right>
 " Code help using external scripts: Lint File, Lint Project, Format, DeepTags, Grep in project
 nnoremap <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 nnoremap <leader>a  :<C-u>cgete system('project-utils ' . &filetype . " " .  expand('%') . " lint")<CR>:copen<CR>
@@ -117,9 +115,9 @@ nnoremap <leader>T  :<C-u>call  system('project-utils ' . &filetype . " . tags")
 nnoremap <leader>f  :<C-u>call Grep("")<Left><Left>
 " Default IDE-Style keybindings: definition, indent, rename, references
 nnoremap <leader>d  :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
-nnoremap <leader>i  :<C-u>mkview<CR>:%s/\($\n\s*\)\+\%$//e<CR>:%s/\s\+$//e<CR>=G:loadview<CR>
 nnoremap <leader>r  :<C-u>call Rename("<c-r>=expand("<cword>")<CR>", "")<Left><Left>
 nnoremap <leader>rf :<C-u>call Grep("<c-r>=expand("<cword>")<CR>")<CR>
+nnoremap <leader>i  :<C-u>mkview<CR>:%s/\($\n\s*\)\+\%$//e<CR>:%s/\s\+$//e<CR>=G:loadview<CR>
 " Override <leader>i formatting with corresponding formatter for each lang
 augroup autoformat_settings
     autocmd!
