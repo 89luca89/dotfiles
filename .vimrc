@@ -25,6 +25,7 @@ filetype off
 call plug#begin('~/.vim/plugged')
 " utilities
 Plug 'chriskempson/base16-vim'
+Plug 'yggdroot/indentLine'
 Plug 'vim-airline/vim-airline'
 " Fzf
 Plug 'junegunn/fzf.vim'
@@ -61,6 +62,12 @@ highlight myDeclaration guifg=#9CDCFE
 highlight myFunction    guifg=#fabd2f
 let g:airline_extensions = ['ale', 'quickfix', 'searchcount', 'tabline' ]
 let g:airline_highlighting_cache = 1
+" indentline
+let g:indentLine_char = '|'
+let g:indentLine_concealcursor = ''
+let g:indentLine_setConceal = 1
+let g:intendLine_faser = 1
+set list lcs=tab:\|\  " here is a space
 " Langs
 let g:ansible_attribute_highlight       = 'ab'
 let g:ansible_extra_keywords_highlight  = 1
