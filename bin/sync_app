@@ -73,7 +73,7 @@ app_sync() {
 		done
 		tar -czf ~/dotfiles/desktop/gnome-setup.tar.gz /tmp/bkp "$HOME"/.local/share/gnome-shell/extensions/
 		rm -rf /tmp/bkp
-		git -C ~/dotfiles commit -m "gnome: update settings" gnome/gnome-setup.tar.gz
+		git -C ~/dotfiles commit -m "gnome: update settings" desktop/gnome-setup.tar.gz
 		;;
 	"pidgin")
 		[ -d ~/.purple ] || (echo "No folder to backup" && exit 1)
