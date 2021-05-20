@@ -62,8 +62,8 @@ app_sync() {
 	"xfce4")
 		[ -d ~/.config/xfce4 ] || (echo "No folder to backup" && exit 1)
 		cd ~ || exit 1
-		tar -czf ~/dotfiles/xfce/xfce4-setup.tar.gz .config/xfce4/ .config/Thunar .local/share/themes
-		git -C ~/dotfiles commit -m "xfce4: update settings" xfce/xfce4-setup.tar.gz
+		tar -czf ~/dotfiles/desktop/xfce4-setup.tar.gz .config/xfce4/ .config/Thunar .local/share/themes
+		git -C ~/dotfiles commit -m "xfce4: update settings" desktop/xfce4-setup.tar.gz
 		;;
 	"gnome")
 		mkdir /tmp/bkp
@@ -71,7 +71,7 @@ app_sync() {
 		for f in ${GNOME_BACKUP[@]}; do
 			dconf dump /org/gnome/$f/ >org.gnome.$f.conf
 		done
-		tar -czf ~/dotfiles/gnome/gnome-setup.tar.gz /tmp/bkp "$HOME"/.local/share/gnome-shell/extensions/
+		tar -czf ~/dotfiles/desktop/gnome-setup.tar.gz /tmp/bkp "$HOME"/.local/share/gnome-shell/extensions/
 		rm -rf /tmp/bkp
 		git -C ~/dotfiles commit -m "gnome: update settings" gnome/gnome-setup.tar.gz
 		;;
@@ -173,7 +173,7 @@ app_restore() {
 		;;
 	"xfce4")
 		rm -rf ~/.config/xfce4 ~/.config/Thunar ~/.config/Mousepad
-		tar -xzf ~/dotfiles/xfce/xfce4-setup.tar.gz -C ~/
+		tar -xzf ~/dotfiles/desktop/xfce4-setup.tar.gz -C ~/
 		killall -9 xfconfd || true
 		killall -9 xfce4-panel || true
 		killall -9 thunar || true
@@ -189,7 +189,7 @@ app_restore() {
 		;;
 	"gnome")
 		rm -rf /tmp/bkp "$HOME"/.local/share/gnome-shell/extensions/
-		tar -xzf ~/dotfiles/gnome/gnome-setup.tar.gz -C /
+		tar -xzf ~/dotfiles/desktop/gnome-setup.tar.gz -C /
 		cd /tmp/bkp || exit 1
 		for file in *; do
 			dconf_path=$(echo '/'$file | sed 's/\.conf/\//g' | sed 's/\./\//g')
