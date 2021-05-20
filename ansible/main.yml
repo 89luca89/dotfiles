@@ -2,7 +2,6 @@
 #
 # Author: Luca Di Maio
 ---
-
 # file: main.yml
 
 - hosts: all
@@ -11,7 +10,6 @@
     - distro_setup
     - packages
     - dotfiles
-
 
   vars_files:
     - "vars/distribution/{{ ansible_distribution }}.yml"

@@ -1,7 +1,5 @@
 # my_apps.yml
-
 ---
-
 - name: Remove bloat packages
   package:
     state: absent
@@ -36,7 +34,7 @@
 
 - name: Instal additional packages
   dnf:
-    name: '{{ item }}'
+    name: "{{ item }}"
     state: present
     disable_gpg_check: true
   become: true

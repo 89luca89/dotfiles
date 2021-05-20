@@ -4,8 +4,8 @@
 - name: Update the profiles file with personal variables
   lineinfile:
     path: /etc/profile
-    regexp: '{{ item }}'
-    line: '{{ item }}'
+    regexp: "{{ item }}"
+    line: "{{ item }}"
     state: present
     backup: true
   with_items: "{{ global_vars }}"
@@ -14,8 +14,8 @@
 - name: Setup TLP blacklist
   lineinfile:
     path: /etc/tlp.conf
-    regexp: '{{ item }}'
-    line: '{{ item }}'
+    regexp: "{{ item }}"
+    line: "{{ item }}"
     state: present
     backup: true
   with_items: "{{ tlp_blacklist }}"
@@ -94,16 +94,16 @@
   become: true
 
 - name: Update Grub and Initramfs
-  command: '{{ item }}'
+  command: "{{ item }}"
   with_items:
-    - 'grub2-mkconfig -o /boot/grub2/grub.cfg'
-    - 'dracut --force --regenerate-all -v'
+    - "grub2-mkconfig -o /boot/grub2/grub.cfg"
+    - "dracut --force --regenerate-all -v"
   when: grub_setup.changed and ansible_os_family == "Redhat"
   become: true
 
 - name: Update Grub and Initramfs
-  command: '{{ item }}'
+  command: "{{ item }}"
   with_items:
-    - 'update-grub'
+    - "update-grub"
   when: grub_setup.changed and ansible_os_family == "Debian"
   become: true

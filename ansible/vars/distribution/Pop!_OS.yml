@@ -91,7 +91,6 @@ debloat_pkg:
   - yelp
   - yelp-libs
   - yelp-xsl
-
 # DEBIAN PACKAGES
 # "evolution"
 # "evolution-ews"

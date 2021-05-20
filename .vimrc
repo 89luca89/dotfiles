@@ -62,8 +62,9 @@ highlight ColorColumn   ctermbg=236
 highlight Comment       ctermfg=243
 highlight Normal        ctermbg=234 ctermfg=15
 highlight Pmenu         ctermbg=235 ctermfg=15
+highlight PmenuSel      ctermbg=237 ctermfg=255
 highlight SpecialKey    ctermfg=240
-highlight VertSplit     ctermbg=235 ctermfg=234
+highlight VertSplit     ctermbg=234 ctermfg=235
 highlight myDeclaration ctermfg=117
 highlight myFunction    ctermfg=121
 let g:airline_extensions = ['ale', 'quickfix', 'searchcount', 'tabline' ]
@@ -169,8 +170,9 @@ function! ToggleTheme()
         highlight Comment       ctermfg=243
         highlight Normal        ctermbg=234 ctermfg=15
         highlight Pmenu         ctermbg=235 ctermfg=15
+        highlight PmenuSel      ctermbg=237 ctermfg=255
         highlight SpecialKey    ctermfg=240
-        highlight VertSplit     ctermbg=235 ctermfg=234
+        highlight VertSplit     ctermbg=234 ctermfg=235
         highlight myDeclaration ctermfg=117
         highlight myFunction    ctermfg=121
         edit

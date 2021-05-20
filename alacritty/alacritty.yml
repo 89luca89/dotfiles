@@ -1,130 +1,125 @@
 ---
-
 schemes:
   dark: &dark
     primary:
-      background: '0x1C1C1C'
-      foreground: '0xD0CFCC'
+      background: "0x1C1C1C"
+      foreground: "0xD0CFCC"
     normal:
-      black: '0x171421'
-      red: '0xC01C28'
-      green: '0x26A269'
-      yellow: '0xA2734C'
-      blue: '0x12488B'
-      magenta: '0xA347BA'
-      cyan: '0x2AA1B3'
-      white: '0xD0CFCC'
+      black: "0x171421"
+      red: "0xC01C28"
+      green: "0x26A269"
+      yellow: "0xA2734C"
+      blue: "0x12488B"
+      magenta: "0xA347BA"
+      cyan: "0x2AA1B3"
+      white: "0xD0CFCC"
     bright:
-      black: '0x5E5C64'
-      red: '0xF66151'
-      green: '0x33DA7A'
-      yellow: '0xE9AD0C'
-      blue: '0x2A7BDE'
-      magenta: '0xC061CB'
-      cyan: '0x33C7DE'
-      white: '0xFFFFFF'
+      black: "0x5E5C64"
+      red: "0xF66151"
+      green: "0x33DA7A"
+      yellow: "0xE9AD0C"
+      blue: "0x2A7BDE"
+      magenta: "0xC061CB"
+      cyan: "0x33C7DE"
+      white: "0xFFFFFF"
     dim:
-      black: '0x333333'
-      red: '0xf2777a'
-      green: '0x99cc99'
-      yellow: '0xffcc66'
-      blue: '0x6699cc'
-      magenta: '0xcc99cc'
-      cyan: '0x66cccc'
-      white: '0xdddddd'
+      black: "0x333333"
+      red: "0xf2777a"
+      green: "0x99cc99"
+      yellow: "0xffcc66"
+      blue: "0x6699cc"
+      magenta: "0xcc99cc"
+      cyan: "0x66cccc"
+      white: "0xdddddd"
 
-  light: &light
-    # Default colors
+  light: &light # Default colors
     primary:
-      background: '#ffffff'
-      foreground: '#000000'
+      background: "#ffffff"
+      foreground: "#000000"
     # Normal colors
     normal:
-      black: '#000000'
-      red: '#cd0000'
-      green: '#00cd00'
-      yellow: '#cdcd00'
-      blue: '#0000ee'
-      magenta: '#cd00cd'
-      cyan: '#00adad'
-      white: '#c5c5c5'
+      black: "#000000"
+      red: "#cd0000"
+      green: "#00cd00"
+      yellow: "#cdcd00"
+      blue: "#0000ee"
+      magenta: "#cd00cd"
+      cyan: "#00adad"
+      white: "#c5c5c5"
 
     # Bright colors
     bright:
-      black: '#7f7f7f'
-      red: '#ff0000'
-      green: '#00ff00'
-      yellow: '#ffff00'
-      blue: '#5c5cff'
-      magenta: '#ff00ff'
-      cyan: '#00ffff'
-      white: '#ffffff'
+      black: "#7f7f7f"
+      red: "#ff0000"
+      green: "#00ff00"
+      yellow: "#ffff00"
+      blue: "#5c5cff"
+      magenta: "#ff00ff"
+      cyan: "#00ffff"
+      white: "#ffffff"
 
-
-  codedark: &codedark
-    # Default colors
+  codedark: &codedark # Default colors
     primary:
-      background: '#1e1e1e'
-      foreground: '#d4d4d4'
+      background: "#1e1e1e"
+      foreground: "#d4d4d4"
     # Normal colors
     normal:
-      black: '#1e1e1e'
-      red: '#f44747'
-      green: '#608b4e'
-      yellow: '#dcdcaa'
-      blue: '#569cd6'
-      magenta: '#c678dd'
-      cyan: '#56b6c2'
-      white: '#d4d4d4'
+      black: "#1e1e1e"
+      red: "#f44747"
+      green: "#608b4e"
+      yellow: "#dcdcaa"
+      blue: "#569cd6"
+      magenta: "#c678dd"
+      cyan: "#56b6c2"
+      white: "#d4d4d4"
 
     # Bright colors
     bright:
-      black: '#808080'
-      red: '#f44747'
-      green: '#608b4e'
-      yellow: '#dcdcaa'
-      blue: '#569cd6'
-      magenta: '#c678dd'
-      cyan: '#56b6c2'
-      white: '#d4d4d4'
+      black: "#808080"
+      red: "#f44747"
+      green: "#608b4e"
+      yellow: "#dcdcaa"
+      blue: "#569cd6"
+      magenta: "#c678dd"
+      cyan: "#56b6c2"
+      white: "#d4d4d4"
 
   tangodark: &tangodark
     primary:
-      background: '0x1C1C1C'
-      foreground: '0xD3D7CF'
+      background: "0x1C1C1C"
+      foreground: "0xD3D7CF"
 
     normal:
-      black: '0x2e3436'
-      red: '0xcc0000'
-      green: '0x4e9a06'
-      yellow: '0xc4a000'
-      blue: '0x3465a4'
-      magenta: '0x75507b'
-      cyan: '0x06989a'
-      white: '0xd3d7cf'
+      black: "0x2e3436"
+      red: "0xcc0000"
+      green: "0x4e9a06"
+      yellow: "0xc4a000"
+      blue: "0x3465a4"
+      magenta: "0x75507b"
+      cyan: "0x06989a"
+      white: "0xd3d7cf"
 
     bright:
-      black: '0x555753'
-      red: '0xef2929'
-      green: '0x8ae234'
-      yellow: '0xfce94f'
-      blue: '0x729fcf'
-      magenta: '0xad7fa8'
-      cyan: '0x34e2e2'
-      white: '0xeeeeec'
+      black: "0x555753"
+      red: "0xef2929"
+      green: "0x8ae234"
+      yellow: "0xfce94f"
+      blue: "0x729fcf"
+      magenta: "0xad7fa8"
+      cyan: "0x34e2e2"
+      white: "0xeeeeec"
 
 colors: *tangodark
 
-
 font:
   normal:
-    family: 'monospace'
+    family: "monospace"
     style: Regular
   bold:
-    family: 'monospace'
+    family: "monospace"
     style: Bold
   italis:
-    family: 'monospace'
+    family: "monospace"
     style: Italic
 
   size: 9.5
@@ -142,10 +137,10 @@ draw_bold_text_with_bright_colors: false
 background_opacity: 1
 
 env:
-    TERM: xterm-256color
+  TERM: xterm-256color
 
 selection:
-  semantic_escape_chars: ",│`|:\"' ()[]{}<>"
+  semantic_escape_chars: ',│`|:"'' ()[]{}<>'
 
 key_bindings:
   - {key: C, mods: Control|Shift, action: Copy}
