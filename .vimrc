@@ -24,6 +24,7 @@ set grepprg=rg\ --vimgrep\ --smart-case\ --follow
 filetype off
 call plug#begin('~/.vim/plugged')
 " utilities
+Plug 'chriskempson/base16-vim'
 Plug 'vim-airline/vim-airline'
 " Fzf
 Plug 'junegunn/fzf.vim'
@@ -51,22 +52,13 @@ augroup general
     autocmd Syntax * syntax match myFunction    '\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\ze\%([a-zA-Z0-9]*(\)'
 augroup end
 set background=dark
-set notermguicolors t_Co=256
-" common
-highlight LineNr        ctermfg=240
-highlight Search        ctermfg=0 ctermbg=226
-highlight SignColumn    ctermbg=NONE
-highlight SpellBad      ctermbg=NONE
-" dark
-highlight ColorColumn   ctermbg=236
-highlight Comment       ctermfg=243
-highlight Normal        ctermbg=234 ctermfg=15
-highlight Pmenu         ctermbg=235 ctermfg=15
-highlight PmenuSel      ctermbg=237 ctermfg=255
-highlight SpecialKey    ctermfg=240
-highlight VertSplit     ctermbg=234 ctermfg=235
-highlight myDeclaration ctermfg=117
-highlight myFunction    ctermfg=121
+set termguicolors
+colorscheme base16-gruvbox-dark-hard
+highlight LineNr        guibg=NONE
+highlight SignColumn    guibg=NONE
+highlight VertSplit     guibg=NONE guifg=#888888
+highlight myDeclaration guifg=#9CDCFE
+highlight myFunction    guifg=#fabd2f
 let g:airline_extensions = ['ale', 'quickfix', 'searchcount', 'tabline' ]
 let g:airline_highlighting_cache = 1
 " Langs
@@ -166,25 +158,18 @@ endfunction
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        highlight ColorColumn   ctermbg=236
-        highlight Comment       ctermfg=243
-        highlight Normal        ctermbg=234 ctermfg=15
-        highlight Pmenu         ctermbg=235 ctermfg=15
-        highlight PmenuSel      ctermbg=237 ctermfg=255
-        highlight SpecialKey    ctermfg=240
-        highlight VertSplit     ctermbg=234 ctermfg=235
-        highlight myDeclaration ctermfg=117
-        highlight myFunction    ctermfg=121
+        colorscheme base16-gruvbox-dark-hard
+        highlight LineNr        guibg=NONE
+        highlight SignColumn    guibg=NONE
+        highlight VertSplit     guibg=NONE guifg=#888888
+        highlight myDeclaration guifg=#9CDCFE
+        highlight myFunction    guifg=#fabd2f
         edit
     else
         set background=light
-        highlight ColorColumn   ctermbg=250
-        highlight Normal        ctermbg=15      ctermfg=0
-        highlight Pmenu         ctermbg=250     ctermfg=0
-        highlight SpecialKey    ctermbg=NONE    ctermfg=250
-        highlight VertSplit     ctermbg=255     ctermfg=255
-        highlight myDeclaration term=bold   cterm=bold  ctermfg=28
-        highlight myFunction    ctermfg=31
+        colorscheme base16-github
+        highlight myDeclaration guifg=#008700
+        highlight myFunction    guifg=#0087af
         edit
     endif
 endfunction
