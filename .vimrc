@@ -1,6 +1,4 @@
 let g:polyglot_disabled = ['yaml'] " exluding vim-yaml from polyglot as it's not working
-" let g:python3_host_prog = '/usr/bin/python3'
-" let g:python_host_prog  = '/usr/bin/python2'
 set autoindent copyindent expandtab shiftwidth=4 softtabstop=4 tabstop=4
 set autoread hidden
 set backspace=indent,eol,start
@@ -11,6 +9,7 @@ set guioptions=d mouse=a
 set hlsearch ignorecase incsearch
 set langnoremap langremap
 set lazyredraw ttyfast ttimeoutlen=50 updatetime=50
+set list lcs=tab:\¦\  " here is a space, goes in hand with indentLine
 set nocompatible nomodeline nofsync nowrap
 set noswapfile nowritebackup nobackup
 set number
@@ -19,14 +18,15 @@ set scrolloff=8 sidescroll=1 smartcase smartindent smarttab
 set splitbelow splitright
 set title
 set undodir=$HOME/.vim/undo undofile undolevels=10000
-set wildignore+=tags wildmenu wildmode=list:longest,full
+set wildignore+=tags wildmenu wildmode=longest:full,full
 set grepprg=rg\ --vimgrep\ --smart-case\ --follow
+set noshowmode noshowcmd laststatus=0 ruler " hide statusline
+set rulerformat=%20(%m%r%w\ %y\ %l/%c%)\    " Modified+FileType+Ruler
 filetype off
 call plug#begin('~/.vim/plugged')
 " utilities
-Plug 'chriskempson/base16-vim'
 Plug 'yggdroot/indentLine'
-Plug 'vim-airline/vim-airline'
+Plug 'chriskempson/base16-vim'
 " Fzf
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
@@ -60,14 +60,8 @@ highlight SignColumn    guibg=NONE
 highlight VertSplit     guibg=NONE guifg=#888888
 highlight myDeclaration guifg=#9CDCFE
 highlight myFunction    guifg=#fabd2f
-let g:airline_extensions = ['ale', 'quickfix', 'searchcount', 'tabline' ]
-let g:airline_highlighting_cache = 1
-" indentline
-let g:indentLine_char = '|'
-let g:indentLine_concealcursor = ''
-let g:indentLine_setConceal = 1
-let g:intendLine_faser = 1
-set list lcs=tab:\|\  " here is a space
+" FZF
+let g:fzf_layout = { 'down': '40%' }
 " Langs
 let g:ansible_attribute_highlight       = 'ab'
 let g:ansible_extra_keywords_highlight  = 1
@@ -99,8 +93,8 @@ map <S-Tab> :<C-u>bp<CR>
 " C-c close buffer
 map <C-c> :<C-u>bp<BAR>sp<BAR>bn<BAR>bd<CR>
 " split resixe
-map <M-Left>   :<C-u>vert resize -5<CR>
-map <M-Right> :<C-u>vert resize +6<CR>
+map <M-Left>  :<C-u>vert resize -2<CR>
+map <M-Right> :<C-u>vert resize +2<CR>
 " Visual mode, C-c copy line
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 " Leader map
