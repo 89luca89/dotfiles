@@ -3,6 +3,7 @@ set autoindent copyindent expandtab shiftwidth=4 softtabstop=4 tabstop=4
 set autoread hidden
 set backspace=indent,eol,start
 set colorcolumn=80
+set completeopt=menu,menuone,popup,noselect,noinsert
 set encoding=utf8
 set formatoptions=tcqj
 set guioptions=d mouse=a
@@ -93,8 +94,10 @@ map <S-Tab> :<C-u>bp<CR>
 " C-c close buffer
 map <C-c> :<C-u>bp<BAR>sp<BAR>bn<BAR>bd<CR>
 " split resixe
+map <M-Down>  :<C-u>resize +2<CR>
 map <M-Left>  :<C-u>vert resize -2<CR>
 map <M-Right> :<C-u>vert resize +2<CR>
+map <M-Up>    :<C-u>resize -2<CR>
 " Visual mode, C-c copy line
 vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 " Leader map
@@ -103,6 +106,9 @@ let mapleader = ' '
 map <leader><leader>  :<C-u>Buffers<CR>
 map <leader>p  :<C-u>Files<CR>
 map <leader>t  :<C-u>Tags<CR>
+" Easier completion shortcuts
+inoremap <C-@> <C-P>
+inoremap <C-F> <C-X><C-F>
 " Code help using external scripts: Lint File, Lint Project, Format, DeepTags, Grep in project
 nnoremap <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 nnoremap <leader>a  :<C-u>cgete system('project-utils ' . &filetype . " " .  expand('%') . " lint")<CR>:copen<CR>
