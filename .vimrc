@@ -1,4 +1,4 @@
-let g:polyglot_disabled = ['yaml'] " exluding vim-yaml from polyglot as it's not working
+let g:polyglot_disabled = ['yaml'] " excluding vim-yaml from polyglot as it's not working
 set autoindent copyindent expandtab shiftwidth=4 softtabstop=4 tabstop=4
 set autoread hidden
 set backspace=indent,eol,start
@@ -63,7 +63,7 @@ highlight myDeclaration guifg=#9CDCFE
 highlight myFunction    guifg=#fabd2f
 " FZF
 let g:fzf_layout = { 'down': '40%' }
-" Langs
+" Languages
 let g:ansible_attribute_highlight       = 'ab'
 let g:ansible_extra_keywords_highlight  = 1
 let g:ansible_name_highlight            = 'd'
@@ -88,12 +88,12 @@ let g:python_highlight_all  = 1
 """""""""""""""""""""
 " do last action on a visual selection
 vnoremap . :'<,'>:normal .<CR>
-" navigate tabs Tab (fw) S-Tab (prev)
+" navigate tabs Tab (fwd) S-Tab (prev)
 map <Tab>   :<C-u>bn<CR>
 map <S-Tab> :<C-u>bp<CR>
 " C-c close buffer
 map <C-c> :<C-u>bp<BAR>sp<BAR>bn<BAR>bd<CR>
-" split resixe
+" split resize
 map <M-Down>  :<C-u>resize +2<CR>
 map <M-Left>  :<C-u>vert resize -2<CR>
 map <M-Right> :<C-u>vert resize +2<CR>
