@@ -55,7 +55,7 @@ augroup general
 augroup end
 set background=dark
 set termguicolors
-colorscheme base16-gruvbox-dark-hard
+colorscheme base16-tomorrow-night
 highlight LineNr        guibg=NONE
 highlight SignColumn    guibg=NONE
 highlight VertSplit     guibg=NONE guifg=#888888
@@ -165,7 +165,7 @@ endfunction
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        colorscheme base16-gruvbox-dark-hard
+        colorscheme base16-tomorrow-night
         highlight LineNr        guibg=NONE
         highlight SignColumn    guibg=NONE
         highlight VertSplit     guibg=NONE guifg=#888888
@@ -174,7 +174,7 @@ function! ToggleTheme()
         edit
     else
         set background=light
-        colorscheme base16-github
+        colorscheme base16-tomorrow
         highlight myDeclaration guifg=#008700
         highlight myFunction    guifg=#0087af
         edit
