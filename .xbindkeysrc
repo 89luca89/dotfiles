@@ -87,12 +87,12 @@
 "amixer -q set Master toggle"
     XF86AudioMute
 
-"gnome-screenshot -i"
+"gnome-screenshot -i --file=file:///home/luca-linux/Pictures/Screenshot_$(date +%F_%H-%M-%S).jpg"
     m:0x0 + c:107
     Print
-"sleep 1; gnome-screenshot -a"
+"sleep 1; gnome-screenshot -a --file=file:///home/luca-linux/Pictures/Screenshot_$(date +%F_%H-%M-%S).jpg"
     m:0x1 + c:107
     Shift + Print
-"gnome-screenshot -w"
+"gnome-screenshot -w --file=file:///home/luca-linux/Pictures/Screenshot_$(date +%F_%H-%M-%S).jpg"
     m:0x8 + c:107
     Alt + Print
