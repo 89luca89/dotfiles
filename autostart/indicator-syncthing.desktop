@@ -1,11 +1,9 @@
 [Desktop Entry]
 Encoding=UTF-8
-Version=0.9.4
 Type=Application
 Name=indicator-syncthing
 Comment=indicator-syncthing
-Exec=indicator-syncthing
-RunHook=0
+Exec=/bin/bash -c "sleep 20; indicator-syncthing"
 StartupNotify=false
 Terminal=false
 Hidden=false

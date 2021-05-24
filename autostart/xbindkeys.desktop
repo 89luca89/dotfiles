@@ -1,11 +1,9 @@
 [Desktop Entry]
 Encoding=UTF-8
-Version=0.9.4
 Type=Application
 Name=xbindkeys
 Comment=xbindkeys
-Exec=xbindkeys -p
-RunHook=0
+Exec=/bin/bash -c "sleep 20; xbindkeys -p"
 StartupNotify=false
 Terminal=false
 Hidden=false

@@ -5,6 +5,7 @@ Type=Application
 Name=xscreensaver
 Comment=xscreensaver
 Exec=xscreensaver -no-splash
+OnlyShowIn=XFCE;
 RunHook=0
 StartupNotify=false
 Terminal=false

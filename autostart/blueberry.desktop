@@ -5,6 +5,7 @@ Type=Application
 Name=blueberry
 Comment=blueberry
 Exec=blueberry-tray
+OnlyShowIn=XFCE;
 RunHook=0
 StartupNotify=false
 Terminal=false

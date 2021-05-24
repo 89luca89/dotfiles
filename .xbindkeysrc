@@ -8,11 +8,11 @@
     m:0x40 + c:26
     Mod4 + e
 
-"gnome-terminal -- tmux"
+"cd ~ && gnome-terminal -- tmux"
     m:0x40 + c:28
     Mod4 + t
 
-"gnome-terminal -- tmux"
+"cd ~ && gnome-terminal -- tmux"
     m:0xc + c:28
     Control+Alt + t
 

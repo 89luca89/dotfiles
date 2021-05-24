@@ -5,6 +5,7 @@ Type=Application
 Name=devilspie2
 Comment=devilspie2
 Exec=devilspie2
+OnlyShowIn=XFCE;
 RunHook=0
 StartupNotify=false
 Terminal=false
