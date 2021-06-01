@@ -1,9 +1,9 @@
 Host w540.lan
-  # HostName localhost
-  HostName 192.168.1.105
+  HostName localhost
+  # HostName 192.168.1.105
   IdentityFile /home/luca-linux/.ssh/id_ecdsa
-  #Port 3333
-  #ProxyJump luca-lan
+  Port 3333
+  ProxyJump luca-lan
   User luca-linux
 
 Host yoga.lan

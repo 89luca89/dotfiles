@@ -1,5 +1,85 @@
 ---
 schemes:
+  tomorrow_night: &tomorrow_night # Default colors
+    primary:
+      background: "0x1d1f21"
+      foreground: "0xc5c8c6"
+
+    # Colors the cursor will use if `custom_cursor_colors` is true
+    cursor:
+      text: "0x1d1f21"
+      cursor: "0xc5c8c6"
+
+    # Normal colors
+    normal:
+      black: "0x1d1f21"
+      red: "0xcc6666"
+      green: "0xb5bd68"
+      yellow: "0xf0c674"
+      blue: "0x81a2be"
+      magenta: "0xb294bb"
+      cyan: "0x8abeb7"
+      white: "0xc5c8c6"
+
+    # Bright colors
+    bright:
+      black: "0x969896"
+      red: "0xcc6666"
+      green: "0xb5bd68"
+      yellow: "0xf0c674"
+      blue: "0x81a2be"
+      magenta: "0xb294bb"
+      cyan: "0x8abeb7"
+      white: "0xffffff"
+
+    indexed_colors:
+      - {index: 16, color: "0xde935f"}
+      - {index: 17, color: "0xa3685a"}
+      - {index: 18, color: "0x282a2e"}
+      - {index: 19, color: "0x373b41"}
+      - {index: 20, color: "0xb4b7b4"}
+      - {index: 21, color: "0xe0e0e0"}
+
+  tomorrow_light: &tomorrow_light # Default colors
+    primary:
+      background: "0xffffff"
+      foreground: "0x4d4d4c"
+
+    # Colors the cursor will use if `custom_cursor_colors` is true
+    cursor:
+      text: "0xffffff"
+      cursor: "0x4d4d4c"
+
+    # Normal colors
+    normal:
+      black: "0xffffff"
+      red: "0xc82829"
+      green: "0x718c00"
+      yellow: "0xeab700"
+      blue: "0x4271ae"
+      magenta: "0x8959a8"
+      cyan: "0x3e999f"
+      white: "0x4d4d4c"
+
+    # Bright colors
+    bright:
+      black: "0x8e908c"
+      red: "0xc82829"
+      green: "0x718c00"
+      yellow: "0xeab700"
+      blue: "0x4271ae"
+      magenta: "0x8959a8"
+      cyan: "0x3e999f"
+      white: "0x1d1f21"
+
+    indexed_colors:
+      - {index: 16, color: "0xf5871f"}
+      - {index: 17, color: "0xa3685a"}
+      - {index: 18, color: "0xe0e0e0"}
+      - {index: 19, color: "0xd6d6d6"}
+      - {index: 20, color: "0x969896"}
+      - {index: 21, color: "0x282a2e"}
+
   dark: &dark
     primary:
       background: "0x1C1C1C"
@@ -109,7 +189,7 @@ schemes:
       cyan: "0x34e2e2"
       white: "0xeeeeec"
 
-colors: *tangodark
+colors: *tomorrow_night
 
 font:
   normal:
@@ -122,7 +202,7 @@ font:
     family: "monospace"
     style: Italic
 
-  size: 9.5
+  size: 10
   use_thin_strokes: true
 
   offset:
