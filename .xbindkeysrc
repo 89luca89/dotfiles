@@ -8,11 +8,11 @@
     m:0x40 + c:26
     Mod4 + e
 
-"cd ~ && gnome-terminal -- tmux"
+"cd ~ && gnome-terminal"
     m:0x40 + c:28
     Mod4 + t
 
-"cd ~ && gnome-terminal -- tmux"
+"cd ~ && alacritty -e tmux"
     m:0xc + c:28
     Control+Alt + t
 
@@ -46,39 +46,39 @@
 "xdotool key Page_Down"
     b:8
 
-"wmctrl -c :ACTIVE:"
+"/bin/wmctrl -c :ACTIVE:"
     m:0x9 + c:24
     Alt + q
 
-"wmctrl -c :ACTIVE:"
+"/bin/wmctrl -c :ACTIVE:"
     m:0x40 + c:24
     Mod4 + q
 
-"wmctrl -r :ACTIVE: -b toggle,fullscreen"
+"/bin/wmctrl -r :ACTIVE: -b toggle,fullscreen"
     m:0x40 + c:41
     Mod4 + f
 
-"winfocus left"
+"~/dotfiles/bin/winfocus left"
     m:0x41 + c:113
     Shift+Mod4 + Left
 
-"winfocus right"
+"~/dotfiles/bin/winfocus right"
     m:0x41 + c:114
     Shift+Mod4 + Right
 
-"quicktile bottom-right"
+"~/.local/bin/quicktile bottom-right"
     m:0x5 + c:114
     Control+Shift + Right
 
-"quicktile bottom-left"
+"~/.local/bin/quicktile bottom-left"
     m:0x5 + c:113
     Control+Shift + Left
 
-"quicktile top-right"
+"~/.local/bin/quicktile top-right"
     m:0x9 + c:114
     Alt+Shift + Right
 
-"quicktile top-left"
+"~/.local/bin/quicktile top-left"
     m:0x9 + c:113
     Alt+Shift + Left
 
@@ -90,7 +90,7 @@
 "gnome-screenshot -i --file=file:///home/luca-linux/Pictures/Screenshot_$(date +%F_%H-%M-%S).jpg"
     m:0x0 + c:107
     Print
-"sleep 1; gnome-screenshot -a --file=file:///home/luca-linux/Pictures/Screenshot_$(date +%F_%H-%M-%S).jpg"
+"sleep 0.5; gnome-screenshot -a --file=file:///home/luca-linux/Pictures/Screenshot_$(date +%F_%H-%M-%S).jpg"
     m:0x1 + c:107
     Shift + Print
 "gnome-screenshot -w --file=file:///home/luca-linux/Pictures/Screenshot_$(date +%F_%H-%M-%S).jpg"
