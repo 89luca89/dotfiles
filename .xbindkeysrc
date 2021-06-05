@@ -16,17 +16,17 @@
     m:0xc + c:28
     Control+Alt + t
 
-"rofi  -combi-modi window,drun,run -show combi -modi combi -modi run -theme Arc-Dark -show-icons  -theme-str 'element-icon { size: 2ch;}'"
+"rofi  -combi-modi drun,run,window -show combi -modi combi -modi run -theme Arc-Dark -show-icons  -theme-str 'element-icon { size: 2ch;}'"
     m:0x40 + c:38
     Mod4 + a
 
-"search Passwords"
-    m:0x40 + c:39
-    Mod4 + s
-
-"search"
+"rofi -show file-browser -theme Arc-Dark -show-icons  -theme-str 'element-icon { size: 2ch;}'"
     m:0x40 + c:65
     Mod4 + space
+
+"keepassx"
+    m:0x40 + c:39
+    Mod4 + s
 
 "switch-theme"
     m:0x40 + c:40
@@ -83,9 +83,6 @@
     Alt+Shift + Left
 
 ### Media Management
-
-"amixer -q set Master toggle"
-    XF86AudioMute
 
 "gnome-screenshot -i --file=file:///home/luca-linux/Pictures/Screenshot_$(date +%F_%H-%M-%S).jpg"
     m:0x0 + c:107

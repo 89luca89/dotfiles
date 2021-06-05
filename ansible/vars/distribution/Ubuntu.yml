@@ -56,8 +56,7 @@ my_packages:
   - network-manager-fortisslvpn-gnome
   - network-manager-iodine-gnome
   - network-manager-l2tp-gnome
-  - pass
-  - pass-extension-otp
+  - keepassxc
   - rsync
   - syncthing
   - tmux

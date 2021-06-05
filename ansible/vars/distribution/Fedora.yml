@@ -56,8 +56,7 @@ my_packages:
   - aria2
   - mpv
   - ncdu
-  - pass
-  - pass-otp
+  - keepassxc
   - ranger
   - rofi
   - rsync
