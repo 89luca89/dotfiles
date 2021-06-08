@@ -26,8 +26,9 @@ set rulerformat=%20(%m%r%w\ %y\ %l/%c%)\    " Modified+FileType+Ruler
 filetype off
 call plug#begin('~/.vim/plugged')
 " utilities
-Plug 'yggdroot/indentLine'
+Plug 'ap/vim-buftabline'
 Plug 'chriskempson/base16-vim'
+Plug 'yggdroot/indentLine'
 " Fzf
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
