@@ -36,7 +36,7 @@ rclone_clear_mount() {
 	rclone mount Local-Crypt:"$1" "$2"
 }
 ssh() {
-	/usr/bin/ssh -t $@ "which tmux &> /dev/null && (tmux attach || tmux new)"
+	/usr/bin/ssh -t $@ "if which tmux &> /dev/null; then (tmux attach || tmux new); else \$SHELL; fi"
 }
 # BASIC ALIASES
 alias firefoxRestore="cat ~/Syncthing/Notes/open_tabs.md | cut -d ']' -f2  | sed 's/(//g' | sed 's/)//g' | xargs firefox --new-tab &"
