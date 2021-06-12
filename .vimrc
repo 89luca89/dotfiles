@@ -62,6 +62,11 @@ highlight SignColumn    guibg=NONE
 highlight VertSplit     guibg=NONE guifg=#888888
 highlight myDeclaration guifg=#9CDCFE
 highlight myFunction    guifg=#fabd2f
+let g:netrw_banner = 0
+let g:netrw_browse_split = 4
+let g:netrw_liststyle = 3
+let g:netrw_sort_sequence = '[\/]$,*'
+let g:netrw_winsize = -28
 " FZF
 let g:fzf_layout = { 'down': '40%' }
 " Languages
@@ -107,6 +112,7 @@ let mapleader = ' '
 map <leader><leader>  :<C-u>Buffers<CR>
 map <leader>p  :<C-u>Files<CR>
 map <leader>t  :<C-u>Tags<CR>
+map <leader>n  :<C-u>Lexplore<CR>
 " Easier completion shortcuts
 inoremap <C-@> <C-P>
 inoremap <C-F> <C-X><C-F>
