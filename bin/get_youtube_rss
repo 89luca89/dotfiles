@@ -10,4 +10,4 @@ fi
 
 ID=$(curl "$URL" | grep -Eo "https://www.youtube.com/channel/.*>" | cut -d'"' -f1 | sort -u | head -n1 | cut -d"\"" -f1 | rev | cut -d'/' -f1 | rev)
 
-echo https://www.youtube.com/feeds/videos.xml?channel_id="$ID"
+echo https://www.youtube.com/feeds/videos.xml?channel_id="$ID" | xclip -sel clip
