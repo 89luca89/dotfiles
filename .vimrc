@@ -27,8 +27,8 @@ filetype off
 call plug#begin('~/.vim/plugged')
 " utilities
 Plug 'ap/vim-buftabline'
-Plug 'chriskempson/base16-vim'
 Plug 'yggdroot/indentLine'
+Plug 'chriskempson/base16-vim'
 " Fzf
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
