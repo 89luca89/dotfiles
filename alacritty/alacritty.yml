@@ -202,7 +202,7 @@ font:
     family: "monospace"
     style: Italic
 
-  size: 10
+  size: 9.5
   use_thin_strokes: true
 
   offset:

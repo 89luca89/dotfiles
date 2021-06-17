@@ -4,15 +4,15 @@
     m:0x40 + c:25
     Mod4 + w
 
-"xdg-open $HOME"
+"xdg-open ~"
     m:0x40 + c:26
     Mod4 + e
 
-"cd ~ && gnome-terminal"
+"cd ~ && alacritty"
     m:0x40 + c:28
     Mod4 + t
 
-"cd ~ && gnome-terminal -- tmux"
+"cd ~ && alacritty -e tmux"
     m:0xc + c:28
     Control+Alt + t
 
@@ -24,31 +24,27 @@
     m:0x40 + c:65
     Mod4 + space
 
-"keepassx"
+"keepassxc"
     m:0x40 + c:39
     Mod4 + s
 
-"switch-theme"
+"~/bin/switch-theme"
     m:0x40 + c:40
     Mod4 + d
 
-"mpv_play"
+"~/bin/mpv_play"
     m:0x40 + c:45
     Mod4 + k
 
-"xscreensaver-command -lock"
+"/bin/xscreensaver-command -lock"
     m:0x40 + c:46
     Mod4 + l
 
-"xdotool key Page_Up"
+"/bin/xdotool key Page_Up"
     b:9
 
-"xdotool key Page_Down"
+"/bin/xdotool key Page_Down"
     b:8
-
-"/bin/wmctrl -c :ACTIVE:"
-    m:0x9 + c:24
-    Alt + q
 
 "/bin/wmctrl -c :ACTIVE:"
     m:0x40 + c:24
@@ -57,6 +53,14 @@
 "/bin/wmctrl -r :ACTIVE: -b toggle,fullscreen"
     m:0x40 + c:41
     Mod4 + f
+
+"/bin/wmctrl -r :ACTIVE: -b add,maximized_horz,maximized_vert"
+    m:0x40 + c:111
+    Mod4 + Up
+
+"/bin/wmctrl -r :ACTIVE: -b remove,maximized_horz,maximized_vert"
+    m:0x40 + c:116
+    Mod4 + Down
 
 "~/dotfiles/bin/winfocus left"
     m:0x41 + c:113
@@ -81,6 +85,14 @@
 "~/.local/bin/quicktile top-left"
     m:0x9 + c:113
     Alt+Shift + Left
+
+"~/.local/bin/quicktile right"
+    m:0x40 + c:114
+    Mod4 + Right
+
+"~/.local/bin/quicktile left"
+    m:0x40 + c:113
+    Mod4 + Left
 
 ### Media Management
 
