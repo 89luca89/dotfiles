@@ -105,3 +105,6 @@
 "gnome-screenshot -w --file=file:///home/luca-linux/Pictures/Screenshot_$(date +%F_%H-%M-%S).jpg"
     m:0x8 + c:107
     Alt + Print
+"alacritty -e ~/bin/screencast"
+    m:0xd + c:27
+    Control+Shift+Alt + r
