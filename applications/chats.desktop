@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=Chats
+Name=Telegram
 Comment=A terminal chat profile
 Exec=/home/luca-linux/bin/communication
 Icon=/home/luca-linux/.local/share/applications/chat-bubbles-icon.png

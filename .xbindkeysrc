@@ -16,11 +16,11 @@
     m:0xc + c:28
     Control+Alt + t
 
-"rofi  -combi-modi drun,run,window -show combi -modi combi -modi run -theme Arc-Dark -show-icons  -theme-str 'element-icon { size: 3ch;}'"
+"rofi  -combi-modi drun,run,window -show combi -modi combi -modi run -theme ~/.local/share/themes/onedark.rasi -show-icons  -theme-str 'element-icon { size: 3ch;}'"
     m:0x40 + c:38
     Mod4 + a
 
-"rofi -show file-browser -theme Arc-Dark -show-icons  -theme-str 'element-icon { size: 3ch;}'"
+"rofi -show file-browser -theme ~/.local/share/themes/onedark.rasi -show-icons  -theme-str 'element-icon { size: 3ch;}'"
     m:0x40 + c:65
     Mod4 + space
 
@@ -105,6 +105,6 @@
 "gnome-screenshot -w --file=file:///home/luca-linux/Pictures/Screenshot_$(date +%F_%H-%M-%S).jpg"
     m:0x8 + c:107
     Alt + Print
-"alacritty -e ~/bin/screencast"
+"alacritty -e ~/dotfiles/bin/screencast"
     m:0xd + c:27
     Control+Shift+Alt + r

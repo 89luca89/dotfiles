@@ -189,7 +189,7 @@ schemes:
       cyan: "0x34e2e2"
       white: "0xeeeeec"
 
-colors: *tomorrow_night
+colors: *tomorrow_light
 
 font:
   normal:
