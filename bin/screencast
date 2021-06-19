@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# Immediately ask sudo password, keep it up for the entire exeuction
+sudo -v
+while true; do
+	sudo -v
+	sleep 30
+done &
+infiloop=$!
+
+
+clean() {
+	kill -9 $infiloop 2> /dev/null
+}
+
+trap clean 1 2 15
+
+FILE="$HOME/Videos/Screencast_from_$(date '+%d-%m-%Y_%H:%M:%S').mp4"
+
+sudo ffmpeg -y -framerate 30 -vsync 0 -f kmsgrab -i - -vf 'hwmap=derive_device=vaapi,scale_vaapi=format=nv12' -c:v h264_vaapi "$FILE"
+sudo chown "$USER"."$USER" "$FILE"
+
+clean
