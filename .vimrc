@@ -57,8 +57,10 @@ augroup end
 set background=dark
 set termguicolors
 colorscheme base16-tomorrow-night
+highlight BufTabLineActive guibg=#404040 guifg=#909090
 highlight LineNr        guibg=NONE
 highlight SignColumn    guibg=NONE
+highlight TabLineSel    guibg=#606060 guifg=#FFFFFF
 highlight VertSplit     guibg=NONE guifg=#888888
 highlight myDeclaration guifg=#9CDCFE
 highlight myFunction    guifg=#fabd2f
@@ -173,8 +175,10 @@ function! ToggleTheme()
     if &background == 'light'
         set background=dark
         colorscheme base16-tomorrow-night
+        highlight BufTabLineActive guibg=#404040 guifg=#909090
         highlight LineNr        guibg=NONE
         highlight SignColumn    guibg=NONE
+        highlight TabLineSel    guibg=#606060 guifg=#FFFFFF
         highlight VertSplit     guibg=NONE guifg=#888888
         highlight myDeclaration guifg=#9CDCFE
         highlight myFunction    guifg=#fabd2f
@@ -182,6 +186,8 @@ function! ToggleTheme()
     else
         set background=light
         colorscheme base16-tomorrow
+        highlight BufTabLineActive guifg=#4d4d4c guibg=#FFFFFF
+        highlight TabLineSel    guibg=#606060 guifg=#FFFFFF
         highlight myDeclaration guifg=#008700
         highlight myFunction    guifg=#0087af
         edit
