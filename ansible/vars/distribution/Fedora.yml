@@ -65,9 +65,9 @@ my_packages:
   - vim
   - w3m
   - papirus-icon-theme
-  - pinentry-gtk
+  - pinentry-qt
   # Generic X utility
-  - devilspie2
+  #- devilspie2
   - setxkbmap
   - wmctrl
   - xbindkeys
@@ -75,6 +75,7 @@ my_packages:
   - xdotool
   - xgamma
   - xinput
+  - xkill
 
 debloat_pkg:
   - PackageKit
@@ -116,8 +117,6 @@ debloat_pkg:
   - rsyslog
   - xarchiver
   - xfce4-screenshooter
-  - xfdashboard
-  - xfdesktop
   - yelp
   - yelp-libs
   - yelp-xsl

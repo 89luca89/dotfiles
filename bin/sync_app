@@ -114,7 +114,7 @@ app_sync() {
 	"tg")
 		[ -d ~/.config/tg ] || (echo "No folder to backup" && exit 1)
 		cd ~ || exit 1
-		tar --exclude=certificates --exclude=*downloads* --exclude=icons -c -z -f /tmp/tg-profile.tar.gz .config/tg
+		tar --exclude=certificates --exclude=*downloads* --exclude=icons -c -z -f /tmp/tg-profile.tar.gz .config/tg .cache/tg
 		gpg --passphrase "$password" --yes --batch --output /tmp/tg-profile.tar.gz.gpg --symmetric --cipher-algo AES256 /tmp/tg-profile.tar.gz
 		shred -n 25 -u -z /tmp/tg-profile.tar.gz
 		mv /tmp/tg-profile.tar.gz.gpg ~/Syncthing/Secured/
