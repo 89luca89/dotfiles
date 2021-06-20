@@ -46,6 +46,8 @@
 "/bin/xdotool key Page_Down"
     b:8
 
+### Window Management
+
 "/bin/wmctrl -c :ACTIVE:"
     m:0x40 + c:24
     Mod4 + q
