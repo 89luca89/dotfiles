@@ -119,7 +119,6 @@ map <leader>n  :<C-u>Lexplore<CR>
 inoremap <C-@> <C-P>
 inoremap <C-F> <C-X><C-F>
 " Code help using external scripts: Lint File, Lint Project, Format, DeepTags, Grep in project
-nnoremap <silent> <C-e> :<C-u>call ToggleTheme()<CR>
 nnoremap <leader>a  :<C-u>cgete system('project-utils ' . &filetype . " " .  expand('%') . " lint")<CR>:copen<CR>
 nnoremap <leader>A  :<C-u>cgete system('project-utils ' . &filetype . " . lint")<CR>:copen<CR>
 nnoremap <leader>I  :<C-u>call  system('project-utils ' . &filetype . " . format")<CR>
@@ -170,9 +169,7 @@ endfunction
 function! Rename(old, new)
     call system("rg --smart-case --follow -l " . shellescape(a:old) . " | xargs -P9 -I{} sed -i 's/" . shellescape(a:old) . "/" . shellescape(a:new) . "/g' {}")
 endfunction
-" Toggle Theme
-function! ToggleTheme()
-    if &background == 'light'
+function! SetDark()
         set background=dark
         colorscheme base16-tomorrow-night
         highlight BufTabLineActive guibg=#404040 guifg=#909090
@@ -183,7 +180,8 @@ function! ToggleTheme()
         highlight myDeclaration guifg=#9CDCFE
         highlight myFunction    guifg=#fabd2f
         edit
-    else
+endfunction
+function! SetLight()
         set background=light
         colorscheme base16-tomorrow
         highlight BufTabLineActive guifg=#4d4d4c guibg=#FFFFFF
@@ -191,8 +189,21 @@ function! ToggleTheme()
         highlight myDeclaration guifg=#008700
         highlight myFunction    guifg=#0087af
         edit
-    endif
 endfunction
+fun! s:set_bg(timer_id)
+    silent call system("grep -q '\*.*dark' ~/.config/alacritty/alacritty.yml")
+    if v:shell_error == 0
+        if &background == 'light'
+            call SetDark()
+        endif
+    else
+        if &background != 'light'
+            call SetLight()
+        endif
+    endif
+endfun
+" Execute bg_sync every 10 seconds
+call timer_start(1000 * 10, function('s:set_bg'), {'repeat': -1})
 " ALE + LSP -------------------------------------------------------------------
 let g:ale_enabled           = 1
 let g:ale_lint_on_enter     = 0
