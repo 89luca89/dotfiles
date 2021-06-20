@@ -190,8 +190,8 @@ function! SetLight()
         highlight myFunction    guifg=#0087af
         edit
 endfunction
-fun! s:set_bg(timer_id)
-    silent call system("grep -q '\*.*dark' ~/.config/alacritty/alacritty.yml")
+function! s:set_bg(timer_id)
+    silent call system("grep -q 'dark' ~/.local/share/current_theme")
     if v:shell_error == 0
         if &background == 'light'
             call SetDark()
