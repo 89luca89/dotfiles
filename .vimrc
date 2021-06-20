@@ -203,7 +203,7 @@ function! s:set_bg(timer_id)
     endif
 endfun
 " Execute bg_sync every 10 seconds
-call timer_start(1000 * 10, function('s:set_bg'), {'repeat': -1})
+call timer_start(1000 * 5, function('s:set_bg'), {'repeat': -1})
 " ALE + LSP -------------------------------------------------------------------
 let g:ale_enabled           = 1
 let g:ale_lint_on_enter     = 0
