@@ -50,6 +50,42 @@
     m:0x40 + c:24
     Mod4 + q
 
+"/bin/wmctrl -s 0"
+    m:0x40 + c:10
+    Mod4 + 1
+
+"/bin/wmctrl -s 1"
+    m:0x40 + c:11
+    Mod4 + 2
+
+"/bin/wmctrl -s 2"
+    m:0x40 + c:12
+    Mod4 + 3
+
+"/bin/wmctrl -s 3"
+    m:0x40 + c:13
+    Mod4 + 4
+
+"/bin/wmctrl -s 4"
+    m:0x40 + c:14
+    Mod4 + 5
+
+"/bin/wmctrl -s 5"
+    m:0x40 + c:15
+    Mod4 + 6
+
+"/bin/wmctrl -s 6"
+    m:0x40 + c:16
+    Mod4 + 7
+
+"/bin/wmctrl -s 7"
+    m:0x40 + c:17
+    Mod4 + 8
+
+"/bin/wmctrl -s 8"
+    m:0x40 + c:18
+    Mod4 + 9
+
 "/bin/wmctrl -r :ACTIVE: -b toggle,fullscreen"
     m:0x40 + c:41
     Mod4 + f
