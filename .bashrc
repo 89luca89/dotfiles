@@ -7,7 +7,7 @@ if [[ $- == *i* ]]; then
 		if [ "$STATUS" == "norepo" ]; then
 			export PS1=${BGREEN}'\u@\h'${PS_CLEAR}':'${BBLUE}'\w'${PS_CLEAR}' $ '
 		else
-			export PS1=${BGREEN}'\u@\h'${PS_CLEAR}':'${BBLUE}'\w'${PS_CLEAR}${RED}" [${BRANCH} ${SYMBOL}${SYMBOL_2}]"${PS_CLEAR}' $ '
+			export PS1=${BGREEN}'\u@\h'${PS_CLEAR}':'${BBLUE}'\w'${PS_CLEAR}${RED}" [${BRANCH}${SYMBOL}${SYMBOL_2}]"${PS_CLEAR}' $ '
 		fi
 	}
 	# Path to the bash it configuration
