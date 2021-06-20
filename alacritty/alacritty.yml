@@ -164,7 +164,7 @@ schemes:
       cyan: "#56b6c2"
       white: "#d4d4d4"
 
-colors: *dark
+colors: *light
 
 font:
   normal:
@@ -202,13 +202,24 @@ key_bindings:
   - {key: N, mods: Control|Shift, action: SpawnNewInstance}
   - {key: Return, mods: Control|Shift, action: ToggleFullscreen}
   - {key: V, mods: Control|Shift, action: Paste}
-
+  - {key: Home, chars: "\x1bOH", mode: AppCursor}
+  - {key: Home, chars: "\x1b[H", mode: ~AppCursor}
+  - {key: End, chars: "\x1bOF", mode: AppCursor}
+  - {key: End, chars: "\x1b[F", mode: ~AppCursor}
+  - {key: Key0, mods: Control, action: ResetFontSize}
+  - {key: Equals, mods: Control, action: IncreaseFontSize}
+  - {key: Minus, mods: Control, action: DecreaseFontSize}
 window:
   padding:
     x: 0
     y: 0
-  dynamic_padding: false
-  decorations: none
+  dynamic_padding:
+    false
+    # decorations: none
+
+bell:
+  animation: EaseOutExpo
+  duration: 1
 
 scrolling:
   history: 0
