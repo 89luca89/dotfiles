@@ -183,7 +183,7 @@ function! SetDark()
 endfunction
 function! SetLight()
         set background=light
-        colorscheme base16-tomorrow
+        colorscheme base16-one-light
         highlight BufTabLineActive guifg=#4d4d4c guibg=#FFFFFF
         highlight TabLineSel    guibg=#606060 guifg=#FFFFFF
         highlight myDeclaration guifg=#008700
