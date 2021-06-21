@@ -1,5 +1,10 @@
 if [[ $- == *i* ]]; then
 	function __git_status() {
+		# setup a simple PROMPT/PS1
+		BGREEN='\[\033[92m\]'
+		BBLUE='\[\033[94m\]'
+		RED='\[\033[91m\]'
+		PS_CLEAR='\[\033[0m\]'
 		STATUS=$(git status 2>/dev/null || echo "norepo")
 		BRANCH=$(echo $STATUS | grep -oP 'branch\s\K.*' | cut -d' ' -f1)
 		SYMBOL=$(echo $STATUS | grep -q "not staged" && echo "*")
@@ -30,11 +35,7 @@ if [[ $- == *i* ]]; then
 	bind '"\e[A": history-search-backward'
 	bind '"\e[B": history-search-forward'
 
-	# setup a simple PROMPT/PS1
-	BGREEN='\[\033[01;32m\]'
-	BBLUE='\[\033[01;34m\]'
-	RED='\[\033[33m\]'
-	PS_CLEAR='\[\033[0m\]'
+	# Set prompt with git
 	__git_status
 
 	if [ -f ~/.fzf.bash ]; then
