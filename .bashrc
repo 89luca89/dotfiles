@@ -1,7 +1,7 @@
 if [[ $- == *i* ]]; then
 	function __git_status() {
 		# setup a simple PROMPT/PS1
-		if grep -q 'light' ~/.local/share/current_theme; then
+		if grep -q 'light' ~/.local/share/current_theme 2> /dev/null; then
 			BGREEN='\[\033[01;90m\]'
 			BBLUE='\[\033[94m\]'
 			RED='\[\033[91m\]'

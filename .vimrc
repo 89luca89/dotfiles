@@ -191,18 +191,18 @@ function! SetLight()
         edit
 endfunction
 function! s:set_bg(timer_id)
-    silent call system("grep -q 'dark' ~/.local/share/current_theme")
+    silent call system("grep -q 'light' ~/.local/share/current_theme")
     if v:shell_error == 0
-        if &background == 'light'
-            call SetDark()
-        endif
-    else
         if &background != 'light'
             call SetLight()
         endif
+    else
+        if &background == 'light'
+            call SetDark()
+        endif
     endif
 endfun
-" Execute bg_sync every 10 seconds
+" Execute bg_sync every 5 seconds
 call timer_start(1000 * 5, function('s:set_bg'), {'repeat': -1})
 " ALE + LSP -------------------------------------------------------------------
 let g:ale_enabled           = 1
