@@ -1,8 +1,9 @@
 [Desktop Entry]
+Version=0.1.0
 Name=indicator-syncthing
 Comment=A Syncthing status menu for Unity and other desktops that support AppIndicator.
-Exec=/bin/bash -c "sleep 20; indicator-syncthing"
-Icon=/home/luca-linux/.local/share/applications/syncthing.svg
+Exec=indicator-syncthing
+Icon=syncthing
 Terminal=false
 Type=Application
 Categories=Utility;

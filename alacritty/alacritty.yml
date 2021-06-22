@@ -206,11 +206,11 @@ window:
     y: 0
   dynamic_padding:
     false
-    # decorations: none
+  decorations: none
 
 bell:
   animation: EaseOutExpo
-  duration: 1
+  duration: 0
 
 scrolling:
   history: 0

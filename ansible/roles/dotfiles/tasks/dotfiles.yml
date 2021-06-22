@@ -6,9 +6,7 @@
     path: "{{ item }}"
     state: directory
   with_items:
-    - "{{ ansible_env.HOME }}/.config/alacritty"
     - "{{ ansible_env.HOME }}/.config/autostart"
-    - "{{ ansible_env.HOME }}/.config/devilspie2"
     - "{{ ansible_env.HOME }}/.config/mpv"
     - "{{ ansible_env.HOME }}/.config/systemd"
     - "{{ ansible_env.HOME }}/.config/systemd/user"
@@ -42,12 +40,9 @@
   with_items:
     - "{{ ansible_env.HOME }}/.Xdefaults"
     - "{{ ansible_env.HOME }}/.aliases"
-    - "{{ ansible_env.HOME }}/.ansible.cfg"
     - "{{ ansible_env.HOME }}/.bashrc"
     - "{{ ansible_env.HOME }}/.clang-format"
-    - "{{ ansible_env.HOME }}/.config/alacritty"
     - "{{ ansible_env.HOME }}/.config/autostart"
-    - "{{ ansible_env.HOME }}/.config/devilspie2"
     - "{{ ansible_env.HOME }}/.config/mpv"
     - "{{ ansible_env.HOME }}/.ctags"
     - "{{ ansible_env.HOME }}/.gitconfig"
@@ -55,7 +50,6 @@
     - "{{ ansible_env.HOME }}/.histfile"
     - "{{ ansible_env.HOME }}/.local/share/applications"
     - "{{ ansible_env.HOME }}/.rclone.conf"
-    - "{{ ansible_env.HOME }}/.skippyrc"
     - "{{ ansible_env.HOME }}/.ssh/config"
     - "{{ ansible_env.HOME }}/.tmux.conf"
     - "{{ ansible_env.HOME }}/.toprc"
@@ -86,10 +80,6 @@
         dest: "{{ ansible_env.HOME }}/.aliases",
       }
     - {
-        src: "{{ ansible_env.HOME }}/dotfiles/.ansible.cfg",
-        dest: "{{ ansible_env.HOME }}/.ansible.cfg",
-      }
-    - {
         src: "{{ ansible_env.HOME }}/dotfiles/.bashrc",
         dest: "{{ ansible_env.HOME }}/.bashrc",
       }
@@ -112,10 +102,6 @@
     - {
         src: "{{ ansible_env.HOME }}/dotfiles/.rclone.conf",
         dest: "{{ ansible_env.HOME }}/.rclone.conf",
-      }
-    - {
-        src: "{{ ansible_env.HOME }}/dotfiles/.skippyrc",
-        dest: "{{ ansible_env.HOME }}/.skippyrc",
       }
     - {
         src: "{{ ansible_env.HOME }}/dotfiles/.tmux.conf",
@@ -146,20 +132,12 @@
         dest: "{{ ansible_env.HOME }}/.zshrc",
       }
     - {
-        src: "{{ ansible_env.HOME }}/dotfiles/alacritty",
-        dest: "{{ ansible_env.HOME }}/.config/alacritty",
-      }
-    - {
         src: "{{ ansible_env.HOME }}/dotfiles/applications",
         dest: "{{ ansible_env.HOME }}/.local/share/applications",
       }
     - {
         src: "{{ ansible_env.HOME }}/dotfiles/autostart",
         dest: "{{ ansible_env.HOME }}/.config/autostart",
-      }
-    - {
-        src: "{{ ansible_env.HOME }}/dotfiles/devilspie2",
-        dest: "{{ ansible_env.HOME }}/.config/devilspie2",
       }
     - {
         src: "{{ ansible_env.HOME }}/dotfiles/mpv",
