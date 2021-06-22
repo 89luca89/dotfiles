@@ -1,9 +1,9 @@
 if [[ $- == *i* ]]; then
 	function __git_status() {
 		# setup a simple PROMPT/PS1
-		BGREEN='\[\033[92m\]'
-		BBLUE='\[\033[94m\]'
-		RED='\[\033[91m\]'
+		BGREEN='\[\033[32m\]'
+		BBLUE='\[\033[34m\]'
+		RED='\[\033[35m\]'
 		PS_CLEAR='\[\033[0m\]'
 		STATUS=$(git status 2>/dev/null || echo "norepo")
 		BRANCH=$(echo $STATUS | grep -oP 'branch\s\K.*' | cut -d' ' -f1)
