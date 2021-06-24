@@ -20,7 +20,7 @@
     m:0x40 + c:38
     Mod4 + a
 
-"rofi -show file-browser -theme ~/dotfiles/rofi/onedark.rasi -show-icons  -theme-str 'element-icon { size: 3ch;}'"
+"FILES=$(rg --files ~) && DIRS=$(rg --files --null ~ | xargs -0 dirname) && echo "$FILES" "$DIRS" | sort -u | rofi -dmenu -theme ~/dotfiles/rofi/onedark.rasi -show-icons  -theme-str 'element-icon { size: 3ch;}' | xargs xdg-open"
     m:0x40 + c:65
     Mod4 + space
 
@@ -45,6 +45,7 @@
 
 "/bin/xdotool key Page_Down"
     b:8
+
 
 ### Window Management
 
