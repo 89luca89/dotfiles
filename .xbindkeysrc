@@ -9,8 +9,8 @@
     Mod4 + e
 
 "cd ~ && alacritty"
-    m:0x40 + c:28
-    Mod4 + t
+    m:0x40 + c:36
+    Mod4 + Return
 
 "cd ~ && alacritty -e tmux"
     m:0xc + c:28
@@ -36,16 +36,17 @@
     m:0x40 + c:45
     Mod4 + k
 
-"/bin/xscreensaver-command -lock"
-    m:0x40 + c:46
-    Mod4 + l
+#"/bin/xscreensaver-command -lock"
+#    m:0x40 + c:46
+#    Mod4 + l
+
+### Mouse extra keys
 
 "/bin/xdotool key Page_Up"
     b:9
 
 "/bin/xdotool key Page_Down"
     b:8
-
 
 ### Window Management
 
@@ -132,6 +133,14 @@
 "~/.local/bin/quicktile left"
     m:0x40 + c:113
     Mod4 + Left
+
+"~/.local/bin/quicktile trigger-resize"
+    m:0x40 + c:27
+    Mod4 + r
+
+"~/.local/bin/quicktile trigger-move"
+    m:0x40 + c:58
+    Mod4 + m
 
 ### Media Management
 
