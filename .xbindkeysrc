@@ -16,11 +16,7 @@
     m:0xc + c:28
     Control+Alt + t
 
-"rofi  -combi-modi drun,run,window -show combi -modi combi -modi run -theme ~/dotfiles/rofi/onedark.rasi -show-icons  -theme-str 'element-icon { size: 3ch;}'"
-    m:0x40 + c:38
-    Mod4 + a
-
-"FILES=$(rg --files ~) && DIRS=$(rg --files --null ~ | xargs -0 dirname) && echo "$FILES" "$DIRS" | sort -u | rofi -dmenu -theme ~/dotfiles/rofi/onedark.rasi -show-icons  -theme-str 'element-icon { size: 3ch;}' | xargs xdg-open"
+"rofi -combi-modi drun,run,window,files:~/dotfiles/bin/rofi_files.sh -show combi -theme ~/dotfiles/rofi/onedark.rasi -show-icons  -theme-str 'element-icon { size: 3ch;}'"
     m:0x40 + c:65
     Mod4 + space
 
