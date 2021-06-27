@@ -38,8 +38,6 @@ app_sync() {
 		gpg --passphrase "$password" --yes --batch --output /tmp/ssh-keys.tar.gz.gpg --symmetric --cipher-algo AES256 /tmp/ssh-keys.tar.gz
 		shred -n 25 -u -z /tmp/ssh-keys.tar.gz
 		cp /tmp/ssh-keys.tar.gz.gpg ~/Syncthing/Secured/
-		mv /tmp/ssh-keys.tar.gz.gpg ~/.password-store/
-		git -C ~/.password-store commit -m "Update" ssh-keys.tar.gz.gpg
 		;;
 	"gpg")
 		[ -d ~/.gnupg ] || (echo "No folder to backup" && exit 1)
@@ -48,8 +46,6 @@ app_sync() {
 		gpg --passphrase "$password" --yes --batch --output /tmp/gnupg-keys.tar.gz.gpg --symmetric --cipher-algo AES256 /tmp/gnupg-keys.tar.gz
 		shred -n 25 -u -z /tmp/gnupg-keys.tar.gz
 		cp /tmp/gnupg-keys.tar.gz.gpg ~/Syncthing/Secured/
-		mv /tmp/gnupg-keys.tar.gz.gpg ~/.password-store/
-		git -C ~/.password-store commit -m "Update" gnupg-keys.tar.gz.gpg
 		;;
 	"xfce4")
 		[ -d ~/.config/xfce4 ] || (echo "No folder to backup" && exit 1)
