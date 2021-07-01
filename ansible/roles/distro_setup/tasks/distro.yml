@@ -66,6 +66,15 @@
       EndSection
   become: true
 
+- name: Disable WIFI Mac address randomization on scan
+  blockinfile:
+    path: /etc/NetworkManager/conf.d/30-mac-randomization.conf
+    create: yes
+    block: |
+      [device-mac-randomization]
+      wifi.scan-rand-mac-address=no
+  become: true
+
 - name: Set UDev Rules
   blockinfile:
     path: /etc/udev/rules.d/powersave.rules
