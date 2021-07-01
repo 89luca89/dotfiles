@@ -21,7 +21,7 @@ if [[ $- == *i* ]]; then
 		"$HOME/.local/bin/fzf/install" --all
 	fi
 	# HISTORY SIZE
-	export HISTFILE=~/.histfile
+	export HISTFILE="$HOME"/.histfile
 	export HISTCONTROL=ignoredups:erasedups # no duplicate entries
 	export HISTSIZE=100000                  # big big history
 	export HISTFILESIZE=100000              # big big history
@@ -35,24 +35,26 @@ if [[ $- == *i* ]]; then
 	bind '"\e[A": history-search-backward'
 	bind '"\e[B": history-search-forward'
 
-	# Set prompt with git
-	__git_status
-
-	if [ -f ~/.fzf.bash ]; then
-		source ~/.fzf.bash
+	if [ -f "$HOME"/.fzf.bash ]; then
+		source "$HOME/.fzf.bash"
 	fi
 	# use tmux split with FZF
 	if [ "${TMUX}" ]; then
 		export FZF_TMUX=1
 	fi
 
+	if [ -f "$HOME"/.aliases ]; then
+		source "$HOME"/.aliases
+	fi
+
+	# include custom files
+	if [ -f "$HOME/.localrc" ]; then
+		source "$HOME/.localrc"
+	fi
+
+	# Set prompt with git
+	__git_status
+
 fi
 
-if [ -f ~/.aliases ]; then
-	source ~/.aliases
-fi
-
-# include custom files
-if [ -f "$HOME/.localrc" ]; then
-	source ~/.localrc
-fi
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash

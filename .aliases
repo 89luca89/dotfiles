@@ -1,6 +1,3 @@
-get_starred_articles() {
-	curl -s "https://luca-lan.mooo.com:50554/rss/i/?a=rss&get=s&state=3&hours=168" | grep "<link>" | grep -oE '<link>[^<]*' | sed 's/<link>//g' | sort -u
-}
 gnome-background() {
 	gsettings set org.gnome.desktop.background primary-color "$1"
 	gsettings set org.gnome.desktop.background secondary-color "$1"
@@ -41,20 +38,21 @@ ssh() {
 # BASIC ALIASES
 alias firefoxRestore="cat ~/Syncthing/Notes/open_tabs.md | cut -d ']' -f2  | sed 's/(//g' | sed 's/)//g' | xargs firefox --new-tab &"
 alias firefoxSync='~/dotfiles/bin/get_firefox_tabs.py > ~/Syncthing/Notes/open_tabs.md'
-alias free="free -mtlw"
-alias git-clean="git fetch -p && for branch in \$(git branch -vv | grep ': gone]' | awk '{print $1}'); do git branch -D \$branch; done"
+alias git-clean="git fetch -p && for branch in \$(git branch -vv | grep ': gone]' | awk '{print \$1}'); do git branch -D \$branch; done"
 alias gnome-reload='DISPLAY=:0 xdotool key Alt+F2; sleep 1; DISPLAY=:0 xdotool key r;DISPLAY=:0  xdotool key Return'
 alias gogetsys="export GOPATH=~/.local/go; go get"
 alias ll='ls -Ahl --group-directories-first --color'
 alias open='xdg-open'
+alias rsyncProjecs='rsync -avHP --delete  -e "ssh -J tunnel" /home/luca-linux/Projects/ root@raspberrypi-1.lan:/usr/local/mnt/Vault/Projects/'
 alias rsyncthingD='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync -av --delete --progress -e "ssh -J management -p 2223" --exclude={.stversions,*.tmp} fileserver@raspberrypi-1.lan:/data/Syncthing/ ~/Syncthing/ && cd -'
 alias rsyncthingS='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync -av --delete --progress -e "ssh -J management -p 2223" --exclude={.stversions,*.tmp} ~/Syncthing/ fileserver@raspberrypi-1.lan:/data/Syncthing/ && cd -'
-alias rsyncProjecs='rsync -avHP --delete  -e "ssh -J tunnel" /home/luca-linux/Projects/ root@raspberrypi-1.lan:/usr/local/mnt/Vault/Projects/'
 alias saml2aws='saml2aws --disable-keychain'
 alias top='top -o %CPU'
 alias vi='vim -u ~/dotfiles/.vimrc-minimal'
-export CARGO_HOME=$HOME/.local/rust
 export EDITOR=vim
+export CARGO_HOME=$HOME/.local/rust
+export RUSTUP_HOME=$HOME/.local/rust
+export RUST_SRC_PATH="$RUSTUP_HOME/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/src"
 export GOPATH=$HOME/Projects/goprojects
 export PATH=$HOME/.local/bin/node_modules/.bin:$PATH
 export PATH=$HOME/.local/bin:$PATH
@@ -64,5 +62,3 @@ export PATH=$HOME/dotfiles/bin:$PATH
 export PATH=$PATH:$GOPATH/bin
 export PATH=$PATH:$RUSTUP_HOME/bin
 export PATH=/bin:$PATH
-export RUSTUP_HOME=$HOME/.local/rust
-export RUST_SRC_PATH="$RUSTUP_HOME/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/src"
