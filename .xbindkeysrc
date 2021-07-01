@@ -17,8 +17,8 @@
     Control+Alt + t
 
 "rofi -combi-modi drun,run,window,files:~/dotfiles/bin/rofi_files.sh -show combi -theme ~/dotfiles/rofi/onedark.rasi -show-icons  -theme-str 'element-icon { size: 3ch;}'"
-    m:0x40 + c:65
-    Mod4 + space
+    m:0x40 + c:38
+    Mod4 + a
 
 "keepassxc"
     m:0x40 + c:39

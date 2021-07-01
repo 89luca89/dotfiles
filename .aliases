@@ -42,13 +42,14 @@ ssh() {
 alias firefoxRestore="cat ~/Syncthing/Notes/open_tabs.md | cut -d ']' -f2  | sed 's/(//g' | sed 's/)//g' | xargs firefox --new-tab &"
 alias firefoxSync='~/dotfiles/bin/get_firefox_tabs.py > ~/Syncthing/Notes/open_tabs.md'
 alias free="free -mtlw"
-alias git-clean="git fetch -p && git branch -vv | awk '/: gone]/{print $1}' | xargs -I{} git branch -d {}"
+alias git-clean="git fetch -p && for branch in \$(git branch -vv | grep ': gone]' | awk '{print $1}'); do git branch -D \$branch; done"
 alias gnome-reload='DISPLAY=:0 xdotool key Alt+F2; sleep 1; DISPLAY=:0 xdotool key r;DISPLAY=:0  xdotool key Return'
 alias gogetsys="export GOPATH=~/.local/go; go get"
 alias ll='ls -Ahl --group-directories-first --color'
 alias open='xdg-open'
 alias rsyncthingD='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync -av --delete --progress -e "ssh -J management -p 2223" --exclude={.stversions,*.tmp} fileserver@raspberrypi-1.lan:/data/Syncthing/ ~/Syncthing/ && cd -'
 alias rsyncthingS='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync -av --delete --progress -e "ssh -J management -p 2223" --exclude={.stversions,*.tmp} ~/Syncthing/ fileserver@raspberrypi-1.lan:/data/Syncthing/ && cd -'
+alias rsyncProjecs='rsync -avHP --delete  -e "ssh -J tunnel" /home/luca-linux/Projects/ root@raspberrypi-1.lan:/usr/local/mnt/Vault/Projects/'
 alias saml2aws='saml2aws --disable-keychain'
 alias top='top -o %CPU'
 alias vi='vim -u ~/dotfiles/.vimrc-minimal'
