@@ -56,7 +56,7 @@ augroup general
 augroup end
 set background=dark
 set termguicolors
-colorscheme base16-tomorrow-night
+colorscheme base16-gruvbox-dark-hard
 highlight BufTabLineActive guibg=#404040 guifg=#909090
 highlight LineNr        guibg=NONE
 highlight SignColumn    guibg=NONE
@@ -171,7 +171,7 @@ function! Rename(old, new)
 endfunction
 function! SetDark()
         set background=dark
-        colorscheme base16-tomorrow-night
+        colorscheme base16-gruvbox-dark-hard
         highlight BufTabLineActive guibg=#404040 guifg=#909090
         highlight LineNr        guibg=NONE
         highlight SignColumn    guibg=NONE

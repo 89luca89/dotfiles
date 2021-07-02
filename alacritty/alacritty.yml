@@ -168,8 +168,8 @@ font:
     family: "monospace"
     style: Italic
 
-  size: 9.5
-  use_thin_strokes: true
+  size: 10
+  use_thin_strokes: false
 
   offset:
     x: 0
@@ -204,8 +204,7 @@ window:
   padding:
     x: 0
     y: 0
-  dynamic_padding:
-    false
+  dynamic_padding: true
   decorations: none
 
 bell:
