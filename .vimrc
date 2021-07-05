@@ -17,6 +17,7 @@ set number
 set path+=.,**
 set scrolloff=8 sidescroll=1 smartcase smartindent smarttab
 set splitbelow splitright
+set termguicolors
 set title
 set undodir=$HOME/.vim/undo undofile undolevels=10000
 set wildignore+=tags wildmenu wildmode=longest:full,full
@@ -54,16 +55,6 @@ augroup general
     autocmd Syntax * syntax match myDeclaration '\v\w+(,\s*\w+)*\ze(\s*:\=)'
     autocmd Syntax * syntax match myFunction    '\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\ze\%([a-zA-Z0-9]*(\)'
 augroup end
-set background=dark
-set termguicolors
-colorscheme base16-gruvbox-dark-hard
-highlight BufTabLineActive guibg=#404040 guifg=#909090
-highlight LineNr        guibg=NONE
-highlight SignColumn    guibg=NONE
-highlight TabLineSel    guibg=#606060 guifg=#FFFFFF
-highlight VertSplit     guibg=NONE guifg=#888888
-highlight myDeclaration guifg=#9CDCFE
-highlight myFunction    guifg=#fabd2f
 let g:netrw_banner = 0
 let g:netrw_browse_split = 4
 let g:netrw_liststyle = 3
@@ -88,8 +79,8 @@ let g:go_highlight_functions         = 1
 let g:go_highlight_generate_tags     = 1
 let g:go_highlight_operators         = 1
 let g:go_highlight_types             = 1
+let g:groovy_highlight_al            = 1
 let g:java_highlight_all             = 1
-let g:java_highlight_java_lang_ids   = 1
 let g:python_highlight_all  = 1
 """""""""""""""""""""
 "       Shortcuts   "
@@ -119,8 +110,8 @@ map <leader>n  :<C-u>Lexplore<CR>
 inoremap <C-@> <C-P>
 inoremap <C-F> <C-X><C-F>
 " Code help using external scripts: Lint File, Lint Project, Format, DeepTags, Grep in project
-nnoremap <leader>a  :<C-u>cgete system('project-utils ' . &filetype . " " .  expand('%') . " lint")<CR>:copen<CR>
-nnoremap <leader>A  :<C-u>cgete system('project-utils ' . &filetype . " . lint")<CR>:copen<CR>
+nnoremap <leader>l  :<C-u>cgete system('project-utils ' . &filetype . " " .  expand('%') . " lint")<CR>:copen<CR>
+nnoremap <leader>L  :<C-u>cgete system('project-utils ' . &filetype . " . lint")<CR>:copen<CR>
 nnoremap <leader>I  :<C-u>call  system('project-utils ' . &filetype . " . format")<CR>
 nnoremap <leader>T  :<C-u>call  system('project-utils ' . &filetype . " . tags")<CR>
 nnoremap <leader>f  :<C-u>call Grep("")<Left><Left>
@@ -193,11 +184,11 @@ endfunction
 function! s:set_bg(timer_id)
     silent call system("grep -q 'light' ~/.local/share/current_theme")
     if v:shell_error == 0
-        if &background != 'light'
+        if &background != 'light' || a:timer_id == 0
             call SetLight()
         endif
     else
-        if &background == 'light'
+        if &background == 'light' || a:timer_id == 0
             call SetDark()
         endif
     endif
