@@ -50,7 +50,7 @@
     m:0x40 + c:24
     Mod4 + q
 
-"/bin/wmctrl -s 0"
+"/bin/wmctrl -s 1"
     m:0x40 + c:10
     Mod4 + 1
 

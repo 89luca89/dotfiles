@@ -35,26 +35,11 @@ if [[ $- == *i* ]]; then
 	bind '"\e[A": history-search-backward'
 	bind '"\e[B": history-search-forward'
 
-	if [ -f "$HOME"/.fzf.bash ]; then
-		source "$HOME/.fzf.bash"
-	fi
-	# use tmux split with FZF
-	if [ "${TMUX}" ]; then
-		export FZF_TMUX=1
-	fi
-
-	if [ -f "$HOME"/.aliases ]; then
-		source "$HOME"/.aliases
-	fi
-
-	# include custom files
-	if [ -f "$HOME/.localrc" ]; then
-		source "$HOME/.localrc"
-	fi
+	[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+	[ -f ~/.aliases ] && source ~/.aliases
+	[ -f ~/.localrc ] && source ~/.localrc
 
 	# Set prompt with git
 	__git_status
 
 fi
-
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
