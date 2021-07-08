@@ -23,7 +23,7 @@ set undodir=$HOME/.vim/undo undofile undolevels=10000
 set wildignore+=tags wildmenu wildmode=longest:full,full
 set grepprg=rg\ --vimgrep\ --smart-case\ --follow
 set noshowmode noshowcmd laststatus=0 ruler " hide statusline
-set rulerformat=%20(%m%r%w\ %y\ %l/%c%)\    " Modified+FileType+Ruler
+set rulerformat=%40(%F%m%r%w\ [%c-%l/%L]\ %y%)\    " Modified+FileType+Ruler
 filetype off
 call plug#begin('~/.vim/plugged')
 " utilities
