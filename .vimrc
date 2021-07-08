@@ -116,7 +116,7 @@ nnoremap <leader>I  :<C-u>call  system('project-utils ' . &filetype . " . format
 nnoremap <leader>T  :<C-u>call  system('project-utils ' . &filetype . " . tags")<CR>
 nnoremap <leader>f  :<C-u>call Grep("")<Left><Left>
 " Default IDE-Style keybindings: definition, indent, rename, references
-nnoremap <leader>d  :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
+nnoremap <leader>gd  :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
 nnoremap <leader>r  :<C-u>call Rename("<c-r>=expand("<cword>")<CR>", "")<Left><Left>
 nnoremap <leader>rf :<C-u>call Grep("<c-r>=expand("<cword>")<CR>")<CR>
 nnoremap <leader>i  :<C-u>mkview<CR>:%s/\($\n\s*\)\+\%$//e<CR>:%s/\s\+$//e<CR>=G:loadview<CR>
@@ -136,7 +136,7 @@ augroup end
 augroup lspbindings
     autocmd!
     " IDE-like keybindings
-    autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>d  :<C-u>vert LSClientGoToDefinitionSplit<CR>
+    autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>gd  :<C-u>vert LSClientGoToDefinitionSplit<CR>
     autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>r  :<C-u>LSClientRename<CR>
     autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>rf :<C-u>LSClientFindReferences<CR>
     autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> K  :<C-u>LSClientShowHover<CR>
