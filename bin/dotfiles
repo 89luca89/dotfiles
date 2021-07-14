@@ -7,8 +7,9 @@ rm "$HOME/.histfile"
 pushd "$HOME/dotfiles"
 
 for i in $(ls -d */ | grep -vE "ansible|bin|desktop"); do
-    stow -D "$i";
-    stow "$i";
+    echo "$i"
+    stow -t ~ -D "$i";
+    stow -t ~ -S "$i";
 done
 
 ln -sf "$HOME/Syncthing/Conf/.histfile" "$HOME/.histfile"
