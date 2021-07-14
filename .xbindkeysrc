@@ -16,9 +16,13 @@
     m:0xc + c:28
     Control+Alt + t
 
-"rofi -combi-modi drun,run,window,files:~/dotfiles/bin/rofi_files.sh -show combi -theme ~/dotfiles/rofi/onedark.rasi -show-icons  -theme-str 'element-icon { size: 3ch;}'"
-    m:0x40 + c:38
-    Mod4 + a
+# "alacritty -e bash -c 'eval $(compgen -c | sort -u | ~/.local/bin/fzf/bin/fzf)'"
+#     m:0x40 + c:38
+#     Mod4 + a
+
+"alacritty -e bash -c '~/.local/bin/fzf/bin/fzf | xargs setsid -f xdg-open'"
+    m:0x40 + c:65
+    Mod4 + space
 
 "keepassxc"
     m:0x40 + c:39
@@ -50,7 +54,7 @@
     m:0x40 + c:24
     Mod4 + q
 
-"/bin/wmctrl -s 1"
+"/bin/wmctrl -s 0"
     m:0x40 + c:10
     Mod4 + 1
 
