@@ -102,11 +102,11 @@
     m:0x40 + c:116
     Mod4 + Down
 
-"~/dotfiles/bin/winfocus left"
+"~/.local/bin/winfocus left"
     m:0x41 + c:113
     Shift+Mod4 + Left
 
-"~/dotfiles/bin/winfocus right"
+"~/.local/bin/winfocus right"
     m:0x41 + c:114
     Shift+Mod4 + Right
 
@@ -153,6 +153,6 @@
 "gnome-screenshot -w --file=file:///home/luca-linux/Pictures/Screenshot_$(date +%F_%H-%M-%S).jpg"
     m:0x8 + c:107
     Alt + Print
-"alacritty -e ~/dotfiles/bin/screencast"
+"alacritty -e ~/.local/bin/screencast"
     m:0xd + c:27
     Control+Shift+Alt + r

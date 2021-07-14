@@ -58,7 +58,7 @@
   when: firstrun.changed
 
 - name: link dotfiles
-  command: "{{ ansible_env.HOME }}/dotfiles/bin/dotfiles"
+  command: "{{ ansible_env.HOME }}/dotfiles/bin/.local/bin/dotfiles"
   when: firstrun.changed
 
 - name: Enable systemd user services
