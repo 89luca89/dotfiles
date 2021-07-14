@@ -21,21 +21,20 @@ python_packages:
   - python3.8
 
 python_modules:
-  - "python-language-server[all]"
+  - "python-lsp-server[all]"
+  - pyls-flake8
+  - pyls-isort
+  - flake8-awesome
+  - flake8-docstrings
+  - flake8-eradicate
+  - setuptools
   - ansible==2.9
   - ansible-later
   - ansible-lint
   - demjson
-  - flake8-awesome
-  - flake8-docstrings
-  - flake8-eradicate
   - indicator-syncthing
-  - lz4
-  - molecule
   - neovim
-  - pass-import
   - psutil
-  - setuptools
   - six
   - yamllint
   - youtube-dl
@@ -45,10 +44,8 @@ golang_packages:
   - golang
 
 golang_modules:
-  - github.com/go-delve/delve/cmd/dlv
   - golang.org/x/lint/golint
   - golang.org/x/tools/cmd/goimports
   - golang.org/x/tools/cmd/gorename
   - golang.org/x/tools/cmd/guru
   - mvdan.cc/sh/cmd/shfmt
-  - github.com/mattn/efm-langserver

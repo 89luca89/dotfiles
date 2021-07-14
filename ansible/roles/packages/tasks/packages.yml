@@ -61,22 +61,17 @@
     GOPATH: "{{ ansible_env.HOME }}/.local/go"
   when: not golang.stat.exists
 
-- name: Install golang lsp
-  get_url:
-    url: "https://golang.org/dl/go1.16.3.linux-amd64.tar.gz"
-    dest: /tmp/go1.16.3.linux-amd64.tar.gz
-  when: not golang.stat.exists
-- name: Unarchive gopls archive
-  unarchive:
-    src: /tmp/go1.16.3.linux-amd64.tar.gz
-    dest: "{{ ansible_env.HOME }}/.local/"
-    copy: no
-  when: not golang.stat.exists
-
 - name: Install Programs (Programming Packages) - golangci-lint
   shell: |
     curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.27.0
   environment:
+    GOPATH: "{{ ansible_env.HOME }}/.local/go"
+  when: not golang.stat.exists
+
+- name: Install Programs (Programming Packages) - gopls
+  command: "go get golang.org/x/tools/gopls@latest"
+  environment:
+    GO111MODULE: "on"
     GOPATH: "{{ ansible_env.HOME }}/.local/go"
   when: not golang.stat.exists
 
