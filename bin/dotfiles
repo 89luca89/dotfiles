@@ -2,9 +2,12 @@
 
 set -e
 
+rm "$HOME/.histfile"
+
 pushd "$HOME/dotfiles"
 
 for i in $(ls -d */ | grep -vE "ansible|bin|desktop"); do
+    stow -D "$i";
     stow "$i";
 done
 
