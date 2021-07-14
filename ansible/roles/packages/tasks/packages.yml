@@ -24,7 +24,7 @@
     executable: pip3
     extra_args: --user
     name: "{{ python_modules }}"
-  become: false
+  become: true
 
 - name: Install Programs (golang)
   package:
@@ -48,6 +48,15 @@
     state: latest
     name: "{{ my_packages }}"
   become: true
+
+- name: Install Programs (Flatpak Programs - flathub)
+  command: "flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo"
+  tags: flatpak
+
+- name: Install Programs (Flatpak Programs )
+  command: "flatpak install -y {{ item }}"
+  with_items: "{{ flatpak_packages }}"
+  tags: flatpak
 
 - name: Check that golang exists
   stat:

@@ -27,10 +27,9 @@ terminal_packages:
   - python3-devel
   - python3-pip
   - ripgrep
-  - stunnel
+  - stow
   - tcpdump
   - tlp
-  - zbar
 
 my_packages:
   - chromium-freeworld
@@ -39,35 +38,28 @@ my_packages:
   - firefox
   - gimp
   - gnome-disk-utility
-  - gnome-screenshot
-  - gnome-terminal
   - gnome-keyring
   - gnome-keyring-pam
+  - gnome-screenshot
+  - gnome-terminal
   - gvim
-  - libreoffice-calc
-  - libreoffice-draw
-  - libreoffice-gtk3
-  - libreoffice-impress
-  - libreoffice-writer
-  - pinta
+  - keepassxc
+  - mypaint
+  - syncthing
   # Cli packages
   # - arandr
   # - nitrogen
+  - alacritty
   - aria2
   - mpv
   - ncdu
-  - keepassxc
   - ranger
-  - rofi
   - rsync
-  - syncthing
   - tmux
   - vim
   - w3m
   - papirus-icon-theme
-  - pinentry-qt
   # Generic X utility
-  #- devilspie2
   - setxkbmap
   - wmctrl
   - xbindkeys
