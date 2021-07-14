@@ -12,5 +12,6 @@ for i in $(ls -d */ | grep -vE "ansible|desktop"); do
 done
 
 ln -sf "Syncthing/Conf/.histfile" "$HOME/.histfile"
+ln -sf "Syncthing/bin" "$HOME/bin"
 
 popd
