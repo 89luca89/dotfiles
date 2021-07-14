@@ -1,9 +1,8 @@
 let g:polyglot_disabled = ['yaml'] " excluding vim-yaml from polyglot as it's not working
 set autoindent copyindent expandtab shiftwidth=4 softtabstop=4 tabstop=4
-set autoread hidden
+set autoread hidden visualbell
 set backspace=indent,eol,start
 set colorcolumn=80
-set completeopt=menu,menuone,popup,noselect,noinsert
 set encoding=utf8
 set formatoptions=tcqj
 set guioptions=d mouse=a
@@ -21,8 +20,10 @@ set termguicolors
 set title
 set undodir=$HOME/.vim/undo undofile undolevels=10000
 set wildignore+=tags wildmenu wildmode=longest:full,full
-set grepprg=rg\ --vimgrep\ --smart-case\ --follow
+set grepprg=rg\ --hidden\ --vimgrep\ --smart-case\ --follow
 set noshowmode noshowcmd laststatus=0 ruler " hide statusline
+set omnifunc=syntaxcomplete#Complete
+set completeopt=menu,menuone,popup,noselect,noinsert
 set rulerformat=%20(%m%r%w\ %y\ %l/%c%)\    " Modified+FileType+Ruler
 filetype off
 call plug#begin('~/.vim/plugged')
@@ -107,7 +108,8 @@ map <leader>p  :<C-u>Files<CR>
 map <leader>t  :<C-u>Tags<CR>
 map <leader>n  :<C-u>Lexplore<CR>
 " Easier completion shortcuts
-inoremap <C-@> <C-P>
+inoremap <C-@> <C-N>
+inoremap <C-L> <C-X><C-L>
 inoremap <C-F> <C-X><C-F>
 " Code help using external scripts: Lint File, Lint Project, Format, DeepTags, Grep in project
 nnoremap <leader>l  :<C-u>cgete system('project-utils ' . &filetype . " " .  expand('%') . " lint")<CR>:copen<CR>
@@ -115,6 +117,7 @@ nnoremap <leader>L  :<C-u>cgete system('project-utils ' . &filetype . " . lint")
 nnoremap <leader>I  :<C-u>call  system('project-utils ' . &filetype . " . format")<CR>
 nnoremap <leader>T  :<C-u>call  system('project-utils ' . &filetype . " . tags")<CR>
 nnoremap <leader>f  :<C-u>call Grep("")<Left><Left>
+nnoremap <leader>td :<C-u>call Grep("TODO<bar>FIXME")<CR>
 " Default IDE-Style keybindings: definition, indent, rename, references
 nnoremap <leader>d  :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
 nnoremap <leader>r  :<C-u>call Rename("<c-r>=expand("<cword>")<CR>", "")<Left><Left>
@@ -141,7 +144,6 @@ augroup lspbindings
     autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>rf :<C-u>LSClientFindReferences<CR>
     autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> K  :<C-u>LSClientShowHover<CR>
     " Add shell and ansible on this one
-    autocmd Filetype sh nnoremap <buffer> K  :<C-u>!man <c-r>=expand("<cword>")<CR><bar>less<CR>
     autocmd Filetype yaml.ansible nnoremap <buffer> K  :<C-u>!ansible-doc <c-r>=expand("<cword>")<CR><bar>less<CR>
 augroup end
 " Fix ansible file detection
@@ -154,11 +156,11 @@ augroup ansible_vim_fthosts
 augroup END
 " FUNCTIONS --------------------------------------------------------------------
 function! Grep(...)
-    cgetexpr system(&grepprg . ' ' . join(a:000, ' '))
+    cgetexpr system(&grepprg . ' "' . join(a:000, ' ') . '"' )
     copen
 endfunction
 function! Rename(old, new)
-    call system("rg --smart-case --follow -l " . shellescape(a:old) . " | xargs -P9 -I{} sed -i 's/" . shellescape(a:old) . "/" . shellescape(a:new) . "/g' {}")
+    call system("rg --hidden --smart-case --follow -l " . shellescape(a:old) . " | xargs -P9 -I{} sed -i 's/" . shellescape(a:old) . "/" . shellescape(a:new) . "/g' {}")
 endfunction
 function! SetDark()
         set background=dark
@@ -170,7 +172,7 @@ function! SetDark()
         highlight VertSplit     guibg=NONE guifg=#888888
         highlight myDeclaration guifg=#9CDCFE
         highlight myFunction    guifg=#fabd2f
-        edit
+        silent! edit
 endfunction
 function! SetLight()
         set background=light
@@ -179,7 +181,7 @@ function! SetLight()
         highlight TabLineSel    guibg=#606060 guifg=#FFFFFF
         highlight myDeclaration guifg=#008700
         highlight myFunction    guifg=#0087af
-        edit
+        silent! edit
 endfunction
 function! s:set_bg(timer_id)
     silent call system("grep -q 'light' ~/.local/share/current_theme")
@@ -207,7 +209,7 @@ let g:lsc_server_commands  = {
             \ 'c' : 'clangd',
             \ 'cc' : 'clangd',
             \ 'cpp' : 'clangd',
-            \ 'python': 'pyls',
+            \ 'python': 'pylsp',
             \ "go": {
                 \    "command": "gopls serve",
                 \    "log_level": -1,
