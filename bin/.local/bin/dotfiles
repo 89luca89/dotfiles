@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -e
+
+
+pushd "$HOME/dotfiles"
+
+for i in $(ls -d */ | grep -vE "ansible|desktop"); do
+    echo "$i"
+    stow -t ~ -D "$i";
+    stow -t ~ -S "$i";
+done
+
+ln -sf "Syncthing/Conf/.histfile" "$HOME/.histfile"
+
+popd
