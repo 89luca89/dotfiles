@@ -24,7 +24,7 @@ set grepprg=rg\ --hidden\ --vimgrep\ --smart-case\ --follow
 set noshowmode noshowcmd laststatus=0 ruler " hide statusline
 set omnifunc=syntaxcomplete#Complete
 set completeopt=menu,menuone,popup,noselect,noinsert
-set rulerformat=%20(%m%r%w\ %y\ %l/%c%)\    " Modified+FileType+Ruler
+set rulerformat=%40(%F%m%r%w\ [%c-%l/%L]\ %y%)\    " Modified+FileType+Ruler
 filetype off
 call plug#begin('~/.vim/plugged')
 " utilities
@@ -119,7 +119,7 @@ nnoremap <leader>T  :<C-u>call  system('project-utils ' . &filetype . " . tags")
 nnoremap <leader>f  :<C-u>call Grep("")<Left><Left>
 nnoremap <leader>td :<C-u>call Grep("TODO<bar>FIXME")<CR>
 " Default IDE-Style keybindings: definition, indent, rename, references
-nnoremap <leader>d  :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
+nnoremap <leader>gd  :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
 nnoremap <leader>r  :<C-u>call Rename("<c-r>=expand("<cword>")<CR>", "")<Left><Left>
 nnoremap <leader>rf :<C-u>call Grep("<c-r>=expand("<cword>")<CR>")<CR>
 nnoremap <leader>i  :<C-u>mkview<CR>:%s/\($\n\s*\)\+\%$//e<CR>:%s/\s\+$//e<CR>=G:loadview<CR>
@@ -139,7 +139,7 @@ augroup end
 augroup lspbindings
     autocmd!
     " IDE-like keybindings
-    autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>d  :<C-u>vert LSClientGoToDefinitionSplit<CR>
+    autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>gd  :<C-u>vert LSClientGoToDefinitionSplit<CR>
     autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>r  :<C-u>LSClientRename<CR>
     autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>rf :<C-u>LSClientFindReferences<CR>
     autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> K  :<C-u>LSClientShowHover<CR>
