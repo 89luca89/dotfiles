@@ -13,12 +13,12 @@ global_vars:
   - export QT_QPA_PLATFORM=xcb
 
 systemd_user_mask_services:
-  - evolution-addressbook-factory
-  - evolution-calendar-factory
-  - evolution-source-registry
-  - goa-daemon
-  - goa-identity-service
-  - gvfs-goa-volume-monitor
+  #  - evolution-addressbook-factory
+  #  - evolution-calendar-factory
+  #  - evolution-source-registry
+  #  - goa-daemon
+  #  - goa-identity-service
+  #  - gvfs-goa-volume-monitor
   - tracker-extract
   - tracker-miner-fs
   - tracker-miner-fs-3
@@ -30,6 +30,4 @@ systemd_root_mask_services:
   - livesys.service
   - livesys-late.sevice
   - dnf-makecache.timer
-  - lm_sensors.service
   - switcheroo-control.service
-  - systemd-homed.service

@@ -8,19 +8,19 @@
     m:0x40 + c:26
     Mod4 + e
 
-"cd ~ && alacritty"
+"cd ~ && gnome-terminal"
     m:0x40 + c:36
     Mod4 + Return
 
-"cd ~ && alacritty -e tmux"
+"cd ~ && gnome-terminal -e tmux"
     m:0xc + c:28
     Control+Alt + t
 
-# "alacritty -e bash -c 'eval $(compgen -c | sort -u | ~/.local/bin/fzf/bin/fzf)'"
+# "gnome-terminal -- bash -c 'eval $(compgen -c | sort -u | ~/.local/bin/fzf/bin/fzf)'"
 #     m:0x40 + c:38
 #     Mod4 + a
 
-"alacritty -e bash -c '~/.local/bin/fzf/bin/fzf | xargs setsid -f xdg-open'"
+"gnome-terminal -- bash -c '~/.local/bin/fzf/bin/fzf | xargs setsid -f xdg-open'"
     m:0x40 + c:65
     Mod4 + space
 
@@ -153,6 +153,6 @@
 "gnome-screenshot -w --file=file:///home/luca-linux/Pictures/Screenshot_$(date +%F_%H-%M-%S).jpg"
     m:0x8 + c:107
     Alt + Print
-"alacritty -e ~/.local/bin/screencast"
+"gnome-terminal -e ~/.local/bin/screencast"
     m:0xd + c:27
     Control+Shift+Alt + r
