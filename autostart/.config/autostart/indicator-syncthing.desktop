@@ -1,9 +1,0 @@
-[Desktop Entry]
-Encoding=UTF-8
-Type=Application
-Name=indicator-syncthing
-Comment=indicator-syncthing
-Exec=/home/luca-linux/.local/bin/indicator-syncthing
-StartupNotify=false
-Terminal=false
-Hidden=false
