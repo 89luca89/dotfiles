@@ -36,15 +36,11 @@ my_packages:
   - file-roller
   - firefox
   - gimp
-  - gnome-disk-utility
-  - gnome-keyring
-  - gnome-keyring-pam
-  - gnome-screenshot
-  - gnome-terminal
   - gvim
   - keepassxc
-  - mypaint
   - syncthing
+  - gnome-terminal
+  - gnome-screenshot
   # Cli packages
   # - arandr
   # - nitrogen
@@ -66,6 +62,12 @@ my_packages:
   - xgamma
   - xinput
   - xkill
+  # Pidgin
+  - pidgin
+  - pidgin-libnotify
+  - pidgin-window-merge
+  - purple-plugin-pack
+  - purple-plugin-pack-pidgin
 
 debloat_pkg:
   - PackageKit
