@@ -5,7 +5,7 @@ set -e
 
 pushd "$HOME/dotfiles"
 
-for i in $(ls -d */ | grep -vE "ansible|desktop"); do
+for i in $(ls -d */ | grep -vE "ansible|alacritty|desktop"); do
     echo "$i"
     stow -t ~ -D "$i";
     stow -t ~ -S "$i";

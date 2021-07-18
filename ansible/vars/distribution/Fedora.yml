@@ -18,8 +18,6 @@ terminal_packages:
   - git
   - git-credential-libsecret
   - golang
-  - libappindicator
-  - libappindicator-gtk3
   - lsof
   - make
   - net-tools
@@ -49,7 +47,6 @@ my_packages:
   # Cli packages
   # - arandr
   # - nitrogen
-  - alacritty
   - aria2
   - mpv
   - ncdu
@@ -58,7 +55,6 @@ my_packages:
   - tmux
   - vim
   - w3m
-  - papirus-icon-theme
   # Generic X utility
   - setxkbmap
   - wmctrl
