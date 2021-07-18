@@ -51,11 +51,13 @@
 
 - name: Install Programs (Flatpak Programs - flathub)
   command: "flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo"
+  become: true
   tags: flatpak
 
 - name: Install Programs (Flatpak Programs )
   command: "flatpak install -y {{ item }}"
   with_items: "{{ flatpak_packages }}"
+  become: true
   tags: flatpak
 
 - name: Check that golang exists

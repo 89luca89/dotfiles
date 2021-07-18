@@ -28,6 +28,7 @@ terminal_packages:
   - stow
   - tcpdump
   - tlp
+  - tree
 
 my_packages:
   - chromium-freeworld
@@ -53,6 +54,7 @@ my_packages:
   - ranger
   - rsync
   - tmux
+  - tmate
   - vim
   - w3m
   # Generic X utility
