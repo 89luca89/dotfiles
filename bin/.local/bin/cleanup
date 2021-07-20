@@ -43,146 +43,95 @@ clean_folder() {
 	fi
 }
 
-FOLDERS=(".aliases"
-	".ansible"
-	".ansible.cfg"
-	".bash_profile"
-	".bashrc"
-	".cache"
-	".clang-format"
-	".config"
-	".ctags"
-	".dbus"
-	".esd_auth"
-	".fzf.bash"
-	".fzf.zsh"
-	".gnupg"
-	".gitconfig"
-	".histfile"
-	".lesshst"
-	".local"
-	".localrc"
-	".mozilla"
-	".password-store"
-	".profile"
-	".purple"
-	".ssh"
-	".tmux.conf"
-	".var"
-	".vim"
-	".viminfo"
-	".vimrc"
-	".zshrc"
-	".xscreensaver"
-	".Xdefaults"
-	"Desktop"
-	"Documents"
-	"Downloads"
-	"Music"
-	"Pictures"
-	"Public"
-	"Programs"
-	"Projects"
-	"Syncthing"
-	"Templates"
-	"Videos"
-	"VirtualMachines"
-	"bin"
-	"dotfiles"
+FOLDERS=(
+	"./.ansible"
+	"./.gnupg"
+	"./.config"
+	"./.local"
+	"./.mozilla"
+	"./.thunderbird"
+	"./.purple"
+	"./.weechat"
+	"./.var"
+	"./.cache"
+	"./.ssh"
+	"./.vim"
+	"./Desktop"
+	"./Documents"
+	"./Downloads"
+	"./Music"
+	"./Pictures"
+	"./Programs"
+	"./Projects"
+	"./Public"
+	"./Syncthing"
+	"./Templates"
+	"./Videos"
+	"./VirtualMachines"
+	"./bin"
+	"./dotfiles"
 )
 pushd ~/ || exit 127
-shopt -s dotglob
-for dir in *; do
+find . -maxdepth 1 -type d -empty -delete
+for dir in $(find . -maxdepth 1 -type d | tail -n+2); do
 	if [[ ! " ${FOLDERS[@]} " =~ " ${dir} " ]]; then
-		clean_folder "$dir"
-	fi
-done
-shopt -u dotglob
-popd || exit 1
-
-CONFIG_FOLDERS=("autostart"
-	"galculator"
-	"GIMP"
-	"Mousepad"
-	"Thunar"
-	"chromium"
-	"containers"
-	"dconf"
-	"enchant"
-	"evolution"
-	"geary"
-	"gedit"
-	"goa-1.0"
-	"gnome-control-center"
-	"gnome-session"
-	"gnome-initial-setup-done"
-	"gtk-2.0"
-	"gtk-3.0"
-	"gtk-4.0"
-	"htop"
-	"ibus"
-	"libreoffice"
-	"libvirt"
-	"menus"
-	"mimeapps.list"
-	"monitors.xml"
-	"mpv"
-	"nautilus"
-	"pulse"
-	"ristretto"
-	"syncthing"
-	"systemd"
-	"touchegg"
-	"user-dirs.dirs"
-	"user-dirs.locale"
-	"vlc"
-	"xfce4"
-)
-pushd ~/.config || exit 127
-for dir in *; do
-	if [[ ! " ${CONFIG_FOLDERS[@]} " =~ " ${dir} " ]]; then
 		clean_folder "$dir"
 	fi
 done
 popd || exit 1
 
 CONFIG_FOLDERS=(
-	"Trash"
-	"applications"
-	"backgrounds"
-	"containers"
-	"doc"
-	"evolution"
-	"folks"
-	"flatpak"
-	"fonts"
-	"geary"
-	"gedit"
-	"gegl-0.4"
-	"gsettings-data-convert"
-	"gstreamer-1.0"
-	"gvfs-metadata"
-	"icc"
-	"icons"
-	"keyrings"
-	"libvirt"
-	"man"
-	"mime"
-	"recently-used.xbel"
-	"ristretto"
-	"sounds"
-	"vlc"
-	"webkitgtk"
-	"xorg"
-	"gnome-settings-daemon"
-	"gnome-shell"
-	"nautilus"
+	"./dconf"
+	"./eog"
+	"./GIMP"
+	"./gnome-control-center"
+	"./gnome-session"
+	"./goa-1.0"
+	"./gtk-2.0"
+	"./gtk-3.0"
+	"./gtk-4.0"
+	"./ibus"
+	"./keepassxc"
+	"./libreoffice"
+	"./nautilus"
+	"./pipewire"
+	"./pulse"
+	"./syncthing"
+	"./systemd"
+	"./tg"
+)
+pushd ~/.config || exit 127
+find . -maxdepth 1 -type d -empty -delete
+for dir in $(find . -maxdepth 1 -type d | tail -n+2); do
+	if [[ ! " ${CONFIG_FOLDERS[@]} " =~ " ${dir} " ]]; then
+		clean_folder "$dir"
+	fi
+done
+popd || exit 1
 
+LOCAL_FOLDERS=(
+	"./backgrounds"
+	"./current_theme"
+	"./doc"
+	"./flatpak"
+	"./gegl-0.4"
+	"./gnome-settings-daemon"
+	"./gnome-shell"
+	"./gvfs-metadata"
+	"./icc"
+	"./keyrings"
+	"./man"
+	"./mime"
+	"./nautilus"
+	"./pki"
+	"./terraform"
+	"./xorg"
 )
 
 pushd ~/.local/share || exit 127
-for dir in *; do
-	if [[ ! " ${CONFIG_FOLDERS[@]} " =~ " ${dir} " ]]; then
+find . -maxdepth 1 -type d -empty -delete
+for dir in $(find . -maxdepth 1 -type d | tail -n+2); do
+	if [[ ! " ${LOCAL_FOLDERS[@]} " =~ " ${dir} " ]]; then
 		clean_folder "$dir"
 	fi
 done
