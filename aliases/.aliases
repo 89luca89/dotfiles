@@ -3,7 +3,7 @@ gnome-background() {
 	gsettings set org.gnome.desktop.background secondary-color "$1"
 	gsettings set org.gnome.desktop.background color-shading-type 'solid'
 	gsettings set org.gnome.desktop.background picture-options 'none'
-	gsettings set org.gnome.desktop.background picture-uri ''
+	gsettings set org.gnome.desktop.background picture-uri '""'
 }
 update-all() {
 	sudo dnf update --refresh
