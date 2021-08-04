@@ -1,0 +1,12 @@
+[Desktop Entry]
+Icon=/home/luca-linux/.local/share/applications/chat-bubbles-icon.png
+MiniIcon=/home/luca-linux/.local/share/applications/chat-bubbles-icon.png
+Name=Telegram
+GenericName=Chat client
+Comment=Extensible chat client
+Keywords=Telegram;extensible;chat;IRC;client;console;terminal;
+Exec=/home/luca-linux/bin/communication telegram %u
+Terminal=false
+Type=Application
+Categories=Network;Chat;IRCClient;ConsoleOnly;
+MimeType=x-scheme-handler/irc;x-scheme-handler/ircs;
