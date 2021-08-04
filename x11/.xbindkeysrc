@@ -16,7 +16,7 @@
     m:0xc + c:28
     Control+Alt + t
 
-"gnome-terminal -- bash -c 'CMD=$(find ~/.local/share/applications/ ~/.local/share/flatpak/exports/share/applications/ /usr/share/applications/ /var/lib/flatpak/exports/share/applications/ -name "*.desktop" | ~/.local/bin/fzf/bin/fzf | xargs basename) && [ -n "$CMD" ] && (setsid -f /bin/gtk-launch $CMD; sleep 0.5)'"
+"gnome-terminal -- bash -c 'CMD=$(find ~/.local/share/applications/ ~/.local/share/flatpak/exports/share/applications/ /usr/share/applications/ /var/lib/flatpak/exports/share/applications/ -name "*.desktop" | ~/.local/bin/fzf/bin/fzf | xargs basename) && [ -n "$CMD" ] && (setsid -f /bin/gtk-launch $CMD; sleep 0.1)'"
     m:0x40 + c:38
     Mod4 + a
 
@@ -142,20 +142,27 @@
     m:0x40 + c:58
     Mod4 + m
 
+"xkill"
+    m:0xc + c:22
+    Control+Alt + BackSpace
+
 ### Media Management
 
 "gnome-screenshot -i --file=file:///home/luca-linux/Pictures/Screenshot_$(date +%F_%H-%M-%S).jpg"
     m:0x0 + c:107
     Print
-"sleep 0.5; gnome-screenshot -a -c"
-    m:0x5 + c:107
-    Control+Shift + Print
+"gnome-screenshot --file=file:///home/luca-linux/Pictures/Screenshot_$(date +%F_%H-%M-%S).jpg"
+    m:0x40 + c:107
+    Mod4 + Print
 "sleep 0.5; gnome-screenshot -a --file=file:///home/luca-linux/Pictures/Screenshot_$(date +%F_%H-%M-%S).jpg"
     m:0x1 + c:107
     Shift + Print
+"sleep 0.5; gnome-screenshot -a -c"
+    m:0x5 + c:107
+    Control+Shift + Print
 "gnome-screenshot -w --file=file:///home/luca-linux/Pictures/Screenshot_$(date +%F_%H-%M-%S).jpg"
     m:0x8 + c:107
     Alt + Print
-"gnome-terminal -e ~/.local/bin/screencast"
+"gnome-terminal -e ~/.local/bin/screencast60"
     m:0xd + c:27
     Control+Shift+Alt + r
