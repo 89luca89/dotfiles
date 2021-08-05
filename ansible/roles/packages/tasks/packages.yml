@@ -1,5 +1,17 @@
 # my_apps.yml
 ---
+
+- name: Install the rpmfusion and fonts repo packages
+  dnf:
+    state: present
+    disable_gpg_check: yes
+    name:
+      - https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_facts.distribution_version }}.noarch.rpm
+      - https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_facts.distribution_version }}.noarch.rpm
+  become: yes
+  tags: rpmfusion
+  when: ansible_os_family == "Redhat"
+
 - name: Remove bloat packages
   package:
     state: absent
@@ -85,61 +97,3 @@
     GO111MODULE: "on"
     GOPATH: "{{ ansible_env.HOME }}/.local/go"
   when: not golang.stat.exists
-
-- name: Check that terraform exists
-  stat:
-    path: "{{ ansible_env.HOME }}/.local/bin/terraform"
-  register: terraform
-- name: Install terraform
-  get_url:
-    url: "https://releases.hashicorp.com/terraform/{{ terraform_version }}/terraform_{{ terraform_version }}_linux_amd64.zip"
-    dest: /tmp/terraform.zip
-  when: not terraform.stat.exists
-- name: Unarchive Terraform archive
-  unarchive:
-    src: /tmp/terraform.zip
-    dest: "{{ ansible_env.HOME }}/.local/bin/"
-    copy: no
-  when: not terraform.stat.exists
-
-- name: Check that terraform-ls exists
-  stat:
-    path: "{{ ansible_env.HOME }}/.local/bin/terraform-ls"
-  register: terraform_ls
-- name: Install terraform lsp
-  get_url:
-    url: "https://releases.hashicorp.com/terraform-ls/{{ terraform_ls_version }}/terraform-ls_{{ terraform_ls_version }}_linux_amd64.zip"
-    dest: /tmp/terraform-ls.zip
-  when: not terraform_ls.stat.exists
-- name: Unarchive Terraform-ls archive
-  unarchive:
-    src: /tmp/terraform-ls.zip
-    dest: "{{ ansible_env.HOME }}/.local/bin/"
-    copy: no
-  when: not terraform_ls.stat.exists
-
-- name: Check that terraform-provider-libvirt exists
-  stat:
-    path: "{{ ansible_env.HOME }}/.local/share/terraform/plugins/registry.terraform.io/dmacvicar/libvirt/{{ terraform_provider_libvirt_version }}/linux_amd64"
-  register: terraform_provider_libvirt
-- name: Check if install folder is present
-  file:
-    path: "{{ ansible_env.HOME }}/.local/share/terraform/plugins/registry.terraform.io/dmacvicar/libvirt/{{ terraform_provider_libvirt_version }}/"
-    state: directory
-    recurse: true
-  when: not terraform_provider_libvirt.stat.exists
-- name: Install terraform-provider-libvirt
-  get_url:
-    url: "{{ terraform_provider_libvirt_url }}"
-    dest: /tmp/terraform-provider-libvirt.tar.gz
-  when: not terraform_provider_libvirt.stat.exists
-- name: Unarchive terraform-provider-libvirt archive
-  unarchive:
-    src: /tmp/terraform-provider-libvirt.tar.gz
-    dest: "{{ ansible_env.HOME }}/.local/share/terraform/plugins/registry.terraform.io/dmacvicar/libvirt/{{ terraform_provider_libvirt_version }}/"
-    copy: no
-  when: not terraform_provider_libvirt.stat.exists
-- command: |
-    mv {{ ansible_env.HOME }}/.local/share/terraform/plugins/registry.terraform.io/dmacvicar/libvirt/{{ terraform_provider_libvirt_version }}/terraform-provider-libvirt \
-          {{ ansible_env.HOME }}/.local/share/terraform/plugins/registry.terraform.io/dmacvicar/libvirt/{{ terraform_provider_libvirt_version }}/linux_amd64
-  when: not terraform_provider_libvirt.stat.exists

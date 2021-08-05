@@ -13,8 +13,8 @@ terminal_packages:
   - clang-tools-extra
   - ctags
   - ctags-etags
+  - dos2unix
   - flatpak
-  - tig
   - git
   - git-credential-libsecret
   - golang
@@ -27,6 +27,7 @@ terminal_packages:
   - ripgrep
   - stow
   - tcpdump
+  - tig
   - tlp
   - tree
 
@@ -36,23 +37,26 @@ my_packages:
   - file-roller
   - firefox
   - gimp
+  - gnome-screenshot
+  - gnome-terminal
   - gvim
   - keepassxc
   - syncthing
-  - gnome-terminal
-  - gnome-screenshot
+  - thunderbird
+  # Pidgin
+  - adwaita-gtk2-theme
+  - gtk-murrine-engine
+  - gtk2-engines
+  - pidgin
+  - pidgin-indicator
   # Cli packages
-  # - arandr
-  # - nitrogen
   - aria2
   - mpv
   - ncdu
-  - ranger
   - rsync
   - tmux
   - tmate
   - vim
-  - w3m
   # Generic X utility
   - setxkbmap
   - wmctrl
@@ -62,12 +66,6 @@ my_packages:
   - xgamma
   - xinput
   - xkill
-  # Pidgin
-  - pidgin
-  - pidgin-libnotify
-  - pidgin-window-merge
-  - purple-plugin-pack
-  - purple-plugin-pack-pidgin
 
 debloat_pkg:
   - PackageKit
@@ -88,51 +86,46 @@ debloat_pkg:
   - abrt-plugin-bodhi
   - abrt-retrace-client
   - abrt-tui
+  - anaconda-install-env-deps
+  - gamemode
   - gnome-boxes
   - gnome-calendar
+  - gnome-characters
+  - gnome-classic-session
+  - gnome-clocks
   - gnome-contacts
   - gnome-dictionary
   - gnome-documents
+  - gnome-font-viewer
   - gnome-getting-started-docs
   - gnome-initial-setup
+  - gnome-logs
   - gnome-maps
+  - gnome-menus
   - gnome-music
   - gnome-online-miners
   - gnome-photos
+  - gnome-shell-extension-background-logo
   - gnome-software
+  - gnome-tour
   - gnome-user-docs
   - gnome-user-share
   - gnome-video-effects
   - gnome-weather
   - httpd
+  - hyperv-daemons
+  - hyperv-daemons-license
+  - hypervfcopyd
+  - hypervkvpd
+  - hypervvssd
   - open-vm-tools-desktop
+  - orca
+  - qemu-guest-agent
+  - rhythmbox
   - rsyslog
-  - xarchiver
-  - xfce4-screenshooter
+  - spice-vdagent
+  - totem
+  - virtualbox-guest-additions
   - yelp
   - yelp-libs
   - yelp-xsl
-  - akregator
-  - dragonplayer
-  - juk
-  - kaddressbook
-  - kcolorchooser
-  - kget
-  - kgpg
-  - kmag
-  - kmahjongg
-  - kmail
-  - kmines
-  - kmousetool
-  - kmouth
-  - kolourpaint
-  - kontact
-  - konversation
-  - korganizer
-  - kpat
-  - krdc
-  - krfb
-  - kruler
-  - ktnef
-  - kwrite
-  - mediawriter

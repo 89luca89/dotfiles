@@ -11,8 +11,8 @@ flatpak_packages:
   # - com.github.tchx84.Flatseal
   - com.jgraph.drawio.desktop
   - com.skype.Client
-  - io.typora.Typora
-  - org.onlyoffice.desktopeditors
+  # - io.typora.Typora
+  # - org.onlyoffice.desktopeditors
   - us.zoom.Zoom
 
 python_packages:
