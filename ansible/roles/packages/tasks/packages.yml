@@ -18,6 +18,20 @@
     name: "{{ debloat_pkg }}"
   become: true
 
+- name: Install Programs (Archive Utilities)
+  package:
+    state: present
+    name: "{{ archive_packages }}"
+  become: yes
+  tags: archives
+
+- name: Install Programs (Media Utilities)
+  package:
+    state: present
+    name: "{{ codecs_packages }}"
+  become: yes
+  tags: codecs
+
 - name: Install Programs (Programming Packages)
   package:
     state: latest

@@ -4,6 +4,42 @@
 
 terraform_provider_libvirt_url: "https://github.com/dmacvicar/terraform-provider-libvirt/releases/download/v{{ terraform_provider_libvirt_version }}/terraform-provider-libvirt-{{ terraform_provider_libvirt_release }}.Fedora_32.x86_64.tar.gz"
 
+archive_packages:
+  - cabextract
+  - lzip
+  - p7zip
+  - p7zip-plugins
+  - unzip
+  - zstd
+
+codecs_packages:
+  - compat-ffmpeg28
+  - compat-ffmpeg28-devel
+  - egl-utils
+  - egl-wayland
+  - flac
+  - ffmpeg
+  - ffmpeg-libs
+  - gstreamer1-libav
+  - gstreamer1-plugins-bad-free
+  - gstreamer1-plugins-bad-freeworld
+  - gstreamer1-plugins-base
+  - gstreamer1-plugins-base-tools
+  - gstreamer1-plugins-good
+  - gstreamer1-plugins-good-extras
+  - gstreamer1-plugins-ugly
+  - gstreamer1-plugins-ugly-free
+  - gstreamer1-svt-av1
+  - gstreamer1-svt-vp9
+  - gstreamer1-vaapi
+  - intel-media-driver
+  - libva-devel
+  - libva-intel-driver
+  - libva-intel-hybrid-driver
+  - libva-utils
+  - libva-vdpau-driver
+  - libvdpau-va-gl
+
 terminal_packages:
   - ShellCheck
   - acpi
@@ -39,6 +75,7 @@ my_packages:
   - gimp
   - gnome-screenshot
   - gnome-terminal
+  - gnome-network-displays
   - gvim
   - keepassxc
   - syncthing
