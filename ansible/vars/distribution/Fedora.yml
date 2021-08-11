@@ -130,8 +130,10 @@ debloat_pkg:
   - anaconda-install-env-deps
   - gamemode
   - gnome-boxes
+  - gnome-calendar
   - gnome-characters
   - gnome-classic-session
+  - gnome-contacts
   - gnome-dictionary
   - gnome-documents
   - gnome-font-viewer
