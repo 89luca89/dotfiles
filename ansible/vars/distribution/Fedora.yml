@@ -84,6 +84,7 @@ my_packages:
   - keepassxc
   - syncthing
   - thunderbird
+  - papirus-icon-theme
   # Pidgin
   - adwaita-gtk2-theme
   - gtk-murrine-engine
