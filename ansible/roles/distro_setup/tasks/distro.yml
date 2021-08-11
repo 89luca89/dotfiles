@@ -1,6 +1,18 @@
 ---
 # tasks file to setup distro to my liking
 
+- name: Improve DNF Performances
+  blockinfile:
+    path: /etc/dnf/dnf.conf
+    create: yes
+    block: |
+      deltarpm=true
+      fastestmirror=true
+      install_weak_deps=false
+      max_parallel_downloads={{ ansible_processor_vcpus }}
+  become: yes
+  when: ansible_os_family == "Redhat"
+
 - name: Update the profiles file with personal variables
   lineinfile:
     path: /etc/profile

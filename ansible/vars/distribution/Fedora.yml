@@ -68,15 +68,19 @@ terminal_packages:
   - tree
 
 my_packages:
-  - chromium-freeworld
   - evince
   - file-roller
   - firefox
+  - chromium-freeworld
   - gimp
-  - gnome-screenshot
-  - gnome-terminal
-  - gnome-network-displays
   - gvim
+  - gnome-nettool
+  - gnome-network-displays
+  - gnome-screenshot
+  - gnome-sound-recorder
+  - gnome-terminal
+  - gnome-firmware
+  - fwupd
   - keepassxc
   - syncthing
   - thunderbird
@@ -126,16 +130,12 @@ debloat_pkg:
   - anaconda-install-env-deps
   - gamemode
   - gnome-boxes
-  - gnome-calendar
   - gnome-characters
   - gnome-classic-session
-  - gnome-clocks
-  - gnome-contacts
   - gnome-dictionary
   - gnome-documents
   - gnome-font-viewer
   - gnome-getting-started-docs
-  - gnome-initial-setup
   - gnome-logs
   - gnome-maps
   - gnome-menus
@@ -144,7 +144,6 @@ debloat_pkg:
   - gnome-photos
   - gnome-shell-extension-background-logo
   - gnome-software
-  - gnome-tour
   - gnome-user-docs
   - gnome-user-share
   - gnome-video-effects

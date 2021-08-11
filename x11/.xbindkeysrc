@@ -16,7 +16,7 @@
     m:0xc + c:28
     Control+Alt + t
 
-"gnome-terminal -- bash -c 'CMD=$(find ~/.local/share/applications/ ~/.local/share/flatpak/exports/share/applications/ /usr/share/applications/ /var/lib/flatpak/exports/share/applications/ -name "*.desktop" | ~/.local/bin/fzf/bin/fzf | xargs basename) && [ -n "$CMD" ] && (setsid -f /bin/gtk-launch $CMD; sleep 0.1)'"
+"gnome-terminal -- bash -c 'CMD=$(find ~/.local/share/applications/ ~/.local/share/flatpak/exports/share/applications/ /usr/share/applications/ /var/lib/flatpak/exports/share/applications/ -name "*.desktop" 2> /dev/null | ~/.local/bin/fzf/bin/fzf | xargs basename) && [ -n "$CMD" ] && (setsid -f /bin/gtk-launch $CMD; sleep 0.1)'"
     m:0x40 + c:38
     Mod4 + a
 
