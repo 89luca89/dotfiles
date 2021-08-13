@@ -6,18 +6,11 @@ gnome-background() {
 	gsettings set org.gnome.desktop.background picture-uri '""'
 }
 update-all() {
+	sudo fwupdmgr refresh --force
 	sudo dnf update --refresh
-	flatpak --user update
+	flatpak update
 	flatpak --unused uninstall
-	cd "$HOME/.vim/plugged" || exit 1
-	# Reset all changes here
-	for i in *; do
-		cd "$i" || exit 1
-		git checkout
-		cd .. || exit 1
-	done
 	vim +PlugUpdate +PlugInstall! +qall
-	popd || exit 1
 }
 update-grub() {
 	CONFS=$(sudo find /boot -name "grub.cfg")
