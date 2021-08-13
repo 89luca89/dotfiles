@@ -27,6 +27,9 @@ call plug#begin('~/.vim/plugged')
 " utilities
 Plug 'ap/vim-buftabline'
 Plug 'yggdroot/indentLine'
+" git
+Plug 'airblade/vim-gitgutter'
+Plug 'tpope/vim-fugitive'
 " Fzf
 Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
@@ -57,6 +60,14 @@ augroup general
     autocmd Syntax * syntax match myDeclaration '\v\w+(,\s*\w+)*\ze(\s*:\=)'
     autocmd Syntax * syntax match myFunction    '\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\ze\%([a-zA-Z0-9]*(\)'
 augroup end
+" Netrw
+let g:netrw_altv    = 1
+let g:netrw_banner  = 0
+let g:netrw_browse_split = 4
+let g:netrw_list_hide    =netrw_gitignore#Hide()
+let g:netrw_liststyle = 3
+let g:netrw_sort_sequence = '[\/]$,*'
+let g:netrw_winsize = -28
 " Languages
 let g:ansible_attribute_highlight       = 'ab'
 let g:ansible_extra_keywords_highlight  = 1
