@@ -180,7 +180,7 @@ endfunction
 function! SetDark()
     set background=dark
     highlight Comment       ctermfg=242
-    highlight Pmenu         ctermbg=235 ctermfg=15
+    highlight SignColumn    ctermbg=NONE guibg=NONE
     highlight TabLineFill   cterm=NONE gui=NONE
     highlight VertSplit     cterm=NONE gui=NONE
     highlight myDeclaration gui=bold cterm=bold guifg=#fabd2f ctermfg=121
@@ -190,7 +190,7 @@ endfunction
 function! SetLight()
     set background=light
     highlight Comment       ctermfg=242
-    highlight Pmenu         ctermbg=250     ctermfg=0
+    highlight SignColumn    ctermbg=NONE guibg=NONE
     highlight TabLineFill   cterm=NONE gui=NONE
     highlight VertSplit     cterm=NONE gui=NONE
     highlight myDeclaration gui=bold cterm=bold guifg=#008700 ctermfg=28
