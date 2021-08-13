@@ -213,29 +213,39 @@ case "$COMMAND" in
 	;;
 "tags")
 
+	rm -f tags
 	ctags -R "$DIR"
+
 	case "$LANG" in
 
 	"c")
 
-		ctags -R --exclude=/usr/include/boost --exclude=/usr/include/c++ /usr/include/ -a
+		ctags -R --exclude=/usr/include/boost --exclude=/usr/include/c++ /usr/include/ ~/.local/include/ -a
 		;;
 
 	"cpp")
 
-		ctags -R --exclude=/usr/include/boost /usr/include/ -a
+		ctags -R --exclude=/usr/include/boost /usr/include/ ~/.local/include/ -a
 		;;
 
 	"go")
 
-		ctags -R /usr/lib/golang/src/ -a
-		ctags -R "$GOPATH"/src/ -a
+		DIRS="/usr/lib/golang/src/"
+
+		if [ -d "$HOME/.local/go/pkg/" ]; then
+			DIRS="$DIRS $HOME/.local/go/pkg/"
+		fi
+		if [ -f "$GOPATH"/pkg/ ]; then
+			DIRS="$DIRS $GOPATH/pkg/"
+		fi
+		ctags -R $DIRS -a
 		;;
 
 	"python")
 
 		version=$(python --version | cut -d' ' -f2 | cut -d'.' -f1,2)
 		ctags -R /usr/lib/python"$version"/ -a
+		ctags -R "$HOME/.local/lib/python$version/" -a
 		;;
 
 	"rust")
