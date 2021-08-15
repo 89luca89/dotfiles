@@ -1,22 +1,18 @@
 source $VIMRUNTIME/defaults.vim
-set autoindent copyindent expandtab shiftwidth=4 softtabstop=4 tabstop=4
-set autoread hidden visualbell
+set autoindent copyindent expandtab shiftwidth=4 softtabstop=4 tabstop=4 smartcase smartindent smarttab
+set autoread autowrite hidden
 set colorcolumn=80 cursorline
 set formatoptions=tcqj
-set grepprg=grep\ -rn
+set grepprg=grep\ -rn hlsearch ignorecase
 set guioptions=d mouse=a
-set hlsearch ignorecase
-set langnoremap langremap lazyredraw ttyfast updatetime=50
+set langnoremap langremap lazyredraw ttyfast
 set list lcs=tab:\¦\  " here is a space, goes in hand with indentLine
-set nomodeline nofsync nowrap noswapfile nowritebackup nobackup
-set smartcase smartindent smarttab
+set omnifunc=syntaxcomplete#Complete completeopt=menu,menuone,popup,noselect,noinsert
+set path+=.,** wildmode=longest:full,full wildignorecase
 set splitbelow splitright
 set title number encoding=utf8
 set undodir=$HOME/.vim/undo undofile undolevels=10000
-set path+=.,** wildignore+=tags wildmode=longest:full,full wildignorecase
-set omnifunc=syntaxcomplete#Complete
-set completeopt=menu,menuone,popup,noselect,noinsert
-set noshowmode noshowcmd laststatus=0 ruler         " hide statusline
+set nomodeline nofsync nowrap noswapfile nowritebackup nobackup noshowmode noshowcmd laststatus=0 ruler
 set rulerformat=%40(%F%m%r%w\ [%c-%l/%L]\ %y%)\     " Modified+FileType+Ruler
 " Avoid Highlighting Large Files
 let g:large_file = 20*1024*1024
@@ -63,12 +59,10 @@ augroup general
     autocmd Syntax * syntax match myFunction    '\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\ze\%([a-zA-Z0-9]*(\)'
 augroup end
 " Netrw
-let g:netrw_altv    = 1
-let g:netrw_banner  = 0
+let g:netrw_altv   = 1
+let g:netrw_banner = 0
 let g:netrw_browse_split = 4
-let g:netrw_list_hide    =netrw_gitignore#Hide()
 let g:netrw_liststyle = 3
-let g:netrw_sort_sequence = '[\/]$,*'
 let g:netrw_winsize = -28
 " Languages
 let g:ansible_attribute_highlight       = 'ab'
