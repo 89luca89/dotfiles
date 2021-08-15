@@ -5,17 +5,19 @@
 # Support single file or entire project folders.
 #
 # Usage:
-# lint-project go ~/path/to/project lint -> lint entire project
-# lint-project sh ~/path/to/file lint -> lint single file
-# lint-project cpp ~/path/to/file format -> reformat single file
-# lint-project python ~/path/to/folder format -> reformat entire project
-# lint-project c ~/path/to/folder tags -> create ctags for the project
+# lint-project go $HOME/path/to/project lint -> lint entire project
+# lint-project sh $HOME/path/to/file lint -> lint single file
+# lint-project cpp $HOME/path/to/file format -> reformat single file
+# lint-project python $HOME/path/to/folder format -> reformat entire project
+# lint-project c $HOME/path/to/folder tags -> create ctags for the project
 
 LANG=$1
 DIR=$2
 COMMAND=$3
 
 case "$COMMAND" in
+
+###############################################################################
 "format")
 
 	case "$LANG" in
@@ -54,20 +56,12 @@ case "$COMMAND" in
 	"python")
 
 		yapf -p --style facebook -i -r "$DIR" 2>/dev/null
-		isort -ac -y -rc "$DIR" 2>/dev/null
+		isort -ac -rc "$DIR" 2>/dev/null
 		;;
 
 	"sh")
 
 		shfmt -s -w "$DIR" 2>/dev/null
-		;;
-
-	"rust")
-
-		files=$(find "$DIR" -type f -name '*.rs')
-		for f in $files; do
-			rustfmt "$f"
-		done
 		;;
 
 	"terraform")
@@ -85,11 +79,10 @@ case "$COMMAND" in
 			jsonlint -f -o "$f" "$f"
 		done
 		;;
-	"css" | "html" | "javascript" | "markdown" | "typescript" | "yaml" | "yaml.ansible")
-		prettier -w .
-		;;
 	esac
 	;;
+
+##############################################################################
 "lint")
 	case "$LANG" in
 	"go")
@@ -100,7 +93,7 @@ case "$COMMAND" in
 		golint -min_confidence 0 "$DIR"
 
 		# golangci with the rest
-		LINES=$(~/.local/go/bin/golangci-lint run --color never --enable-all -D golint,funlen,gomodguard --out-format tab | grep "$(basename "$DIR")" | sed "s/  */ /g" | sort -u)
+		LINES=$("$HOME/.local/go/bin/golangci-lint" run --color never --enable-all -D golint,funlen,gomodguard --out-format tab | grep "$(basename "$DIR")" | sed "s/  */ /g" | sort -u)
 
 		while IFS= read -r line; do
 
@@ -128,38 +121,6 @@ case "$COMMAND" in
 		flake8 -j auto --max-line-length 80 "$DIR" 2>/dev/null
 		;;
 
-	*"ansible"*)
-
-		DIR=$(realpath --relative-to=$(pwd) "$DIR")
-
-		yamllint -d "{extends: default, rules: {line-length: disable, truthy: disable, key-duplicates: enable, comments: {min-spaces-from-content: 1}}}" --format parsable "$DIR"
-
-		ansible-lint -p --nocolor -x yaml 2>/dev/null
-
-		if [ -d "$DIR" ]; then
-			if [ -d "$DIR/tasks" ]; then
-				LINES=$(ansible-later tasks 2>&1)
-			else
-				LINES=$(ansible-later roles 2>&1)
-			fi
-		else
-			echo ansible-later $DIR
-			LINES=$(ansible-later "$DIR" 2>&1)
-		fi
-
-		while IFS= read -r line; do
-			if [ "$(echo "$line" | wc -c)" -lt 2 ]; then
-				continue
-			else
-				if ! echo "$line" | grep -q ERROR; then
-					if ! echo "$line" | grep -q WARN; then
-						echo "$line" | cut -c5-
-					fi
-				fi
-			fi
-		done <<<"$LINES"
-		;;
-
 	"sh")
 
 		if [ -d "$DIR" ]; then
@@ -182,6 +143,37 @@ case "$COMMAND" in
 	"yaml")
 
 		yamllint -d "{extends: default, rules: {line-length: disable, truthy: disable, key-duplicates: enable, comments: {min-spaces-from-content: 1}}}" --format parsable "$DIR"
+		;;
+
+	*"ansible"*)
+
+		DIR=$(realpath --relative-to="$(pwd)" "$DIR")
+
+		yamllint -d "{extends: default, rules: {line-length: disable, truthy: disable, key-duplicates: enable, comments: {min-spaces-from-content: 1}}}" --format parsable "$DIR"
+
+		ansible-lint -p --nocolor -x yaml 2>/dev/null
+
+		if [ -d "$DIR" ]; then
+			if [ -d "$DIR/tasks" ]; then
+				LINES=$(ansible-later tasks 2>&1)
+			else
+				LINES=$(ansible-later roles 2>&1)
+			fi
+		else
+			LINES=$(ansible-later "$DIR" 2>&1)
+		fi
+
+		while IFS= read -r line; do
+			if [ "$(echo "$line" | wc -c)" -lt 2 ]; then
+				continue
+			else
+				if ! echo "$line" | grep -q ERROR; then
+					if ! echo "$line" | grep -q WARN; then
+						echo "$line" | cut -c5-
+					fi
+				fi
+			fi
+		done <<<"$LINES"
 		;;
 
 	"xml")
@@ -211,21 +203,22 @@ case "$COMMAND" in
 
 	esac
 	;;
+
+##############################################################################
 "tags")
 
 	rm -f tags
-	ctags -R "$DIR"
 
 	case "$LANG" in
 
 	"c")
 
-		ctags -R --exclude=/usr/include/boost --exclude=/usr/include/c++ /usr/include/ ~/.local/include/ -a
+		ctags -R --exclude=/usr/include/boost --exclude=/usr/include/c++ . /usr/include/ "$HOME/.local/include/" -a
 		;;
 
 	"cpp")
 
-		ctags -R --exclude=/usr/include/boost /usr/include/ ~/.local/include/ -a
+		ctags -R --exclude=/usr/include/boost /usr/include/ . "$HOME/.local/include/" -a
 		;;
 
 	"go")
@@ -238,23 +231,38 @@ case "$COMMAND" in
 		if [ -f "$GOPATH"/pkg/ ]; then
 			DIRS="$DIRS $GOPATH/pkg/"
 		fi
-		ctags -R $DIRS -a
+		ctags -R . $DIRS -a
 		;;
 
 	"python")
 
 		version=$(python --version | cut -d' ' -f2 | cut -d'.' -f1,2)
-		ctags -R /usr/lib/python"$version"/ -a
-		ctags -R "$HOME/.local/lib/python$version/" -a
+		DIRS="/usr/include/python$version/"
+
+		for i in $(cat requirements.txt); do
+			if [ -d "/usr/lib/python$version/site-packages/$i" ]; then
+				DIRS="$DIRS /usr/lib/python$version/site-packages/*$i*"
+			fi
+			if [ -d "/usr/lib64/python$version/site-packages/$i" ]; then
+				DIRS="$DIRS /usr/lib64/python$version/site-packages/*$i*"
+			fi
+			if [ -d "$HOME/.local/lib/python$version/site-packages/$i" ]; then
+				DIRS="$DIRS $HOME/.local/lib/python$version/site-packages/*$i*"
+			fi
+
+		done
+		ctags -R . $DIRS -a
 		;;
 
-	"rust")
+	*"ansible"*)
 
-		TOOLCHAIN=$(rustup toolchain list | grep default | awk '{print $1}')
-		ctags -R ~/.local/rust/toolchains/"$TOOLCHAIN" -a
+		version=$(ansible --version | grep 'python version' | awk '{print $4}' | cut -d'.' -f1,2)
+
+		DIRS=$(ls -ad /usr/lib*/python"$version"/site-packages/*ansible*)
+		ctags -R . $DIRS -a
 		;;
 	"*")
-		ctags -R . -a
+		ctags -R .
 		;;
 
 	esac
