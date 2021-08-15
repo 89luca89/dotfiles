@@ -27,6 +27,9 @@ call plug#begin('~/.vim/plugged')
 " utilities
 Plug 'ap/vim-buftabline'
 Plug 'yggdroot/indentLine'
+" colorscheme
+Plug 'joshdick/onedark.vim'
+Plug 'cormacrelf/vim-colors-github'
 " git
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
@@ -110,9 +113,6 @@ let mapleader = ' '
 map <leader><leader>  :<C-u>Buffers<CR>
 map <leader>p  :<C-u>Files<CR>
 map <leader>t  :<C-u>Tags<CR>
-" map <leader><leader>  :<C-u>buffers<CR>:buffer<space>*
-" map <leader>p  :<C-u>find **
-" map <leader>t  :<C-u>call Tags()<CR>G//<backspace>
 map <leader>n  :<C-u>Lexplore<CR>
 " Easier completion shortcuts
 inoremap <C-L> <C-X><C-L>
@@ -184,28 +184,18 @@ endfunction
 function! Rename(old, new)
     call system("grep -rl " . shellescape(a:old) . " | xargs -P9 -I{} sed -i 's/" . shellescape(a:old) . "/" . shellescape(a:new) . "/g' {}")
 endfunction
-function! Tags()
-    cgetexpr system("grep -v '^!_' tags | sort -ru | awk -F'\t' '{split($5,line," . '":");print $2":"line[2]":0: "$1}'. "'")
-    copen
-endfunction
 function! SetDark()
     set background=dark
-    highlight Comment       ctermfg=242
-    highlight SignColumn    ctermbg=NONE guibg=NONE
-    highlight TabLineFill   cterm=NONE gui=NONE
-    highlight VertSplit     cterm=NONE gui=NONE
-    highlight myDeclaration gui=bold cterm=bold guifg=#fabd2f ctermfg=121
-    highlight myFunction    gui=bold cterm=bold guifg=#9CDCFE ctermfg=117
+    colorscheme onedark
+    highlight myDeclaration ctermfg=121
+    highlight myFunction    ctermfg=117
     silent! edit
 endfunction
 function! SetLight()
     set background=light
-    highlight Comment       ctermfg=242
-    highlight SignColumn    ctermbg=NONE guibg=NONE
-    highlight TabLineFill   cterm=NONE gui=NONE
-    highlight VertSplit     cterm=NONE gui=NONE
-    highlight myDeclaration gui=bold cterm=bold guifg=#008700 ctermfg=28
-    highlight myFunction    gui=bold cterm=bold guifg=#0087af ctermfg=31
+    colorscheme github
+    highlight myDeclaration ctermfg=28
+    highlight myFunction    ctermfg=31
     silent! edit
 endfunction
 function! s:set_bg(timer_id)
