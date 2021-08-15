@@ -1,20 +1,19 @@
+source $VIMRUNTIME/defaults.vim
 set autoindent copyindent expandtab shiftwidth=4 softtabstop=4 tabstop=4
 set autoread hidden visualbell
-set backspace=indent,eol,start
-set colorcolumn=80
-set display=truncate
+set colorcolumn=80 cursorline
 set formatoptions=tcqj
 set grepprg=grep\ -rn
 set guioptions=d mouse=a
-set hlsearch ignorecase incsearch
-set langnoremap langremap lazyredraw ttyfast ttimeoutlen=50 updatetime=50
+set hlsearch ignorecase
+set langnoremap langremap lazyredraw ttyfast updatetime=50
 set list lcs=tab:\¦\  " here is a space, goes in hand with indentLine
-set nocompatible nomodeline nofsync nowrap noswapfile nowritebackup nobackup
-set scrolloff=5 sidescroll=1 smartcase smartindent smarttab
+set nomodeline nofsync nowrap noswapfile nowritebackup nobackup
+set smartcase smartindent smarttab
 set splitbelow splitright
 set title number encoding=utf8
-set undodir=$HOME/.vim/undo undofile undolevels=10000 history=200
-set path+=.,** wildignore+=tags wildmenu wildmode=longest:full,full wildignorecase
+set undodir=$HOME/.vim/undo undofile undolevels=10000
+set path+=.,** wildignore+=tags wildmode=longest:full,full wildignorecase
 set omnifunc=syntaxcomplete#Complete
 set completeopt=menu,menuone,popup,noselect,noinsert
 set noshowmode noshowcmd laststatus=0 ruler         " hide statusline
