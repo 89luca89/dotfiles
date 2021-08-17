@@ -5,7 +5,8 @@ Name=Telegram
 GenericName=Chat client
 Comment=Extensible chat client
 Keywords=Telegram;extensible;chat;IRC;client;console;terminal;
-Exec=/home/luca-linux/bin/communication telegram %u
+#Exec=/home/luca-linux/bin/communication telegram %u
+Exec=firefox -P Chats --no-remote --class=Telegram https://web.telegram.org
 Terminal=false
 Type=Application
 Categories=Network;Chat;IRCClient;ConsoleOnly;

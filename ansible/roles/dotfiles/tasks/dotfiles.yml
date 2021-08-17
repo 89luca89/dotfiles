@@ -46,7 +46,6 @@
     - "{{ ansible_env.HOME }}/.ctags"
     - "{{ ansible_env.HOME }}/.gitconfig"
     - "{{ ansible_env.HOME }}/.histfile"
-    - "{{ ansible_env.HOME }}/.local/share/applications"
     - "{{ ansible_env.HOME }}/.ssh/config"
     - "{{ ansible_env.HOME }}/.tmux.conf"
     - "{{ ansible_env.HOME }}/.toprc"
