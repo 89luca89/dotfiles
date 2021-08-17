@@ -103,25 +103,25 @@ vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 " Leader map
 let mapleader = ' '
 " Utility shortcuts with leader:
-map <leader><leader>  :<C-u>Buffers<CR>
-map <leader>p  :<C-u>Files<CR>
-map <leader>t  :<C-u>Tags<CR>
+map <leader><Tab>    :<C-u>Buffers<CR>
+map <leader><leader> :<C-u>Files<CR>
 map <leader>n  :<C-u>Lexplore<CR>
+map <leader>t  :<C-u>Tags<CR>
 " Easier completion shortcuts
 inoremap <C-L> <C-X><C-L>
 inoremap <C-F> <C-X><C-F>
 " Code help using external scripts: Lint File, Lint Project, Format, DeepTags, Grep in project
+" Default IDE-Style keybindings: definition, indent, rename, references
 nnoremap <leader>l  :<C-u>cgete system('project-utils ' . &filetype . " " .  expand('%') . " lint")<CR>:copen<CR>
 nnoremap <leader>L  :<C-u>cgete system('project-utils ' . &filetype . " . lint")<CR>:copen<CR>
+nnoremap <leader>i   :<C-u>mkview<CR>:%s/\($\n\s*\)\+\%$//e<CR>:%s/\s\+$//e<CR>=G:loadview<CR>
 nnoremap <leader>I  :<C-u>call  system('project-utils ' . &filetype . " . format")<CR>
 nnoremap <leader>T  :<C-u>call  system('project-utils ' . &filetype . " . tags")<CR>
 nnoremap <leader>f  :<C-u>call  Grep("")<Left><Left>
-nnoremap <leader>td :<C-u>call  Grep("TODO<bar>FIXME")<CR>
-" Default IDE-Style keybindings: definition, indent, rename, references
-nnoremap <leader>gd  :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
 nnoremap <leader>r   :<C-u>call Rename("<c-r>=expand("<cword>")<CR>", "")<Left><Left>
 nnoremap <leader>rf  :<C-u>call Grep("<c-r>=expand("<cword>")<CR>")<CR>
-nnoremap <leader>i   :<C-u>mkview<CR>:%s/\($\n\s*\)\+\%$//e<CR>:%s/\s\+$//e<CR>=G:loadview<CR>
+nnoremap <leader>td :<C-u>call  Grep("TODO<bar>FIXME")<CR>
+nnoremap <leader>gd  :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
 " Override <leader>i formatting with corresponding formatter for each lang
 augroup autoformat_settings
     autocmd!
@@ -180,15 +180,17 @@ endfunction
 function! SetDark()
     set background=dark
     colorscheme onedark
-    highlight myDeclaration ctermfg=121
-    highlight myFunction    ctermfg=117
+    highlight Normal        guibg=NONE    ctermbg=NONE
+    highlight myDeclaration guifg=#87ffaf ctermfg=121
+    highlight myFunction    guifg=#87d7ff ctermfg=117
     silent! edit
 endfunction
 function! SetLight()
     set background=light
     colorscheme github
-    highlight myDeclaration ctermfg=28
-    highlight myFunction    ctermfg=31
+    highlight Normal        guibg=NONE    ctermbg=NONE
+    highlight myDeclaration guifg=#008700 ctermfg=28
+    highlight myFunction    guifg=#0087af ctermfg=31
     silent! edit
 endfunction
 function! s:set_bg(timer_id)
