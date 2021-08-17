@@ -1,6 +1,7 @@
 # Common shortcuts for all
 #
-"xdg-open https://about:blank"
+# "xdg-open https://about:blank"
+"firefox -p"
     m:0x40 + c:25
     Mod4 + w
 
@@ -149,8 +150,8 @@
 ### Media Management
 
 "gnome-screenshot -i --file=file:///home/luca-linux/Pictures/Screenshot_$(date +%F_%H-%M-%S).jpg"
-    m:0x0 + c:107
-    Print
+    m:0x4 + c:107
+    Control + Print
 "gnome-screenshot --file=file:///home/luca-linux/Pictures/Screenshot_$(date +%F_%H-%M-%S).jpg"
     m:0x40 + c:107
     Mod4 + Print
