@@ -129,6 +129,7 @@ debloat_pkg:
   - abrt-retrace-client
   - abrt-tui
   - anaconda-install-env-deps
+  - fedora-logos-httpd
   - gamemode
   - gnome-boxes
   - gnome-calendar
