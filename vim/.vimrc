@@ -29,7 +29,7 @@ Plug 'cormacrelf/vim-colors-github'
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 " Fzf
-Plug 'junegunn/fzf', { 'dir': '~/.local/bin/fzf', 'do': './install --all' }
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 " Lang Packs
 Plug 'sheerun/vim-polyglot'

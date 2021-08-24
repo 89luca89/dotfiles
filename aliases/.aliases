@@ -36,12 +36,13 @@ alias gnome-reload='DISPLAY=:0 xdotool key Alt+F2; sleep 1; DISPLAY=:0 xdotool k
 alias gogetsys="export GOPATH=~/.local/go; go get"
 alias ll='ls -Ahl --group-directories-first --color'
 alias open='xdg-open'
-alias rsyncProjecs='rsync -avHP --delete  -e "ssh -J tunnel" /home/luca-linux/Projects/ root@raspberrypi-1.lan:/usr/local/mnt/Vault/Projects/'
+alias rsyncProjecs='rsync -avHP --delete  -e "ssh -J tunnel" $HOME/Projects/ root@raspberrypi-1.lan:/usr/local/mnt/Vault/Projects/'
 alias rsyncthingD='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync -av --delete --progress -e "ssh -J management -p 2223" --exclude={.stversions,*.tmp} fileserver@raspberrypi-1.lan:/data/Syncthing/ ~/Syncthing/ && cd -'
 alias rsyncthingS='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync -av --delete --progress -e "ssh -J management -p 2223" --exclude={.stversions,*.tmp} ~/Syncthing/ fileserver@raspberrypi-1.lan:/data/Syncthing/ && cd -'
 alias saml2aws='saml2aws --disable-keychain'
 alias top='top -o %CPU'
 alias vi='vim -u ~/.vimrc-minimal'
+export LESSHISTFILE=-
 export EDITOR=vim
 export CARGO_HOME=$HOME/.local/rust
 export RUSTUP_HOME=$HOME/.local/rust
@@ -54,3 +55,11 @@ export PATH=$HOME/bin:$PATH
 export PATH=$PATH:$GOPATH/bin
 export PATH=$PATH:$RUSTUP_HOME/bin
 export PATH=/bin:$PATH
+export XDG_DESKTOP_DIR="$HOME/Desktop"
+export XDG_DOCUMENTS_DIR="$HOME/Documents"
+export XDG_DOWNLOAD_DIR="$HOME/Downloads"
+export XDG_MUSIC_DIR="$HOME/Music"
+export XDG_PICTURES_DIR="$HOME/Pictures"
+export XDG_PUBLICSHARE_DIR="$HOME/Public"
+export XDG_TEMPLATES_DIR="$HOME/Templates"
+export XDG_VIDEOS_DIR="$HOME/Videos"
