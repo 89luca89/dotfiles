@@ -67,20 +67,43 @@ terminal_packages:
   - tlp
   - tree
 
+### gnome-extensions-app gnome-tweaks
 my_packages:
-  - evince
-  - file-roller
   - firefox
   - chromium-freeworld
+  - baobab
+  - cheese
+  - drawing
+  - eog
+  - epiphany
+  - evince
+  - pdfarranger
+  - gcolor3
+  - file-roller
+  - gedit
+  - gigolo
   - gimp
   - gvim
-  - gnome-nettool
+  - gnome-calculator
+  - gnome-calendar
+  - gnome-characters
+  - gnome-connections
+  - gnome-contacts
+  - gnome-disk-utility
+  - gnome-firmware
+  - gnome-font-viewer
+  - gnome-logs
+  - gnome-maps
   - gnome-network-displays
   - gnome-screenshot
   - gnome-sound-recorder
   - gnome-terminal
-  - gnome-firmware
+  - gnome-weather
+  - rhythmbox
+  - rhythmbox-alternative-toolbar
+  - totem
   - fwupd
+  - putty
   - keepassxc
   - syncthing
   - thunderbird
@@ -132,17 +155,8 @@ debloat_pkg:
   - fedora-logos-httpd
   - gamemode
   - gnome-boxes
-  - gnome-calendar
-  - gnome-characters
-  - gnome-classic-session
-  - gnome-contacts
   - gnome-dictionary
   - gnome-documents
-  - gnome-font-viewer
-  - gnome-getting-started-docs
-  - gnome-logs
-  - gnome-maps
-  - gnome-menus
   - gnome-music
   - gnome-online-miners
   - gnome-photos
@@ -150,8 +164,6 @@ debloat_pkg:
   - gnome-software
   - gnome-user-docs
   - gnome-user-share
-  - gnome-video-effects
-  - gnome-weather
   - httpd
   - hyperv-daemons
   - hyperv-daemons-license
@@ -161,10 +173,8 @@ debloat_pkg:
   - open-vm-tools-desktop
   - orca
   - qemu-guest-agent
-  - rhythmbox
   - rsyslog
   - spice-vdagent
-  - totem
   - virtualbox-guest-additions
   - yelp
   - yelp-libs
