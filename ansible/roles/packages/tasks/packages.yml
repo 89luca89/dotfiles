@@ -10,7 +10,7 @@
       - https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_facts.distribution_version }}.noarch.rpm
   become: yes
   tags: rpmfusion
-  when: ansible_os_family == "Redhat"
+  when: ansible_os_family == "RedHat"
 
 - name: Remove bloat packages
   package:
@@ -58,7 +58,7 @@
     name: "{{ golang_packages }}"
   become: true
 
-- name: Instal additional packages
+- name: Install additional packages
   dnf:
     name: "{{ item }}"
     state: present
@@ -74,17 +74,21 @@
     state: latest
     name: "{{ my_packages }}"
   become: true
+  tags: desktop_packages
 
 - name: Install Programs (Flatpak Programs - flathub)
-  command: "flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo"
+  command: "flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo"
+  changed_when: no
   become: true
-  tags: flatpak
+  tags: desktop_packages
 
 - name: Install Programs (Flatpak Programs )
-  command: "flatpak install -y {{ item }}"
+  command: "flatpak --user install -y {{ item }}"
   with_items: "{{ flatpak_packages }}"
+  register: flatpak_out
+  changed_when: not 'already installed' in flatpak_out.stderr
   become: true
-  tags: flatpak
+  tags: desktop_packages
 
 - name: Check that golang exists
   stat:

@@ -23,15 +23,11 @@
   with_items: "{{ global_vars }}"
   become: true
 
-- name: Setup TLP blacklist
-  lineinfile:
-    path: /etc/tlp.conf
-    regexp: "{{ item }}"
-    line: "{{ item }}"
-    state: present
-    backup: true
-  with_items: "{{ tlp_blacklist }}"
-  become: true
+- name: Detect systemd
+  command: systemctl status
+  register: systemd_present
+  failed_when: no
+  changed_when: no
 
 # Mask systemd services to free up memory
 - name: Mask services /1
@@ -48,6 +44,7 @@
   delay: 3
   register: result
   until: result is not failed
+  when: systemd_present.rc == 0
 
 # Mask systemd services to free up memory
 - name: Mask services /2
@@ -63,6 +60,7 @@
   delay: 3
   register: result
   until: result is not failed
+  when: systemd_present.rc == 0
 
 - name: Improve Intel Tearfree on xorg
   blockinfile:
@@ -97,6 +95,11 @@
     marker: "# {mark} ANSIBLE MANAGED BLOCK BY DOTFILES"
   become: yes
 
+- name: Check if Grub is present
+  stat:
+    path: /etc/default/grub
+  register: grub_file
+
 - name: Deploy Grub Flags
   replace:
     path: /etc/default/grub
@@ -113,18 +116,19 @@
     - {option: scsi_mod.use_blk_mq, value: 1}
   register: grub_setup
   become: true
+  when: grub_file.stat.exists
 
 - name: Update Grub and Initramfs
   command: "{{ item }}"
   with_items:
     - "grub2-mkconfig -o /boot/grub2/grub.cfg"
     - "dracut --force --regenerate-all -v"
-  when: grub_setup.changed and ansible_os_family == "Redhat"
+  when: grub_setup is defined and grub_setup.changed and ansible_os_family == "Redhat"
   become: true
 
 - name: Update Grub and Initramfs
   command: "{{ item }}"
   with_items:
     - "update-grub"
-  when: grub_setup.changed and ansible_os_family == "Debian"
+  when: grub_setup is defined and grub_setup.changed and ansible_os_family == "Debian"
   become: true

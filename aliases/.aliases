@@ -29,6 +29,7 @@ ssh() {
 	/usr/bin/ssh -t $@ "if which tmux &> /dev/null; then (tmux attach || tmux new); else \$SHELL; fi"
 }
 # BASIC ALIASES
+alias  cp='cp --reflink=auto'
 alias firefoxRestore="cat ~/Syncthing/Notes/open_tabs.md | cut -d ']' -f2  | sed 's/(//g' | sed 's/)//g' | xargs firefox --new-tab &"
 alias firefoxSync='~/bin/get_firefox_tabs.py > ~/Syncthing/Notes/open_tabs.md'
 alias git-clean="git fetch -p && for branch in \$(git branch -vv | grep ': gone]' | awk '{print \$1}'); do git branch -D \"\${branch}\"; done"

@@ -8,11 +8,8 @@ terraform_provider_libvirt_version: 0.6.3
 terraform_provider_libvirt_release: 0.6.3+git.1604843676.67f4f2aa
 
 flatpak_packages:
-  # - com.github.tchx84.Flatseal
+  - com.github.tchx84.Flatseal
   - com.jgraph.drawio.desktop
-  - com.skype.Client
-  # - io.typora.Typora
-  # - org.onlyoffice.desktopeditors
   - us.zoom.Zoom
 
 python_packages:

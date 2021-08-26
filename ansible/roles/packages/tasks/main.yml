@@ -3,3 +3,13 @@
 - name: Include myApps
   include: packages.yml
   tags: packages
+
+- name: Setup TLP blacklist
+  lineinfile:
+    path: /etc/tlp.conf
+    regexp: "{{ item }}"
+    line: "{{ item }}"
+    state: present
+    backup: true
+  with_items: "{{ tlp_blacklist }}"
+  become: true
