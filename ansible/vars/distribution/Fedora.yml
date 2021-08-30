@@ -62,7 +62,6 @@ terminal_packages:
   - powertop
   - python3-devel
   - python3-pip
-  - ripgrep
   - stow
   - tcpdump
   - tig
@@ -121,19 +120,15 @@ my_packages:
   - gnome-network-displays
   - gnome-weather
   - keepassxc
-  - papirus-icon-theme
   - pdfarranger
   - remmina
   - rhythmbox
-  - rhythmbox-alternative-toolbar
   - thunderbird
   - totem
   - pidgin
   - pidgin-indicator
 
 debloat_pkg:
-  - PackageKit
-  - PackageKit-glib
   - abrt
   - abrt-addon-ccpp
   - abrt-addon-kerneloops
@@ -160,7 +155,6 @@ debloat_pkg:
   - gnome-online-miners
   - gnome-photos
   - gnome-shell-extension-background-logo
-  - gnome-software
   - gnome-user-docs
   - gnome-user-share
   - httpd

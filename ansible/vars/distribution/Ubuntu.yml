@@ -2,76 +2,80 @@
 # vars file for my_apps
 #
 
+use_flatpaks: true
+
 terraform_provider_libvirt_url: "https://github.com/dmacvicar/terraform-provider-libvirt/releases/download/v{{ terraform_provider_libvirt_version }}/terraform-provider-libvirt-{{ terraform_provider_libvirt_release }}.Ubuntu_20.04.x86_64.tar.gz"
 
-clang_packages:
-  - make
-  - clang
-  - clang-tools-extra
-
-terminal_packages:
+archive_packages:
   - cabextract
   - lzip
-  - p7zip-full
+  - p7zip
+  - p7zip-plugins
   - unzip
-  - unrar
-  - build-essential
+  - zstd
+
+terminal_packages:
   - shellcheck
-  - clang
-  - clang-tools
-  - exuberant-ctags
-  - gcc
-  - tig
-  - git
-  - golang
-  - lsof
-  - make
-  - python3-pip
-  - ripgrep
-  - ncdu
   - acpi
   - bash-completion
+  - build-essential
+  - clang
+  - clang-tools
+  - clang-tools-extra
   - curl
+  - exuberant-ctags
   - flatpak
+  - gcc
+  - git
+  - golang
   - libappindicator1
   - libappindicator3-1
+  - lsof
+  - make
+  - ncdu
   - net-tools
   - powertop
-  - stunnel4
+  - python3-pip
+  - stow
   - tcpdump
+  - tig
   - tlp
+  - tree
+  # Cli packages
+  - aria2
+  - mpv
+  - ncdu
+  - rsync
+  - tmux
+  - tmate
+  - vim
+  - syncthing
+  # Generic X utility
+  - setxkbmap
   - wmctrl
+  - xbindkeys
   - xclip
   - xdotool
-  - zbar-tools
+  - xgamma
+  - xinput
+  - xkill
 
 my_packages:
-  - gimp
-  - libreoffice-calc
-  - libreoffice-draw
-  - libreoffice-gtk3
-  - libreoffice-impress
-  - libreoffice-writer
-  - mpv
-  - network-manager-fortisslvpn-gnome
-  - network-manager-iodine-gnome
-  - network-manager-l2tp-gnome
-  - keepassxc
-  - rsync
-  - syncthing
-  - tmux
-  - vim
+  - gnome-disk-utility
+  - gnome-screenshot
+  - gnome-system-monitor
+  - gnome-terminal
+  - gnome-terminal-nautilus
+  - gvim
+  - nautilus
+  - nautilus-extensions
+  - firefox
   - ttf-mscorefonts-installer
-  - gnome-tweaks
 
 debloat_pkg:
-  - packagekit
-  - packagekit-glib
   - evolution
   - evolution-ews
   - gnome-boxes
-  - gnome-calendar
-  - gnome-contacts
   - gnome-dictionary
   - gnome-documents
   - gnome-getting-started-docs
@@ -80,11 +84,9 @@ debloat_pkg:
   - gnome-music
   - gnome-online-miners
   - gnome-photos
-  - gnome-software
   - gnome-user-docs
   - gnome-user-share
   - gnome-video-effects
-  - gnome-weather
   - snapd
   - update-manager
   - yelp
