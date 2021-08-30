@@ -23,12 +23,6 @@
   with_items: "{{ global_vars }}"
   become: true
 
-- name: Detect systemd
-  command: systemctl status
-  register: systemd_present
-  failed_when: no
-  changed_when: no
-
 # Mask systemd services to free up memory
 - name: Mask services /1
   systemd:
@@ -44,7 +38,7 @@
   delay: 3
   register: result
   until: result is not failed
-  when: systemd_present.rc == 0
+  when: not is_toolbox
 
 # Mask systemd services to free up memory
 - name: Mask services /2
@@ -60,7 +54,7 @@
   delay: 3
   register: result
   until: result is not failed
-  when: systemd_present.rc == 0
+  when: not is_toolbox
 
 - name: Improve Intel Tearfree on xorg
   blockinfile:

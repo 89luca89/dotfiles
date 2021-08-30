@@ -2,6 +2,8 @@
 # vars file for my_apps
 #
 
+use_flatpaks: true
+
 terraform_provider_libvirt_url: "https://github.com/dmacvicar/terraform-provider-libvirt/releases/download/v{{ terraform_provider_libvirt_version }}/terraform-provider-libvirt-{{ terraform_provider_libvirt_release }}.Fedora_32.x86_64.tar.gz"
 
 archive_packages:
@@ -66,54 +68,6 @@ terminal_packages:
   - tig
   - tlp
   - tree
-
-### gnome-extensions-app gnome-tweaks
-my_packages:
-  - firefox
-  - chromium-freeworld
-  - baobab
-  - cheese
-  - drawing
-  - eog
-  - epiphany
-  - evince
-  - pdfarranger
-  - gcolor3
-  - file-roller
-  - gedit
-  - gigolo
-  - gimp
-  - gvim
-  - gnome-calculator
-  - gnome-calendar
-  - gnome-characters
-  - gnome-connections
-  - gnome-contacts
-  - gnome-disk-utility
-  - gnome-firmware
-  - gnome-font-viewer
-  - gnome-logs
-  - gnome-maps
-  - gnome-network-displays
-  - gnome-screenshot
-  - gnome-sound-recorder
-  - gnome-terminal
-  - gnome-weather
-  - rhythmbox
-  - rhythmbox-alternative-toolbar
-  - totem
-  - fwupd
-  - putty
-  - keepassxc
-  - syncthing
-  - thunderbird
-  - papirus-icon-theme
-  # Pidgin
-  - adwaita-gtk2-theme
-  - gtk-murrine-engine
-  - gtk2-engines
-  - pidgin
-  - pidgin-indicator
   # Cli packages
   - aria2
   - mpv
@@ -122,6 +76,7 @@ my_packages:
   - tmux
   - tmate
   - vim
+  - syncthing
   # Generic X utility
   - setxkbmap
   - wmctrl
@@ -131,6 +86,50 @@ my_packages:
   - xgamma
   - xinput
   - xkill
+
+
+### gnome-extensions-app gnome-tweaks
+my_packages:
+  - gnome-disk-utility
+  - gnome-screenshot
+  - gnome-system-monitor
+  - gnome-terminal
+  - gnome-terminal-nautilus
+  - gvim
+  - nautilus
+  - nautilus-extensions
+  - firefox
+  - chromium-freeworld
+  - baobab
+  - cheese
+  - drawing
+  - eog
+  - evince
+  - file-roller
+  - gcolor3
+  - gedit
+  - gigolo
+  - gimp
+  - gnome-sound-recorder
+  - gnome-calculator
+  - gnome-calendar
+  - gnome-connections
+  - gnome-contacts
+  - gnome-firmware
+  - gnome-logs
+  - gnome-maps
+  - gnome-network-displays
+  - gnome-weather
+  - keepassxc
+  - papirus-icon-theme
+  - pdfarranger
+  - remmina
+  - rhythmbox
+  - rhythmbox-alternative-toolbar
+  - thunderbird
+  - totem
+  - pidgin
+  - pidgin-indicator
 
 debloat_pkg:
   - PackageKit

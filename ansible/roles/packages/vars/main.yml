@@ -7,10 +7,41 @@ terraform_ls_version: 0.8.0
 terraform_provider_libvirt_version: 0.6.3
 terraform_provider_libvirt_release: 0.6.3+git.1604843676.67f4f2aa
 
+use_flatpaks: false
+
 flatpak_packages:
-  - com.github.tchx84.Flatseal
   - com.jgraph.drawio.desktop
   - us.zoom.Zoom
+  - com.github.tchx84.Flatseal
+  - com.github.jeromerobert.pdfarranger
+  - com.github.maoschanz.drawing
+  - im.pidgin.Pidgin
+  - nl.hjdskes.gcolor3
+  - org.chromium.Chromium
+  - org.gimp.GIMP
+  - org.gnome.Calculator
+  - org.gnome.Calendar
+  - org.gnome.Connections
+  - org.gnome.Contacts
+  - org.gnome.Evince
+  - org.gnome.FileRoller
+  - org.gnome.Firmware
+  - org.gnome.Logs
+  - org.gnome.Maps
+  - org.gnome.NetworkDisplays
+  - org.gnome.Platform
+  - org.gnome.Rhythmbox3
+  - org.gnome.SoundRecorder
+  - org.gnome.Totem
+  - org.gnome.Weather
+  - org.gnome.baobab
+  - org.gnome.clocks
+  - org.gnome.eog
+  - org.gnome.gedit
+  - org.keepassxc.KeePassXC
+  - org.mozilla.Thunderbird
+  - org.mozilla.firefox
+  - org.remmina.Remmina
 
 python_packages:
   - python2-devel

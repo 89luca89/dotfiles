@@ -6,6 +6,18 @@
 
 - hosts: all
   gather_facts: True
+  pre_tasks:
+
+    - name: Detect is we're inside a toolbox
+      command: systemctl status
+      register: inside_toolbox
+      failed_when: no
+      changed_when: no
+
+    - name: Set fact toolbox
+      set_fact:
+        is_toolbox: "{% if inside_toolbox.rc == 0 %}false{% else %}true{% endif %}"
+
   roles:
     - distro_setup
     - packages

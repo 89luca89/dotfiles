@@ -12,26 +12,6 @@
   tags: rpmfusion
   when: ansible_os_family == "RedHat"
 
-- name: Remove bloat packages
-  package:
-    state: absent
-    name: "{{ debloat_pkg }}"
-  become: true
-
-- name: Install Programs (Archive Utilities)
-  package:
-    state: present
-    name: "{{ archive_packages }}"
-  become: yes
-  tags: archives
-
-- name: Install Programs (Media Utilities)
-  package:
-    state: present
-    name: "{{ codecs_packages }}"
-  become: yes
-  tags: codecs
-
 - name: Install Programs (Programming Packages)
   package:
     state: latest
@@ -58,29 +38,54 @@
     name: "{{ golang_packages }}"
   become: true
 
-- name: Install additional packages
-  dnf:
-    name: "{{ item }}"
-    state: present
-    disable_gpg_check: true
-  become: true
-  with_items:
-    - https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
-    - "@virtualization"
-  when: ansible_facts['os_family'] == "RedHat"
+- block:
 
-- name: Install Programs (GUI Programs)
-  package:
-    state: latest
-    name: "{{ my_packages }}"
-  become: true
-  tags: desktop_packages
+    - name: Remove bloat packages
+      package:
+        state: absent
+        name: "{{ debloat_pkg }}"
+      become: true
 
-- name: Install Programs (Flatpak Programs - flathub)
-  command: "flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo"
-  changed_when: no
-  become: true
-  tags: desktop_packages
+    - name: Install Programs (Archive Utilities)
+      package:
+        state: present
+        name: "{{ archive_packages }}"
+      become: yes
+      tags: archives
+
+    - name: Install Programs (Media Utilities)
+      package:
+        state: present
+        name: "{{ codecs_packages }}"
+      become: yes
+      tags: codecs
+
+    - name: Install additional packages
+      dnf:
+        name: "{{ item }}"
+        state: present
+        disable_gpg_check: true
+      become: true
+      with_items:
+        - https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
+        - "@virtualization"
+      when: ansible_facts['os_family'] == "RedHat"
+
+    - name: Install Programs (Flatpak Programs - flathub)
+      command: "flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo"
+      changed_when: no
+      become: true
+      tags: flatpak_packages
+
+    - name: Install Programs (GUI Programs)
+      package:
+        state: latest
+        name: "{{ my_packages }}"
+      become: true
+      tags: desktop_packages
+      when: not use_flatpaks
+
+  when: not is_toolbox
 
 - name: Install Programs (Flatpak Programs )
   command: "flatpak --user install -y {{ item }}"
@@ -88,7 +93,8 @@
   register: flatpak_out
   changed_when: not 'already installed' in flatpak_out.stderr
   become: true
-  tags: desktop_packages
+  tags: flatpak_packages
+  when: not is_toolbox and use_flatpaks
 
 - name: Check that golang exists
   stat:
