@@ -110,6 +110,7 @@ done
 popd || exit 1
 
 LOCAL_FOLDERS=(
+	"./applications"
 	"./backgrounds"
 	"./current_theme"
 	"./doc"
@@ -136,3 +137,11 @@ for dir in $(find . -maxdepth 1 -type d | tail -n+2); do
 	fi
 done
 popd || exit 1
+
+FLATS=$(flatpak list --app --columns=application)
+for d in ~/.var/app/*; do
+	DIR=$(basename "$d")
+	if ! echo $FLATS | grep -q $DIR; then
+		clean_folder "$d"
+	fi
+done
