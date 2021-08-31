@@ -93,7 +93,7 @@
   when: (not is_toolbox) and use_flatpaks
 
 - name: Install Programs (Flatpak Programs )
-  command: "flatpak --user install -y {{ item }}"
+  command: "flatpak --user install -y flathub {{ item }}"
   with_items: "{{ flatpak_packages }}"
   register: flatpak_out
   changed_when: not 'already installed' in flatpak_out.stderr
