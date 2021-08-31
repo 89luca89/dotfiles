@@ -6,6 +6,10 @@
 
 - hosts: all
   gather_facts: True
+
+  vars_files:
+    - "vars/distribution/{{ ansible_distribution }}.yml"
+
   pre_tasks:
 
     - name: Detect is we're inside a toolbox
@@ -13,15 +17,14 @@
       register: inside_toolbox
       failed_when: no
       changed_when: no
+      tags: always
 
     - name: Set fact toolbox
       set_fact:
         is_toolbox: "{% if inside_toolbox.rc == 0 %}false{% else %}true{% endif %}"
+      tags: always
 
   roles:
     - distro_setup
     - packages
     - dotfiles
-
-  vars_files:
-    - "vars/distribution/{{ ansible_distribution }}.yml"

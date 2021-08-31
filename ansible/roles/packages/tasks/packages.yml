@@ -74,7 +74,7 @@
     - name: Install Programs (Flatpak Programs - flathub)
       command: "flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo"
       changed_when: no
-      become: true
+      become: false
       tags: flatpak_packages
 
     - name: Install Programs (GUI Programs)
@@ -92,9 +92,16 @@
   with_items: "{{ flatpak_packages }}"
   register: flatpak_out
   changed_when: not 'already installed' in flatpak_out.stderr
-  become: true
+  become: false
   tags: flatpak_packages
-  when: not is_toolbox and use_flatpaks
+  when: (not is_toolbox) and use_flatpaks
+
+- name: Env variables (Flatpak Programs)
+  command: "flatpak override --user --env={{ item.value }} {{ item.key }}"
+  with_items: "{{ flatpak_overrides }}"
+  become: false
+  tags: flatpak_packages
+  when: (not is_toolbox) and use_flatpaks
 
 - name: Check that golang exists
   stat:

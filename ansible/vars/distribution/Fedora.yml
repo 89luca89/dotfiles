@@ -97,36 +97,35 @@ my_packages:
   - gvim
   - nautilus
   - nautilus-extensions
-  - firefox
-  - chromium-freeworld
-  - baobab
-  - cheese
-  - drawing
-  - eog
-  - evince
-  - file-roller
-  - gcolor3
-  - gedit
-  - gigolo
-  - gimp
-  - gnome-sound-recorder
-  - gnome-calculator
-  - gnome-calendar
-  - gnome-connections
-  - gnome-contacts
-  - gnome-firmware
-  - gnome-logs
-  - gnome-maps
-  - gnome-network-displays
-  - gnome-weather
-  - keepassxc
-  - pdfarranger
-  - remmina
-  - rhythmbox
-  - thunderbird
-  - totem
-  - pidgin
-  - pidgin-indicator
+  #  - firefox
+  #  - chromium-freeworld
+  #  - baobab
+  #  - cheese
+  #  - drawing
+  #  - eog
+  #  - evince
+  #  - file-roller
+  #  - gcolor3
+  #  - gedit
+  #  - gigolo
+  #  - krita
+  #  - gnome-sound-recorder
+  #  - gnome-calculator
+  #  - gnome-calendar
+  #  - gnome-connections
+  #  - gnome-contacts
+  #  - gnome-firmware
+  #  - gnome-logs
+  #  - gnome-maps
+  #  - gnome-network-displays
+  #  - gnome-weather
+  #  - keepassxc
+  #  - pdfarranger
+  #  - remmina
+  #  - rhythmbox
+  #  - thunderbird
+  #  - totem
+  #  - pidgin
 
 debloat_pkg:
   - abrt
