@@ -83,10 +83,13 @@
     - ansible_pkg_mgr != 'atomic_container'  # Detect if using ostree
 
 - name: Install Programs (Flatpak Programs - flathub)
-  command: "flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo"
+  command: "flatpak remote-add --user --if-not-exists {{ item.key }} {{ item.value }}"
   changed_when: no
   become: false
   tags: flatpak_packages
+  with_items:
+    - {key: "fedora", value: "oci+https://registry.fedoraproject.org"}
+    - {key: "flathub", value: "https://flathub.org/repo/flathub.flatpakrepo"}
   when: (not is_toolbox) and use_flatpaks
 
 - name: Install Programs (Flatpak Programs )
