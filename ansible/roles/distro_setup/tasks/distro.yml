@@ -11,7 +11,7 @@
       install_weak_deps=false
       max_parallel_downloads={{ ansible_processor_vcpus }}
   become: yes
-  when: ansible_os_family == "Redhat"
+  when: ansible_os_family == "RedHat"
 
 - name: Update the profiles file with personal variables
   lineinfile:
@@ -117,7 +117,7 @@
   with_items:
     - "grub2-mkconfig -o /boot/grub2/grub.cfg"
     - "dracut --force --regenerate-all -v"
-  when: grub_setup is defined and grub_setup.changed and ansible_os_family == "Redhat"
+  when: grub_setup is defined and grub_setup.changed and ansible_os_family == "RedHat"
   become: true
 
 - name: Update Grub and Initramfs
