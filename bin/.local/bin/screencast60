@@ -15,7 +15,7 @@ clean() {
 
 trap clean 1 2 15
 
-FILE="$HOME/Videos/Screencast_from_$(date '+%d-%m-%Y %H:%M:%S').mp4"
+FILE="$XDG_VIDEOS_DIR/Screencast_from_$(date '+%d-%m-%Y %H:%M:%S').mp4"
 
 sudo ffmpeg -y -framerate 60 -vaapi_device /dev/dri/renderD128 -f kmsgrab -i - -vf 'hwmap=derive_device=vaapi,scale_vaapi=format=nv12' -c:v h264_vaapi -qp:v 26 -bf 0 -f mpegts "$FILE"
 sudo chown "$USER"."$USER" "$FILE"
