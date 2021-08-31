@@ -111,38 +111,6 @@
     m:0x41 + c:114
     Shift+Mod4 + Right
 
-"~/.local/bin/quicktile bottom-right"
-    m:0x5 + c:114
-    Control+Shift + Right
-
-"~/.local/bin/quicktile bottom-left"
-    m:0x5 + c:113
-    Control+Shift + Left
-
-"~/.local/bin/quicktile top-right"
-    m:0x9 + c:114
-    Alt+Shift + Right
-
-"~/.local/bin/quicktile top-left"
-    m:0x9 + c:113
-    Alt+Shift + Left
-
-"~/.local/bin/quicktile right"
-    m:0x40 + c:114
-    Mod4 + Right
-
-"~/.local/bin/quicktile left"
-    m:0x40 + c:113
-    Mod4 + Left
-
-"~/.local/bin/quicktile trigger-resize"
-    m:0x40 + c:27
-    Mod4 + r
-
-"~/.local/bin/quicktile trigger-move"
-    m:0x40 + c:58
-    Mod4 + m
-
 "xkill"
     m:0xc + c:22
     Control+Alt + BackSpace
