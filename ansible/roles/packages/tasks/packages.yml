@@ -1,44 +1,45 @@
 # my_apps.yml
 ---
 
-- name: Install the rpmfusion and fonts repo packages
-  dnf:
-    state: present
-    disable_gpg_check: yes
-    name:
-      - https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_facts.distribution_version }}.noarch.rpm
-      - https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_facts.distribution_version }}.noarch.rpm
-  become: yes
-  tags: rpmfusion
-  when: ansible_os_family == "RedHat"
-
-- name: Install Programs (Programming Packages)
-  package:
-    state: latest
-    name: "{{ terminal_packages }}"
-  become: true
-
-- name: Install Programs (python)
-  package:
-    state: latest
-    name: "{{ python_packages }}"
-  become: true
-
-- name: Install Programs (PIP Packages) - pip
-  pip:
-    state: latest
-    executable: pip3
-    extra_args: --user
-    name: "{{ python_modules }}"
-  become: true
-
-- name: Install Programs (golang)
-  package:
-    state: latest
-    name: "{{ golang_packages }}"
-  become: true
-
 - block:
+
+  - name: Install the rpmfusion and fonts repo packages
+    dnf:
+      state: present
+      disable_gpg_check: yes
+      name:
+        - https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_facts.distribution_version }}.noarch.rpm
+        - https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_facts.distribution_version }}.noarch.rpm
+    become: yes
+    tags: rpmfusion
+    when: ansible_os_family == "RedHat"
+
+  - name: Install Programs (Programming Packages)
+    package:
+      state: latest
+      name: "{{ terminal_packages }}"
+    become: true
+
+  - name: Install Programs (python)
+    package:
+      state: latest
+      name: "{{ python_packages }}"
+    become: true
+
+  - name: Install Programs (PIP Packages) - pip
+    pip:
+      state: latest
+      executable: pip3
+      extra_args: --user
+      name: "{{ python_modules }}"
+    become: true
+
+  - name: Install Programs (golang)
+    package:
+      state: latest
+      name: "{{ golang_packages }}"
+    become: true
+
 
     - name: Remove bloat packages
       package:
@@ -80,7 +81,6 @@
       when: not use_flatpaks
 
   when:
-    - not is_toolbox
     - ansible_pkg_mgr != 'atomic_container'  # Detect if using ostree
 
 - name: Install Programs (Flatpak Programs - flathub)
