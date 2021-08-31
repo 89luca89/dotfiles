@@ -123,6 +123,14 @@ app_sync() {
 		shred -n 25 -u -z /tmp/weechat-profile.tar.gz
 		mv /tmp/weechat-profile.tar.gz.gpg ~/Syncthing/Secured/
 		;;
+	"flatpak")
+		[ -d ~/.var/app ] || (echo "No folder to backup" && exit 1)
+		cd ~/.var || exit 1
+		tar --exclude=*cache*  -c -z -f /tmp/flatpak-data.tar.gz app
+		gpg --passphrase "$password" --yes --batch --output /tmp/flatpak-data.tar.gz.gpg --symmetric --cipher-algo AES256 /tmp/flatpak-data.tar.gz
+		shred -n 25 -u -z /tmp/flatpak-data.tar.gz
+		mv /tmp/flatpak-data.tar.gz.gpg ~/Syncthing/Secured/
+		;;
 	esac
 }
 
@@ -243,6 +251,16 @@ app_restore() {
 		fi
 		tar -xzf /tmp/weechat-profile.tar.gz -C ~/
 		shred -n 25 -u -z /tmp/weechat-profile.tar.gz
+		;;
+	"flatpak")
+		gpg --output /tmp/flatpak-data.tar.gz --decrypt ~/Syncthing/Secured/flatpak-data.tar.gz.gpg
+		if [ ! -f /tmp/flatpak-data.tar.gz ]; then
+			echo "Failed to decrypt"
+			exit 1
+		fi
+		rm -rf ~/.var/app
+		tar -xzf /tmp/flatpak-data.tar.gz -C ~/.var/
+		shred -n 25 -u -z /tmp/flatpak-data.tar.gz
 		;;
 	esac
 }
