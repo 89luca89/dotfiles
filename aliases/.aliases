@@ -18,7 +18,7 @@ update-grub() {
 		echo "$conf"
 		sudo grub2-mkconfig -o "$conf"
 	done
-	sudo dracut --force --regenerate-all -v
+	sudo dracut --force --regenerate-all
 	sync
 }
 rclone_clear_mount() {

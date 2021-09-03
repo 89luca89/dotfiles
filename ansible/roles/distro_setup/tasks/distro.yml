@@ -89,6 +89,37 @@
     marker: "# {mark} ANSIBLE MANAGED BLOCK BY DOTFILES"
   become: yes
 
+
+- name: Check if lvm.conf is present
+  stat:
+    path: /etc/lvm/lvm.conf
+  register: lvm_file
+
+- name: Deploy lvm.conf Flags
+  replace:
+    path: /etc/lvm/lvm.conf
+    regexp: 'issue_discards = 0'
+    replace: 'issue_discards = 1'
+    backup: yes
+  register: lvm_setup
+  become: true
+  when: lvm_file.stat.exists
+
+- name: Check if Crypttab is present
+  stat:
+    path: /etc/crypttab
+  register: crypt_file
+
+- name: Deploy Crypttab Flags
+  replace:
+    path: /etc/crypttab
+    regexp: 'none$'
+    replace: 'none discard no-read-workqueue no-write-workqueue'
+    backup: yes
+  register: crypt_setup
+  become: true
+  when: crypt_file.stat.exists
+
 - name: Check if Grub is present
   stat:
     path: /etc/default/grub
@@ -117,12 +148,20 @@
   with_items:
     - "grub2-mkconfig -o /boot/grub2/grub.cfg"
     - "dracut --force --regenerate-all -v"
-  when: grub_setup is defined and grub_setup.changed and ansible_os_family == "RedHat"
+  when: >
+    ((grub_setup is defined and grub_setup.changed) or
+    (lvm_setup is defined and lvm_setup.changed) or
+    (crypt_setup is defined and crypt_setup.changed))
+    and ansible_os_family == "RedHat"
   become: true
 
 - name: Update Grub and Initramfs
   command: "{{ item }}"
   with_items:
     - "update-grub"
-  when: grub_setup is defined and grub_setup.changed and ansible_os_family == "Debian"
+  when: >
+    ((grub_setup is defined and grub_setup.changed) or
+    (lvm_setup is defined and lvm_setup.changed) or
+    (crypt_setup is defined and crypt_setup.changed))
+    and ansible_os_family == "Debiam"
   become: true
