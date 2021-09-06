@@ -5,7 +5,7 @@ set colorcolumn=80 cursorline
 set formatoptions=tcqj
 set grepprg=grep\ -rn hlsearch ignorecase
 set guioptions=d mouse=a
-set langnoremap langremap lazyredraw ttyfast
+set langnoremap langremap lazyredraw redrawtime=0 ttyfast
 set list lcs=tab:\¦\  " here is a space, goes in hand with indentLine
 set omnifunc=syntaxcomplete#Complete completeopt=menu,menuone,popup,noselect,noinsert
 set path+=.,** wildmode=longest:full,full wildignorecase
