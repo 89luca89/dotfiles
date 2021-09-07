@@ -73,19 +73,16 @@ app_sync() {
 		;;
 	"firefox")
 		[ -d ~/.mozilla ] || (echo "No folder to backup" && exit 1)
-		find ~/.mozilla/ -iname "*cache*" | xargs rm -rf
-		find .mozilla/firefox/*/storage/default/http* -iname "*.files" | xargs rm -rf
 		cd ~ || exit 1
-		tar -czf /tmp/firefox-profile.tar.gz .mozilla
+		tar -c -z -f /tmp/firefox-profile.tar.gz --exclude="*cache*" --exclude=".mozilla/firefox/*/storage/default/http*" .mozilla
 		gpg --passphrase "$password" --yes --batch --output /tmp/firefox-profile.tar.gz.gpg --symmetric --cipher-algo AES256 /tmp/firefox-profile.tar.gz
 		shred -n 25 -u -z /tmp/firefox-profile.tar.gz
 		mv /tmp/firefox-profile.tar.gz.gpg ~/Syncthing/Secured/
 		;;
 	"thunderbird")
 		[ -d ~/.thunderbird ] || (echo "No folder to backup" && exit 1)
-		find ~/.thunderbird/ -iname "*cache*" | xargs rm -rf
 		cd ~ || exit 1
-		tar -c -z -f /tmp/thunderbird-profile.tar.gz --exclude=.thunderbird/*/extensions/lang* --exclude=.thunderbird/*-default/ImapMail .thunderbird/
+		tar -c -z -f /tmp/thunderbird-profile.tar.gz --exclude="*cache*" --exclude=.thunderbird/*/extensions/lang* --exclude=.thunderbird/*-default/ImapMail .thunderbird/
 		gpg --passphrase "$password" --yes --batch --output /tmp/thunderbird-profile.tar.gz.gpg --symmetric --cipher-algo AES256 /tmp/thunderbird-profile.tar.gz
 		shred -n 25 -u -z /tmp/thunderbird-profile.tar.gz
 		mv /tmp/thunderbird-profile.tar.gz.gpg ~/Syncthing/Secured/
