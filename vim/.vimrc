@@ -122,6 +122,8 @@ nnoremap <leader>r   :<C-u>call Rename("<c-r>=expand("<cword>")<CR>", "")<Left><
 nnoremap <leader>rf  :<C-u>call Grep("<c-r>=expand("<cword>")<CR>")<CR>
 nnoremap <leader>td :<C-u>call  Grep("TODO<bar>FIXME")<CR>
 nnoremap <leader>gd  :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
+nnoremap <leader>k  :<C-u>call CheatSheet("")<Left><Left>
+nnoremap <leader>K  :<C-u>call CheatSheet("<c-r>=expand("<cword>")<CR>")<CR>
 " Override <leader>i formatting with corresponding formatter for each lang
 augroup autoformat_settings
     autocmd!
@@ -141,8 +143,6 @@ augroup lspbindings
     autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>r  :<C-u>LSClientRename<CR>
     autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>rf :<C-u>LSClientFindReferences<CR>
     autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> K  :<C-u>LSClientShowHover<CR>
-    " Add shell and ansible on this one
-    autocmd Filetype yaml.ansible nnoremap <buffer> K  :<C-u>!ansible-doc <c-r>=expand("<cword>")<CR><bar>less<CR>
 augroup end
 " Fix ansible file detection
 augroup ansible_vim_fthosts
@@ -170,6 +170,9 @@ let g:lsc_server_commands  = {
                 \  },
                 \}
 " FUNCTIONS --------------------------------------------------------------------
+function! CheatSheet(query)
+    call term_start("sh -c \"curl https://cheat.sh/$(echo " . &filetype . "| cut -d'.' -f2)/$(echo " . a:query . "|tr ' ' '+')\"")
+endfunction
 function! Grep(...)
     cgetexpr system(&grepprg . ' "' . join(a:000, ' ') . '"' )
     copen
