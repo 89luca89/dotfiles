@@ -76,6 +76,7 @@ terminal_packages:
   - tmate
   - vim
   - syncthing
+  - PackageKit
   # Generic X utility
   - setxkbmap
   - wmctrl

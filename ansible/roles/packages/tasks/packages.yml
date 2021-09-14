@@ -16,19 +16,19 @@
 
     - name: Install Programs (Programming Packages)
       package:
-        state: latest
+        state: present
         name: "{{ terminal_packages }}"
       become: true
 
     - name: Install Programs (python)
       package:
-        state: latest
+        state: present
         name: "{{ python_packages }}"
       become: true
 
     - name: Install Programs (PIP Packages) - pip
       pip:
-        state: latest
+        state: present
         executable: pip3
         extra_args: --user
         name: "{{ python_modules }}"
@@ -36,7 +36,7 @@
 
     - name: Install Programs (golang)
       package:
-        state: latest
+        state: present
         name: "{{ golang_packages }}"
       become: true
 
@@ -73,7 +73,7 @@
 
     - name: Install Programs (GUI Programs)
       package:
-        state: latest
+        state: present
         name: "{{ my_packages }}"
       become: true
       tags: desktop_packages
