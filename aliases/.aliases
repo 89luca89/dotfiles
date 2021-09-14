@@ -6,11 +6,13 @@ gnome-background() {
 	gsettings set org.gnome.desktop.background picture-uri '""'
 }
 update-all() {
-	sudo fwupdmgr refresh --force
-	sudo dnf update --refresh
+	pkcon refresh
+	pkcon update
 	flatpak update
 	flatpak --unused uninstall
 	vim +PlugUpdate +PlugInstall! +qall
+	sleep 5
+	pkcon quit
 }
 update-grub() {
 	CONFS=$(sudo find /boot -name "grub.cfg")
