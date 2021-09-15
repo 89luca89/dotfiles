@@ -13,12 +13,11 @@ flatpak_packages:
   - com.jgraph.drawio.desktop
   - us.zoom.Zoom
   - com.github.tchx84.Flatseal
-  - org.libretro.RetroArch
-  - com.github.polymeilex.neothesia
   - com.github.jeromerobert.pdfarranger
   - com.github.maoschanz.drawing
+  - com.github.polymeilex.neothesia
   - de.haeckerfelix.Fragments
-  - im.pidgin.Pidgin
+  - fyi.zoey.Boop-GTK
   - nl.hjdskes.gcolor3
   - org.chromium.Chromium
   - org.gnome.Calculator
@@ -42,6 +41,7 @@ flatpak_packages:
   - org.kde.krita
   - org.keepassxc.KeePassXC
   - org.libreoffice.LibreOffice
+  - org.libretro.RetroArch
   - org.mozilla.Thunderbird
   - org.mozilla.firefox
   - org.remmina.Remmina

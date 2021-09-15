@@ -67,7 +67,6 @@
         disable_gpg_check: true
       become: true
       with_items:
-        - https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
         - "@virtualization"
       when: ansible_facts['os_family'] == "RedHat"
 
