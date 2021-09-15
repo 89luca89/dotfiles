@@ -56,6 +56,34 @@
   until: result is not failed
   when: not is_toolbox
 
+- name: Install Power Management (Laptop)
+  package:
+    state: present
+    name:
+      - acpi
+      - hdparm
+      - lm_sensors
+      - msr-tools
+      - powertop
+      - thermald
+      - tlp
+      - tlp-rdw
+  become: yes
+  when: not is_toolbox
+
+- name: daemon enable
+  systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+    daemon_reload: yes
+  become: yes
+  with_items:
+    - powertop.service
+    - thermald.service
+    - tlp.service
+  when: not is_toolbox
+
 - name: Improve Intel Tearfree on xorg
   blockinfile:
     path: /etc/X11/xorg.conf.d/20-intel.conf
@@ -79,11 +107,85 @@
       wifi.scan-rand-mac-address=no
   become: true
 
+- name: Set sysctl variables
+  sysctl:
+    name: '{{ item.name }}'
+    value: '{{ item.value }}'
+    sysctl_set: yes
+    state: present
+    reload: yes
+  with_items:
+    - {name: vm.laptop_mode, value: 5}
+    - {name: kernel.nmi_watchdog, value: 0}
+    - {name: vm.swappiness, value: 5}
+    - {name: vm.oom_kill_allocating_task, value: 1}
+    - {name: vm.block_dump, value: 1}
+    - {name: vm.vfs_cache_pressure, value: 100}
+    - {name: vm.dirty_ratio, value: 90}
+    - {name: vm.dirty_background_ratio, value: 50}
+    - {name: vm.dirty_writeback_centisecs, value: 60000}
+    - {name: vm.dirty_expire_centisecs, value: 60000}
+    - {name: fs.inotify.max_user_watches, value: 524288}
+    - {name: net.ipv4.ip_default_ttl, value: 66}
+  become: yes
+
+- name: Blacklist unused kernel module
+  kernel_blacklist:
+    name: intel_powerclamp
+    state: present
+  become: yes
+
+- name: Set i915 driver options
+  lineinfile:
+    path: /etc/modprobe.d/i915.conf
+    create: yes
+    line: 'options i915 disable_power_well=0 enable_dc=2 enable_psr=1 enable_rc6=7 enable_fbc=1 powersave=1 enable_guc=3 enable_dpcd_backlight=1'
+  become: yes
+
+- name: Set Intel HDA driver options
+  lineinfile:
+    path: /etc/modprobe.d/snd_hda_intel.conf
+    create: yes
+    line: 'options snd_hda_intel power_save_controlle=Y power_save=1'
+  become: yes
+
+- name: Set Intel ETH driver options
+  lineinfile:
+    path: /etc/modprobe.d/e1000e.conf
+    create: yes
+    line: 'options e1000e SmartPowerDownEnable=1'
+  become: yes
+
+- name: Set Intel Wifi driver options
+  lineinfile:
+    path: /etc/modprobe.d/iwlwifi.conf
+    create: yes
+    line: 'options iwlwifi power_save=Y power_level=5 iwlmvm power_scheme=3'
+  become: yes
+
+
 - name: Set UDev Rules
   blockinfile:
     path: /etc/udev/rules.d/powersave.rules
     create: yes
     block: |
+      ACTION=="add", SUBSYSTEM=="pci", ATTR{power/control}="auto"
+      ACTION=="add", SUBSYSTEM=="ahci", ATTR{power/control}="auto"
+      ACTION=="add", SUBSYSTEM=="scsi_host", KERNEL=="host*", ATTR{link_power_management_policy}="min_power"
+      ACTION=="add", SUBSYSTEM=="scsi", ATTR{power/control}="auto"
+      ACTION=="add", SUBSYSTEM=="acpi", ATTR{power/control}="auto"
+      ACTION=="add", SUBSYSTEM=="block", ATTR{power/control}="auto"
+      ACTION=="add", SUBSYSTEM=="workqueue", ATTR{power/control}="auto"
+      ACTION=="add", SUBSYSTEM=="i2c", ATTR{power/control}="auto"
+      ACTION=="add", SUBSYSTEM=="net", KERNEL=="enp*", RUN+="/usr/sbin/ethtool -s %k wol d"
+      ACTION=="add", SUBSYSTEM=="net", KERNEL=="wlp*", RUN+="/usr/sbin/ethtool -s %k wol d"
+      ACTION=="add", SUBSYSTEM=="net", KERNEL=="wlp*", RUN+="/usr/sbin/iw dev %k set power_save on"
+      ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/read_ahead_kb}="65536"
+      ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="bfq"
+      ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="0", ATTR{queue/iosched/low_latency}="1"
+      ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq"
+      ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/iosched/low_latency}="1"
+      ACTION=="add|change", KERNEL=="sd[a-z]", RUN+="/usr/sbin/hdparm -B 1 /dev/%k"
       SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="0",RUN+="/bin/cpupower frequency-set -g ondemand -u 2000MHz"
       SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="1",RUN+="/bin/cpupower frequency-set -g performance -u 4500MHz"
     marker: "# {mark} ANSIBLE MANAGED BLOCK BY DOTFILES"
