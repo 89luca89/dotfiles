@@ -5,9 +5,8 @@ gnome-background() {
 	gsettings set org.gnome.desktop.background picture-options 'none'
 	gsettings set org.gnome.desktop.background picture-uri '""'
 }
-update-all() {
-	pkcon refresh
-	pkcon update
+update() {
+	sudo dnf update --refresh
 	flatpak update
 	flatpak --unused uninstall
 	vim +PlugUpdate +PlugInstall! +qall
