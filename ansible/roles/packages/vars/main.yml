@@ -10,23 +10,19 @@ terraform_provider_libvirt_release: 0.6.3+git.1604843676.67f4f2aa
 use_flatpaks: true
 
 flatpak_packages:
-  - com.jgraph.drawio.desktop
   - us.zoom.Zoom
   - com.github.tchx84.Flatseal
-  - com.github.jeromerobert.pdfarranger
-  - com.github.maoschanz.drawing
-  - com.github.polymeilex.neothesia
-  - de.haeckerfelix.Fragments
-  - fyi.zoey.Boop-GTK
-  - nl.hjdskes.gcolor3
-  - org.chromium.Chromium
+  - org.gnome.baobab
   - org.gnome.Calculator
   - org.gnome.Calendar
+  - org.gnome.clocks
   - org.gnome.Connections
   - org.gnome.Contacts
+  - org.gnome.eog
   - org.gnome.Epiphany
   - org.gnome.Evince
   - org.gnome.FileRoller
+  - org.gnome.gedit
   - org.gnome.Logs
   - org.gnome.Maps
   - org.gnome.NetworkDisplays
@@ -34,17 +30,22 @@ flatpak_packages:
   - org.gnome.SoundRecorder
   - org.gnome.Totem
   - org.gnome.Weather
-  - org.gnome.baobab
-  - org.gnome.clocks
-  - org.gnome.eog
-  - org.gnome.gedit
   - org.kde.krita
   - org.keepassxc.KeePassXC
   - org.libreoffice.LibreOffice
-  - org.libretro.RetroArch
-  - org.mozilla.Thunderbird
+  - org.chromium.Chromium
   - org.mozilla.firefox
+  - org.mozilla.Thunderbird
   - org.remmina.Remmina
+  - org.libretro.RetroArch
+  - com.github.polymeilex.neothesia
+  - com.github.jeromerobert.pdfarranger
+  - com.github.johnfactotum.Foliate
+  - com.github.maoschanz.drawing
+  - com.jgraph.drawio.desktop
+  - de.haeckerfelix.Fragments
+  - fyi.zoey.Boop-GTK
+  - nl.hjdskes.gcolor3
 
 flatpak_overrides:
   - {key: "org.mozilla.firefox", value: "MOZ_USE_XINPUT2=1"}
