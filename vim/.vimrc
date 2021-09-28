@@ -7,15 +7,13 @@ set grepprg=grep\ -rn hlsearch ignorecase
 set guioptions=d mouse=a
 set langnoremap langremap lazyredraw redrawtime=0 ttyfast
 set list lcs=tab:\¦\  " here is a space, goes in hand with indentLine
+set nomodeline nofsync nowrap noswapfile nowritebackup nobackup noshowmode noshowcmd nofoldenable
 set omnifunc=syntaxcomplete#Complete completeopt=menu,menuone,popup,noselect,noinsert
 set path+=.,** wildmode=longest:full,full wildignorecase
 set splitbelow splitright
 set title number encoding=utf8
 set undodir=$HOME/.vim/undo undofile undolevels=10000
-set nomodeline nofsync nowrap noswapfile nowritebackup nobackup noshowmode noshowcmd laststatus=0 ruler
-set rulerformat=%40(%F%m%r%w\ [%c-%l/%L]\ %y%)\     " Modified+FileType+Ruler
-" Avoid Highlighting Large Files
-let g:large_file = 20*1024*1024
+set laststatus=0 ruler rulerformat=%40(%F%m%r%w\ [%c-%l/%L]\ %y%)\     " Modified+FileType+Ruler
 let g:polyglot_disabled = ['yaml'] " excluding vim-yaml from polyglot as it's not working
 filetype off
 call plug#begin('~/.vim/plugged')
