@@ -10,8 +10,6 @@ update() {
 	flatpak update
 	flatpak --unused uninstall
 	vim +PlugUpdate +PlugInstall! +qall
-	sleep 5
-	pkcon quit
 }
 update-grub() {
 	CONFS=$(sudo find /boot -name "grub.cfg")
@@ -36,8 +34,8 @@ alias gogetsys="export GOPATH=~/.local/go; go get"
 alias ll='ls -Ahl --group-directories-first --color'
 alias open='xdg-open'
 alias rsyncProjecs='rsync -avHP --delete  -e "ssh -J tunnel" $HOME/Projects/ root@raspberrypi-1.lan:/usr/local/mnt/Vault/Projects/'
-alias rsyncthingD='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync -av --delete --progress -e "ssh -J management -p 2223" --exclude={.stversions,*.tmp} fileserver@raspberrypi-1.lan:/data/Syncthing/ ~/Syncthing/ && cd -'
-alias rsyncthingS='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync -av --delete --progress -e "ssh -J management -p 2223" --exclude={.stversions,*.tmp} ~/Syncthing/ fileserver@raspberrypi-1.lan:/data/Syncthing/ && cd -'
+alias rsyncthingD='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync -av --delete --progress -e "ssh -J jump -p 2223" --exclude={.stversions,*.tmp} fileserver@raspberrypi-1.lan:/data/Syncthing/ ~/Syncthing/ && cd -'
+alias rsyncthingS='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync -av --delete --progress -e "ssh -J jump -p 2223" --exclude={.stversions,*.tmp} ~/Syncthing/ fileserver@raspberrypi-1.lan:/data/Syncthing/ && cd -'
 alias saml2aws='saml2aws --disable-keychain'
 alias top='top -o %CPU'
 alias vi='vim -u ~/.vimrc-minimal'
