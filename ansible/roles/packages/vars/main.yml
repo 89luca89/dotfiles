@@ -46,6 +46,8 @@ flatpak_packages:
   - de.haeckerfelix.Fragments
   - fyi.zoey.Boop-GTK
   - nl.hjdskes.gcolor3
+  - org.freedesktop.Platform.VAAPI.Intel
+  - org.freedesktop.Platform.GStreamer.gstreamer-vaapi
 
 flatpak_overrides:
   - {key: "org.mozilla.firefox", value: "MOZ_USE_XINPUT2=1"}
