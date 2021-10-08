@@ -12,24 +12,24 @@ use_flatpaks: true
 flatpak_packages:
   - us.zoom.Zoom
   - com.github.tchx84.Flatseal
-  - org.gnome.baobab
   - org.gnome.Calculator
   - org.gnome.Calendar
-  - org.gnome.clocks
   - org.gnome.Connections
   - org.gnome.Contacts
-  - org.gnome.eog
   - org.gnome.Epiphany
   - org.gnome.Evince
   - org.gnome.FileRoller
-  - org.gnome.gedit
   - org.gnome.Logs
   - org.gnome.Maps
   - org.gnome.NetworkDisplays
   - org.gnome.Rhythmbox3
   - org.gnome.SoundRecorder
+  - org.gnome.TextEditor
   - org.gnome.Totem
   - org.gnome.Weather
+  - org.gnome.baobab
+  - org.gnome.clocks
+  - org.gnome.eog
   - org.kde.krita
   - org.keepassxc.KeePassXC
   - org.libreoffice.LibreOffice
