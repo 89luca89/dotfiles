@@ -1,8 +1,8 @@
 if [[ $- == *i* ]]; then
 	function __git_status() {
 		# setup a simple PROMPT/PS1
-		BGREEN=''
-		BBLUE='\[\033[94m\]'
+		BGREEN='\[\033[1;32m\]'
+		BBLUE='\[\033[1;94m\]'
 		RED='\[\033[91m\]'
 		PS_CLEAR='\[\033[0m\]'
 		STATUS=$(git status 2>/dev/null || echo "norepo")
