@@ -1,80 +1,105 @@
 # my_apps.yml
 ---
 
+- name: Install the rpmfusion and fonts repo packages
+  dnf:
+    state: present
+    disable_gpg_check: yes
+    name:
+      - https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_facts.distribution_version }}.noarch.rpm
+      - https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_facts.distribution_version }}.noarch.rpm
+  become: yes
+  tags: rpmfusion
+  when: ansible_os_family == "RedHat"
+
+- name: Remove snaps
+  apt:
+    state: absent
+    purge: yes
+    name: snapd
+  become: yes
+  when: ansible_distribution == "Ubuntu"
+
+- name: Blacklist Snaps
+  blockinfile:
+    path: /etc/apt/preferences.d/nosnap.pref
+    create: yes
+    block: |
+      Package: snapd
+      Pin: release a=*
+      Pin-Priority: -10
+  become: yes
+  when: ansible_distribution == "Ubuntu"
+
+
+- name: Install Programs (Programming Packages)
+  package:
+    state: present
+    name: "{{ terminal_packages }}"
+  become: yes
+
+- name: Install Programs (python)
+  package:
+    state: present
+    name: "{{ python_packages }}"
+  become: yes
+
+- name: Install Programs (PIP Packages) - pip
+  pip:
+    state: present
+    executable: pip3
+    extra_args: --user
+    name: "{{ python_modules }}"
+  become: yes
+
+- name: Install Programs (golang)
+  package:
+    state: present
+    name: "{{ golang_packages }}"
+  become: yes
+
+- name: Remove bloat packages
+  package:
+    state: absent
+    name: "{{ debloat_pkg }}"
+  become: yes
+
+- name: Install Programs (Archive Utilities)
+  package:
+    state: present
+    name: "{{ archive_packages }}"
+  become: yes
+  tags: archives
+
+- name: Install Programs (Media Utilities)
+  package:
+    state: present
+    name: "{{ codecs_packages }}"
+  become: yes
+  tags: codecs
+
+- name: Install virtualization packages
+  dnf:
+    name: "{{ virtualization_packages }}"
+    state: present
+    disable_gpg_check: yes
+  become: yes
+  when: ansible_os_family == "RedHat"
+
+- name: Install virtualization packages
+  apt:
+    name: "{{ virtualization_packages }}"
+    state: present
+  become: yes
+  when: ansible_os_family == "Debian"
+
 - block:
-
-    - name: Install the rpmfusion and fonts repo packages
-      dnf:
-        state: present
-        disable_gpg_check: yes
-        name:
-          - https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_facts.distribution_version }}.noarch.rpm
-          - https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_facts.distribution_version }}.noarch.rpm
-      become: yes
-      tags: rpmfusion
-      when: ansible_os_family == "RedHat"
-
-    - name: Install Programs (Programming Packages)
-      package:
-        state: present
-        name: "{{ terminal_packages }}"
-      become: true
-
-    - name: Install Programs (python)
-      package:
-        state: present
-        name: "{{ python_packages }}"
-      become: true
-
-    - name: Install Programs (PIP Packages) - pip
-      pip:
-        state: present
-        executable: pip3
-        extra_args: --user
-        name: "{{ python_modules }}"
-      become: true
-
-    - name: Install Programs (golang)
-      package:
-        state: present
-        name: "{{ golang_packages }}"
-      become: true
-
-    - name: Remove bloat packages
-      package:
-        state: absent
-        name: "{{ debloat_pkg }}"
-      become: true
-
-    - name: Install Programs (Archive Utilities)
-      package:
-        state: present
-        name: "{{ archive_packages }}"
-      become: yes
-      tags: archives
-
-    - name: Install Programs (Media Utilities)
-      package:
-        state: present
-        name: "{{ codecs_packages }}"
-      become: yes
-      tags: codecs
-
-    - name: Install additional packages
-      dnf:
-        name: "{{ item }}"
-        state: present
-        disable_gpg_check: true
-      become: true
-      with_items:
-        - "@virtualization"
-      when: ansible_facts['os_family'] == "RedHat"
 
     - name: Install Programs (GUI Programs)
       package:
         state: present
         name: "{{ my_packages }}"
-      become: true
+      become: yes
       tags: desktop_packages
       when: not use_flatpaks
 
@@ -84,28 +109,28 @@
 - name: Install Programs (Flatpak Programs - flathub)
   command: "flatpak remote-add --user --if-not-exists {{ item.key }} {{ item.value }}"
   changed_when: no
-  become: false
+  become: no
   tags: flatpak_packages
   with_items:
     - {key: "fedora", value: "oci+https://registry.fedoraproject.org"}
     - {key: "flathub", value: "https://flathub.org/repo/flathub.flatpakrepo"}
-  when: (not is_toolbox) and use_flatpaks
+  when: use_flatpaks
 
 - name: Install Programs (Flatpak Programs )
   command: "flatpak --user install -y flathub {{ item }}"
   with_items: "{{ flatpak_packages }}"
   register: flatpak_out
   changed_when: not 'already installed' in flatpak_out.stderr
-  become: false
+  become: no
   tags: flatpak_packages
-  when: (not is_toolbox) and use_flatpaks
+  when: use_flatpaks
 
 - name: Env variables (Flatpak Programs)
   command: "flatpak override --user --env={{ item.value }} {{ item.key }}"
   with_items: "{{ flatpak_overrides }}"
-  become: false
+  become: no
   tags: flatpak_packages
-  when: (not is_toolbox) and use_flatpaks
+  when: use_flatpaks
 
 - name: Check that golang exists
   stat:

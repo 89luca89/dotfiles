@@ -2,12 +2,7 @@
 # vars file for my_apps
 #
 
-terraform_version: 0.13.0
-terraform_ls_version: 0.8.0
-terraform_provider_libvirt_version: 0.6.3
-terraform_provider_libvirt_release: 0.6.3+git.1604843676.67f4f2aa
-
-use_flatpaks: true
+use_flatpaks: yes
 
 flatpak_packages:
   - us.zoom.Zoom
@@ -32,7 +27,7 @@ flatpak_packages:
   - org.gnome.eog
   - org.kde.krita
   - org.keepassxc.KeePassXC
-  - org.libreoffice.LibreOffice
+  - org.libreoffice.LibreOffice # org.onlyoffice.desktopeditors
   - org.chromium.Chromium
   - org.mozilla.firefox
   - org.mozilla.Thunderbird
@@ -46,18 +41,16 @@ flatpak_packages:
   - de.haeckerfelix.Fragments
   - fyi.zoey.Boop-GTK
   - nl.hjdskes.gcolor3
-  - org.freedesktop.Platform.VAAPI.Intel
-  - org.freedesktop.Platform.GStreamer.gstreamer-vaapi
 
 flatpak_overrides:
+  - {key: "org.mozilla.firefox", value: "MOZ_ACCELLERATED=1"}
   - {key: "org.mozilla.firefox", value: "MOZ_USE_XINPUT2=1"}
   - {key: "org.mozilla.firefox", value: "MOZ_WEBRENDER=1"}
   - {key: "org.mozilla.firefox", value: "MOZ_X11_EGL=1"}
 
 python_packages:
-  - python2-devel
-  - python3-devel
-  - python3.8
+  - python3
+  - python3-pip
 
 python_modules:
   - "python-lsp-server[all]"
@@ -76,8 +69,7 @@ python_modules:
   - psutil
   - six
   - yamllint
-  - youtube-dl
-  - "https://github.com/ssokolow/quicktile/archive/master.zip"
+  # - "https://github.com/ssokolow/quicktile/archive/master.zip"
 
 golang_packages:
   - golang

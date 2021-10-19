@@ -1,77 +1,44 @@
 ---
 # tasks file to setup distro to my liking
 
-- name: Improve DNF Performances
-  blockinfile:
-    path: /etc/dnf/dnf.conf
-    create: yes
-    block: |
-      deltarpm=true
-      fastestmirror=true
-      install_weak_deps=false
-      max_parallel_downloads={{ ansible_processor_vcpus }}
-  become: yes
-  when: ansible_os_family == "RedHat"
-
-- name: Update the profiles file with personal variables
-  lineinfile:
-    path: /etc/profile
-    regexp: "{{ item }}"
-    line: "{{ item }}"
-    state: present
-    backup: true
-  with_items: "{{ global_vars }}"
-  become: true
-
 # Mask systemd services to free up memory
 - name: Mask services /1
   systemd:
     name: "{{ item }}"
     state: stopped
-    enabled: false
-    masked: true
-    daemon_reload: true
+    enabled: no
+    masked: yes
+    daemon_reload: yes
     scope: user
   with_items: "{{ systemd_user_mask_services }}"
-  become: false
+  become: no
   retries: 3
   delay: 3
   register: result
   until: result is not failed
-  when: not is_toolbox
 
 # Mask systemd services to free up memory
 - name: Mask services /2
   systemd:
     name: "{{ item }}"
     state: stopped
-    enabled: false
-    masked: true
-    daemon_reload: true
+    enabled: no
+    masked: yes
+    daemon_reload: yes
   with_items: "{{ systemd_root_mask_services }}"
-  become: true
+  become: yes
   retries: 3
   delay: 3
   register: result
   until: result is not failed
-  when: not is_toolbox
 
 - name: Install Power Management (Laptop)
   package:
     state: present
-    name:
-      - acpi
-      - hdparm
-      - lm_sensors
-      - msr-tools
-      - powertop
-      - thermald
-      - tlp
-      - tlp-rdw
+    name: "{{ power_management_packages }}"
   become: yes
-  when: not is_toolbox
 
-- name: daemon enable
+- name: Enable Power Management (Laptop)
   systemd:
     name: "{{ item }}"
     state: started
@@ -79,10 +46,8 @@
     daemon_reload: yes
   become: yes
   with_items:
-    - powertop.service
     - thermald.service
     - tlp.service
-  when: not is_toolbox
 
 - name: Improve Intel Tearfree on xorg
   blockinfile:
@@ -96,37 +61,6 @@
         Option "TearFree" "true"
         Option "DRI" "3"
       EndSection
-  become: true
-
-- name: Disable WIFI Mac address randomization on scan
-  blockinfile:
-    path: /etc/NetworkManager/conf.d/30-mac-randomization.conf
-    create: yes
-    block: |
-      [device-mac-randomization]
-      wifi.scan-rand-mac-address=no
-  become: true
-
-- name: Set sysctl variables
-  sysctl:
-    name: '{{ item.name }}'
-    value: '{{ item.value }}'
-    sysctl_set: yes
-    state: present
-    reload: yes
-  with_items:
-    - {name: vm.laptop_mode, value: 5}
-    - {name: kernel.nmi_watchdog, value: 0}
-    - {name: vm.swappiness, value: 5}
-    - {name: vm.oom_kill_allocating_task, value: 1}
-    - {name: vm.block_dump, value: 1}
-    - {name: vm.vfs_cache_pressure, value: 100}
-    - {name: vm.dirty_ratio, value: 90}
-    - {name: vm.dirty_background_ratio, value: 50}
-    - {name: vm.dirty_writeback_centisecs, value: 60000}
-    - {name: vm.dirty_expire_centisecs, value: 60000}
-    - {name: fs.inotify.max_user_watches, value: 524288}
-    - {name: net.ipv4.ip_default_ttl, value: 66}
   become: yes
 
 - name: Blacklist unused kernel module
@@ -163,6 +97,35 @@
     line: 'options iwlwifi power_save=Y power_level=5 iwlmvm power_scheme=3'
   become: yes
 
+- name: Disable WIFI Mac address randomization on scan
+  blockinfile:
+    path: /etc/NetworkManager/conf.d/30-mac-randomization.conf
+    create: yes
+    block: |
+      [device-mac-randomization]
+      wifi.scan-rand-mac-address=no
+  become: yes
+
+- name: Set sysctl variables
+  sysctl:
+    name: '{{ item.name }}'
+    value: '{{ item.value }}'
+    sysctl_set: yes
+    state: present
+    reload: yes
+  with_items:
+    - {name: vm.laptop_mode, value: 5}
+    - {name: kernel.nmi_watchdog, value: 0}
+    - {name: vm.swappiness, value: 5}
+    - {name: vm.oom_kill_allocating_task, value: 1}
+    - {name: vm.vfs_cache_pressure, value: 100}
+    - {name: vm.dirty_ratio, value: 90}
+    - {name: vm.dirty_background_ratio, value: 50}
+    - {name: vm.dirty_writeback_centisecs, value: 60000}
+    - {name: vm.dirty_expire_centisecs, value: 60000}
+    - {name: fs.inotify.max_user_watches, value: 524288}
+    - {name: net.ipv4.ip_default_ttl, value: 66}
+  become: yes
 
 - name: Set UDev Rules
   blockinfile:
@@ -186,11 +149,10 @@
       ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq"
       ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/iosched/low_latency}="1"
       ACTION=="add|change", KERNEL=="sd[a-z]", RUN+="/usr/sbin/hdparm -B 1 /dev/%k"
-      SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="0",RUN+="/bin/cpupower frequency-set -g ondemand -u 2000MHz"
+      SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="0",RUN+="/bin/cpupower frequency-set -g conservative -u 2000MHz"
       SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="1",RUN+="/bin/cpupower frequency-set -g performance -u 4500MHz"
     marker: "# {mark} ANSIBLE MANAGED BLOCK BY DOTFILES"
   become: yes
-
 
 - name: Check if lvm.conf is present
   stat:
@@ -204,7 +166,7 @@
     replace: 'issue_discards = 1'
     backup: yes
   register: lvm_setup
-  become: true
+  become: yes
   when: lvm_file.stat.exists
 
 - name: Check if Crypttab is present
@@ -219,7 +181,7 @@
     replace: 'none discard no-read-workqueue no-write-workqueue'
     backup: yes
   register: crypt_setup
-  become: true
+  become: yes
   when: crypt_file.stat.exists
 
 - name: Check if Grub is present
@@ -232,7 +194,7 @@
     path: /etc/default/grub
     regexp: '^(GRUB_CMDLINE_LINUX=(?:(?![" ]{{ item.option | regex_escape }}=).)*)(?:[" ]{{ item.option | regex_escape }}=\S+)?(.*")$'
     replace: '\1 {{ item.option }}={{ item.value }}\2'
-    backup: true
+    backup: yes
   with_items:
     - {option: drm.debug, value: 0}
     - {option: drm.vblankoffdelay, value: 1}
@@ -241,8 +203,8 @@
     - {option: pcie_aspm, value: force}
     - {option: pcie_aspm.policy, value: powersupersave}
     - {option: scsi_mod.use_blk_mq, value: 1}
+  become: yes
   register: grub_setup
-  become: true
   when: grub_file.stat.exists
 
 - name: Update Grub and Initramfs
@@ -255,7 +217,7 @@
     (lvm_setup is defined and lvm_setup.changed) or
     (crypt_setup is defined and crypt_setup.changed))
     and ansible_os_family == "RedHat"
-  become: true
+  become: yes
 
 - name: Update Grub and Initramfs
   command: "{{ item }}"
@@ -266,4 +228,4 @@
     (lvm_setup is defined and lvm_setup.changed) or
     (crypt_setup is defined and crypt_setup.changed))
     and ansible_os_family == "Debiam"
-  become: true
+  become: yes

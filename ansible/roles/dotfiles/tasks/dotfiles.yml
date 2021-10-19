@@ -1,17 +1,11 @@
 ---
 # tasks file for dotfiles
 
-- name: Check if Baseline folder is present
+- name: Check if Vim Baseline folder is present
   file:
     path: "{{ item }}"
     state: directory
   with_items:
-    - "{{ ansible_env.HOME }}/.config/autostart"
-    - "{{ ansible_env.HOME }}/.config/alacritty"
-    - "{{ ansible_env.HOME }}/.config/mpv"
-    - "{{ ansible_env.HOME }}/.local/go"
-    - "{{ ansible_env.HOME }}/.local/share"
-    - "{{ ansible_env.HOME }}/.ssh/"
     - "{{ ansible_env.HOME }}/.vim"
     - "{{ ansible_env.HOME }}/.vim/autoload"
     - "{{ ansible_env.HOME }}/.vim/swap"
@@ -19,6 +13,22 @@
     - "{{ ansible_env.HOME }}/.vim/undo"
     - "{{ ansible_env.HOME }}/.vim/view"
   register: firstrun
+
+- name: Prepare to link dotfiles
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ ansible_env.HOME }}/.Xdefaults"
+    - "{{ ansible_env.HOME }}/.aliases"
+    - "{{ ansible_env.HOME }}/.bashrc"
+    - "{{ ansible_env.HOME }}/.gitconfig"
+    - "{{ ansible_env.HOME }}/.histfile"
+    - "{{ ansible_env.HOME }}/.tmux.conf"
+    - "{{ ansible_env.HOME }}/.toprc"
+    - "{{ ansible_env.HOME }}/.vimrc"
+    - "{{ ansible_env.HOME }}/.zshrc"
+  when: firstrun.changed
 
 - name: Install vim-plug
   get_url:
@@ -30,31 +40,6 @@
         src: "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim",
         dest: "{{ ansible_env.HOME }}/.vim/autoload",
       }
-
-- name: Prepare to link dotfiles
-  file:
-    path: "{{ item }}"
-    state: absent
-  with_items:
-    - "{{ ansible_env.HOME }}/.Xdefaults"
-    - "{{ ansible_env.HOME }}/.aliases"
-    - "{{ ansible_env.HOME }}/.bashrc"
-    - "{{ ansible_env.HOME }}/.clang-format"
-    - "{{ ansible_env.HOME }}/.config/alacritty"
-    - "{{ ansible_env.HOME }}/.config/autostart"
-    - "{{ ansible_env.HOME }}/.config/mpv"
-    - "{{ ansible_env.HOME }}/.ctags"
-    - "{{ ansible_env.HOME }}/.gitconfig"
-    - "{{ ansible_env.HOME }}/.histfile"
-    - "{{ ansible_env.HOME }}/.ssh/config"
-    - "{{ ansible_env.HOME }}/.tmux.conf"
-    - "{{ ansible_env.HOME }}/.toprc"
-    - "{{ ansible_env.HOME }}/.vimrc"
-    - "{{ ansible_env.HOME }}/.vimrc-minimal"
-    - "{{ ansible_env.HOME }}/.xbindkeysrc"
-    - "{{ ansible_env.HOME }}/.xscreensaver"
-    - "{{ ansible_env.HOME }}/.zshrc"
-  when: firstrun.changed
 
 - name: link dotfiles
   command: "{{ ansible_env.HOME }}/dotfiles/bin/.local/bin/dotfiles"

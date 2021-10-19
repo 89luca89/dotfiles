@@ -2,9 +2,7 @@
 # vars file for my_apps
 #
 
-use_flatpaks: true
-
-terraform_provider_libvirt_url: "https://github.com/dmacvicar/terraform-provider-libvirt/releases/download/v{{ terraform_provider_libvirt_version }}/terraform-provider-libvirt-{{ terraform_provider_libvirt_release }}.Fedora_32.x86_64.tar.gz"
+use_flatpaks: yes
 
 archive_packages:
   - cabextract
@@ -41,6 +39,9 @@ codecs_packages:
   - libva-utils
   - libva-vdpau-driver
   - libvdpau-va-gl
+
+virtualization_packages:
+  - "@virtualization"
 
 terminal_packages:
   - ShellCheck

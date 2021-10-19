@@ -2,17 +2,49 @@
 # vars file for my_apps
 #
 
-use_flatpaks: true
-
-terraform_provider_libvirt_url: "https://github.com/dmacvicar/terraform-provider-libvirt/releases/download/v{{ terraform_provider_libvirt_version }}/terraform-provider-libvirt-{{ terraform_provider_libvirt_release }}.Ubuntu_20.04.x86_64.tar.gz"
+use_flatpaks: yes
 
 archive_packages:
   - cabextract
   - lzip
   - p7zip
-  - p7zip-plugins
+  - p7zip-full
   - unzip
   - zstd
+
+codecs_packages:
+  - ffmpeg
+  - flac
+  - gstreamer1.0-libav
+  - gstreamer1.0-plugins-bad
+  - gstreamer1.0-plugins-bad-apps
+  - gstreamer1.0-plugins-base
+  - gstreamer1.0-plugins-base-apps
+  - gstreamer1.0-plugins-good
+  - gstreamer1.0-plugins-ugly
+  - gstreamer1.0-vaapi
+  - i965-va-driver
+  - intel-media-va-driver
+  - libigdgmm-dev
+  - libigdgmm11
+  - libva-dev
+  - libva-drm2
+  - libva-glx2
+  - libva-wayland2
+  - libva-x11-2
+  - libva2
+  - libvdpau-va-gl1
+
+virtualization_packages:
+  - bridge-utils
+  - libvirt-clients
+  - libvirt-daemon
+  - libvirt-daemon-config-network
+  - libvirt-daemon-system
+  - qemu-kvm
+  - virtinst
+  - virt-manager
+  - virt-viewer
 
 terminal_packages:
   - shellcheck
@@ -21,7 +53,6 @@ terminal_packages:
   - build-essential
   - clang
   - clang-tools
-  - clang-tools-extra
   - curl
   - exuberant-ctags
   - flatpak
@@ -51,14 +82,14 @@ terminal_packages:
   - vim
   - syncthing
   # Generic X utility
-  - setxkbmap
+  - x11-xkb-utils
   - wmctrl
   - xbindkeys
   - xclip
   - xdotool
-  - xgamma
+  - x11-utils
+  - x11-xserver-utils
   - xinput
-  - xkill
 
 my_packages:
   - gnome-disk-utility
@@ -87,7 +118,6 @@ debloat_pkg:
   - gnome-user-docs
   - gnome-user-share
   - gnome-video-effects
-  - snapd
   - update-manager
   - yelp
   - yelp-libs
