@@ -122,3 +122,6 @@ debloat_pkg:
   - yelp
   - yelp-libs
   - yelp-xsl
+  - seahorse
+
+# sudo apt remove firefox baobab cheese drawing eog evince file-roller gcolor3 gedit gigolo krita gnome-sound-recorder gnome-calculator gnome-calendar gnome-connections gnome-contacts gnome-logs gnome-maps gnome-weather keepassxc pdfarranger remmina rhythmbox thunderbird totem pidgin

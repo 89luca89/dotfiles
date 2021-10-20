@@ -173,3 +173,5 @@ debloat_pkg:
   - yelp
   - yelp-libs
   - yelp-xsl
+
+# sudo dnf remove firefox chromium-freeworld baobab cheese drawing eog evince file-roller gcolor3 gedit gigolo krita gnome-sound-recorder gnome-calculator gnome-calendar gnome-connections gnome-contacts gnome-logs gnome-maps gnome-network-displays gnome-weather keepassxc pdfarranger remmina rhythmbox thunderbird totem pidgin

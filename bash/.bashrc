@@ -10,9 +10,9 @@ if [[ $- == *i* ]]; then
 		SYMBOL=$(echo $STATUS | grep -q "not staged" && echo "*")
 		SYMBOL_2=$(echo $STATUS | grep -q "Untracked" && echo "%")
 		if [ "$STATUS" == "norepo" ]; then
-			export PS1=${BGREEN}'\u@\h'${PS_CLEAR}':'${BBLUE}'\w'${PS_CLEAR}' $ '
+			export PS1=${BGREEN}'\u@\h'${PS_CLEAR}':'${BBLUE}'\w'${PS_CLEAR}'$ '
 		else
-			export PS1=${BGREEN}'\u@\h'${PS_CLEAR}':'${BBLUE}'\w'${PS_CLEAR}${RED}" [${BRANCH}${SYMBOL}${SYMBOL_2}]"${PS_CLEAR}' $ '
+			export PS1=${BGREEN}'\u@\h'${PS_CLEAR}':'${BBLUE}'\w'${PS_CLEAR}${RED}"[${BRANCH}${SYMBOL}${SYMBOL_2}]"${PS_CLEAR}'$ '
 		fi
 	}
 	# Path to the bash it configuration
