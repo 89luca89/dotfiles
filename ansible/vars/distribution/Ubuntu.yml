@@ -42,14 +42,15 @@ virtualization_packages:
   - libvirt-daemon-config-network
   - libvirt-daemon-system
   - qemu-kvm
-  - virtinst
+  - qemu-user-static
   - virt-manager
   - virt-viewer
+  - virtinst
 
 terminal_packages:
-  - shellcheck
   - acpi
   - bash-completion
+  - binwalk
   - build-essential
   - clang
   - clang-tools
@@ -59,37 +60,33 @@ terminal_packages:
   - gcc
   - git
   - golang
-  - libappindicator1
-  - libappindicator3-1
   - lsof
   - make
   - ncdu
   - net-tools
-  - powertop
+  - nmap
   - python3-pip
+  - shellcheck
   - stow
   - tcpdump
   - tig
-  - tlp
   - tree
   # Cli packages
-  - aria2
   - mpv
-  - ncdu
   - rsync
   - tmux
-  - tmate
   - vim
   - syncthing
   # Generic X utility
-  - x11-xkb-utils
+  - wl-gammactl
   - wmctrl
+  - x11-utils
+  - x11-xkb-utils
+  - x11-xserver-utils
   - xbindkeys
   - xclip
   - xdotool
-  - x11-utils
-  - x11-xserver-utils
-  - xinput
+  - xlsclients
 
 my_packages:
   - gnome-disk-utility
@@ -100,7 +97,6 @@ my_packages:
   - gvim
   - nautilus
   - nautilus-extensions
-  - firefox
   - ttf-mscorefonts-installer
 
 debloat_pkg:
@@ -123,5 +119,3 @@ debloat_pkg:
   - yelp-libs
   - yelp-xsl
   - seahorse
-
-# sudo apt remove firefox baobab cheese drawing eog evince file-roller gcolor3 gedit gigolo krita gnome-sound-recorder gnome-calculator gnome-calendar gnome-connections gnome-contacts gnome-logs gnome-maps gnome-weather keepassxc pdfarranger remmina rhythmbox thunderbird totem pidgin

@@ -42,12 +42,13 @@ codecs_packages:
 
 virtualization_packages:
   - "@virtualization"
+  - qemu-user-static
 
 terminal_packages:
   - ShellCheck
   - acpi
-  - android-tools
   - bash-completion
+  - binwalk
   - clang
   - clang-tools-extra
   - ctags
@@ -60,33 +61,28 @@ terminal_packages:
   - lsof
   - make
   - net-tools
-  - powertop
+  - nmap
   - python3-devel
   - python3-pip
   - stow
   - tcpdump
   - tig
-  - tlp
   - tree
   # Cli packages
-  - aria2
   - mpv
-  - ncdu
   - rsync
   - tmux
-  - tmate
   - vim
   - syncthing
   - PackageKit
   # Generic X utility
-  - setxkbmap
+  - xgamma
+  - wl-gammactl
   - wmctrl
   - xbindkeys
   - xclip
   - xdotool
-  - xgamma
-  - xinput
-  - xkill
+  - xlsclients
 
 
 ### gnome-extensions-app gnome-tweaks
@@ -147,17 +143,23 @@ debloat_pkg:
   - abrt-retrace-client
   - abrt-tui
   - anaconda-install-env-deps
+  - evolution
+  - evolution-ews
   - fedora-logos-httpd
   - gamemode
   - gnome-boxes
   - gnome-dictionary
   - gnome-documents
+  - gnome-getting-started-docs
+  - gnome-initial-setup
+  - gnome-maps
   - gnome-music
   - gnome-online-miners
   - gnome-photos
   - gnome-shell-extension-background-logo
   - gnome-user-docs
   - gnome-user-share
+  - gnome-video-effects
   - httpd
   - hyperv-daemons
   - hyperv-daemons-license
@@ -168,10 +170,9 @@ debloat_pkg:
   - orca
   - qemu-guest-agent
   - rsyslog
+  - seahorse
   - spice-vdagent
   - virtualbox-guest-additions
   - yelp
   - yelp-libs
   - yelp-xsl
-
-# sudo dnf remove firefox chromium-freeworld baobab cheese drawing eog evince file-roller gcolor3 gedit gigolo krita gnome-sound-recorder gnome-calculator gnome-calendar gnome-connections gnome-contacts gnome-logs gnome-maps gnome-network-displays gnome-weather keepassxc pdfarranger remmina rhythmbox thunderbird totem pidgin

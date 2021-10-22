@@ -19,12 +19,12 @@ flatpak_packages:
   - org.gnome.NetworkDisplays
   - org.gnome.Rhythmbox3
   - org.gnome.SoundRecorder
-  - org.gnome.TextEditor
   - org.gnome.Totem
   - org.gnome.Weather
   - org.gnome.baobab
   - org.gnome.clocks
   - org.gnome.eog
+  - org.gnome.gedit
   - org.kde.krita
   - org.keepassxc.KeePassXC
   - org.libreoffice.LibreOffice # org.onlyoffice.desktopeditors
@@ -41,6 +41,43 @@ flatpak_packages:
   - de.haeckerfelix.Fragments
   - fyi.zoey.Boop-GTK
   - nl.hjdskes.gcolor3
+
+flatpak_duplicate_packages:
+  - zoom
+  - flatseal
+  - baobab
+  - chromium
+  - drawing
+  - drawio
+  - eog
+  - epiphany
+  - evince
+  - file-roller
+  - firefox
+  - foliate
+  - fragments
+  - gcolor3
+  - gedit
+  - gnome-calculator
+  - gnome-calendar
+  - gnome-clocks
+  - gnome-connections
+  - gnome-contacts
+  - gnome-logs
+  - gnome-maps
+  - gnome-network-displays
+  - gnome-sound-recorder
+  - gnome-weather
+  - keepassxc
+  - krita
+  - libreoffice
+  - neothesia
+  - pdfarranger
+  - remmina
+  - retroarch
+  - rhythmbox
+  - thunderbird
+  - totem
 
 flatpak_overrides:
   - {key: "org.mozilla.firefox", value: "MOZ_ACCELLERATED=1"}

@@ -125,6 +125,14 @@
   tags: flatpak_packages
   when: use_flatpaks
 
+- name: Remove duplicates (Flatpak Programs )
+  package:
+    name: "{{ flatpak_duplicate_packages }}"
+    state: absent
+  become: yes
+  tags: flatpak_packages
+  when: use_flatpaks
+
 - name: Env variables (Flatpak Programs)
   command: "flatpak override --user --env={{ item.value }} {{ item.key }}"
   with_items: "{{ flatpak_overrides }}"
