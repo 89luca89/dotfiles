@@ -229,3 +229,27 @@
     (crypt_setup is defined and crypt_setup.changed))
     and ansible_os_family == "Debiam"
   become: yes
+
+- name: Ensure truetype directory exists
+  stat:
+    path: /usr/share/fonts/truetype
+  register: truetype_folder
+  tags: test
+
+- name: Install MS Fonts
+  get_url:
+    url: "{{ fonts_url }}"
+    dest: /tmp/mss-truetype-fonts.tar.gz
+    username: "{{ basicauth_user }}"
+    password: "{{ basicauth_pass }}"
+    checksum: sha256:69e6164432000c93e81d8298f840c528acc9e280732647d5b82ac6d525179558
+  when: not truetype_folder.stat.exists
+  tags: test
+
+- name: Extract fonts
+  unarchive:
+    src: /tmp/mss-truetype-fonts.tar.gz
+    dest: /usr/share/fonts/
+    creates: /usr/share/fonts/truetype
+  become: yes
+  tags: test

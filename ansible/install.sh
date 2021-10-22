@@ -16,4 +16,4 @@ for i in $base_deps; do
 	fi
 done
 
-ansible-playbook -i localhost, -c local -K "$DIR"/main.yml --diff $*
+ansible-playbook -i localhost, -c local --ask-vault-pass -K "$DIR"/main.yml --diff $*
