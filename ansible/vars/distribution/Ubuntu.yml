@@ -97,7 +97,6 @@ my_packages:
   - gvim
   - nautilus
   - nautilus-extensions
-  - ttf-mscorefonts-installer
 
 debloat_pkg:
   - evolution
