@@ -8,16 +8,16 @@ echo 'max_usb_current=1' | tee -a /boot/config.txt
 
 apt update; apt upgrade -y
 apt install -y \
-    cryptsetup
-    htop
-    iftop
-    iotop
-    lm-sensors
-    nginx
-    parallel
-    rclone
-    rsync
-    tmux
+    cryptsetup \
+    htop \
+    iftop \
+    iotop \
+    lm-sensors \
+    nginx \
+    parallel \
+    rclone \
+    rsync \
+    tmux \
     vim
 
 yes | sensors-detect
