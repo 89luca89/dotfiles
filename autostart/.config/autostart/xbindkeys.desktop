@@ -1,9 +1,0 @@
-[Desktop Entry]
-Encoding=UTF-8
-Type=Application
-Name=xbindkeys
-Comment=xbindkeys
-Exec=xbindkeys -p
-StartupNotify=false
-Terminal=false
-Hidden=false
