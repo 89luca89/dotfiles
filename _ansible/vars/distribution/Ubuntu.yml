@@ -67,6 +67,7 @@ terminal_packages:
   - ncdu
   - net-tools
   - nmap
+  - openssl
   - python3-pip
   - shellcheck
   - stow
@@ -80,7 +81,6 @@ terminal_packages:
   - vim
   - syncthing
   # Generic X utility
-  - wl-gammactl
   - wmctrl
   - x11-utils
   - x11-xkb-utils

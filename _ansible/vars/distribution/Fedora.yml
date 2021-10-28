@@ -63,6 +63,7 @@ terminal_packages:
   - make
   - net-tools
   - nmap
+  - openssl
   - python3-devel
   - python3-pip
   - stow
@@ -77,8 +78,6 @@ terminal_packages:
   - syncthing
   - PackageKit
   # Generic X utility
-  - xgamma
-  - wl-gammactl
   - wmctrl
   - xbindkeys
   - xclip
