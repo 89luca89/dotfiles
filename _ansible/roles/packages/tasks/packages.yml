@@ -126,11 +126,11 @@
   when: use_flatpaks
 
 - name: Remove duplicates (Flatpak Programs )
-  package:
-    name: "{{ flatpak_duplicate_packages }}"
-    state: absent
+  command: "{{ pkg_mngr }} remove -y {{ ' '.join(flatpak_duplicate_packages) }}"
+  register: pkg_out
+  changed_when: pkg_out.stderr == 0
   become: yes
-  tags: flatpak_packages
+  tags: flatpak_packages_test
   when: use_flatpaks
 
 - name: Env variables (Flatpak Programs)

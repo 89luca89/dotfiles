@@ -84,6 +84,10 @@ flatpak_overrides:
   - {key: "org.mozilla.firefox", value: "MOZ_USE_XINPUT2=1"}
   - {key: "org.mozilla.firefox", value: "MOZ_WEBRENDER=1"}
   - {key: "org.mozilla.firefox", value: "MOZ_X11_EGL=1"}
+  - {key: "org.mozilla.Thunderbird", value: "MOZ_ACCELLERATED=1"}
+  - {key: "org.mozilla.Thunderbird", value: "MOZ_USE_XINPUT2=1"}
+  - {key: "org.mozilla.Thunderbird", value: "MOZ_WEBRENDER=1"}
+  - {key: "org.mozilla.Thunderbird", value: "MOZ_X11_EGL=1"}
 
 python_packages:
   - python3

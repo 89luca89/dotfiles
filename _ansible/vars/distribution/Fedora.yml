@@ -4,6 +4,8 @@
 
 use_flatpaks: yes
 
+pkg_mngr: "dnf"
+
 archive_packages:
   - cabextract
   - lzip
@@ -52,7 +54,6 @@ terminal_packages:
   - clang
   - clang-tools-extra
   - ctags
-  - ctags-etags
   - dos2unix
   - flatpak
   - git
