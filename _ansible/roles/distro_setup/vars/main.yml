@@ -35,9 +35,9 @@ systemd_user_mask_services:
   #  - evolution-addressbook-factory
   #  - evolution-calendar-factory
   #  - evolution-source-registry
-  #  - goa-daemon
-  #  - goa-identity-service
-  #  - gvfs-goa-volume-monitor
+  - goa-daemon
+  - goa-identity-service
+  - gvfs-goa-volume-monitor
   - tracker-extract
   - tracker-miner-fs
   - tracker-miner-fs-3

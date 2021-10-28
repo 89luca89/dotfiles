@@ -105,12 +105,10 @@ python_modules:
   - ansible-later
   - ansible-lint
   - demjson
-  - indicator-syncthing
   - neovim
   - psutil
   - six
   - yamllint
-  # - "https://github.com/ssokolow/quicktile/archive/master.zip"
 
 golang_packages:
   - golang
