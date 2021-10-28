@@ -44,7 +44,6 @@ clean_folder() {
 }
 
 FOLDERS=(
-	"./.ansible"
 	"./.gnupg"
 	"./.config"
 	"./.local"
@@ -114,7 +113,6 @@ LOCAL_FOLDERS=(
 	"./icc"
 	"./keyrings"
 	"./nautilus"
-	"./terraform"
 	"./xorg"
 )
 
