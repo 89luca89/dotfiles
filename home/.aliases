@@ -26,8 +26,8 @@ rclone_clear_mount() {
 }
 # BASIC ALIASES
 alias  cp='cp --reflink=auto'
-alias firefoxRestore="cat ~/Syncthing/Notes/open_tabs.md | cut -d ']' -f2  | sed 's/(//g' | sed 's/)//g' | xargs firefox --new-tab &"
-alias firefoxSync='~/bin/get_firefox_tabs.py > ~/Syncthing/Notes/open_tabs.md'
+alias firefoxRestore="cat ~/Syncthing/notes/open_tabs.md | cut -d ']' -f2  | sed 's/(//g' | sed 's/)//g' | xargs firefox --new-tab &"
+alias firefoxSync='~/bin/get_firefox_tabs.py > ~/Syncthing/notes/open_tabs.md'
 alias git-clean="git fetch -p && for branch in \$(git branch -vv | grep ': gone]' | awk '{print \$1}'); do git branch -D \"\${branch}\"; done"
 alias gnome-reload='DISPLAY=:0 xdotool key Alt+F2; sleep 1; DISPLAY=:0 xdotool key r;DISPLAY=:0  xdotool key Return'
 alias gogetsys="export GOPATH=~/.local/go; go get"

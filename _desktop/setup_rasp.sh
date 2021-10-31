@@ -25,8 +25,8 @@ yes | sensors-detect
 sed -i 's/^.*PermitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config
 systemctl restart sshd
 
-ln -s /usr/local/mnt/Vault/Syncthing/Bin /root/bin
-ln -s /usr/local/mnt/Vault/Syncthing/Conf/.rclone.conf ~/
+ln -s /usr/local/mnt/Vault/Syncthing/bin /root/bin
+ln -s /usr/local/mnt/Vault/Syncthing/conf/.rclone.conf ~/
 
 pip3 install docker-compose
 curl -sSL https://get.docker.com | sh

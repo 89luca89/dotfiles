@@ -11,7 +11,7 @@ for i in $(ls -d */ | grep -vE "^_"); do
     stow -t ~ -S "$i";
 done
 
-ln -sf "Syncthing/Conf/.histfile" "$HOME/.histfile"
-ln -sfn "Syncthing/Bin" "$HOME/bin"
+ln -sf "Syncthing/conf/.histfile" "$HOME/.histfile"
+ln -sfn "Syncthing/bin" "$HOME/bin"
 
 popd
