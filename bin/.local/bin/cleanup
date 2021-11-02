@@ -55,10 +55,13 @@ FOLDERS=(
 	"./.cache"
 	"./.ssh"
 	"./.vim"
+	"./Books"
 	"./Desktop"
 	"./Documents"
 	"./Downloads"
+	"./Games"
 	"./Music"
+	"./PhoneCamera"
 	"./Pictures"
 	"./Programs"
 	"./Projects"
@@ -69,6 +72,7 @@ FOLDERS=(
 	"./VirtualMachines"
 	"./bin"
 	"./dotfiles"
+	"./firmwares"
 )
 pushd ~/ || exit 127
 find . -maxdepth 1 -type d -empty -delete

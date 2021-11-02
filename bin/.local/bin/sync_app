@@ -51,8 +51,12 @@ app_sync() {
 		;;
 	"firefox")
 		[ -d ~/.mozilla ] || (echo "No folder to backup" && exit 1)
+		ps aux | grep -v grep | grep -qi firefox-bin && (echo "Shut down firefox first" && exit 1)
 		cd ~ || exit 1
+		find .mozilla -iname "favicons*" | xargs rm -rf
+		find ~/.mozilla/**/*/storage/ -type f  | grep http | xargs rm || true
 		find .mozilla -type d -iname "*cache*" | xargs rm -rf
+		for f in ~/.mozilla/firefox/*/*.sqlite; do sqlite3 $f 'VACUUM;'; done
 		tar -c -z -f /tmp/firefox-profile.tar.gz --exclude="*cache*" --exclude=".mozilla/firefox/*/storage/default/http*" .mozilla
 		openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in /tmp/firefox-profile.tar.gz -out /tmp/firefox-profile.tar.gz.enc -k "$password"
 		shred -n 25 -u -z /tmp/firefox-profile.tar.gz
@@ -102,7 +106,7 @@ app_sync() {
 	"flatpak")
 		[ -d ~/.var/app ] || (echo "No folder to backup" && exit 1)
 		cd ~/.var || exit 1
-		tar --exclude=*cache* -c -z -f /tmp/flatpak-data.tar.gz app
+		tar --exclude=*cache* --exclude=*org.chromium.Chromium* -c -z -f /tmp/flatpak-data.tar.gz app
 		openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in /tmp/flatpak-data.tar.gz -out /tmp/flatpak-data.tar.gz.enc -k "$password"
 		shred -n 25 -u -z /tmp/flatpak-data.tar.gz
 		mv /tmp/flatpak-data.tar.gz.enc ~/Syncthing/secured/
