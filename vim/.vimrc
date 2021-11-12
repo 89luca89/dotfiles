@@ -3,7 +3,7 @@ set autoindent copyindent expandtab shiftwidth=4 softtabstop=4 tabstop=4 smartca
 set autoread autowrite hidden
 set colorcolumn=80 cursorline
 set formatoptions=tcqj
-set grepprg=grep\ -rn hlsearch ignorecase
+set grepprg=grep\ -rn hlsearch ignorecase clipboard+=unnamedplus
 set guioptions=d mouse=a
 set langnoremap langremap lazyredraw redrawtime=0 ttyfast
 set list lcs=tab:\¦\  " here is a space, goes in hand with indentLine
@@ -39,6 +39,11 @@ call plug#end()
 filetype plugin indent on
 syntax on
 " Theming
+set background=dark
+colorscheme onedark
+highlight Normal        guibg=NONE    ctermbg=NONE
+highlight myDeclaration guifg=#87ffaf ctermfg=121
+highlight myFunction    guifg=#87d7ff ctermfg=117
 augroup general
     autocmd! general
     " When editing a file, always jump to the last known cursor position.
@@ -96,8 +101,6 @@ map <M-Down>  :<C-u>resize +2<CR>
 map <M-Left>  :<C-u>vert resize -2<CR>
 map <M-Right> :<C-u>vert resize +2<CR>
 map <M-Up>    :<C-u>resize -2<CR>
-" Visual mode, C-c copy line
-vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 " Leader map
 let mapleader = ' '
 " Utility shortcuts with leader:
@@ -178,38 +181,23 @@ endfunction
 function! Rename(old, new)
     call system("grep -rl " . shellescape(a:old) . " | xargs -P9 -I{} sed -i 's/" . shellescape(a:old) . "/" . shellescape(a:new) . "/g' {}")
 endfunction
-function! SetDark()
-    set background=dark
-    colorscheme onedark
-    highlight Normal        guibg=NONE    ctermbg=NONE
-    highlight myDeclaration guifg=#87ffaf ctermfg=121
-    highlight myFunction    guifg=#87d7ff ctermfg=117
-    silent! edit
-endfunction
-function! SetLight()
-    set background=light
-    colorscheme github
-    highlight Normal        guibg=NONE    ctermbg=NONE
-    highlight myDeclaration guifg=#008700 ctermfg=28
-    highlight myFunction    guifg=#0087af ctermfg=31
-    silent! edit
-endfunction
-function! s:set_bg(timer_id)
-    silent call system("grep -q 'light' ~/.local/share/current_theme")
-    if v:shell_error == 0
-        if &background != 'light' || a:timer_id == 0
-            call SetLight()
-        endif
+function! ToggleTheme()
+    if &background == 'light'
+        set background=dark
+        colorscheme onedark
+        highlight Normal        guibg=NONE    ctermbg=NONE
+        highlight myDeclaration guifg=#87ffaf ctermfg=121
+        highlight myFunction    guifg=#87d7ff ctermfg=117
+        silent! edit
     else
-        if &background == 'light' || a:timer_id == 0
-            call SetDark()
-        endif
+        set background=light
+        colorscheme github
+        highlight Normal        guibg=#ffffff    ctermbg=white
+        highlight myDeclaration guifg=#008700 ctermfg=28
+        highlight myFunction    guifg=#0087af ctermfg=31
+        silent! edit
     endif
-endfun
-" Execute bg_sync every 5 seconds
-silent call timer_start(1000 * 5, function('s:set_bg'), {'repeat': -1})
-" Execute now to set theme
-silent call s:set_bg(0)
+endfunction
 " Window Zoom toggle
 function! ZoomToggle() abort
     if exists('t:zoomed') && t:zoomed
