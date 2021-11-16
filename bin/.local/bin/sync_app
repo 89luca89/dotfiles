@@ -45,7 +45,7 @@ app_sync() {
 		for f in ${GNOME_BACKUP[@]}; do
 			dconf dump /org/gnome/$f/ >org.gnome.$f.conf
 		done
-		tar -czf ~/dotfiles/_desktop/gnome-setup.tar.gz /tmp/bkp # "$HOME"/.local/share/gnome-shell/extensions/
+		tar -czf ~/dotfiles/_desktop/gnome-setup.tar.gz /tmp/bkp "$HOME"/.local/share/gnome-shell/extensions/
 		rm -rf /tmp/bkp
 		git -C ~/dotfiles commit -m "gnome: update settings" _desktop/gnome-setup.tar.gz
 		;;
@@ -86,22 +86,6 @@ app_sync() {
 		openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in /tmp/syncthing-profile-$(hostname).tar.gz -out /tmp/syncthing-profile-$(hostname).tar.gz.enc -k "$password"
 		shred -n 25 -u -z /tmp/syncthing-profile-$(hostname).tar.gz
 		mv /tmp/syncthing-profile-$(hostname).tar.gz.enc ~/Syncthing/secured/
-		;;
-	"tg")
-		[ -d ~/.config/tg ] || (echo "No folder to backup" && exit 1)
-		cd ~ || exit 1
-		tar --exclude=files -c -z -f /tmp/tg-profile.tar.gz .config/tg .cache/tg
-		openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in /tmp/tg-profile.tar.gz -out /tmp/tg-profile.tar.gz.enc -k "$password"
-		shred -n 25 -u -z /tmp/tg-profile.tar.gz
-		mv /tmp/tg-profile.tar.gz.enc ~/Syncthing/secured/
-		;;
-	"weechat")
-		[ -d ~/.weechat ] || (echo "No folder to backup" && exit 1)
-		cd ~ || exit 1
-		tar -c -z -f /tmp/weechat-profile.tar.gz .weechat
-		openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in /tmp/weechat-profile.tar.gz -out /tmp/weechat-profile.tar.gz.enc -k "$password"
-		shred -n 25 -u -z /tmp/weechat-profile.tar.gz
-		mv /tmp/weechat-profile.tar.gz.enc ~/Syncthing/secured/
 		;;
 	"flatpak")
 		[ -d ~/.var/app ] || (echo "No folder to backup" && exit 1)
@@ -188,24 +172,6 @@ app_restore() {
 		tar -xzf /tmp/syncthing-profile-$(hostname).tar.gz -C ~/
 		shred -n 25 -u -z /tmp/syncthing-profile-$(hostname).tar.gz
 		systemctl restart --user syncthing
-		;;
-	"tg")
-		openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -d -in ~/Syncthing/secured/tg-profile.tar.gz.enc -out /tmp/tg-profile.tar.gz
-		if [ ! -f /tmp/tg-profile.tar.gz ]; then
-			echo "Failed to decrypt"
-			exit 1
-		fi
-		tar -xzf /tmp/tg-profile.tar.gz -C ~/
-		shred -n 25 -u -z /tmp/tg-profile.tar.gz
-		;;
-	"weechat")
-		openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -d -in ~/Syncthing/secured/weechat-profile.tar.gz.enc -out /tmp/weechat-profile.tar.gz
-		if [ ! -f /tmp/weechat-profile.tar.gz ]; then
-			echo "Failed to decrypt"
-			exit 1
-		fi
-		tar -xzf /tmp/weechat-profile.tar.gz -C ~/
-		shred -n 25 -u -z /tmp/weechat-profile.tar.gz
 		;;
 	"flatpak")
 		openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -d -in ~/Syncthing/secured/flatpak-data.tar.gz.enc -out /tmp/flatpak-data.tar.gz
