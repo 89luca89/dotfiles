@@ -69,6 +69,8 @@
 - name: Autoremove
   command: "{{ pkg_mngr }} autoremove -y"
   become: yes
+  register: pkg_output
+  changed_when: pkg_output.stdout_lines|length > 4
   tags: debloat
 
 - name: Install Programs (Archive Utilities)

@@ -159,4 +159,7 @@ power_management_packages:
   - tlp
   - tlp-rdw
 
-power_management_service: tlp
+power_management_service:
+  - tlp
+  - thermald
+  - powertop

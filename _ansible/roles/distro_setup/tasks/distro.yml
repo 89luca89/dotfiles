@@ -49,8 +49,7 @@
     daemon_reload: yes
   become: yes
   with_items:
-    - thermald.service
-    - "{{ power_management_service }}.service"
+    - "{{ power_management_service }}"
   tags: powersave
 
 - name: Improve Intel Tearfree on xorg
