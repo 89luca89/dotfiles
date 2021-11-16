@@ -16,6 +16,7 @@
   delay: 3
   register: result
   until: result is not failed
+  tags: debloat
 
 # Mask systemd services to free up memory
 - name: Mask services /2
@@ -31,12 +32,14 @@
   delay: 3
   register: result
   until: result is not failed
+  tags: debloat
 
 - name: Install Power Management (Laptop)
   package:
     state: present
     name: "{{ power_management_packages }}"
   become: yes
+  tags: powersave
 
 - name: Enable Power Management (Laptop)
   systemd:
@@ -47,7 +50,8 @@
   become: yes
   with_items:
     - thermald.service
-    - tlp.service
+    - "{{ power_management_service }}.service"
+  tags: powersave
 
 - name: Improve Intel Tearfree on xorg
   blockinfile:
@@ -62,12 +66,14 @@
         Option "DRI" "3"
       EndSection
   become: yes
+  tags: distro
 
 - name: Blacklist unused kernel module
   kernel_blacklist:
     name: intel_powerclamp
     state: present
   become: yes
+  tags: distro
 
 - name: Set i915 driver options
   lineinfile:
@@ -75,6 +81,7 @@
     create: yes
     line: 'options i915 disable_power_well=0 enable_dc=2 enable_psr=1 enable_rc6=7 enable_fbc=1 powersave=1 enable_guc=3 enable_dpcd_backlight=1'
   become: yes
+  tags: distro
 
 - name: Set Intel HDA driver options
   lineinfile:
@@ -82,6 +89,7 @@
     create: yes
     line: 'options snd_hda_intel power_save_controlle=Y power_save=1'
   become: yes
+  tags: distro
 
 - name: Set Intel ETH driver options
   lineinfile:
@@ -89,6 +97,7 @@
     create: yes
     line: 'options e1000e SmartPowerDownEnable=1'
   become: yes
+  tags: distro
 
 - name: Set Intel Wifi driver options
   lineinfile:
@@ -96,6 +105,7 @@
     create: yes
     line: 'options iwlwifi power_save=Y power_level=5 iwlmvm power_scheme=3'
   become: yes
+  tags: distro
 
 - name: Disable WIFI Mac address randomization on scan
   blockinfile:
@@ -105,6 +115,7 @@
       [device-mac-randomization]
       wifi.scan-rand-mac-address=no
   become: yes
+  tags: distro
 
 - name: Set sysctl variables
   sysctl:
@@ -126,6 +137,7 @@
     - {name: fs.inotify.max_user_watches, value: 524288}
     - {name: net.ipv4.ip_default_ttl, value: 66}
   become: yes
+  tags: distro
 
 - name: Set UDev Rules
   blockinfile:
@@ -153,11 +165,13 @@
       SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="1",RUN+="/bin/cpupower frequency-set -g performance -u 4500MHz"
     marker: "# {mark} ANSIBLE MANAGED BLOCK BY DOTFILES"
   become: yes
+  tags: powersave
 
 - name: Check if lvm.conf is present
   stat:
     path: /etc/lvm/lvm.conf
   register: lvm_file
+  tags: distro
 
 - name: Deploy lvm.conf Flags
   replace:
@@ -168,11 +182,13 @@
   register: lvm_setup
   become: yes
   when: lvm_file.stat.exists
+  tags: distro
 
 - name: Check if Crypttab is present
   stat:
     path: /etc/crypttab
   register: crypt_file
+  tags: distro
 
 - name: Deploy Crypttab Flags
   replace:
@@ -183,11 +199,13 @@
   register: crypt_setup
   become: yes
   when: crypt_file.stat.exists
+  tags: distro
 
 - name: Check if Grub is present
   stat:
     path: /etc/default/grub
   register: grub_file
+  tags: distro,grub
 
 - name: Deploy Grub Flags
   replace:
@@ -206,6 +224,7 @@
   become: yes
   register: grub_setup
   when: grub_file.stat.exists
+  tags: distro,grub
 
 - name: Update Grub and Initramfs
   command: "{{ item }}"
@@ -218,6 +237,7 @@
     (crypt_setup is defined and crypt_setup.changed))
     and ansible_os_family == "RedHat"
   become: yes
+  tags: distro,grub
 
 - name: Update Grub and Initramfs
   command: "{{ item }}"
@@ -229,12 +249,13 @@
     (crypt_setup is defined and crypt_setup.changed))
     and ansible_os_family == "Debiam"
   become: yes
+  tags: distro,grub
 
 - name: Ensure truetype directory exists
   stat:
     path: /usr/share/fonts/truetype
   register: truetype_folder
-  tags: test
+  tags: distro,fonts
 
 - name: Install MS Fonts
   get_url:
@@ -244,7 +265,7 @@
     password: "{{ basicauth_pass }}"
     checksum: sha256:69e6164432000c93e81d8298f840c528acc9e280732647d5b82ac6d525179558
   when: not truetype_folder.stat.exists
-  tags: test
+  tags: distro,fonts
 
 - name: Extract fonts
   unarchive:
@@ -252,4 +273,4 @@
     dest: /usr/share/fonts/
     creates: /usr/share/fonts/truetype
   become: yes
-  tags: test
+  tags: distro,fonts

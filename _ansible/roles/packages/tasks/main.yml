@@ -1,5 +1,62 @@
 # main.yml
 ---
-- name: Include myApps
+
+- name: Install rpmfusion
+  dnf:
+    state: present
+    disable_gpg_check: yes
+    name: "{{ rpmfusion_packages }}"
+  become: yes
+  when: ansible_os_family == "RedHat"
+  tags: rpmfusion
+
+- name: Enable powertools
+  command: "dnf config-manager --set-enabled powertools"
+  become: yes
+  when: ansible_distribution == "CentOS"
+  tags: rpmfusion
+
+- name: Remove snaps
+  apt:
+    state: absent
+    purge: yes
+    name: snapd
+  become: yes
+  when: ansible_distribution == "Ubuntu"
+  tags: snapd
+
+- name: Blacklist Snaps
+  blockinfile:
+    path: /etc/apt/preferences.d/nosnap.pref
+    create: yes
+    block: |
+      Package: snapd
+      Pin: release a=*
+      Pin-Priority: -10
+  become: yes
+  when: ansible_distribution == "Ubuntu"
+  tags: snapd
+
+- name: Remove bloat packages
+  package:
+    state: absent
+    name: "{{ debloat_pkg }}"
+  become: yes
+  tags: debloat
+
+- name: Install Programs (Archive Utilities)
+  package:
+    state: present
+    name: "{{ archive_packages }}"
+  become: yes
+  tags: archives
+
+- name: Install CLI Packages
+  include: terminal.yml
+  when: (toolbox_enabled|bool == false) or is_toolbox
+  tags: terminal
+
+- name: Install Main Packages
   include: packages.yml
+  when: not is_toolbox
   tags: packages

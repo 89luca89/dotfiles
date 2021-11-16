@@ -3,6 +3,7 @@
 #
 
 use_flatpaks: yes
+toolbox_enabled: yes
 
 pkg_mngr: "apt"
 
@@ -50,7 +51,6 @@ virtualization_packages:
   - virtinst
 
 terminal_packages:
-  - acpi
   - bash-completion
   - binwalk
   - build-essential
@@ -58,7 +58,6 @@ terminal_packages:
   - clang-tools
   - curl
   - exuberant-ctags
-  - flatpak
   - gcc
   - git
   - golang
@@ -75,30 +74,34 @@ terminal_packages:
   - tig
   - tree
   # Cli packages
-  - mpv
   - rsync
   - tmux
   - vim
-  - syncthing
-  # Generic X utility
-  - wmctrl
-  - x11-utils
-  - x11-xkb-utils
-  - x11-xserver-utils
-  - xbindkeys
-  - xclip
-  - xdotool
-  - xlsclients
 
 my_packages:
+  - flatpak
   - gnome-disk-utility
   - gnome-screenshot
   - gnome-system-monitor
   - gnome-terminal
   - gnome-terminal-nautilus
-  - gvim
+  - mpv
   - nautilus
   - nautilus-extensions
+  - stow
+  - syncthing
+  # Terminal stuff
+  - git
+  - git-credential-libsecret
+  - openssl
+  - vim
+  # Generic X utility
+  - libappindicator-gtk3
+  - wl-clipboard
+  - wmctrl
+  - xclip
+  - xdotool
+  - xlsclients
 
 debloat_pkg:
   - evolution
@@ -120,3 +123,15 @@ debloat_pkg:
   - yelp-libs
   - yelp-xsl
   - seahorse
+
+power_management_packages:
+  - acpi
+  - hdparm
+  - lm-sensors
+  - msr-tools
+  - powertop
+  - thermald
+  - tlp
+  - tlp-rdw
+
+power_management_service: tlp

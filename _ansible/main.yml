@@ -25,6 +25,6 @@
       tags: always
 
   roles:
-    - distro_setup
+    - { role: distro_setup, when: not is_toolbox }
     - packages
-    - dotfiles
+    - { role: dotfiles, when: not is_toolbox }

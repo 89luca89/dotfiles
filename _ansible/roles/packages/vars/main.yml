@@ -25,38 +25,28 @@ flatpak_packages:
   - org.gnome.clocks
   - org.gnome.eog
   - org.gnome.gedit
-  - org.kde.krita
   - org.keepassxc.KeePassXC
   - org.libreoffice.LibreOffice # org.onlyoffice.desktopeditors
   - org.chromium.Chromium
   - org.mozilla.firefox
   - org.mozilla.Thunderbird
-  - org.remmina.Remmina
-  - org.libretro.RetroArch
-  - com.github.polymeilex.neothesia
   - com.github.jeromerobert.pdfarranger
-  - com.github.johnfactotum.Foliate
   - com.github.maoschanz.drawing
+  - com.github.polymeilex.neothesia
   - com.jgraph.drawio.desktop
   - de.haeckerfelix.Fragments
-  - fyi.zoey.Boop-GTK
   - nl.hjdskes.gcolor3
+  - org.remmina.Remmina
 
 flatpak_duplicate_packages:
-  - zoom
   - flatseal
   - baobab
   - chromium
-  - drawing
-  - drawio
   - eog
   - epiphany
   - evince
   - file-roller
   - firefox
-  - foliate
-  - fragments
-  - gcolor3
   - gedit
   - gnome-calculator
   - gnome-calendar
@@ -68,13 +58,7 @@ flatpak_duplicate_packages:
   - gnome-network-displays
   - gnome-sound-recorder
   - gnome-weather
-  - keepassxc
-  - krita
   - libreoffice*
-  - neothesia
-  - pdfarranger
-  - remmina
-  - retroarch
   - rhythmbox
   - thunderbird
   - totem

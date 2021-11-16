@@ -1,76 +1,6 @@
 # my_apps.yml
 ---
 
-- name: Install the rpmfusion and fonts repo packages
-  dnf:
-    state: present
-    disable_gpg_check: yes
-    name:
-      - https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_facts.distribution_version }}.noarch.rpm
-      - https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_facts.distribution_version }}.noarch.rpm
-  become: yes
-  tags: rpmfusion
-  when: ansible_os_family == "RedHat"
-
-- name: Remove snaps
-  apt:
-    state: absent
-    purge: yes
-    name: snapd
-  become: yes
-  when: ansible_distribution == "Ubuntu"
-
-- name: Blacklist Snaps
-  blockinfile:
-    path: /etc/apt/preferences.d/nosnap.pref
-    create: yes
-    block: |
-      Package: snapd
-      Pin: release a=*
-      Pin-Priority: -10
-  become: yes
-  when: ansible_distribution == "Ubuntu"
-
-
-- name: Install Programs (Programming Packages)
-  package:
-    state: present
-    name: "{{ terminal_packages }}"
-  become: yes
-
-- name: Install Programs (python)
-  package:
-    state: present
-    name: "{{ python_packages }}"
-  become: yes
-
-- name: Install Programs (PIP Packages) - pip
-  pip:
-    state: present
-    executable: pip3
-    extra_args: --user
-    name: "{{ python_modules }}"
-  become: yes
-
-- name: Install Programs (golang)
-  package:
-    state: present
-    name: "{{ golang_packages }}"
-  become: yes
-
-- name: Remove bloat packages
-  package:
-    state: absent
-    name: "{{ debloat_pkg }}"
-  become: yes
-
-- name: Install Programs (Archive Utilities)
-  package:
-    state: present
-    name: "{{ archive_packages }}"
-  become: yes
-  tags: archives
-
 - name: Install Programs (Media Utilities)
   package:
     state: present
@@ -78,43 +8,39 @@
   become: yes
   tags: codecs
 
-- name: Install virtualization packages
+- name: Install virtualization packages / Rpm
   dnf:
     name: "{{ virtualization_packages }}"
     state: present
     disable_gpg_check: yes
   become: yes
   when: ansible_os_family == "RedHat"
+  tags: virtualization
 
-- name: Install virtualization packages
+- name: Install virtualization packages / Deb
   apt:
     name: "{{ virtualization_packages }}"
     state: present
   become: yes
   when: ansible_os_family == "Debian"
+  tags: virtualization
 
-- block:
-
-    - name: Install Programs (GUI Programs)
-      package:
-        state: present
-        name: "{{ my_packages }}"
-      become: yes
-      tags: desktop_packages
-      when: not use_flatpaks
-
-  when:
-    - ansible_pkg_mgr != 'atomic_container'  # Detect if using ostree
+- name: Install Main Programs
+  package:
+    state: present
+    name: "{{ my_packages }}"
+  become: yes
+  tags: desktop_packages
 
 - name: Install Programs (Flatpak Programs - flathub)
   command: "flatpak remote-add --user --if-not-exists {{ item.key }} {{ item.value }}"
   changed_when: no
   become: no
-  tags: flatpak_packages
   with_items:
     - {key: "fedora", value: "oci+https://registry.fedoraproject.org"}
     - {key: "flathub", value: "https://flathub.org/repo/flathub.flatpakrepo"}
   when: use_flatpaks
+  tags: flatpak_packages
 
 - name: Install Programs (Flatpak Programs )
   command: "flatpak --user install -y flathub {{ item }}"
@@ -122,46 +48,20 @@
   register: flatpak_out
   changed_when: not 'already installed' in flatpak_out.stderr
   become: no
-  tags: flatpak_packages
   when: use_flatpaks
+  tags: flatpak_packages
 
 - name: Remove duplicates (Flatpak Programs )
   command: "{{ pkg_mngr }} remove -y {{ ' '.join(flatpak_duplicate_packages) }}"
   register: pkg_out
   changed_when: pkg_out.stderr == 0
   become: yes
-  tags: flatpak_packages_test
   when: use_flatpaks
+  tags: flatpak_packages
 
 - name: Env variables (Flatpak Programs)
   command: "flatpak override --user --env={{ item.value }} {{ item.key }}"
   with_items: "{{ flatpak_overrides }}"
   become: no
-  tags: flatpak_packages
   when: use_flatpaks
-
-- name: Check that golang exists
-  stat:
-    path: "{{ ansible_env.HOME }}/.local/go/bin/gopls"
-  register: golang
-
-- name: Install Programs (Programming Packages) - golang
-  command: "go get -u {{ item }}"
-  with_items: "{{ golang_modules }}"
-  environment:
-    GOPATH: "{{ ansible_env.HOME }}/.local/go"
-  when: not golang.stat.exists
-
-- name: Install Programs (Programming Packages) - golangci-lint
-  shell: |
-    curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.27.0
-  environment:
-    GOPATH: "{{ ansible_env.HOME }}/.local/go"
-  when: not golang.stat.exists
-
-- name: Install Programs (Programming Packages) - gopls
-  command: "go get golang.org/x/tools/gopls@latest"
-  environment:
-    GO111MODULE: "on"
-    GOPATH: "{{ ansible_env.HOME }}/.local/go"
-  when: not golang.stat.exists
+  tags: flatpak_packages

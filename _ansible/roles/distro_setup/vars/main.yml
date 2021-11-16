@@ -28,13 +28,10 @@ basicauth_pass: !vault |
           3436386166316433620a346262383563393938613564303831666237636264663736623738333163
           33633130656562376234356462303263386237626236643737383164333336323233
 
-tlp_blacklist:
-  - USB_BLACKLIST="8087:07dc"
-
 systemd_user_mask_services:
-  #  - evolution-addressbook-factory
-  #  - evolution-calendar-factory
-  #  - evolution-source-registry
+  - evolution-addressbook-factory
+  - evolution-calendar-factory
+  - evolution-source-registry
   - goa-daemon
   - goa-identity-service
   - gvfs-goa-volume-monitor
@@ -50,13 +47,3 @@ systemd_root_mask_services:
   - livesys-late.sevice
   - dnf-makecache.timer
   - switcheroo-control.service
-
-power_management_packages:
-  - acpi
-  - hdparm
-  #  - lm_sensors
-  - msr-tools
-  - powertop
-  - thermald
-  - tlp
-  - tlp-rdw
