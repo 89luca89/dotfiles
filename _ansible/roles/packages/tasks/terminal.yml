@@ -1,0 +1,62 @@
+# my_apps.yml
+---
+
+- name: Install Programs (Programming Packages)
+  package:
+    state: present
+    name: "{{ terminal_packages }}"
+  become: yes
+  tags: terminal
+
+- name: Install Programs (python)
+  package:
+    state: present
+    name: "{{ python_packages }}"
+  become: yes
+  tags: terminal,python
+
+- name: Install Programs (PIP Packages) - pip
+  pip:
+    state: present
+    executable: pip3
+    extra_args: --user
+    name: "{{ python_modules }}"
+  become: yes
+  tags: terminal,python
+
+- name: Install Programs (golang)
+  package:
+    state: present
+    name: "{{ golang_packages }}"
+  become: yes
+  tags: terminal,golang
+
+- name: Check that golang exists
+  stat:
+    path: "{{ ansible_env.HOME }}/.local/go/bin/gopls"
+  register: golang
+  tags: terminal,golang
+
+- name: Install Programs (Programming Packages) - golang
+  command: "go get -u {{ item }}"
+  with_items: "{{ golang_modules }}"
+  environment:
+    GOPATH: "{{ ansible_env.HOME }}/.local/go"
+  when: not golang.stat.exists
+  tags: terminal,golang
+
+- name: Install Programs (Programming Packages) - golangci-lint
+  shell: |
+    curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.27.0
+  environment:
+    GOPATH: "{{ ansible_env.HOME }}/.local/go"
+  when: not golang.stat.exists
+  tags: terminal,golang
+
+- name: Install Programs (Programming Packages) - gopls
+  command: "go get golang.org/x/tools/gopls@latest"
+  environment:
+    GO111MODULE: "on"
+    GOPATH: "{{ ansible_env.HOME }}/.local/go"
+  when: not golang.stat.exists
+  tags: terminal,golang

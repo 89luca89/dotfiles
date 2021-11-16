@@ -1,0 +1,162 @@
+---
+# vars file for my_apps
+#
+
+use_flatpaks: yes
+toolbox_enabled: yes
+
+pkg_mngr: "dnf"
+
+rpmfusion_packages:
+  - epel-release
+  - https://download1.rpmfusion.org/free/el/rpmfusion-free-release-{{ ansible_facts.distribution_version }}.noarch.rpm
+  - https://download1.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-{{ ansible_facts.distribution_version }}.noarch.rpm
+
+archive_packages:
+  - cabextract
+  - lzip
+  - p7zip
+  - p7zip-plugins
+  - unzip
+  - zstd
+
+codecs_packages:
+  - egl-wayland
+  - flac
+  - ffmpeg
+  - ffmpeg-libs
+  - gstreamer1-libav
+  - gstreamer1-plugins-bad-free
+  - gstreamer1-plugins-bad-freeworld
+  - gstreamer1-plugins-base
+  - gstreamer1-plugins-good
+  - gstreamer1-plugins-ugly
+  - gstreamer1-plugins-ugly-free
+  - gstreamer1-svt-av1
+  - gstreamer1-svt-vp9
+  - libva-devel
+  - libva-intel-driver
+  - libva-utils
+  - libva-vdpau-driver
+
+virtualization_packages:
+  - "@Virtualization Host"
+  - "@Virtualization Hypervisor"
+  - "@Virtualization Platform"
+  - "@Virtualization Tools"
+
+terminal_packages:
+  - ShellCheck
+  - bash-completion
+  - binwalk
+  - clang
+  - clang-tools-extra
+  - ctags
+  - dos2unix
+  - git
+  - git-credential-libsecret
+  - golang
+  - lsof
+  - make
+  - net-tools
+  - nmap
+  - openssl
+  - python3-devel
+  - python3-pip
+  - stow
+  - tcpdump
+  - tig
+  - tree
+  # Cli packages
+  - rsync
+  - tmux
+  - vim
+
+
+### gnome-extensions-app gnome-tweaks
+my_packages:
+  - flatpak
+  - gnome-disk-utility
+  - gnome-screenshot
+  - gnome-system-monitor
+  - gnome-terminal
+  - gnome-terminal-nautilus
+  - mpv
+  - nautilus
+  - nautilus-extensions
+  - stow
+  - syncthing
+  # Terminal stuff
+  - git
+  - git-credential-libsecret
+  - openssl
+  - vim
+  # Generic X utility
+  - libappindicator-gtk3
+  - wmctrl
+  - xclip
+  - xdotool
+  - xlsclients
+
+debloat_pkg:
+  - abrt
+  - abrt-addon-ccpp
+  - abrt-addon-kerneloops
+  - abrt-addon-pstoreoops
+  - abrt-addon-vmcore
+  - abrt-addon-xorg
+  - abrt-cli
+  - abrt-dbus
+  - abrt-desktop
+  - abrt-gui
+  - abrt-gui-libs
+  - abrt-java-connector
+  - abrt-libs
+  - abrt-plugin-bodhi
+  - abrt-retrace-client
+  - abrt-tui
+  - anaconda-install-env-deps
+  - evolution
+  - evolution-ews
+  - fedora-logos-httpd
+  - gamemode
+  - gnome-boxes
+  - gnome-dictionary
+  - gnome-documents
+  - gnome-getting-started-docs
+  - gnome-initial-setup
+  - gnome-maps
+  - gnome-music
+  - gnome-online-miners
+  - gnome-photos
+  - gnome-shell-extension-background-logo
+  - gnome-user-docs
+  - gnome-user-share
+  - gnome-video-effects
+  - httpd
+  - hyperv-daemons
+  - hyperv-daemons-license
+  - hypervfcopyd
+  - hypervkvpd
+  - hypervvssd
+  - open-vm-tools-desktop
+  - orca
+  - qemu-guest-agent
+  - rsyslog
+  - seahorse
+  - spice-vdagent
+  - virtualbox-guest-additions
+  - yelp
+  - yelp-libs
+  - yelp-xsl
+
+power_management_packages:
+  - hdparm
+  - lm_sensors
+  - msr-tools
+  - powertop
+  - thermald
+  - tlp
+  - tlp-rdw
+
+power_management_service: tlp
