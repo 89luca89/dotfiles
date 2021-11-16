@@ -37,10 +37,37 @@
   when: ansible_distribution == "Ubuntu"
   tags: snapd
 
+- name: Backports Enable
+  blockinfile:
+    path: /etc/apt/sources.list
+    create: yes
+    block: |
+      deb http://deb.debian.org/debian bullseye-backports main contrib non-free
+  become: yes
+  when: ansible_distribution == "Debian"
+  tags: backports
+
+- name: Backports Priority
+  blockinfile:
+    path: /etc/apt/preferences.d/backports
+    create: yes
+    block: |
+      Package: *
+      Pin: release a=bullseye-backports
+      Pin-Priority: 500
+  become: yes
+  when: ansible_distribution == "Debian"
+  tags: backports
+
 - name: Remove bloat packages
   package:
     state: absent
     name: "{{ debloat_pkg }}"
+  become: yes
+  tags: debloat
+
+- name: Autoremove
+  command: "{{ pkg_mngr }} autoremove -y"
   become: yes
   tags: debloat
 

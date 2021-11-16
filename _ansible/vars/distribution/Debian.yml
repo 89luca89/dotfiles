@@ -1,0 +1,138 @@
+---
+# vars file for my_apps
+#
+
+use_flatpaks: yes
+toolbox_enabled: yes
+
+pkg_mngr: "apt"
+
+archive_packages:
+  - cabextract
+  - lzip
+  - p7zip
+  - p7zip-full
+  - unzip
+  - zstd
+
+codecs_packages:
+  - ffmpeg
+  - flac
+  - gstreamer1.0-libav
+  - gstreamer1.0-plugins-bad
+  - gstreamer1.0-plugins-bad-apps
+  - gstreamer1.0-plugins-base
+  - gstreamer1.0-plugins-base-apps
+  - gstreamer1.0-plugins-good
+  - gstreamer1.0-plugins-ugly
+  - gstreamer1.0-vaapi
+  - i965-va-driver
+  - intel-media-va-driver
+  - libigdgmm-dev
+  - libigdgmm11
+  - libva-dev
+  - libva-drm2
+  - libva-glx2
+  - libva-wayland2
+  - libva-x11-2
+  - libva2
+  - libvdpau-va-gl1
+
+virtualization_packages:
+  - bridge-utils
+  - libvirt-clients
+  - libvirt-daemon
+  - libvirt-daemon-config-network
+  - libvirt-daemon-system
+  - qemu-kvm
+  - qemu-user-static
+  - virt-manager
+  - virt-viewer
+  - virtinst
+
+terminal_packages:
+  - bash-completion
+  - binwalk
+  - build-essential
+  - clang
+  - clang-tools
+  - curl
+  - exuberant-ctags
+  - gcc
+  - git
+  - golang
+  - lsof
+  - make
+  - ncdu
+  - net-tools
+  - nmap
+  - openssl
+  - python3-pip
+  - shellcheck
+  - stow
+  - tcpdump
+  - tig
+  - tree
+  # Cli packages
+  - rsync
+  - tmux
+  - vim
+
+my_packages:
+  - flatpak
+  - gnome-disk-utility
+  - gnome-screenshot
+  - gnome-system-monitor
+  - gnome-terminal
+  - gnome-terminal-nautilus
+  - mpv
+  - nautilus
+  - nautilus-extensions
+  - stow
+  - syncthing
+  # Terminal stuff
+  - git
+  - git-credential-libsecret
+  - openssl
+  - vim
+  # Generic X utility
+  - libappindicator-gtk3
+  - wl-clipboard
+  - wmctrl
+  - xclip
+  - xdotool
+  - xlsclients
+
+debloat_pkg:
+  - evolution
+  - evolution-ews
+  - gnome-games
+  - gnome-boxes
+  - gnome-dictionary
+  - gnome-documents
+  - gnome-getting-started-docs
+  - gnome-initial-setup
+  - gnome-maps
+  - gnome-music
+  - gnome-online-miners
+  - gnome-photos
+  - gnome-user-docs
+  - gnome-user-share
+  - gnome-video-effects
+  - update-manager
+  - yelp
+  - yelp-libs
+  - yelp-xsl
+  - seahorse
+
+power_management_packages:
+  - acpi
+  - hdparm
+  - lm-sensors
+  - msr-tools
+  - powertop
+  - thermald
+  - tlp
+  - tlp-rdw
+
+power_management_service: tlp
