@@ -33,6 +33,7 @@ flatpak_packages:
   - com.github.jeromerobert.pdfarranger
   - com.github.maoschanz.drawing
   - com.github.polymeilex.neothesia
+  - com.gitlab.newsflash
   - com.jgraph.drawio.desktop
   - de.haeckerfelix.Fragments
   - nl.hjdskes.gcolor3
