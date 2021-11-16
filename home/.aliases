@@ -7,8 +7,8 @@ gnome-background() {
 }
 update() {
 	sudo dnf update --refresh
-	flatpak update
-	flatpak --unused uninstall
+	flatpak update --user
+	flatpak uninstall --user --unused
 	vim +PlugUpdate +PlugInstall! +qall
 }
 update-grub() {
