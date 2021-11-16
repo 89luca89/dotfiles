@@ -131,7 +131,7 @@
     - {name: vm.vfs_cache_pressure, value: 100}
     - {name: vm.dirty_ratio, value: 90}
     - {name: vm.dirty_background_ratio, value: 50}
-    - {name: vm.dirty_writeback_centisecs, value: 60000}
+    - {name: vm.dirty_writeback_centisecs, value: 1500}
     - {name: vm.dirty_expire_centisecs, value: 60000}
     - {name: fs.inotify.max_user_watches, value: 524288}
     - {name: net.ipv4.ip_default_ttl, value: 66}
