@@ -30,7 +30,8 @@ if [[ $- == *i* ]]; then
 	shopt -s histverify
 	shopt -s cmdhist
 
-	export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r; __git_status"
+	# export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r; __git_status"
+	export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}__git_status"
 	# Complete using arrow up/down
 	bind '"\e[A": history-search-backward'
 	bind '"\e[B": history-search-forward'
