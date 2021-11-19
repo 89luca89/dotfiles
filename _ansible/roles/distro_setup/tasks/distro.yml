@@ -282,3 +282,25 @@
     creates: /usr/share/fonts/truetype
   become: yes
   tags: distro,fonts
+
+
+- name: Git clone toolbox
+  git:
+    repo: 'https://github.com/89luca89/simpler-toolbox'
+    dest: /opt/simpler-toolbox
+  become: yes
+  tags: distro,toolbox
+
+- name: Deploy files
+  copy:
+    src: "/opt/simpler-toolbox/{{ item }}"
+    dest: "/usr/local/bin/{{ item }}"
+    owner: root
+    group: root
+    mode: '0755'
+  with_items:
+    - toolbox_create
+    - toolbox_enter
+    - toolbox_init
+  become: yes
+  tags: distro,toolbox
