@@ -27,4 +27,4 @@
   roles:
     - { role: distro_setup, when: not is_toolbox }
     - packages
-    - { role: dotfiles, when: not is_toolbox }
+    - dotfiles

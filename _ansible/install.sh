@@ -4,14 +4,14 @@ DIR="$(dirname $0)"
 
 base_deps="git python3 ansible"
 
-if which dnf >/dev/null; then
+if command -v dnf >/dev/null; then
 	PKG="dnf"
-elif which apt >/dev/null; then
+elif command -v apt >/dev/null; then
 	PKG="apt"
 fi
 
 for i in $base_deps; do
-	if ! which "$i" >/dev/null; then
+	if ! command -v "$i" >/dev/null; then
 		sudo $PKG install -y "$i"
 	fi
 done
