@@ -52,6 +52,14 @@
     - "{{ power_management_service }}"
   tags: powersave
 
+- name: Check Intel GPU Vendor
+  command: "lshw -C display 2> /dev/null | grep vendor | grep -iq intel"
+  register: intel_gpu
+  changed_when: no
+  failed_when: no
+  become: yes
+  tags: distro
+
 - name: Improve Intel Tearfree on xorg
   blockinfile:
     path: /etc/X11/xorg.conf.d/20-intel.conf
@@ -64,6 +72,7 @@
         Option "TearFree" "true"
         Option "DRI" "3"
       EndSection
+  when: intel_gpu.rc == 0
   become: yes
   tags: distro
 
