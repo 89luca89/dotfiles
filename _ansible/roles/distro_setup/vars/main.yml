@@ -41,9 +41,3 @@ systemd_user_mask_services:
   - tracker-miner-rss
   - tracker-store
   - tracker-writeback
-
-systemd_root_mask_services:
-  - livesys.service
-  - livesys-late.sevice
-  - dnf-makecache.timer
-  - switcheroo-control.service

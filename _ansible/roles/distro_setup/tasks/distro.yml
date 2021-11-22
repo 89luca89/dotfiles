@@ -16,23 +16,6 @@
   delay: 3
   register: result
   until: result is not failed
-  tags: debloat
-
-# Mask systemd services to free up memory
-- name: Mask services /2
-  systemd:
-    name: "{{ item }}"
-    state: stopped
-    enabled: no
-    masked: yes
-    daemon_reload: yes
-  with_items: "{{ systemd_root_mask_services }}"
-  become: yes
-  retries: 3
-  delay: 3
-  register: result
-  until: result is not failed
-  tags: debloat
 
 - name: Install Power Management (Laptop)
   package:
@@ -53,67 +36,57 @@
   tags: powersave
 
 - name: Check Intel GPU Vendor
-  command: "lshw -C display 2> /dev/null | grep vendor | grep -iq intel"
+  shell: "lshw -C display 2> /dev/null | grep vendor | grep -iq intel"
   register: intel_gpu
   changed_when: no
   failed_when: no
   become: yes
-  tags: distro
+  tags: distro,intel
 
-- name: Improve Intel Tearfree on xorg
-  blockinfile:
-    path: /etc/X11/xorg.conf.d/20-intel.conf
-    create: yes
-    block: |
-      Section "Device"
-        Identifier "intel"
-        Driver "intel"
-        Option "AccelMethod" "sna"
-        Option "TearFree" "true"
-        Option "DRI" "3"
-      EndSection
+- name: Intel setup
+  block:
+    - name: Improve Intel Tearfree on xorg
+      blockinfile:
+        path: /etc/X11/xorg.conf.d/20-intel.conf
+        create: yes
+        block: |
+          Section "Device"
+            Identifier "intel"
+            Driver "intel"
+            Option "AccelMethod" "sna"
+            Option "TearFree" "true"
+            Option "DRI" "3"
+          EndSection
+      tags: distro,intel
+
+    - name: Set i915 driver options
+      lineinfile:
+        path: /etc/modprobe.d/i915.conf
+        create: yes
+        line: 'options i915 disable_power_well=0 enable_dc=2 enable_psr=1 enable_rc6=7 enable_fbc=1 powersave=1 enable_guc=3 enable_dpcd_backlight=1'
+      tags: distro,intel
+
+    - name: Set Intel HDA driver options
+      lineinfile:
+        path: /etc/modprobe.d/snd_hda_intel.conf
+        create: yes
+        line: 'options snd_hda_intel power_save_controlle=Y power_save=1'
+      tags: distro,intel
+
+    - name: Set Intel ETH driver options
+      lineinfile:
+        path: /etc/modprobe.d/e1000e.conf
+        create: yes
+        line: 'options e1000e SmartPowerDownEnable=1'
+      tags: distro,intel
+
+    - name: Set Intel Wifi driver options
+      lineinfile:
+        path: /etc/modprobe.d/iwlwifi.conf
+        create: yes
+        line: 'options iwlwifi power_save=Y power_level=5 iwlmvm power_scheme=3'
+      tags: distro,intel
   when: intel_gpu.rc == 0
-  become: yes
-  tags: distro
-
-- name: Blacklist unused kernel module
-  kernel_blacklist:
-    name: intel_powerclamp
-    state: present
-  become: yes
-  tags: distro
-
-- name: Set i915 driver options
-  lineinfile:
-    path: /etc/modprobe.d/i915.conf
-    create: yes
-    line: 'options i915 disable_power_well=0 enable_dc=2 enable_psr=1 enable_rc6=7 enable_fbc=1 powersave=1 enable_guc=3 enable_dpcd_backlight=1'
-  become: yes
-  tags: distro
-
-- name: Set Intel HDA driver options
-  lineinfile:
-    path: /etc/modprobe.d/snd_hda_intel.conf
-    create: yes
-    line: 'options snd_hda_intel power_save_controlle=Y power_save=1'
-  become: yes
-  tags: distro
-
-- name: Set Intel ETH driver options
-  lineinfile:
-    path: /etc/modprobe.d/e1000e.conf
-    create: yes
-    line: 'options e1000e SmartPowerDownEnable=1'
-  become: yes
-  tags: distro
-
-- name: Set Intel Wifi driver options
-  lineinfile:
-    path: /etc/modprobe.d/iwlwifi.conf
-    create: yes
-    line: 'options iwlwifi power_save=Y power_level=5 iwlmvm power_scheme=3'
-  become: yes
-  tags: distro
 
 - name: Disable WIFI Mac address randomization on scan
   blockinfile:
@@ -123,7 +96,7 @@
       [device-mac-randomization]
       wifi.scan-rand-mac-address=no
   become: yes
-  tags: distro
+  tags: distro,wifi
 
 - name: Set sysctl variables
   sysctl:
@@ -145,7 +118,14 @@
     - {name: fs.inotify.max_user_watches, value: 524288}
     - {name: net.ipv4.ip_default_ttl, value: 66}
   become: yes
-  tags: distro
+  tags: distro,sysctl
+
+- name: Cpupower
+  shell: "{{ pkg_mngr }} install -y {{ cpupower_pkg }}"
+  register: pkg_output
+  changed_when: pkg_output.stdout_lines|length > 5
+  become: yes
+  tags: distro,powersave
 
 - name: Set UDev Rules
   blockinfile:
@@ -173,7 +153,7 @@
       SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="1",RUN+="/bin/cpupower frequency-set -g performance -u 4500MHz"
     marker: "# {mark} ANSIBLE MANAGED BLOCK BY DOTFILES"
   become: yes
-  tags: powersave
+  tags: distro,powersave
 
 - name: Check if lvm.conf is present
   stat:
@@ -190,15 +170,15 @@
   register: lvm_setup
   become: yes
   when: lvm_file.stat.exists
-  tags: distro
+  tags: distro,storage
 
 - name: Check if Crypttab is present
   stat:
     path: /etc/crypttab
   register: crypt_file
-  tags: distro
+  tags: distro,storage
 
-- name: Deploy Crypttab Flags
+- name: Deploy Crypttab Performance Flags
   replace:
     path: /etc/crypttab
     regexp: 'none$'
@@ -207,7 +187,59 @@
   register: crypt_setup
   become: yes
   when: crypt_file.stat.exists
-  tags: distro
+  tags: distro,storage
+
+- name: Check if zram is present
+  shell: swapon | grep zram
+  register: zram_setup
+  changed_when: no
+  failed_when: no
+  tags: distro,zram
+
+- name: Setup zramswap
+  block:
+    - name: Set zram service
+      blockinfile:
+        path: /etc/systemd/system/zram.service
+        create: yes
+        block: |
+          [Unit]
+          Description=Swap with zram
+          After=multi-user.target
+
+          [Service]
+          Type=oneshot
+          RemainAfterExit=true
+          ExecStartPre=/sbin/mkswap /dev/zram0
+          ExecStart=/sbin/swapon /dev/zram0
+          ExecStop=/sbin/swapoff /dev/zram0
+
+          [Install]
+          WantedBy=multi-user.target
+        marker: "# {mark} ANSIBLE MANAGED BLOCK"
+      register: zram_setup
+      tags: distro,zram
+
+    - name: Setup zram
+      shell: "{{ item }}"
+      with_items:
+        - echo zram > /etc/modules-load.d/zram.conf
+        - echo 'options zram num_devices=1' > /etc/modprobe.d/zram.conf
+        - echo 'KERNEL=="zram0", ATTR{disksize}="{{ (ansible_memtotal_mb/2)|int }}M",TAG+="systemd"' > /etc/udev/rules.d/99-zram.rules
+        - udevadm control --reload-rules && udevadm trigger
+        - modprobe zram num_devices=1
+      when: zram_setup.changed
+      tags: distro,zram
+
+    - name: Enable Zram
+      systemd:
+        name: zram
+        state: started
+        enabled: yes
+        daemon_reload: yes
+      tags: distro,zram
+  become: yes
+  when: zram_setup.rc != 0
 
 - name: Check if Grub is present
   stat:
@@ -229,8 +261,28 @@
     - {option: pcie_aspm, value: force}
     - {option: pcie_aspm.policy, value: powersupersave}
     - {option: scsi_mod.use_blk_mq, value: 1}
-  become: yes
   register: grub_setup
+  become: yes
+  when: grub_file.stat.exists
+  tags: distro,grub
+
+- name: Set Grub Rules
+  blockinfile:
+    path: /etc/default/grub
+    create: yes
+    block: |
+        GRUB_DISABLE_OS_PROBER="true"
+        GRUB_DISABLE_RECOVERY="true"
+        GRUB_DISABLE_SUBMENU="true"
+        GRUB_GFXMODE=640x480
+        GRUB_RECORDFAIL_TIMEOUT=0
+        GRUB_TIMEOUT=0
+        GRUB_TIMEOUT_QUIET="true"
+        GRUB_TIMEOUT_STYLE=hidden
+        superusers=""
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+  register: grub_conf
+  become: yes
   when: grub_file.stat.exists
   tags: distro,grub
 
@@ -241,6 +293,7 @@
     - "dracut --force --regenerate-all -v"
   when: >
     ((grub_setup is defined and grub_setup.changed) or
+    (grub_conf is defined and grub.conf.changed) or
     (lvm_setup is defined and lvm_setup.changed) or
     (crypt_setup is defined and crypt_setup.changed))
     and ansible_os_family == "RedHat"
@@ -253,15 +306,16 @@
     - "update-grub"
   when: >
     ((grub_setup is defined and grub_setup.changed) or
+    (grub_conf is defined and grub.conf.changed) or
     (lvm_setup is defined and lvm_setup.changed) or
     (crypt_setup is defined and crypt_setup.changed))
-    and ansible_os_family == "Debiam"
+    and ansible_os_family == "Debian"
   become: yes
   tags: distro,grub
 
 - name: Ensure truetype directory exists
   stat:
-    path: /usr/share/fonts/truetype
+    path: "{{ ansible_env.HOME }}/.local/share/fonts/truetype"
   register: truetype_folder
   tags: distro,fonts
 
@@ -278,29 +332,6 @@
 - name: Extract fonts
   unarchive:
     src: /tmp/mss-truetype-fonts.tar.gz
-    dest: /usr/share/fonts/
-    creates: /usr/share/fonts/truetype
-  become: yes
+    dest: "{{ ansible_env.HOME }}/.local/share/fonts/"
+    creates: "{{ ansible_env.HOME }}/.local/share/fonts/truetype"
   tags: distro,fonts
-
-
-- name: Git clone toolbox
-  git:
-    repo: 'https://github.com/89luca89/simpler-toolbox'
-    dest: /opt/simpler-toolbox
-  become: yes
-  tags: distro,toolbox
-
-- name: Deploy files
-  copy:
-    src: "/opt/simpler-toolbox/{{ item }}"
-    dest: "/usr/local/bin/{{ item }}"
-    owner: root
-    group: root
-    mode: '0755'
-  with_items:
-    - toolbox_create
-    - toolbox_enter
-    - toolbox_init
-  become: yes
-  tags: distro,toolbox
