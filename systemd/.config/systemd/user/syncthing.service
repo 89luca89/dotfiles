@@ -4,7 +4,7 @@ Documentation=man:syncthing(1)
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/syncthing -no-browser -no-restart -logflags=0
+ExecStart=/usr/local/bin/toolbox_enter --name fedora-toolbox -e  /usr/bin/syncthing -no-browser -no-restart -logflags=0
 Restart=always
 
 [Install]
