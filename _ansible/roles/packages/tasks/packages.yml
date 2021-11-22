@@ -1,13 +1,6 @@
 # my_apps.yml
 ---
 
-- name: Install Programs (Media Utilities)
-  package:
-    state: present
-    name: "{{ codecs_packages }}"
-  become: yes
-  tags: codecs
-
 - name: Install virtualization packages / Rpm
   dnf:
     name: "{{ virtualization_packages }}"
@@ -54,10 +47,10 @@
 - name: Remove duplicates (Flatpak Programs )
   command: "{{ pkg_mngr }} remove -y {{ ' '.join(flatpak_duplicate_packages) }}"
   register: pkg_out
-  changed_when: pkg_out.stderr == 0
+  changed_when: pkg_out is defined and pkg_out.stderr == 0
   become: yes
   when: use_flatpaks
-  tags: flatpak_packages
+  tags: flatpak_packages_debloat
 
 - name: Env variables (Flatpak Programs)
   command: "flatpak override --user --env={{ item.value }} {{ item.key }}"

@@ -1,0 +1,52 @@
+---
+
+- name: Git clone toolbox
+  git:
+    repo: 'https://github.com/89luca89/simpler-toolbox'
+    dest: /tmp/simpler-toolbox
+    force: yes
+  tags: toolbox
+
+- name: Deploy files
+  copy:
+    src: "/tmp/simpler-toolbox/{{ item }}"
+    dest: "{{ ansible_env.HOME }}/.local/bin/{{ item }}"
+    mode: '0755'
+  with_items:
+    - toolbox_create
+    - toolbox_enter
+    - toolbox_export
+    - toolbox_init
+  tags: toolbox
+
+- name: Setup podman repo (Debian Family)
+  block:
+    - name: Check if repo is present
+      stat:
+        path: /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+      register: podman_repo
+
+    - name: Configure podman repos
+      shell: |
+          . /etc/os-release
+          echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+          curl -L "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key" | apt-key add -
+      when: not podman_repo.stat.exists
+
+    - name: Apt update
+      command: apt update
+      changed_when: no
+
+  become: yes
+  when: ansible_os_family == "Debian"
+  tags: toolbox,podman
+
+- name: Install podman
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - podman
+    - podman-plugins
+  become: yes
+  tags: toolbox,podman
