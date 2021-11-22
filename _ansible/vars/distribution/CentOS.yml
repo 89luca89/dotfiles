@@ -159,6 +159,8 @@ power_management_packages:
   - tlp
   - tlp-rdw
 
+cpupower_pkg: "kernel-tools"
+
 power_management_service:
   - tlp
   - thermald

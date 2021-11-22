@@ -168,6 +168,8 @@ power_management_packages:
   - powertop
   - thermald
 
+cpupower_pkg: "kernel-tools"
+
 power_management_service:
   - power-profiles-daemon
   - thermald
