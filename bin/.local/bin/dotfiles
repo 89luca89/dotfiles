@@ -1,17 +1,17 @@
-#!/bin/bash
+#!/bin/sh
 
-set -e
+set -o errexit                                                                                                                                              │
+set -o nounset
 
-
-pushd "$HOME/dotfiles"
+cd "$HOME/dotfiles"
 
 for i in $(ls -d */ | grep -vE "^_"); do
     echo "$i"
-    stow -t ~ -D "$i";
-    stow -t ~ -S "$i";
+    stow -t ~ -D "$i" 2>/dev/null
+    stow -t ~ -S "$i" 2>/dev/null
 done
 
 ln -sf "Syncthing/conf/.histfile" "$HOME/.histfile"
 ln -sfn "Syncthing/bin" "$HOME/bin"
 
-popd
+cd -
