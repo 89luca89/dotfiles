@@ -32,6 +32,6 @@ if groups | grep -Eq "sudo|wheel"; then
 else
 	echo "Skipping some tags, user is not in sudoers"
 	ansible-playbook -i localhost, -c local --ask-vault-pass \
-		--skip-tags archive,archives,backports,codecs,debloat,grub,intel,virtualization,desktop_packages,flatpak_packages_debloat,powersave,rpmfusion,snapd,storage,sysctl,podman,wifi,zram \
+		--skip-tags archive,archives,backports,codecs,debloat,grub,intel,virtualization,desktop_packages,flatpak_repo,powersave,rpmfusion,snapd,storage,sysctl,podman,wifi,zram \
 		"$DIR"/main.yml --diff $*
 fi

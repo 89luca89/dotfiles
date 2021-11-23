@@ -25,6 +25,25 @@
   become: yes
   tags: desktop_packages
 
+- name: Setup flatpak repo (Ubuntu)
+  block:
+    - name: Check if repo is present
+      stat:
+        path: /etc/apt/sources.list.d/flatpak-ubuntu-stable-focal.list
+      register: flatpak_repo
+
+    - name: Configure podman repos
+      shell: |
+          add-apt-repository -y ppa:flatpak/stable
+      when: not flatpak_repo.stat.exists
+
+    - name: Apt update
+      command: apt update
+      changed_when: no
+
+  when: ansible_distribution == "Ubuntu"
+  tags: flatpak_repo
+
 - name: Install Programs (Flatpak Programs - flathub)
   command: "flatpak remote-add --user --if-not-exists {{ item.key }} {{ item.value }}"
   changed_when: no
@@ -43,14 +62,6 @@
   become: no
   when: use_flatpaks
   tags: flatpak_packages
-
-- name: Remove duplicates (Flatpak Programs )
-  command: "{{ pkg_mngr }} remove -y {{ ' '.join(flatpak_duplicate_packages) }}"
-  register: pkg_out
-  changed_when: pkg_out is defined and pkg_out.stderr == 0
-  become: yes
-  when: use_flatpaks
-  tags: flatpak_packages_debloat
 
 - name: Env variables (Flatpak Programs)
   command: "flatpak override --user --env={{ item.value }} {{ item.key }}"
