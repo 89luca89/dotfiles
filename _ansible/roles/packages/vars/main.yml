@@ -5,20 +5,19 @@
 use_flatpaks: yes
 
 flatpak_packages:
+  - com.slack.Slack
   - us.zoom.Zoom
   - com.github.tchx84.Flatseal
   - org.gnome.Calculator
   - org.gnome.Calendar
   - org.gnome.Connections
   - org.gnome.Contacts
-  - org.gnome.Epiphany
   - org.gnome.Evince
   - org.gnome.FileRoller
   - org.gnome.Logs
   - org.gnome.Maps
   - org.gnome.NetworkDisplays
   - org.gnome.Rhythmbox3
-  - org.gnome.SoundRecorder
   - org.gnome.Totem
   - org.gnome.Weather
   - org.gnome.baobab
@@ -26,18 +25,19 @@ flatpak_packages:
   - org.gnome.eog
   - org.gnome.gedit
   - org.keepassxc.KeePassXC
-  - org.libreoffice.LibreOffice # org.onlyoffice.desktopeditors
+  - org.libreoffice.LibreOffice
   - org.chromium.Chromium
   - org.mozilla.firefox
   - org.mozilla.Thunderbird
+  - org.signal.Signal
+  - org.telegram.desktop
+  - org.videolan.VLC
   - com.github.jeromerobert.pdfarranger
-  - com.github.maoschanz.drawing
   - com.github.polymeilex.neothesia
-  - com.gitlab.newsflash
   - com.jgraph.drawio.desktop
   - de.haeckerfelix.Fragments
+  - net.sourceforge.liferea
   - nl.hjdskes.gcolor3
-  - org.remmina.Remmina
 
 flatpak_overrides:
   - {key: "org.mozilla.firefox", value: "MOZ_ACCELLERATED=1"}
@@ -61,7 +61,6 @@ python_modules:
   - flake8-docstrings
   - flake8-eradicate
   - setuptools
-  - ansible==2.9
   - ansible-later
   - ansible-lint
   - demjson
