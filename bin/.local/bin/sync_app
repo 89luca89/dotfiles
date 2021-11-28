@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Sync target app via syncthing.
 # Create tar.gz of app config/data folder and protect it with gpg.
 
@@ -90,7 +90,7 @@ app_sync() {
 	"flatpak")
 		[ -d ~/.var/app ] || (echo "No folder to backup" && exit 1)
 		cd ~/.var || exit 1
-		tar --exclude=*cache* --exclude=*org.chromium.Chromium* -c -z -f /tmp/flatpak-data.tar.gz app
+		tar --exclude=*cache* --exclude={*Chromium*,*Webkit*,*Cache*} -c -z -f /tmp/flatpak-data.tar.gz app
 		openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in /tmp/flatpak-data.tar.gz -out /tmp/flatpak-data.tar.gz.enc -k "$password"
 		shred -n 25 -u -z /tmp/flatpak-data.tar.gz
 		mv /tmp/flatpak-data.tar.gz.enc ~/Syncthing/secured/
