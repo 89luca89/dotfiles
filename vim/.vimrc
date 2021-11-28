@@ -23,9 +23,6 @@ Plug 'yggdroot/indentLine'
 " colorscheme
 Plug 'joshdick/onedark.vim'
 Plug 'cormacrelf/vim-colors-github'
-" git
-Plug 'airblade/vim-gitgutter'
-Plug 'tpope/vim-fugitive'
 " Fzf
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
@@ -61,12 +58,6 @@ augroup general
     autocmd Syntax * syntax match myDeclaration '\v\w+(,\s*\w+)*\ze(\s*:\=)'
     autocmd Syntax * syntax match myFunction    '\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\ze\%([a-zA-Z0-9]*(\)'
 augroup end
-" Netrw
-let g:netrw_altv   = 1
-let g:netrw_banner = 0
-let g:netrw_browse_split = 4
-let g:netrw_liststyle = 3
-let g:netrw_winsize = -28
 " Languages
 let g:ansible_attribute_highlight       = 'ab'
 let g:ansible_extra_keywords_highlight  = 1
@@ -89,6 +80,7 @@ let g:python_highlight_all  = 1
 """""""""""""""""""""
 "       Shortcuts   "
 """""""""""""""""""""
+map <C-e>   :<C-u>call ToggleTheme()<CR>
 " do last action on a visual selection
 vnoremap . :'<,'>:normal .<CR>
 " navigate tabs Tab (fwd) S-Tab (prev)
@@ -96,11 +88,8 @@ map <Tab>   :<C-u>bn<CR>
 map <S-Tab> :<C-u>bp<CR>
 " C-c close buffer
 map <C-c> :<C-u>bp<BAR>sp<BAR>bn<BAR>bd<CR>
-" split resize
-map <M-Down>  :<C-u>resize +2<CR>
-map <M-Left>  :<C-u>vert resize -2<CR>
-map <M-Right> :<C-u>vert resize +2<CR>
-map <M-Up>    :<C-u>resize -2<CR>
+" copy to clipboard on a visual selection
+vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
 " Leader map
 let mapleader = ' '
 " Utility shortcuts with leader:
@@ -115,14 +104,14 @@ inoremap <C-F> <C-X><C-F>
 " Default IDE-Style keybindings: definition, indent, rename, references
 nnoremap <leader>l  :<C-u>cgete system('project-utils ' . &filetype . " " .  expand('%') . " lint")<CR>:copen<CR>
 nnoremap <leader>L  :<C-u>cgete system('project-utils ' . &filetype . " . lint")<CR>:copen<CR>
-nnoremap <leader>i   :<C-u>mkview<CR>:%s/\($\n\s*\)\+\%$//e<CR>:%s/\s\+$//e<CR>=G:loadview<CR>
-nnoremap <leader>I  :<C-u>call  system('project-utils ' . &filetype . " . format")<CR>
-nnoremap <leader>T  :<C-u>call  system('project-utils ' . &filetype . " . tags")<CR>
-nnoremap <leader>f  :<C-u>call  Grep("")<Left><Left>
-nnoremap <leader>r   :<C-u>call Rename("<c-r>=expand("<cword>")<CR>", "")<Left><Left>
-nnoremap <leader>rf  :<C-u>call Grep("<c-r>=expand("<cword>")<CR>")<CR>
-nnoremap <leader>td :<C-u>call  Grep("TODO<bar>FIXME")<CR>
-nnoremap <leader>gd  :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
+nnoremap <leader>i  :<C-u>mkview<CR>:%s/\($\n\s*\)\+\%$//e<CR>:%s/\s\+$//e<CR>=G:loadview<CR>
+nnoremap <leader>I  :<C-u>call system('project-utils ' . &filetype . " . format")<CR>
+nnoremap <leader>T  :<C-u>call system('project-utils ' . &filetype . " . tags")<CR>
+nnoremap <leader>f  :<C-u>call Grep("")<Left><Left>
+nnoremap <leader>r  :<C-u>call Rename("<c-r>=expand("<cword>")<CR>", "")<Left><Left>
+nnoremap <leader>rf :<C-u>call Grep("<c-r>=expand("<cword>")<CR>")<CR>
+nnoremap <leader>td :<C-u>call Grep("TODO<bar>FIXME")<CR>
+nnoremap <leader>gd :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
 nnoremap <leader>k  :<C-u>call CheatSheet("")<Left><Left>
 nnoremap <leader>K  :<C-u>call CheatSheet("<c-r>=expand("<cword>")<CR>")<CR>
 " Override <leader>i formatting with corresponding formatter for each lang
@@ -154,10 +143,10 @@ augroup ansible_vim_fthosts
     autocmd BufNewFile,BufRead */roles/**/*.yml set filetype=yaml.ansible
 augroup END
 " ALE + LSP -------------------------------------------------------------------
-let g:ale_enabled           = 1
-let g:ale_lint_on_enter     = 0
+let g:ale_enabled       = 1
+let g:ale_lint_on_enter = 0
 let g:ale_lint_on_text_changed = 0
-let g:ale_lint_on_save = 1
+let g:ale_lint_on_save  = 1
 let g:ale_yaml_yamllint_options = '-d "{extends: default, rules: {line-length: disable, truthy: disable, key-duplicates: enable, comments: {min-spaces-from-content: 1}}}"'
 let g:lsc_auto_completeopt='menu,menuone,popup,noselect,noinsert'
 let g:lsc_server_commands  = {
@@ -198,16 +187,3 @@ function! ToggleTheme()
         silent! edit
     endif
 endfunction
-" Window Zoom toggle
-function! ZoomToggle() abort
-    if exists('t:zoomed') && t:zoomed
-        execute t:zoom_winrestcmd
-        let t:zoomed = 0
-    else
-        let t:zoom_winrestcmd = winrestcmd()
-        resize
-        vertical resize
-        let t:zoomed = 1
-    endif
-endfunction
-nnoremap <silent> <C-W>z :call ZoomToggle()<CR>
