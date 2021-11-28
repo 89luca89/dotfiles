@@ -22,7 +22,7 @@
     state: present
     name: "{{ power_management_packages }}"
   become: yes
-  tags: powersave
+  tags: powersave,become
 
 - name: Enable Power Management (Laptop)
   systemd:
@@ -33,14 +33,13 @@
   become: yes
   with_items:
     - "{{ power_management_service }}"
-  tags: powersave
+  tags: powersave,become
 
 - name: Check Intel GPU Vendor
   shell: "lshw -C display 2> /dev/null | grep vendor | grep -iq intel"
   register: intel_gpu
   changed_when: no
   failed_when: no
-  become: yes
   tags: distro,intel
 
 - name: Intel setup
@@ -57,35 +56,32 @@
             Option "TearFree" "true"
             Option "DRI" "3"
           EndSection
-      tags: distro,intel
 
     - name: Set i915 driver options
       lineinfile:
         path: /etc/modprobe.d/i915.conf
         create: yes
         line: 'options i915 disable_power_well=0 enable_dc=2 enable_psr=1 enable_rc6=7 enable_fbc=1 powersave=1 enable_guc=3 enable_dpcd_backlight=1'
-      tags: distro,intel
 
     - name: Set Intel HDA driver options
       lineinfile:
         path: /etc/modprobe.d/snd_hda_intel.conf
         create: yes
         line: 'options snd_hda_intel power_save_controlle=Y power_save=1'
-      tags: distro,intel
 
     - name: Set Intel ETH driver options
       lineinfile:
         path: /etc/modprobe.d/e1000e.conf
         create: yes
         line: 'options e1000e SmartPowerDownEnable=1'
-      tags: distro,intel
 
     - name: Set Intel Wifi driver options
       lineinfile:
         path: /etc/modprobe.d/iwlwifi.conf
         create: yes
         line: 'options iwlwifi power_save=Y power_level=5 iwlmvm power_scheme=3'
-      tags: distro,intel
+  become: yes
+  tags: distro,intel,become
   when: intel_gpu.rc == 0
 
 - name: Disable WIFI Mac address randomization on scan
@@ -96,7 +92,7 @@
       [device-mac-randomization]
       wifi.scan-rand-mac-address=no
   become: yes
-  tags: distro,wifi
+  tags: distro,wifi,become
 
 - name: Set sysctl variables
   sysctl:
@@ -118,14 +114,14 @@
     - {name: fs.inotify.max_user_watches, value: 524288}
     - {name: net.ipv4.ip_default_ttl, value: 66}
   become: yes
-  tags: distro,sysctl
+  tags: distro,sysctl,become
 
 - name: Cpupower
   shell: "{{ pkg_mngr }} install -y {{ cpupower_pkg }}"
   register: pkg_output
   changed_when: pkg_output.stdout_lines|length > 5
   become: yes
-  tags: distro,powersave
+  tags: distro,powersave,become
 
 - name: Set UDev Rules
   blockinfile:
@@ -153,7 +149,7 @@
       SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="1",RUN+="/bin/cpupower frequency-set -g performance -u 4500MHz"
     marker: "# {mark} ANSIBLE MANAGED BLOCK BY DOTFILES"
   become: yes
-  tags: distro,powersave
+  tags: distro,powersave,become
 
 - name: Check if lvm.conf is present
   stat:
@@ -170,7 +166,7 @@
   register: lvm_setup
   become: yes
   when: lvm_file.stat.exists
-  tags: distro,storage
+  tags: distro,storage,become
 
 - name: Check if Crypttab is present
   stat:
@@ -187,7 +183,7 @@
   register: crypt_setup
   become: yes
   when: crypt_file.stat.exists
-  tags: distro,storage
+  tags: distro,storage,become
 
 - name: Check if zram is present
   shell: swapon | grep zram
@@ -218,7 +214,6 @@
           WantedBy=multi-user.target
         marker: "# {mark} ANSIBLE MANAGED BLOCK"
       register: zram_setup
-      tags: distro,zram
 
     - name: Setup zram
       shell: "{{ item }}"
@@ -229,7 +224,6 @@
         - udevadm control --reload-rules && udevadm trigger
         - modprobe zram num_devices=1
       when: zram_setup.changed
-      tags: distro,zram
 
     - name: Enable Zram
       systemd:
@@ -237,8 +231,8 @@
         state: started
         enabled: yes
         daemon_reload: yes
-      tags: distro,zram
   become: yes
+  tags: distro,zram,become
   when: zram_setup.rc != 0
 
 - name: Check if Grub is present
@@ -264,7 +258,7 @@
   register: grub_setup
   become: yes
   when: grub_file.stat.exists
-  tags: distro,grub
+  tags: distro,grub,become
 
 - name: Set Grub Rules
   blockinfile:
@@ -284,7 +278,7 @@
   register: grub_conf
   become: yes
   when: grub_file.stat.exists
-  tags: distro,grub
+  tags: distro,grub,become
 
 - name: Update Grub and Initramfs
   command: "{{ item }}"
@@ -298,7 +292,7 @@
     (crypt_setup is defined and crypt_setup.changed))
     and ansible_os_family == "RedHat"
   become: yes
-  tags: distro,grub
+  tags: distro,grub,become
 
 - name: Update Grub and Initramfs
   command: "{{ item }}"
@@ -311,7 +305,14 @@
     (crypt_setup is defined and crypt_setup.changed))
     and ansible_os_family == "Debian"
   become: yes
-  tags: distro,grub
+  tags: distro,grub,become
+
+- name: Create a directory if it does not exist
+  file:
+    path: "{{ ansible_env.HOME }}/.local/share/fonts"
+    state: directory
+    mode: '0700'
+  tags: distro,fonts
 
 - name: Ensure truetype directory exists
   stat:
@@ -322,7 +323,7 @@
 - name: Install MS Fonts
   get_url:
     url: "{{ fonts_url }}"
-    dest: /tmp/mss-truetype-fonts.tar.gz
+    dest: "{{ ansible_env.HOME }}/Downloads/mss-truetype-fonts.tar.gz"
     username: "{{ basicauth_user }}"
     password: "{{ basicauth_pass }}"
     checksum: sha256:69e6164432000c93e81d8298f840c528acc9e280732647d5b82ac6d525179558
@@ -331,7 +332,7 @@
 
 - name: Extract fonts
   unarchive:
-    src: /tmp/mss-truetype-fonts.tar.gz
+    src: "{{ ansible_env.HOME }}/Downloads/mss-truetype-fonts.tar.gz"
     dest: "{{ ansible_env.HOME }}/.local/share/fonts/"
     creates: "{{ ansible_env.HOME }}/.local/share/fonts/truetype"
   tags: distro,fonts

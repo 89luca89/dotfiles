@@ -8,7 +8,7 @@
     disable_gpg_check: yes
   become: yes
   when: ansible_os_family == "RedHat"
-  tags: virtualization
+  tags: virtualization,become
 
 - name: Install virtualization packages / Deb
   apt:
@@ -16,14 +16,14 @@
     state: present
   become: yes
   when: ansible_os_family == "Debian"
-  tags: virtualization
+  tags: virtualization,become
 
 - name: Install Main Programs
   package:
     state: present
     name: "{{ my_packages }}"
   become: yes
-  tags: desktop_packages
+  tags: desktop_packages,become
 
 - name: Setup flatpak repo (Ubuntu)
   block:
@@ -32,7 +32,7 @@
         path: /etc/apt/sources.list.d/flatpak-ubuntu-stable-focal.list
       register: flatpak_repo
 
-    - name: Configure podman repos
+    - name: Configure flatpak repos
       shell: |
           add-apt-repository -y ppa:flatpak/stable
       when: not flatpak_repo.stat.exists
@@ -42,7 +42,8 @@
       changed_when: no
 
   when: ansible_distribution == "Ubuntu"
-  tags: flatpak_repo
+  become: yes
+  tags: flatpak_repo,become
 
 - name: Install Programs (Flatpak Programs - flathub)
   command: "flatpak remote-add --user --if-not-exists {{ item.key }} {{ item.value }}"

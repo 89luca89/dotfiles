@@ -8,13 +8,37 @@
     name: "{{ rpmfusion_packages }}"
   become: yes
   when: ansible_os_family == "RedHat"
-  tags: rpmfusion
+  tags: rpmfusion,become
 
 - name: Enable powertools
   command: "dnf config-manager --set-enabled powertools"
   become: yes
   when: ansible_distribution == "CentOS"
-  tags: rpmfusion
+  tags: rpmfusion,become
+
+- name: Dnf tweaks
+  blockinfile:
+    path: /etc/dnf/dnf.conf
+    create: yes
+    block: |
+      deltarpm=True
+      fastestmirror=True
+      install_weak_deps=False
+      max_parallel_downloads=10
+  become: yes
+  when: ansible_os_family == "RedHat"
+  tags: dnf,become
+
+- name: Apt no recommends
+  blockinfile:
+    path: /etc/apt/apt.conf.d/01norecommend
+    create: yes
+    block: |
+      APT::Install-Recommends "0";
+      APT::Install-Suggests "0";
+  become: yes
+  when: ansible_os_family == "Debian"
+  tags: apt,become
 
 - name: Remove snaps
   apt:
@@ -23,7 +47,7 @@
     name: snapd
   become: yes
   when: ansible_distribution == "Ubuntu"
-  tags: snapd
+  tags: snapd,become
 
 - name: Blacklist Snaps
   blockinfile:
@@ -35,7 +59,7 @@
       Pin-Priority: -10
   become: yes
   when: ansible_distribution == "Ubuntu"
-  tags: snapd
+  tags: snapd,become
 
 - name: Backports Enable
   blockinfile:
@@ -45,7 +69,7 @@
       deb http://deb.debian.org/debian bullseye-backports main contrib non-free
   become: yes
   when: ansible_distribution == "Debian"
-  tags: backports
+  tags: backports,become
 
 - name: Backports Priority
   blockinfile:
@@ -57,35 +81,34 @@
       Pin-Priority: 500
   become: yes
   when: ansible_distribution == "Debian"
-  tags: backports
+  tags: backports,become
 
 - name: Remove bloat packages
   package:
     state: absent
     name: "{{ debloat_pkg }}"
   become: yes
-  tags: debloat
+  tags: debloat,become
 
 - name: Autoremove
   command: "{{ pkg_mngr }} autoremove -y"
   become: yes
   register: pkg_output
   changed_when: pkg_output.stdout_lines|length > 4
-  tags: debloat
+  tags: debloat,become
 
 - name: Install Programs (Archive Utilities)
   package:
     state: present
     name: "{{ archive_packages }}"
   become: yes
-  tags: archives
+  tags: archives,become
 
-- name: Install Programs (Media Utilities)
-  package:
-    state: present
-    name: "{{ codecs_packages }}"
+- name: Install Podman Packages
+  include: podman.yml
+  when: not is_toolbox
   become: yes
-  tags: codecs
+  tags: podman,become
 
 - name: Setup toolbox
   include: toolbox.yml
@@ -100,5 +123,4 @@
 - name: Install CLI Packages
   include: terminal.yml
   when: (toolbox_enabled|bool == false) or is_toolbox
-  become: yes
   tags: terminal

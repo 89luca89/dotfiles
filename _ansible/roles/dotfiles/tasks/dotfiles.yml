@@ -37,19 +37,10 @@
     mode: 0755
   with_items:
     - {
-        src: "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim",
-        dest: "{{ ansible_env.HOME }}/.vim/autoload",
-      }
+      src: "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim",
+      dest: "{{ ansible_env.HOME }}/.vim/autoload",
+    }
 
 - name: link dotfiles
   command: "{{ ansible_env.HOME }}/dotfiles/bin/.local/bin/dotfiles"
   when: firstrun.changed
-
-- name: Enable systemd user services
-  systemd:
-    name: "{{ item }}"
-    state: started
-    enabled: yes
-    scope: user
-  with_items:
-    - syncthing.service

@@ -6,22 +6,20 @@
     state: present
     name: "{{ terminal_packages }}"
   become: yes
-  tags: terminal
+  tags: terminal,become
 
 - name: Install Programs (python)
   package:
     state: present
     name: "{{ python_packages }}"
   become: yes
-  tags: terminal,python
+  tags: terminal,python,become
 
 - name: Install Programs (PIP Packages) - pip
-  pip:
-    state: present
-    executable: pip3
-    extra_args: --user
-    name: "{{ python_modules }}"
-  become: yes
+  shell: 'pip3 install --user {{ item }} | sed "s/Requirement already satisfied.*//g"'
+  register: pip_output
+  changed_when: pip_output.stdout_lines|length > 0
+  with_items: "{{ python_modules }}"
   tags: terminal,python
 
 - name: Install Programs (golang)
@@ -29,7 +27,7 @@
     state: present
     name: "{{ golang_packages }}"
   become: yes
-  tags: terminal,golang
+  tags: terminal,golang,become
 
 - name: Check that golang exists
   stat:
