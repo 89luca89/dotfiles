@@ -15,29 +15,6 @@ archive_packages:
   - unzip
   - zstd
 
-codecs_packages:
-  - ffmpeg
-  - flac
-  - gstreamer1.0-libav
-  - gstreamer1.0-plugins-bad
-  - gstreamer1.0-plugins-bad-apps
-  - gstreamer1.0-plugins-base
-  - gstreamer1.0-plugins-base-apps
-  - gstreamer1.0-plugins-good
-  - gstreamer1.0-plugins-ugly
-  - gstreamer1.0-vaapi
-  - i965-va-driver
-  - intel-media-va-driver
-  - libigdgmm-dev
-  - libigdgmm11
-  - libva-dev
-  - libva-drm2
-  - libva-glx2
-  - libva-wayland2
-  - libva-x11-2
-  - libva2
-  - libvdpau-va-gl1
-
 virtualization_packages:
   - bridge-utils
   - libvirt-clients
@@ -85,7 +62,6 @@ my_packages:
   - gnome-system-monitor
   - gnome-terminal
   - gnome-terminal-nautilus
-  - mpv
   - nautilus
   - nautilus-extensions
   - stow

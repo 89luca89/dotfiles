@@ -20,25 +20,6 @@ archive_packages:
   - unzip
   - zstd
 
-codecs_packages:
-  - egl-wayland
-  - flac
-  - ffmpeg
-  - ffmpeg-libs
-  - gstreamer1-libav
-  - gstreamer1-plugins-bad-free
-  - gstreamer1-plugins-bad-freeworld
-  - gstreamer1-plugins-base
-  - gstreamer1-plugins-good
-  - gstreamer1-plugins-ugly
-  - gstreamer1-plugins-ugly-free
-  - gstreamer1-svt-av1
-  - gstreamer1-svt-vp9
-  - libva-devel
-  - libva-intel-driver
-  - libva-utils
-  - libva-vdpau-driver
-
 virtualization_packages:
   - "@Virtualization Host"
   - "@Virtualization Hypervisor"
@@ -81,7 +62,6 @@ my_packages:
   - gnome-system-monitor
   - gnome-terminal
   - gnome-terminal-nautilus
-  - mpv
   - nautilus
   - nautilus-extensions
   - stow

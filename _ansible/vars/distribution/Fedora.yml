@@ -19,34 +19,6 @@ archive_packages:
   - unzip
   - zstd
 
-codecs_packages:
-  - compat-ffmpeg28
-  - compat-ffmpeg28-devel
-  - egl-utils
-  - egl-wayland
-  - flac
-  - ffmpeg
-  - ffmpeg-libs
-  - gstreamer1-libav
-  - gstreamer1-plugins-bad-free
-  - gstreamer1-plugins-bad-freeworld
-  - gstreamer1-plugins-base
-  - gstreamer1-plugins-base-tools
-  - gstreamer1-plugins-good
-  - gstreamer1-plugins-good-extras
-  - gstreamer1-plugins-ugly
-  - gstreamer1-plugins-ugly-free
-  - gstreamer1-svt-av1
-  - gstreamer1-svt-vp9
-  - gstreamer1-vaapi
-  - intel-media-driver
-  - libva-devel
-  - libva-intel-driver
-  - libva-intel-hybrid-driver
-  - libva-utils
-  - libva-vdpau-driver
-  - libvdpau-va-gl
-
 virtualization_packages:
   - "@virtualization"
   - bridge-utils
@@ -68,8 +40,8 @@ terminal_packages:
   - net-tools
   - nmap
   - openssl
-  - python3-devel
   - python3-pip
+  - sqlite
   - stow
   - tcpdump
   - tig
@@ -78,6 +50,11 @@ terminal_packages:
   - rsync
   - tmux
   - vim
+  # miscrellanous
+  - htop
+  - powertop
+  - syncthing
+  - python3.8
 
 
 ### gnome-extensions-app gnome-tweaks
@@ -88,7 +65,6 @@ my_packages:
   - gnome-system-monitor
   - gnome-terminal
   - gnome-terminal-nautilus
-  - mpv
   - nautilus
   - nautilus-extensions
   - stow
@@ -154,6 +130,7 @@ debloat_pkg:
   - seahorse
   - spice-vdagent
   - virtualbox-guest-additions
+  - vim-minimal
   - yelp
   - yelp-libs
   - yelp-xsl
