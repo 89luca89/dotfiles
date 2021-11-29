@@ -1,5 +1,26 @@
 # main.yml
 ---
+
+# Mask systemd services to free up memory
+- name: Mask services /1
+  systemd:
+    name: "{{ item }}"
+    state: stopped
+    enabled: no
+    masked: yes
+    daemon_reload: yes
+    scope: user
+  with_items: "{{ systemd_user_mask_services }}"
+  become: no
+  retries: 3
+  delay: 3
+  register: result
+  until: result is not failed
+
 - name: Include distro setup
   include: distro.yml
-  tags: distro
+  tags: distro,become
+
+- name: Include fonts setup
+  include: fonts.yml
+  tags: distro,fonts

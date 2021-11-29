@@ -1,22 +1,6 @@
 ---
 # tasks file to setup distro to my liking
 
-# Mask systemd services to free up memory
-- name: Mask services /1
-  systemd:
-    name: "{{ item }}"
-    state: stopped
-    enabled: no
-    masked: yes
-    daemon_reload: yes
-    scope: user
-  with_items: "{{ systemd_user_mask_services }}"
-  become: no
-  retries: 3
-  delay: 3
-  register: result
-  until: result is not failed
-
 - name: Install Power Management (Laptop)
   package:
     state: present
@@ -306,33 +290,3 @@
     and ansible_os_family == "Debian"
   become: yes
   tags: distro,grub,become
-
-- name: Create a directory if it does not exist
-  file:
-    path: "{{ ansible_env.HOME }}/.local/share/fonts"
-    state: directory
-    mode: '0700'
-  tags: distro,fonts
-
-- name: Ensure truetype directory exists
-  stat:
-    path: "{{ ansible_env.HOME }}/.local/share/fonts/truetype"
-  register: truetype_folder
-  tags: distro,fonts
-
-- name: Install MS Fonts
-  get_url:
-    url: "{{ fonts_url }}"
-    dest: "{{ ansible_env.HOME }}/Downloads/mss-truetype-fonts.tar.gz"
-    username: "{{ basicauth_user }}"
-    password: "{{ basicauth_pass }}"
-    checksum: sha256:69e6164432000c93e81d8298f840c528acc9e280732647d5b82ac6d525179558
-  when: not truetype_folder.stat.exists
-  tags: distro,fonts
-
-- name: Extract fonts
-  unarchive:
-    src: "{{ ansible_env.HOME }}/Downloads/mss-truetype-fonts.tar.gz"
-    dest: "{{ ansible_env.HOME }}/.local/share/fonts/"
-    creates: "{{ ansible_env.HOME }}/.local/share/fonts/truetype"
-  tags: distro,fonts

@@ -5,6 +5,31 @@
 use_flatpaks: yes
 toolbox_enabled: yes
 
+os_unused_modules: ""
+proc_mnt_options: "rw,nosuid,nodev,noexec,relatime,hidepid=1"
+unwanted_services:
+  - kdump.service
+  - nfs.service
+  - rexec.socket
+  - rlogin.socket
+  - rsh.socket
+  - slapd.service
+  - smb.service
+  - telnet.service
+  - tftp.service
+  - vsftpd.service
+unwanted_pkg:
+  - mcstrans
+  - rsh
+  - rsh-server
+  - setroubleshoot
+  - talk
+  - telnet-server
+  - tftp
+  - tftp-server
+  - xinetd
+  - ypserv
+
 pkg_mngr: "apt"
 
 archive_packages:
@@ -19,7 +44,6 @@ virtualization_packages:
   - bridge-utils
   - libvirt-clients
   - libvirt-daemon
-  - libvirt-daemon-config-network
   - libvirt-daemon-system
   - qemu-kvm
   - qemu-user-static
@@ -57,49 +81,31 @@ terminal_packages:
 
 my_packages:
   - flatpak
-  - gnome-disk-utility
-  - gnome-screenshot
-  - gnome-system-monitor
-  - gnome-terminal
-  - gnome-terminal-nautilus
   - nautilus
-  - nautilus-extensions
   - stow
   - syncthing
   # Terminal stuff
   - git
-  - git-credential-libsecret
   - openssl
   - vim
   # Generic X utility
-  - libappindicator-gtk3
   - wl-clipboard
   - wmctrl
+  - x11-utils
   - xclip
   - xdotool
-  - xlsclients
 
 debloat_pkg:
-  - evolution
-  - evolution-ews
+  - apport
+  - apport-gtk
+  - apport-symptoms
   - gnome-games
   - gnome-boxes
-  - gnome-dictionary
   - gnome-documents
-  - gnome-getting-started-docs
-  - gnome-initial-setup
   - gnome-maps
   - gnome-music
   - gnome-online-miners
   - gnome-photos
-  - gnome-user-docs
-  - gnome-user-share
-  - gnome-video-effects
-  - update-manager
-  - yelp
-  - yelp-libs
-  - yelp-xsl
-  - seahorse
 
 power_management_packages:
   - acpi
@@ -116,4 +122,3 @@ cpupower_pkg: "linux-tools-$(uname -r)"
 power_management_service:
   - tlp
   - thermald
-  - powertop

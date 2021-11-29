@@ -1,14 +1,11 @@
 #!/bin/sh
 
-set -o errexit                                                                                                                                              │
-set -o nounset
-
 cd "$HOME/dotfiles"
 
 for i in $(ls -d */ | grep -vE "^_"); do
     echo "$i"
-    stow -t ~ -D "$i" 2>/dev/null
-    stow -t ~ -S "$i" 2>/dev/null
+    stow -t ~ -D "$i"
+    stow -t ~ -S "$i"
 done
 
 ln -sf "Syncthing/conf/.histfile" "$HOME/.histfile"

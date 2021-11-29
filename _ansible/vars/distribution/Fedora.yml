@@ -5,6 +5,31 @@
 use_flatpaks: yes
 toolbox_enabled: yes
 
+os_unused_modules: ""
+proc_mnt_options: "rw,nosuid,nodev,noexec,relatime,hidepid=1"
+unwanted_services:
+  - kdump.service
+  - nfs.service
+  - rexec.socket
+  - rlogin.socket
+  - rsh.socket
+  - slapd.service
+  - smb.service
+  - telnet.service
+  - tftp.service
+  - vsftpd.service
+unwanted_pkg:
+  - mcstrans
+  - rsh
+  - rsh-server
+  - setroubleshoot
+  - talk
+  - telnet-server
+  - tftp
+  - tftp-server
+  - xinetd
+  - ypserv
+
 pkg_mngr: "dnf"
 
 rpmfusion_packages:
@@ -60,11 +85,6 @@ terminal_packages:
 ### gnome-extensions-app gnome-tweaks
 my_packages:
   - flatpak
-  - gnome-disk-utility
-  - gnome-screenshot
-  - gnome-system-monitor
-  - gnome-terminal
-  - gnome-terminal-nautilus
   - nautilus
   - nautilus-extensions
   - stow
@@ -100,23 +120,14 @@ debloat_pkg:
   - abrt-retrace-client
   - abrt-tui
   - anaconda-install-env-deps
-  - evolution
-  - evolution-ews
   - fedora-logos-httpd
-  - gamemode
   - gnome-boxes
-  - gnome-dictionary
   - gnome-documents
-  - gnome-getting-started-docs
-  - gnome-initial-setup
   - gnome-maps
   - gnome-music
   - gnome-online-miners
   - gnome-photos
   - gnome-shell-extension-background-logo
-  - gnome-user-docs
-  - gnome-user-share
-  - gnome-video-effects
   - httpd
   - hyperv-daemons
   - hyperv-daemons-license
@@ -124,16 +135,11 @@ debloat_pkg:
   - hypervkvpd
   - hypervvssd
   - open-vm-tools-desktop
-  - orca
   - qemu-guest-agent
   - rsyslog
-  - seahorse
   - spice-vdagent
   - virtualbox-guest-additions
   - vim-minimal
-  - yelp
-  - yelp-libs
-  - yelp-xsl
 
 power_management_packages:
   - acpi
