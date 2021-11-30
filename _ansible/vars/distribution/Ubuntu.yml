@@ -119,6 +119,7 @@ power_management_packages:
   - thermald
   - tlp
   - tlp-rdw
+  - linux-image-generic-hwe-20.04-edge
 
 cpupower_pkg: "linux-tools-$(uname -r)"
 

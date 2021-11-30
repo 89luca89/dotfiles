@@ -45,7 +45,7 @@
       lineinfile:
         path: /etc/modprobe.d/i915.conf
         create: yes
-        line: 'options i915 disable_power_well=0 enable_dc=2 enable_psr=1 enable_rc6=7 enable_fbc=1 powersave=1 enable_guc=3 enable_dpcd_backlight=1'
+        line: 'options i915 disable_power_well=0 enable_dc=2 enable_psr=1 enable_rc6=7 enable_fbc=1 powersave=1 enable_guc=3'
 
     - name: Set Intel HDA driver options
       lineinfile:
@@ -282,6 +282,7 @@
   command: "{{ item }}"
   with_items:
     - "update-grub"
+    - "update-initramfs -k all -u"
   when: >
     ((grub_setup is defined and grub_setup.changed) or
     (grub_conf is defined and grub.conf.changed) or
