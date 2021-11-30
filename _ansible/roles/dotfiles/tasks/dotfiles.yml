@@ -5,6 +5,7 @@
   file:
     path: "{{ item }}"
     state: directory
+    mode: 0700
   with_items:
     - "{{ ansible_env.HOME }}/.vim"
     - "{{ ansible_env.HOME }}/.vim/autoload"
@@ -41,6 +42,6 @@
       dest: "{{ ansible_env.HOME }}/.vim/autoload",
     }
 
-- name: link dotfiles
+- name: Link dotfiles
   command: "{{ ansible_env.HOME }}/dotfiles/bin/.local/bin/dotfiles"
   when: firstrun.changed

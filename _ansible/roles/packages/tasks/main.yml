@@ -25,6 +25,7 @@
       fastestmirror=True
       install_weak_deps=False
       max_parallel_downloads=10
+    mode: 0644
   become: yes
   when: ansible_os_family == "RedHat"
   tags: dnf,become
@@ -36,6 +37,7 @@
     block: |
       APT::Install-Recommends "0";
       APT::Install-Suggests "0";
+    mode: 0644
   become: yes
   when: ansible_os_family == "Debian"
   tags: apt,become
@@ -57,6 +59,7 @@
       Package: snapd
       Pin: release a=*
       Pin-Priority: -10
+    mode: 0644
   become: yes
   when: ansible_distribution == "Ubuntu"
   tags: snapd,become
@@ -67,6 +70,7 @@
     create: yes
     block: |
       deb http://deb.debian.org/debian bullseye-backports main contrib non-free
+    mode: 0644
   become: yes
   when: ansible_distribution == "Debian"
   tags: backports,become
@@ -79,6 +83,7 @@
       Package: *
       Pin: release a=bullseye-backports
       Pin-Priority: 500
+    mode: 0644
   become: yes
   when: ansible_distribution == "Debian"
   tags: backports,become

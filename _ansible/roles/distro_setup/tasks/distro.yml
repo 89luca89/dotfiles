@@ -19,54 +19,37 @@
     - "{{ power_management_service }}"
   tags: powersave,become
 
-- name: Check Intel GPU Vendor
-  shell: "lshw -C display 2> /dev/null | grep vendor | grep -iq intel"
-  register: intel_gpu
-  changed_when: no
-  failed_when: no
-  tags: distro,intel
-
 - name: Intel setup
   block:
-    - name: Improve Intel Tearfree on xorg
-      blockinfile:
-        path: /etc/X11/xorg.conf.d/20-intel.conf
-        create: yes
-        block: |
-          Section "Device"
-            Identifier "intel"
-            Driver "intel"
-            Option "AccelMethod" "sna"
-            Option "TearFree" "true"
-            Option "DRI" "3"
-          EndSection
-
     - name: Set i915 driver options
       lineinfile:
         path: /etc/modprobe.d/i915.conf
         create: yes
         line: 'options i915 disable_power_well=0 enable_dc=2 enable_psr=1 enable_rc6=7 enable_fbc=1 powersave=1 enable_guc=3'
+        mode: 0600
 
     - name: Set Intel HDA driver options
       lineinfile:
         path: /etc/modprobe.d/snd_hda_intel.conf
         create: yes
         line: 'options snd_hda_intel power_save_controlle=Y power_save=1'
+        mode: 0600
 
     - name: Set Intel ETH driver options
       lineinfile:
         path: /etc/modprobe.d/e1000e.conf
         create: yes
         line: 'options e1000e SmartPowerDownEnable=1'
+        mode: 0600
 
     - name: Set Intel Wifi driver options
       lineinfile:
         path: /etc/modprobe.d/iwlwifi.conf
         create: yes
         line: 'options iwlwifi power_save=Y power_level=5 iwlmvm power_scheme=3'
+        mode: 0600
   become: yes
   tags: distro,intel,become
-  when: intel_gpu.rc == 0
 
 - name: Disable WIFI Mac address randomization on scan
   blockinfile:
@@ -75,6 +58,7 @@
     block: |
       [device-mac-randomization]
       wifi.scan-rand-mac-address=no
+    mode: 0600
   become: yes
   tags: distro,wifi,become
 
@@ -132,6 +116,7 @@
       SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="0",RUN+="/bin/cpupower frequency-set -g conservative -u 2000MHz"
       SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="1",RUN+="/bin/cpupower frequency-set -g performance -u 4500MHz"
     marker: "# {mark} ANSIBLE MANAGED BLOCK BY DOTFILES"
+    mode: 0600
   become: yes
   tags: distro,powersave,become
 
@@ -197,7 +182,8 @@
           [Install]
           WantedBy=multi-user.target
         marker: "# {mark} ANSIBLE MANAGED BLOCK"
-      register: zram_setup
+        mode: 0644
+      register: zram_service
 
     - name: Setup zram
       shell: "{{ item }}"
@@ -207,7 +193,7 @@
         - echo 'KERNEL=="zram0", ATTR{disksize}="{{ (ansible_memtotal_mb/2)|int }}M",TAG+="systemd"' > /etc/udev/rules.d/99-zram.rules
         - udevadm control --reload-rules && udevadm trigger
         - modprobe zram num_devices=1
-      when: zram_setup.changed
+      when: zram_service.changed
 
     - name: Enable Zram
       systemd:
@@ -259,33 +245,34 @@
         GRUB_TIMEOUT_STYLE=hidden
         superusers=""
     marker: "# {mark} ANSIBLE MANAGED BLOCK"
+    mode: 0600
   register: grub_conf
   become: yes
   when: grub_file.stat.exists
   tags: distro,grub,become
 
-- name: Update Grub and Initramfs
+- name: Update Grub and Initramfs /RedHat
   command: "{{ item }}"
   with_items:
     - "grub2-mkconfig -o /boot/grub2/grub.cfg"
     - "dracut --force --regenerate-all -v"
   when: >
     ((grub_setup is defined and grub_setup.changed) or
-    (grub_conf is defined and grub.conf.changed) or
+    (grub_conf is defined and grub_conf.changed) or
     (lvm_setup is defined and lvm_setup.changed) or
     (crypt_setup is defined and crypt_setup.changed))
     and ansible_os_family == "RedHat"
   become: yes
   tags: distro,grub,become
 
-- name: Update Grub and Initramfs
+- name: Update Grub and Initramfs /Debian
   command: "{{ item }}"
   with_items:
     - "update-grub"
     - "update-initramfs -k all -u"
   when: >
     ((grub_setup is defined and grub_setup.changed) or
-    (grub_conf is defined and grub.conf.changed) or
+    (grub_conf is defined and grub_conf.changed) or
     (lvm_setup is defined and lvm_setup.changed) or
     (crypt_setup is defined and crypt_setup.changed))
     and ansible_os_family == "Debian"
