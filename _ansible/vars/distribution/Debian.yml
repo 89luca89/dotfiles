@@ -74,6 +74,9 @@ terminal_packages:
   - tcpdump
   - tig
   - tree
+  - iputils
+  - iproute
+  - procps
   # Cli packages
   - rsync
   - tmux
