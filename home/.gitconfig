@@ -11,3 +11,5 @@
   #main-view-commit-title-graph = v1
   main-view-author-display = abbreviated
   main-view-id-display = yes
+[commit]
+	gpgsign = true
