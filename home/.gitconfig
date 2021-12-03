@@ -1,6 +1,7 @@
 [user]
 	email = luca.dimaio1@gmail.com
 	name = 89luca89
+	signingkey = 1CC3874E5EC80A3E
 [credential]
 	helper = libsecret
 [core]

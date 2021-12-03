@@ -6,7 +6,7 @@ gnome-background() {
 	gsettings set org.gnome.desktop.background picture-uri '""'
 }
 update() {
-	sudo dnf update --refresh
+	pkcon update
 	if ! flatpak update --user; then
 		flatpak repair --user
 	fi
