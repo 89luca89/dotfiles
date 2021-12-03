@@ -102,13 +102,10 @@ debloat_pkg:
   - apport
   - apport-gtk
   - apport-symptoms
+  - update-manager
   - gnome-games
   - gnome-boxes
-  - gnome-documents
-  - gnome-maps
-  - gnome-music
   - gnome-online-miners
-  - gnome-photos
 
 power_management_packages:
   - acpi

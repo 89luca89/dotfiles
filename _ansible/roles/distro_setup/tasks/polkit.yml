@@ -1,0 +1,60 @@
+---
+
+- name: Deploy packagekit policy
+  copy:
+    content: |
+      [Allow Package Management to user]
+      Identity=unix-user:*
+      Action=io.snapcraft.*;org.freedesktop.packagekit.*;com.ubuntu.update-notifier.*;com.ubuntu.pkexec.synaptic;com.ubuntu.update-notifier.pkexec.cddistupgrader;com.ubuntu.update-notifier.pkexec.package-system-locked;
+    dest: /var/lib/polkit-1/localauthority/10-vendor.d/53-allow-pkg-mgmt.pkla
+    backup: yes
+    mode: 0644
+  when: ansible_os_family == "Debian"
+  tags: polkit
+
+- name: Deploy Udisk policy
+  copy:
+    content: |
+      [Mounting usb]
+      Identity=unix-user:*
+      Action=org.freedesktop.upower.*;org.freedesktop.udisks2.*;
+      ResultAny=no
+      ResultInactive=no
+      ResultActive=yes
+    dest: /var/lib/polkit-1/localauthority/10-vendor.d/org.freedesktop.udisks.pkla
+    backup: yes
+    mode: 0644
+  tags: polkit
+
+- name: Deploy networkmanager policy
+  copy:
+    content: |
+      [Adding or changing system-wide NetworkManager connections]
+      Identity=unix-user:*
+      Action=org.freedesktop.NetworkManager.settings.*;org.freedesktop.network-manager-settings.*;org.freedesktop.ModemManager.*;
+      ResultAny=no
+      ResultInactive=no
+      ResultActive=yes
+    dest: /var/lib/polkit-1/localauthority/10-vendor.d/org.freedesktop.NetworkManager.pkla
+    backup: yes
+    mode: 0644
+  register: polkit_deploy
+  tags: polkit
+
+- name: Restart network manager to apply configs
+  service:
+    name: "{{ network_manager_service }}"
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+  when: polkit_deploy.changed
+  tags: polkit
+
+- name: Restart polkitd to apply configs
+  service:
+    name: "polkit"
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+  when: polkit_deploy.changed
+  tags: polkit
