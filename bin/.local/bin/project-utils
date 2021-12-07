@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Using bash instead of posix sh, to use arrays
 #
 # lint-project: Central hub to lint, format and generate ctags for multiple languages.
@@ -129,13 +129,13 @@ case "$COMMAND" in
 
 				if file "$file" | grep -qi shell; then
 					# file is a shell script, we can shellcheck
-					shellcheck -Cnever -a -f gcc -x "$file"
+					shellcheck -o all -Cnever -Sstyle -a -f gcc -x "$file"
 				fi
 
 			done
 		else
 
-			shellcheck -Cnever -a -f gcc -x "$DIR"
+			shellcheck -o all -Cnever -Sstyle -a -f gcc -x "$DIR"
 
 		fi
 		;;
