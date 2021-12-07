@@ -57,23 +57,24 @@ terminal_packages:
   - clang-tools-extra
   - ctags
   - dos2unix
+  - file
   - git
   - git-credential-libsecret
   - golang
+  - iproute
+  - iputils
   - lsof
   - make
   - net-tools
   - nmap
   - openssl
+  - procps
   - python3-pip
   - sqlite
   - stow
   - tcpdump
   - tig
   - tree
-  - iputils
-  - iproute
-  - procps
   # Cli packages
   - rsync
   - tmux

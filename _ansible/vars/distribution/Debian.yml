@@ -59,24 +59,25 @@ terminal_packages:
   - clang-tools
   - curl
   - exuberant-ctags
+  - file
   - gcc
   - git
   - golang
+  - iproute2
+  - iputils-ping
   - lsof
   - make
   - ncdu
   - net-tools
   - nmap
   - openssl
+  - procps
   - python3-pip
   - shellcheck
   - stow
   - tcpdump
   - tig
   - tree
-  - iputils
-  - iproute
-  - procps
   # Cli packages
   - rsync
   - tmux
