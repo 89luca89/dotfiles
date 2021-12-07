@@ -5,6 +5,33 @@ gnome-background() {
 	gsettings set org.gnome.desktop.background picture-options 'none'
 	gsettings set org.gnome.desktop.background picture-uri '""'
 }
+gnome-backup() {
+	declare -a gnome_dconf_backup=(
+		"/org/gnome/desktop/input-sources"
+		"/org/gnome/desktop/interface"
+		"/org/gnome/desktop/peripherals/touchpad"
+		"/org/gnome/desktop/privacy"
+		"/org/gnome/desktop/sound"
+		"/org/gnome/desktop/wm/preferences"
+		"/org/gnome/mutter"
+		"/org/gnome/nautilus"
+		"/org/gnome/settings-daemon/plugins/media-keys"
+		"/org/gnome/terminal/legacy"
+	)
+	dest_folder="$HOME/dotfiles/_desktop/$(gnome-shell --version | sed 's/ /-/g' | tr '[:upper:]' '[:lower:]')"
+	mkdir -p $dest_folder
+	for f in ${gnome_dconf_backup[@]}; do
+		dconf dump $f/ >$dest_folder/$(echo $f | sed 's/\//./g').conf
+	done
+}
+gnome-restore() {
+	dest_folder="$HOME/dotfiles/_desktop/$(gnome-shell --version | sed 's/ /-/g' | tr '[:upper:]' '[:lower:]')"
+	cd $dest_folder
+	for f in .*.conf; do
+		dconf_path=$(echo $f | sed 's/conf//g' | sed 's/\./\//g')
+		dconf load $dconf_path < $f
+	done
+}
 update() {
 	pkcon update
 	if ! flatpak update --user; then
@@ -27,7 +54,7 @@ rclone_clear_mount() {
 	rclone mount Local-Crypt:"$1" "$2"
 }
 # BASIC ALIASES
-alias  cp='cp --reflink=auto'
+alias cp='cp --reflink=auto'
 alias firefoxRestore="cat ~/Syncthing/notes/open_tabs.md | cut -d ']' -f2  | sed 's/(//g' | sed 's/)//g' | xargs firefox --new-tab &"
 alias firefoxSync='~/bin/get_firefox_tabs.py > ~/Syncthing/notes/open_tabs.md'
 alias git-clean="git fetch -p && for branch in \$(git branch -vv | grep ': gone]' | awk '{print \$1}'); do git branch -D \"\${branch}\"; done"

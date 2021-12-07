@@ -2,8 +2,6 @@
 	email = luca.dimaio1@gmail.com
 	name = 89luca89
 	signingkey = 1CC3874E5EC80A3E
-[credential]
-	helper = libsecret
 [core]
 	askpass = ""
 [tig]
@@ -13,3 +11,5 @@
   main-view-id-display = yes
 [commit]
 	gpgsign = true
+[credential]
+	helper = /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret

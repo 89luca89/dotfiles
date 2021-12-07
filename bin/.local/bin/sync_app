@@ -5,16 +5,9 @@
 set -o errexit
 # set -o nounset
 
-declare -a GNOME_BACKUP=(
-	"desktop"
-	"settings-daemon"
-	"shell"
-	"terminal"
-)
-
 app_sync() {
 	TARGET=$1
-	if [ -z $2 ] && [ "$TARGET" != "xfce4" ] && [ "$TARGET" != "gnome" ]; then
+	if [ -z $2 ]; then
 		echo -n "Password: "
 		read -s password
 		echo
@@ -38,16 +31,6 @@ app_sync() {
 		openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in /tmp/ssh-keys.tar.gz -out /tmp/ssh-keys.tar.gz.enc -k "$password"
 		shred -n 25 -u -z /tmp/ssh-keys.tar.gz
 		cp /tmp/ssh-keys.tar.gz.enc ~/Syncthing/secured/
-		;;
-	"gnome")
-		mkdir /tmp/bkp
-		cd /tmp/bkp || exit 1
-		for f in ${GNOME_BACKUP[@]}; do
-			dconf dump /org/gnome/$f/ >org.gnome.$f.conf
-		done
-		tar -czf ~/dotfiles/_desktop/gnome-setup.tar.gz /tmp/bkp "$HOME"/.local/share/gnome-shell/extensions/
-		rm -rf /tmp/bkp
-		git -C ~/dotfiles commit -m "gnome: update settings" _desktop/gnome-setup.tar.gz
 		;;
 	"firefox")
 		[ -d ~/.mozilla ] || (echo "No folder to backup" && exit 1)
@@ -95,16 +78,6 @@ app_sync() {
 		shred -n 25 -u -z /tmp/flatpak-data.tar.gz
 		mv /tmp/flatpak-data.tar.gz.enc ~/Syncthing/secured/
 		;;
-	"connections")
-		[ -d /etc/NetworkManager/system-connections/ ] || (echo "No folder to backup" && exit 1)
-		[ -d /var/lib/bluetooth/ ] || (echo "No folder to backup" && exit 1)
-		cd / || exit 1
-		sudo tar -c -z -f /tmp/system-connections.tar.gz /etc/NetworkManager/system-connections/ /var/lib/bluetooth/
-		sudo chown $USER. /tmp/system-connections.tar.gz
-		openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in /tmp/system-connections.tar.gz -out /tmp/system-connections.tar.gz.enc -k "$password"
-		sudo shred -n 25 -u -z /tmp/system-connections.tar.gz
-		mv /tmp/system-connections.tar.gz.enc ~/Syncthing/secured/
-		;;
 	esac
 }
 
@@ -120,16 +93,6 @@ app_restore() {
 		fi
 		tar -xzf /tmp/ssh-keys.tar.gz -C ~/
 		shred -n 25 -u -z /tmp/ssh-keys.tar.gz
-		;;
-	"gnome")
-		rm -rf /tmp/bkp "$HOME"/.local/share/gnome-shell/extensions/
-		tar -xzf ~/dotfiles/_desktop/gnome-setup.tar.gz -C /
-		cd /tmp/bkp || exit 1
-		for file in *; do
-			dconf_path=$(echo '/'$file | sed 's/\.conf/\//g' | sed 's/\./\//g')
-			dconf load $dconf_path <$file
-		done
-		rm -rf /tmp/bkp
 		;;
 	"firefox")
 		openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -d -in ~/Syncthing/secured/firefox-profile.tar.gz.enc -out /tmp/firefox-profile.tar.gz
@@ -182,17 +145,6 @@ app_restore() {
 		rm -rf ~/.var/app
 		tar -xzf /tmp/flatpak-data.tar.gz -C ~/.var/
 		shred -n 25 -u -z /tmp/flatpak-data.tar.gz
-		;;
-	"connections")
-		openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -d -in ~/Syncthing/secured/system-connections.tar.gz.enc -out /tmp/system-connections.tar.gz
-		if [ ! -f /tmp/system-connections.tar.gz ]; then
-			echo "Failed to decrypt"
-			exit 1
-		fi
-		sudo tar -xzf /tmp/system-connections.tar.gz -C /
-		shred -n 25 -u -z /tmp/system-connections.tar.gz
-		sudo systemctl restart NetworkManager
-		sudo systemctl restart bluetooth
 		;;
 	esac
 }
