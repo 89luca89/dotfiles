@@ -14,6 +14,7 @@ gnome-backup() {
 		"/org/gnome/desktop/sound"
 		"/org/gnome/desktop/wm/preferences"
 		"/org/gnome/mutter"
+		"/org/gnome/shell"
 		"/org/gnome/nautilus"
 		"/org/gnome/settings-daemon/plugins/media-keys"
 		"/org/gnome/terminal/legacy"
