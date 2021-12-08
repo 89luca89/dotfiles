@@ -42,28 +42,6 @@
   when: ansible_os_family == "Debian"
   tags: apt,become
 
-- name: Remove snaps
-  apt:
-    state: absent
-    purge: yes
-    name: snapd
-  become: yes
-  when: ansible_distribution == "Ubuntu"
-  tags: snapd,become
-
-- name: Blacklist Snaps
-  blockinfile:
-    path: /etc/apt/preferences.d/nosnap.pref
-    create: yes
-    block: |
-      Package: snapd
-      Pin: release a=*
-      Pin-Priority: -10
-    mode: 0644
-  become: yes
-  when: ansible_distribution == "Ubuntu"
-  tags: snapd,become
-
 - name: Backports Enable
   blockinfile:
     path: /etc/apt/sources.list
@@ -114,11 +92,6 @@
   when: not is_toolbox
   become: yes
   tags: podman,become
-
-- name: Setup toolbox
-  include: toolbox.yml
-  when: not is_toolbox
-  tags: toolbox
 
 - name: Install Main Packages
   include: packages.yml
