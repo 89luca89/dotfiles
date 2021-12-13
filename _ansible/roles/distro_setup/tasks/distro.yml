@@ -176,7 +176,7 @@
           Type=oneshot
           RemainAfterExit=true
           ExecStartPre=/sbin/mkswap /dev/zram0
-          ExecStart=/sbin/swapon /dev/zram0
+          ExecStart=/sbin/swapon -p 100 /dev/zram0
           ExecStop=/sbin/swapoff /dev/zram0
 
           [Install]
@@ -225,27 +225,40 @@
     - {option: pcie_aspm, value: force}
     - {option: pcie_aspm.policy, value: powersupersave}
     - {option: scsi_mod.use_blk_mq, value: 1}
+    # hardening
+    - {option: audit, value: 1}
+    - {option: amd_iommu, value: 'on'}
+    - {option: debugfs, value: 'off'}
+    - {option: init_on_alloc, value: 1}
+    - {option: init_on_free, value: 1}
+    - {option: intel_iommu, value: 'on'}
+    - {option: l1tf, value: flush}
+    - {option: loglevel, value: 0}
+    - {option: mce, value: 0}
+    - {option: mds, value: full}
+    - {option: mitigations, value: auto}
+    - {option: modules.sig_enforce, value: 1}
+    - {option: page_alloc.shuffle, value: 1}
+    - {option: page_poison, value: 1}
+    - {option: pti, value: 'on'}
+    - {option: slub_debug, value: FZP}
+    - {option: spec_store_bypass_disable, value: 'on'}
+    - {option: tsx, value: 'off'}
+    - {option: tsx_async_abort, value: full}
+    - {option: vsyscall, value: 'none'}
+    - {option: net.ifnames, value: 0}   # We want ethX naming for interfaces
+    - {option: biosdevname, value: 0}   # We want ethX naming for interfaces
   register: grub_setup
   become: yes
   when: grub_file.stat.exists
   tags: distro,grub,become
 
-- name: Set Grub Rules
-  blockinfile:
+- name: Deploy Grub Flags /2
+  replace:
     path: /etc/default/grub
-    create: yes
-    block: |
-        GRUB_DISABLE_OS_PROBER="true"
-        GRUB_DISABLE_RECOVERY="true"
-        GRUB_DISABLE_SUBMENU="true"
-        GRUB_GFXMODE=640x480
-        GRUB_RECORDFAIL_TIMEOUT=0
-        GRUB_TIMEOUT=0
-        GRUB_TIMEOUT_QUIET="true"
-        GRUB_TIMEOUT_STYLE=hidden
-        superusers=""
-    marker: "# {mark} ANSIBLE MANAGED BLOCK"
-    mode: 0600
+    regexp: 'rhgb quiet'
+    replace: 'rhgb slab_nomerge quiet'
+    backup: yes
   register: grub_conf
   become: yes
   when: grub_file.stat.exists

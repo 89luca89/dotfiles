@@ -124,9 +124,14 @@ debloat_pkg:
   - abrt-retrace-client
   - abrt-tui
   - anaconda-install-env-deps
+  - evolution
+  - evolution-ews
   - fedora-logos-httpd
   - gnome-boxes
+  - gnome-documents
+  - gnome-maps
   - gnome-online-miners
+  - gnome-photos
   - gnome-shell-extension-background-logo
   - httpd
   - hyperv-daemons
@@ -138,8 +143,9 @@ debloat_pkg:
   - qemu-guest-agent
   - rsyslog
   - spice-vdagent
-  - virtualbox-guest-additions
   - vim-minimal
+  - virtualbox-guest-additions
+  - yelp
 
 power_management_packages:
   - acpi

@@ -42,30 +42,6 @@
   when: ansible_os_family == "Debian"
   tags: apt,become
 
-- name: Backports Enable
-  blockinfile:
-    path: /etc/apt/sources.list
-    create: yes
-    block: |
-      deb http://deb.debian.org/debian bullseye-backports main contrib non-free
-    mode: 0644
-  become: yes
-  when: ansible_distribution == "Debian"
-  tags: backports,become
-
-- name: Backports Priority
-  blockinfile:
-    path: /etc/apt/preferences.d/backports
-    create: yes
-    block: |
-      Package: *
-      Pin: release a=bullseye-backports
-      Pin-Priority: 500
-    mode: 0644
-  become: yes
-  when: ansible_distribution == "Debian"
-  tags: backports,become
-
 - name: Remove bloat packages
   package:
     state: absent

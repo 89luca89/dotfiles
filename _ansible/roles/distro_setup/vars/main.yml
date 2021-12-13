@@ -32,6 +32,7 @@ systemd_user_mask_services:
   - evolution-addressbook-factory
   - evolution-calendar-factory
   - evolution-source-registry
+  - gamemoded.service
   - goa-daemon
   - goa-identity-service
   - gvfs-goa-volume-monitor
@@ -41,3 +42,5 @@ systemd_user_mask_services:
   - tracker-miner-rss
   - tracker-store
   - tracker-writeback
+  - ubuntu-report.path
+  - ubuntu-report.service
