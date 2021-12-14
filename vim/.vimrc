@@ -21,8 +21,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'ap/vim-buftabline'
 Plug 'yggdroot/indentLine'
 " colorscheme
-Plug 'joshdick/onedark.vim'
-Plug 'cormacrelf/vim-colors-github'
+Plug 'rakr/vim-one'
 " Fzf
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
@@ -36,11 +35,11 @@ call plug#end()
 filetype plugin indent on
 syntax on
 " Theming
+colorscheme one
 set background=dark
-colorscheme onedark
-highlight Normal        guibg=NONE    ctermbg=NONE
-highlight myDeclaration guifg=#87ffaf ctermfg=121
-highlight myFunction    guifg=#87d7ff ctermfg=117
+set termguicolors
+highlight myDeclaration guifg=#87ffaf   ctermfg=121
+highlight myFunction    guifg=#87d7ff   ctermfg=117
 augroup general
     autocmd! general
     " When editing a file, always jump to the last known cursor position.
@@ -89,7 +88,7 @@ map <S-Tab> :<C-u>bp<CR>
 " C-c close buffer
 map <C-c> :<C-u>bp<BAR>sp<BAR>bn<BAR>bd<CR>
 " copy to clipboard on a visual selection
-vnoremap <C-c> :'<,'>w !xclip -sel clip<CR><CR>
+vnoremap <C-c> :w !xclip -sel clip<CR><CR>
 " Leader map
 let mapleader = ' '
 " Utility shortcuts with leader:
@@ -173,17 +172,13 @@ endfunction
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        colorscheme onedark
-        highlight Normal        guibg=NONE    ctermbg=NONE
-        highlight myDeclaration guifg=#87ffaf ctermfg=121
-        highlight myFunction    guifg=#87d7ff ctermfg=117
+        highlight myDeclaration guifg=#87ffaf   ctermfg=121
+        highlight myFunction    guifg=#87d7ff   ctermfg=117
         silent! edit
     else
         set background=light
-        colorscheme github
-        highlight Normal        guibg=#ffffff    ctermbg=white
-        highlight myDeclaration guifg=#008700 ctermfg=28
-        highlight myFunction    guifg=#0087af ctermfg=31
+        highlight myDeclaration guifg=#008700   ctermfg=28
+        highlight myFunction    guifg=#0087af   ctermfg=31
         silent! edit
     endif
 endfunction
