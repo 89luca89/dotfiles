@@ -81,7 +81,7 @@ let g:python_highlight_all  = 1
 """""""""""""""""""""
 map <C-e>   :<C-u>call ToggleTheme()<CR>
 " do last action on a visual selection
-vnoremap . :'<,'>:normal .<CR>
+vnoremap . :normal .<CR>
 " navigate tabs Tab (fwd) S-Tab (prev)
 map <Tab>   :<C-u>bn<CR>
 map <S-Tab> :<C-u>bp<CR>
