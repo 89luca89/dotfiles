@@ -58,6 +58,7 @@ terminal_packages:
   - clang
   - clang-tools
   - curl
+  - devscripts
   - exuberant-ctags
   - file
   - gcc

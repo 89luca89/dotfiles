@@ -19,11 +19,4 @@ if ! command -v ansible >/dev/null; then
 	sudo $PKG install -y ansible
 fi
 
-if groups | grep -Eq "sudo|wheel"; then
-	ansible-playbook -i localhost, -c local --ask-vault-pass -K "$DIR"/main.yml --diff $*
-else
-	echo "Skipping some tags, user is not in sudoers"
-	ansible-playbook -i localhost, -c local --ask-vault-pass \
-		--skip-tags become \
-		"$DIR"/main.yml --diff $*
-fi
+ansible-playbook -i localhost, -c local --ask-vault-pass -K "$DIR"/main.yml --diff $*
