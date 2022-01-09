@@ -85,6 +85,10 @@ terminal_packages:
   - powertop
   - syncthing
   - python3.8
+  - xclip
+  - lm_sensors
+  - acpi
+  - bc
 
 
 ### gnome-extensions-app gnome-tweaks

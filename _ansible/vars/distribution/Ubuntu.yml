@@ -83,6 +83,10 @@ terminal_packages:
   - rsync
   - tmux
   - vim
+  - xclip
+  - lm-sensors
+  - acpi
+  - bc
 
 my_packages:
   - flatpak
