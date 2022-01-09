@@ -12,5 +12,5 @@
 [commit]
 	gpgsign = true
 [credential]
-	# helper = libsecret
-	helper = /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret
+	helper = libsecret
+	# helper = /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret

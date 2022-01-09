@@ -5,6 +5,9 @@ if [[ $- == *i* ]]; then
 		BBLUE='\[\033[1;94m\]'
 		RED='\[\033[91m\]'
 		PS_CLEAR='\[\033[0m\]'
+		if ! command -v git 2>/dev/null; then
+			export PS2=${BGREEN}'\u@'$HOSTNAME''${PS_CLEAR}':'${BBLUE}'\w'${PS_CLEAR}'$ '
+		fi
 		STATUS=$(git status 2>/dev/null || echo "norepo")
 		BRANCH=$(echo $STATUS | grep -oP 'branch\s\K.*' | cut -d' ' -f1)
 		SYMBOL=$(echo $STATUS | grep -q "not staged" && echo "*")
@@ -31,7 +34,7 @@ if [[ $- == *i* ]]; then
 	shopt -s cmdhist
 
 	# export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r; __git_status"
-	export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}__git_status"
+	export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}command -v __git_status >/dev/null && __git_status"
 	# Complete using arrow up/down
 	bind '"\e[A": history-search-backward'
 	bind '"\e[B": history-search-forward'
@@ -39,7 +42,6 @@ if [[ $- == *i* ]]; then
 	[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 	[ -f ~/.aliases ] && source ~/.aliases
 	[ -f ~/.localrc ] && source ~/.localrc
-
 
 	if [ -f /run/.containerenv ]; then
 		HOSTNAME=$(cat /run/.containerenv | grep name | cut -d'"' -f2 | tr -d '\n')
