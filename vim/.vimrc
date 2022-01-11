@@ -6,7 +6,7 @@ set formatoptions=tcqj
 set grepprg=grep\ -rn hlsearch ignorecase clipboard+=unnamedplus
 set guioptions=d mouse=a
 set langnoremap langremap lazyredraw redrawtime=0 ttyfast
-set list lcs=tab:\¦\  " here is a space, goes in hand with indentLine
+set list lcs=tab:\▏\  " here is a space, goes in hand with indentLine
 set nomodeline nofsync nowrap noswapfile nowritebackup nobackup noshowmode noshowcmd nofoldenable
 set omnifunc=syntaxcomplete#Complete completeopt=menu,menuone,popup,noselect,noinsert
 set path+=.,** wildmode=longest:full,full wildignorecase
@@ -14,9 +14,11 @@ set splitbelow splitright
 set title number encoding=utf8
 set undodir=$HOME/.vim/undo undofile undolevels=10000
 set laststatus=0 ruler rulerformat=%40(%F%m%r%w\ [%c-%l/%L]\ %y%)\     " Modified+FileType+Ruler
-let g:polyglot_disabled = ['yaml', 'markdown'] " excluding vim-yaml from polyglot as it's not working
+let g:polyglot_disabled = ['markdown'] " excluding vim-yaml from polyglot as it's not working
 filetype off
 call plug#begin('~/.vim/plugged')
+Plug 'airblade/vim-gitgutter'
+Plug 'tpope/vim-fugitive'
 " utilities
 Plug 'ap/vim-buftabline'
 Plug 'yggdroot/indentLine'
@@ -27,7 +29,6 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 " Lang Packs
 Plug 'sheerun/vim-polyglot'
-Plug 'stephpy/vim-yaml'
 " LSP
 Plug 'dense-analysis/ale'
 Plug 'natebosch/vim-lsc'
@@ -59,12 +60,6 @@ augroup general
     autocmd Syntax * syntax match myFunction    '\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\ze\%([a-zA-Z0-9]*(\)'
 augroup end
 " Languages
-let g:ansible_attribute_highlight       = 'ab'
-let g:ansible_extra_keywords_highlight  = 1
-let g:ansible_name_highlight            = 'd'
-let g:ansible_normal_keywords_highlight = 'Special'
-let g:ansible_with_keywords_highlight   = 'Conditional'
-let g:ansible_yamlKeyName = 'yamlKey'
 let g:go_highlight_build_constraints = 1
 let g:go_highlight_extra_types       = 1
 let g:go_highlight_fields            = 1
@@ -74,9 +69,9 @@ let g:go_highlight_functions         = 1
 let g:go_highlight_generate_tags     = 1
 let g:go_highlight_operators         = 1
 let g:go_highlight_types             = 1
-let g:groovy_highlight_al            = 1
 let g:java_highlight_all             = 1
 let g:python_highlight_all  = 1
+let g:indentLine_char = '▏'
 """""""""""""""""""""
 "       Shortcuts   "
 """""""""""""""""""""
