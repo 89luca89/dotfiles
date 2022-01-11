@@ -21,7 +21,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'ap/vim-buftabline'
 Plug 'yggdroot/indentLine'
 " colorscheme
-Plug 'rakr/vim-one'
+Plug 'chriskempson/base16-vim'
 " Fzf
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
@@ -35,9 +35,10 @@ call plug#end()
 filetype plugin indent on
 syntax on
 " Theming
-colorscheme one
 set background=dark
 set termguicolors
+let base16colorspace=256
+colorscheme base16-onedark
 highlight myDeclaration guifg=#87ffaf   ctermfg=121
 highlight myFunction    guifg=#87d7ff   ctermfg=117
 augroup general
@@ -172,11 +173,13 @@ endfunction
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
+        colorscheme base16-onedark
         highlight myDeclaration guifg=#87ffaf   ctermfg=121
         highlight myFunction    guifg=#87d7ff   ctermfg=117
         silent! edit
     else
         set background=light
+        colorscheme base16-github
         highlight myDeclaration guifg=#008700   ctermfg=28
         highlight myFunction    guifg=#0087af   ctermfg=31
         silent! edit
