@@ -14,7 +14,7 @@ set splitbelow splitright
 set title number encoding=utf8
 set undodir=$HOME/.vim/undo undofile undolevels=10000
 set laststatus=0 ruler rulerformat=%40(%F%m%r%w\ [%c-%l/%L]\ %y%)\     " Modified+FileType+Ruler
-let g:polyglot_disabled = ['markdown'] " excluding vim-yaml from polyglot as it's not working
+let g:polyglot_disabled = ['yaml','markdown'] " excluding vim-yaml from polyglot as it's not working
 filetype off
 call plug#begin('~/.vim/plugged')
 Plug 'airblade/vim-gitgutter'
@@ -29,6 +29,7 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 " Lang Packs
 Plug 'sheerun/vim-polyglot'
+Plug 'stephpy/vim-yaml'
 " LSP
 Plug 'dense-analysis/ale'
 Plug 'natebosch/vim-lsc'
