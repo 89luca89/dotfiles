@@ -24,7 +24,19 @@
         is_container: "{% if inside_container.rc == 0 %}false{% else %}true{% endif %}"
       tags: always
 
+    - name: Check that ar-hardening exists
+      stat:
+        path: "{{ ansible_env.HOME }}/.ansible/roles/ar-hardening"
+      register: hardening_exists
   roles:
     - {role: distro_setup, when: not is_container, become: yes}
     - packages
-      # - dotfiles
+    - dotfiles
+
+  post_tasks:
+
+    - include_role:
+        name: ar-hardening
+        apply:
+          become: yes
+      when: hardening_exists.stat.exists

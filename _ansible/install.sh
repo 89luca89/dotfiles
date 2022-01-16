@@ -16,7 +16,7 @@ if ! command -v git >/dev/null; then
 fi
 
 if ! command -v ansible >/dev/null; then
-	sudo $PKG install -y ansible
+	pip3 install ansible==2.9.10
 fi
 
 ansible-playbook -i localhost, -c local --ask-vault-pass -K "$DIR"/main.yml --diff $*
