@@ -3,7 +3,7 @@
 #
 
 use_flatpaks: yes
-toolbox_enabled: yes
+container_enabled: yes
 
 os_unused_modules: ""
 proc_mnt_options: "rw,nosuid,nodev,noexec,relatime,hidepid=1"
@@ -91,8 +91,6 @@ terminal_packages:
 my_packages:
   - flatpak
   - nautilus
-  - stow
-  - syncthing
   # Terminal stuff
   - git
   - openssl
@@ -110,7 +108,6 @@ debloat_pkg:
   - apport-symptoms
   - evolution
   - evolution-ews
-  - gnome-boxes
   - gnome-documents
   - gnome-games
   - gnome-maps
@@ -129,6 +126,8 @@ power_management_packages:
   - tlp
   - tlp-rdw
   - linux-image-generic-hwe-20.04-edge
+  - linux-tools-generic-hwe-20.04-edge
+  - linux-headers-generic-hwe-20.04-edge
 
 cpupower_pkg: "linux-tools-$(uname -r)"
 

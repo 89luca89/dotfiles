@@ -65,16 +65,16 @@
 
 - name: Install Podman Packages
   include: podman.yml
-  when: not is_toolbox
+  when: not is_container
   become: yes
   tags: podman,become
 
 - name: Install Main Packages
   include: packages.yml
-  when: not is_toolbox
+  when: not is_container
   tags: packages
 
 - name: Install CLI Packages
   include: terminal.yml
-  when: (toolbox_enabled|bool == false) or is_toolbox
+  when: (container_enabled|bool == false) or is_container
   tags: terminal

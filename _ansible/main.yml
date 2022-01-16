@@ -12,19 +12,19 @@
 
   pre_tasks:
 
-    - name: Detect is we're inside a toolbox
+    - name: Detect is we're inside a container
       command: systemctl status
-      register: inside_toolbox
+      register: inside_container
       failed_when: no
       changed_when: no
       tags: always
 
-    - name: Set fact toolbox
+    - name: Set fact container
       set_fact:
-        is_toolbox: "{% if inside_toolbox.rc == 0 %}false{% else %}true{% endif %}"
+        is_container: "{% if inside_container.rc == 0 %}false{% else %}true{% endif %}"
       tags: always
 
   roles:
-    - {role: distro_setup, when: not is_toolbox}
+    - {role: distro_setup, when: not is_container, become: yes}
     - packages
-    - dotfiles
+      # - dotfiles

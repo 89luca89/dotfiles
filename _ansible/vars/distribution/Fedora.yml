@@ -3,7 +3,7 @@
 #
 
 use_flatpaks: yes
-toolbox_enabled: yes
+container_enabled: yes
 
 os_unused_modules: ""
 proc_mnt_options: "rw,nosuid,nodev,noexec,relatime,hidepid=1"
@@ -96,8 +96,6 @@ my_packages:
   - flatpak
   - nautilus
   - nautilus-extensions
-  - stow
-  - syncthing
   # Terminal stuff
   - git
   - git-credential-libsecret
@@ -132,7 +130,6 @@ debloat_pkg:
   - evolution
   - evolution-ews
   - fedora-logos-httpd
-  - gnome-boxes
   - gnome-documents
   - gnome-maps
   - gnome-online-miners

@@ -1,12 +1,11 @@
 ---
-# tasks file to setup distro to my liking
+# tasks file to setup become,distro to my liking
 
 - name: Install Power Management (Laptop)
   package:
     state: present
     name: "{{ power_management_packages }}"
-  become: yes
-  tags: powersave,become
+  tags: become,distro,powersave
 
 - name: Enable Power Management (Laptop)
   systemd:
@@ -14,42 +13,75 @@
     state: started
     enabled: yes
     daemon_reload: yes
-  become: yes
   with_items:
     - "{{ power_management_service }}"
-  tags: powersave,become
+  tags: become,distro,powersave
+
+- name: Check Intel GPU Vendor
+  shell: "lshw -C display 2> /dev/null | grep vendor | grep -iq intel"
+  register: intel_gpu
+  changed_when: no
+  failed_when: no
+  tags: always
+
+- name: Add latest graphic drivers
+  apt_repository:
+    repo: "ppa:oibaf/graphics-drivers"
+    state: present
+    update_cache: yes
+  tags: become,distro
+  when: ansible_os_family == "Debian"
 
 - name: Intel setup
   block:
+    - name: Improve Intel Tearfree on xorg
+      blockinfile:
+        path: /etc/X11/xorg.conf.d/20-intel.conf
+        create: yes
+        mode: 0644
+        block: |
+          Section "Device"
+            Identifier "intel"
+            Driver "intel"
+            Option "AccelMethod" "sna"
+            Option "TearFree" "true"
+            Option "DRI" "3"
+          EndSection
+      tags: become,distro
+
     - name: Set i915 driver options
       lineinfile:
         path: /etc/modprobe.d/i915.conf
         create: yes
         line: 'options i915 disable_power_well=0 enable_dc=2 enable_psr=1 enable_rc6=7 enable_fbc=1 powersave=1 enable_guc=3'
-        mode: 0600
+        mode: 0644
+      tags: become,distro
 
     - name: Set Intel HDA driver options
       lineinfile:
         path: /etc/modprobe.d/snd_hda_intel.conf
         create: yes
         line: 'options snd_hda_intel power_save_controlle=Y power_save=1'
-        mode: 0600
+        mode: 0644
+      tags: become,distro
 
     - name: Set Intel ETH driver options
       lineinfile:
         path: /etc/modprobe.d/e1000e.conf
         create: yes
         line: 'options e1000e SmartPowerDownEnable=1'
-        mode: 0600
+        mode: 0644
+      tags: become,distro
 
     - name: Set Intel Wifi driver options
       lineinfile:
         path: /etc/modprobe.d/iwlwifi.conf
         create: yes
         line: 'options iwlwifi power_save=Y power_level=5 iwlmvm power_scheme=3'
-        mode: 0600
-  become: yes
-  tags: distro,intel,become
+        mode: 0644
+      tags: become,distro
+
+  when: intel_gpu.rc == 0
 
 - name: Disable WIFI Mac address randomization on scan
   blockinfile:
@@ -58,9 +90,8 @@
     block: |
       [device-mac-randomization]
       wifi.scan-rand-mac-address=no
-    mode: 0600
-  become: yes
-  tags: distro,wifi,become
+    mode: 0644
+  tags: become,distro
 
 - name: Set sysctl variables
   sysctl:
@@ -81,15 +112,7 @@
     - {name: vm.dirty_expire_centisecs, value: 60000}
     - {name: fs.inotify.max_user_watches, value: 524288}
     - {name: net.ipv4.ip_default_ttl, value: 66}
-  become: yes
-  tags: distro,sysctl,become
-
-- name: Cpupower
-  shell: "{{ pkg_mngr }} install -y {{ cpupower_pkg }}"
-  register: pkg_output
-  changed_when: pkg_output.stdout_lines|length > 5
-  become: yes
-  tags: distro,powersave,become
+  tags: become,distro
 
 - name: Set UDev Rules
   blockinfile:
@@ -113,18 +136,17 @@
       ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq"
       ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/iosched/low_latency}="1"
       ACTION=="add|change", KERNEL=="sd[a-z]", RUN+="/usr/sbin/hdparm -B 1 /dev/%k"
-      SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="0",RUN+="/bin/cpupower frequency-set -g conservative -u 2000MHz"
+      SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="0",RUN+="/bin/cpupower frequency-set -g powersave -u 2000MHz"
       SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="1",RUN+="/bin/cpupower frequency-set -g performance -u 4500MHz"
     marker: "# {mark} ANSIBLE MANAGED BLOCK BY DOTFILES"
     mode: 0600
-  become: yes
-  tags: distro,powersave,become
+  tags: become,distro,powersave
 
 - name: Check if lvm.conf is present
   stat:
     path: /etc/lvm/lvm.conf
   register: lvm_file
-  tags: distro
+  tags: become,distro
 
 - name: Deploy lvm.conf Flags
   replace:
@@ -133,15 +155,14 @@
     replace: 'issue_discards = 1'
     backup: yes
   register: lvm_setup
-  become: yes
   when: lvm_file.stat.exists
-  tags: distro,storage,become
+  tags: become,distro
 
 - name: Check if Crypttab is present
   stat:
     path: /etc/crypttab
   register: crypt_file
-  tags: distro,storage
+  tags: become,distro
 
 - name: Deploy Crypttab Performance Flags
   replace:
@@ -150,66 +171,14 @@
     replace: 'none discard no-read-workqueue no-write-workqueue'
     backup: yes
   register: crypt_setup
-  become: yes
   when: crypt_file.stat.exists
-  tags: distro,storage,become
-
-- name: Check if zram is present
-  shell: swapon | grep zram
-  register: zram_setup
-  changed_when: no
-  failed_when: no
-  tags: distro,zram
-
-- name: Setup zramswap
-  block:
-    - name: Set zram service
-      blockinfile:
-        path: /etc/systemd/system/zram.service
-        create: yes
-        block: |
-          [Unit]
-          Description=Swap with zram
-          After=multi-user.target
-
-          [Service]
-          Type=oneshot
-          RemainAfterExit=true
-          ExecStartPre=/sbin/mkswap /dev/zram0
-          ExecStart=/sbin/swapon -p 100 /dev/zram0
-          ExecStop=/sbin/swapoff /dev/zram0
-
-          [Install]
-          WantedBy=multi-user.target
-        marker: "# {mark} ANSIBLE MANAGED BLOCK"
-        mode: 0644
-      register: zram_service
-
-    - name: Setup zram
-      shell: "{{ item }}"
-      with_items:
-        - echo zram > /etc/modules-load.d/zram.conf
-        - echo 'options zram num_devices=1' > /etc/modprobe.d/zram.conf
-        - echo 'KERNEL=="zram0", ATTR{disksize}="{{ (ansible_memtotal_mb/2)|int }}M",TAG+="systemd"' > /etc/udev/rules.d/99-zram.rules
-        - udevadm control --reload-rules && udevadm trigger
-        - modprobe zram num_devices=1
-      when: zram_service.changed
-
-    - name: Enable Zram
-      systemd:
-        name: zram
-        state: started
-        enabled: yes
-        daemon_reload: yes
-  become: yes
-  tags: distro,zram,become
-  when: zram_setup.rc != 0
+  tags: become,distro
 
 - name: Check if Grub is present
   stat:
     path: /etc/default/grub
   register: grub_file
-  tags: distro,grub
+  tags: become,distro,grub
 
 - name: Deploy Grub Flags
   replace:
@@ -249,9 +218,8 @@
     - {option: net.ifnames, value: 0}   # We want ethX naming for interfaces
     - {option: biosdevname, value: 0}   # We want ethX naming for interfaces
   register: grub_setup
-  become: yes
   when: grub_file.stat.exists
-  tags: distro,grub,become
+  tags: become,distro,grub
 
 - name: Deploy Grub Flags /2
   replace:
@@ -275,8 +243,7 @@
     (lvm_setup is defined and lvm_setup.changed) or
     (crypt_setup is defined and crypt_setup.changed))
     and ansible_os_family == "RedHat"
-  become: yes
-  tags: distro,grub,become
+  tags: become,distro,grub
 
 - name: Update Grub and Initramfs /Debian
   command: "{{ item }}"
@@ -289,5 +256,4 @@
     (lvm_setup is defined and lvm_setup.changed) or
     (crypt_setup is defined and crypt_setup.changed))
     and ansible_os_family == "Debian"
-  become: yes
-  tags: distro,grub,become
+  tags: become,distro,grub
