@@ -34,9 +34,14 @@ gnome-restore() {
 	done
 }
 update() {
-	pkcon update
+	if command -v apt; then
+		sudo apt update; sudo apt upgrade
+	elif command -v dnf; then
+		sudo dnf upgrade --refresh
+	fi
 	if ! flatpak update --user; then
 		flatpak repair --user
+		flatpak update --user
 	fi
 	flatpak uninstall --user --unused
 	vim +PlugUpdate +PlugInstall! +qall
@@ -69,6 +74,9 @@ alias rsyncthingS='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname 
 alias saml2aws='saml2aws --disable-keychain'
 alias top='top -o %CPU'
 alias vi='vim -u ~/.vimrc-minimal'
+if [ ! -e /run/.containerenv ] && [ ! -e /.dockerenv ]; then
+	alias vim='/usr/bin/vim -u ~/.vimrc-minimal'
+fi
 export LESSHISTFILE=-
 export EDITOR=vim
 export CARGO_HOME=$HOME/.local/rust

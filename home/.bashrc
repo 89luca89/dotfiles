@@ -6,7 +6,7 @@ if [[ $- == *i* ]]; then
 		RED='\[\033[91m\]'
 		PS_CLEAR='\[\033[0m\]'
 		if ! command -v git >/dev/null 2>/dev/null; then
-			export PS2=${BGREEN}'\u@'$HOSTNAME''${PS_CLEAR}':'${BBLUE}'\w'${PS_CLEAR}'$ '
+			export PS1=${BGREEN}'\u@'$HOSTNAME''${PS_CLEAR}':'${BBLUE}'\w'${PS_CLEAR}'$ '
 			return
 		fi
 		STATUS=$(git status 2>/dev/null || echo "norepo")
