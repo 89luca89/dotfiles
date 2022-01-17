@@ -38,6 +38,7 @@ flatpak_packages:
   - de.haeckerfelix.Fragments
   - net.sourceforge.liferea
   - nl.hjdskes.gcolor3
+  - io.typora.Typora
 
 flatpak_overrides:
   - {key: "org.mozilla.firefox", value: "MOZ_ACCELLERATED=1"}
