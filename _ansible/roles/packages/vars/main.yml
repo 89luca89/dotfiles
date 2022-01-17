@@ -20,23 +20,23 @@ flatpak_packages:
   - org.gnome.Rhythmbox3
   - org.gnome.Totem
   - org.gnome.Weather
+  - org.gnome.World.Secrets
   - org.gnome.baobab
   - org.gnome.clocks
   - org.gnome.eog
   - org.gnome.gedit
-  - org.keepassxc.KeePassXC
   - org.libreoffice.LibreOffice
   - org.chromium.Chromium
   - org.mozilla.firefox
   - org.mozilla.Thunderbird
   - org.signal.Signal
   - org.telegram.desktop
-  - org.videolan.VLC
+  - io.github.celluloid_player.Celluloid
+  - app/org.gimp.GIMP/x86_64/stable
   - com.github.jeromerobert.pdfarranger
   - com.github.polymeilex.neothesia
   - com.jgraph.drawio.desktop
   - de.haeckerfelix.Fragments
-  - net.sourceforge.liferea
   - nl.hjdskes.gcolor3
   - io.typora.Typora
 
