@@ -40,7 +40,7 @@ syntax on
 set background=dark
 set termguicolors
 let base16colorspace=256
-colorscheme base16-onedark
+colorscheme base16-gruvbox-dark-hard
 highlight myDeclaration guifg=#87ffaf   ctermfg=121
 highlight myFunction    guifg=#87d7ff   ctermfg=117
 augroup general
@@ -169,7 +169,7 @@ endfunction
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        colorscheme base16-onedark
+        colorscheme base16-gruvbox-dark-hard
         highlight myDeclaration guifg=#87ffaf   ctermfg=121
         highlight myFunction    guifg=#87d7ff   ctermfg=117
         silent! edit
