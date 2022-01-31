@@ -72,7 +72,12 @@
 - name: Install Main Packages
   include: packages.yml
   when: not is_container
-  tags: packages
+  tags: packages,become
+
+- name: Install Flatpak Packages
+  include: flatpak.yml
+  when: not is_container
+  tags: flatpak
 
 - name: Install CLI Packages
   include: terminal.yml

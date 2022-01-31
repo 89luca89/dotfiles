@@ -1,0 +1,47 @@
+---
+
+- name: Setup flatpak repo (Ubuntu)
+  block:
+    - name: Check if repo is present
+      stat:
+        path: /etc/apt/sources.list.d/flatpak-ubuntu-stable-focal.list
+      register: flatpak_repo
+
+    - name: Configure flatpak repos
+      shell: |
+          add-apt-repository -y ppa:flatpak/stable
+      when: not flatpak_repo.stat.exists
+
+    - name: Apt update
+      command: apt update
+      changed_when: no
+
+  when: ansible_distribution == "Ubuntu"
+  become: yes
+  tags: flatpak_repo,become
+
+- name: Install Programs (Flatpak Programs - flathub)
+  command: "flatpak remote-add --user --if-not-exists {{ item.key }} {{ item.value }}"
+  changed_when: no
+  become: no
+  with_items:
+    - {key: "fedora", value: "oci+https://registry.fedoraproject.org"}
+    - {key: "flathub", value: "https://flathub.org/repo/flathub.flatpakrepo"}
+  when: use_flatpaks
+  tags: flatpak_packages
+
+- name: Install Programs (Flatpak Programs )
+  command: "flatpak --user install -y flathub {{ item }}"
+  with_items: "{{ flatpak_packages }}"
+  register: flatpak_out
+  changed_when: not 'already installed' in flatpak_out.stderr
+  become: no
+  when: use_flatpaks
+  tags: flatpak_packages
+
+- name: Env variables (Flatpak Programs)
+  command: "flatpak override --user --env={{ item.value }} {{ item.key }}"
+  with_items: "{{ flatpak_overrides }}"
+  become: no
+  when: use_flatpaks
+  tags: flatpak_packages
