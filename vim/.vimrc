@@ -97,6 +97,7 @@ inoremap <C-L> <C-X><C-L>
 inoremap <C-F> <C-X><C-F>
 " Code help using external scripts: Lint File, Lint Project, Format, DeepTags, Grep in project
 " Default IDE-Style keybindings: definition, indent, rename, references
+nnoremap <leader>line  :<C-u>cgete system(&grepprg . ' ".\{100\}" ')<bar>copen<C-Left>
 nnoremap <leader>l  :<C-u>cgete system('project-utils ' . &filetype . " " .  expand('%') . " lint")<CR>:copen<CR>
 nnoremap <leader>L  :<C-u>cgete system('project-utils ' . &filetype . " . lint")<CR>:copen<CR>
 nnoremap <leader>i  :<C-u>mkview<CR>:%s/\($\n\s*\)\+\%$//e<CR>:%s/\s\+$//e<CR>=G:loadview<CR>
