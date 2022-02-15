@@ -22,7 +22,8 @@ Plug 'tpope/vim-fugitive'
 Plug 'ap/vim-buftabline'
 Plug 'yggdroot/indentLine'
 " colorscheme
-Plug 'chriskempson/base16-vim'
+Plug 'cormacrelf/vim-colors-github'
+Plug 'tomasiser/vim-code-dark'
 " Fzf
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
@@ -35,19 +36,21 @@ call plug#end()
 filetype plugin indent on
 syntax on
 " Theming
-set background=dark
 set termguicolors
-let base16colorspace=256
-colorscheme base16-gruvbox-dark-hard
-highlight myDeclaration guifg=#87ffaf   ctermfg=121
-highlight myFunction    guifg=#87d7ff   ctermfg=117
+set background=dark
+set t_Co=256
+set t_ut=
+colorscheme codedark
+highlight SpecialKey ctermfg=242 guifg=#666666
+highlight link myFunction Function
+highlight link myDeclaration Identifier
 augroup general
     autocmd! general
     " When editing a file, always jump to the last known cursor position.
     autocmd BufReadPost *
-      \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
-      \ |   exe "normal! g`\""
-      \ | endif
+                \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
+                \ |   exe "normal! g`\""
+                \ | endif
     "keep equal proportions when windows resized
     autocmd VimResized * wincmd =
     " Strip whitespaces and extra newlines
@@ -169,15 +172,13 @@ endfunction
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        colorscheme base16-gruvbox-dark-hard
-        highlight myDeclaration guifg=#87ffaf   ctermfg=121
-        highlight myFunction    guifg=#87d7ff   ctermfg=117
-        silent! edit
+        colorscheme codedark
+        highlight SpecialKey ctermfg=242 guifg=#666666
     else
         set background=light
-        colorscheme base16-github
-        highlight myDeclaration guifg=#008700   ctermfg=28
-        highlight myFunction    guifg=#0087af   ctermfg=31
-        silent! edit
+        colorscheme github
     endif
+    highlight link myFunction Function
+    highlight link myDeclaration Identifier
+    silent! edit
 endfunction
