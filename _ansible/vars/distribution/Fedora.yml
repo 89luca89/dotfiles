@@ -152,14 +152,14 @@ debloat_pkg:
 power_management_packages:
   - acpi
   - hdparm
-  - kernel-tools
+    # - kernel-tools
   - power-profiles-daemon # TLP removed to use this
   - lm_sensors
   - msr-tools
   - powertop
   - thermald
 
-cpupower_pkg: "kernel-tools"
+cpupower_pkg: "" #"kernel-tools"
 
 power_management_service:
   - power-profiles-daemon
