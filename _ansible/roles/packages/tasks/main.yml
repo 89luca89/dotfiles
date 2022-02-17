@@ -42,44 +42,6 @@
   when: ansible_os_family == "Debian"
   tags: apt,become
 
-- name: Remove bloat packages
-  package:
-    state: absent
-    name: "{{ debloat_pkg }}"
-  become: yes
-  tags: debloat,become
-
-- name: Autoremove
-  command: "{{ pkg_mngr }} autoremove -y"
-  become: yes
-  register: pkg_output
-  changed_when: pkg_output.stdout_lines|length > 4
-  tags: debloat,become
-
-- name: Install Programs (Archive Utilities)
-  package:
-    state: present
-    name: "{{ archive_packages }}"
-  become: yes
-  tags: archives,become
-
-- name: Install Podman Packages
-  include: podman.yml
-  when: not is_container
-  become: yes
-  tags: podman,become
-
-- name: Install Main Packages
-  include: packages.yml
-  when: not is_container
-  tags: packages,become
-
-- name: Install Flatpak Packages
-  include: flatpak.yml
-  when: not is_container
-  tags: flatpak
-
 - name: Install CLI Packages
   include: terminal.yml
-  when: (container_enabled|bool == false) or is_container
   tags: terminal

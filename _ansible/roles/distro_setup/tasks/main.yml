@@ -21,6 +21,15 @@
   include: distro.yml
   tags: distro,become
 
-- name: Include fonts setup
-  include: fonts.yml
-  tags: distro,fonts
+- name: Install Podman Packages
+  include: podman.yml
+  become: yes
+  tags: podman,become
+
+- name: Install Main Packages
+  include: packages.yml
+  tags: packages,become
+
+- name: Install Flatpak Packages
+  include: flatpak.yml
+  tags: flatpak

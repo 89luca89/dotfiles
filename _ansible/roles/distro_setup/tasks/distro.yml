@@ -17,72 +17,6 @@
     - "{{ power_management_service }}"
   tags: become,distro,powersave
 
-- name: Check Intel GPU Vendor
-  shell: "lshw -C display 2> /dev/null | grep vendor | grep -iq intel"
-  register: intel_gpu
-  changed_when: no
-  failed_when: no
-  tags: always
-
-- name: Add latest graphic drivers
-  apt_repository:
-    repo: "ppa:oibaf/graphics-drivers"
-    state: present
-    update_cache: yes
-  tags: become,distro
-  when: ansible_os_family == "Debian"
-
-- name: Intel setup
-  block:
-    - name: Improve Intel Tearfree on xorg
-      blockinfile:
-        path: /etc/X11/xorg.conf.d/20-intel.conf
-        create: yes
-        mode: 0644
-        block: |
-          Section "Device"
-            Identifier "intel"
-            Driver "intel"
-            Option "AccelMethod" "sna"
-            Option "TearFree" "true"
-            Option "DRI" "3"
-          EndSection
-      tags: become,distro
-
-    - name: Set i915 driver options
-      lineinfile:
-        path: /etc/modprobe.d/i915.conf
-        create: yes
-        line: 'options i915 disable_power_well=0 enable_dc=2 enable_psr=1 enable_rc6=7 enable_fbc=1 powersave=1 enable_guc=3'
-        mode: 0644
-      tags: become,distro
-
-    - name: Set Intel HDA driver options
-      lineinfile:
-        path: /etc/modprobe.d/snd_hda_intel.conf
-        create: yes
-        line: 'options snd_hda_intel power_save_controlle=Y power_save=1'
-        mode: 0644
-      tags: become,distro
-
-    - name: Set Intel ETH driver options
-      lineinfile:
-        path: /etc/modprobe.d/e1000e.conf
-        create: yes
-        line: 'options e1000e SmartPowerDownEnable=1'
-        mode: 0644
-      tags: become,distro
-
-    - name: Set Intel Wifi driver options
-      lineinfile:
-        path: /etc/modprobe.d/iwlwifi.conf
-        create: yes
-        line: 'options iwlwifi power_save=Y power_level=5 iwlmvm power_scheme=3'
-        mode: 0644
-      tags: become,distro
-
-  when: intel_gpu.rc == 0
-
 - name: Disable WIFI Mac address randomization on scan
   blockinfile:
     path: /etc/NetworkManager/conf.d/30-mac-randomization.conf
@@ -165,70 +99,12 @@
 - name: Deploy Crypttab Performance Flags
   replace:
     path: /etc/crypttab
-    regexp: 'none$'
+    regexp: 'none discard$'
     replace: 'none discard no-read-workqueue no-write-workqueue'
     backup: yes
   register: crypt_setup
   when: crypt_file.stat.exists
   tags: become,distro
-
-- name: Check if Grub is present
-  stat:
-    path: /etc/default/grub
-  register: grub_file
-  tags: become,distro,grub
-
-- name: Deploy Grub Flags
-  replace:
-    path: /etc/default/grub
-    regexp: '^(GRUB_CMDLINE_LINUX=(?:(?![" ]{{ item.option | regex_escape }}=).)*)(?:[" ]{{ item.option | regex_escape }}=\S+)?(.*")$'
-    replace: '\1 {{ item.option }}={{ item.value }}\2'
-    backup: yes
-  with_items:
-    - {option: drm.debug, value: 0}
-    - {option: drm.vblankoffdelay, value: 1}
-    - {option: mmc_mod.use_blk_mq, value: 1}
-    - {option: nmi_watchdog, value: 0}
-    - {option: pcie_aspm, value: force}
-    - {option: pcie_aspm.policy, value: powersupersave}
-    - {option: scsi_mod.use_blk_mq, value: 1}
-    # hardening
-    - {option: audit, value: 1}
-    - {option: amd_iommu, value: 'on'}
-    - {option: debugfs, value: 'off'}
-    - {option: init_on_alloc, value: 1}
-    - {option: init_on_free, value: 1}
-    - {option: intel_iommu, value: 'on'}
-    - {option: l1tf, value: flush}
-    - {option: loglevel, value: 0}
-    - {option: mce, value: 0}
-    - {option: mds, value: full}
-    - {option: mitigations, value: auto}
-    - {option: modules.sig_enforce, value: 1}
-    - {option: page_alloc.shuffle, value: 1}
-    - {option: page_poison, value: 1}
-    - {option: pti, value: 'on'}
-    - {option: slub_debug, value: FZP}
-    - {option: spec_store_bypass_disable, value: 'on'}
-    - {option: tsx, value: 'off'}
-    - {option: tsx_async_abort, value: full}
-    - {option: vsyscall, value: 'none'}
-    - {option: net.ifnames, value: 0}   # We want ethX naming for interfaces
-    - {option: biosdevname, value: 0}   # We want ethX naming for interfaces
-  register: grub_setup
-  when: grub_file.stat.exists
-  tags: become,distro,grub
-
-- name: Deploy Grub Flags /2
-  replace:
-    path: /etc/default/grub
-    regexp: 'rhgb quiet'
-    replace: 'rhgb slab_nomerge quiet'
-    backup: yes
-  register: grub_conf
-  become: yes
-  when: grub_file.stat.exists
-  tags: distro,grub,become
 
 - name: Update Grub and Initramfs /RedHat
   command: "{{ item }}"
@@ -236,9 +112,7 @@
     - "grub2-mkconfig -o /boot/grub2/grub.cfg"
     - "dracut --force --regenerate-all -v"
   when: >
-    ((grub_setup is defined and grub_setup.changed) or
-    (grub_conf is defined and grub_conf.changed) or
-    (lvm_setup is defined and lvm_setup.changed) or
+    ((lvm_setup is defined and lvm_setup.changed) or
     (crypt_setup is defined and crypt_setup.changed))
     and ansible_os_family == "RedHat"
   tags: become,distro,grub
@@ -249,9 +123,7 @@
     - "update-grub"
     - "update-initramfs -k all -u"
   when: >
-    ((grub_setup is defined and grub_setup.changed) or
-    (grub_conf is defined and grub_conf.changed) or
-    (lvm_setup is defined and lvm_setup.changed) or
+    ((lvm_setup is defined and lvm_setup.changed) or
     (crypt_setup is defined and crypt_setup.changed))
     and ansible_os_family == "Debian"
   tags: become,distro,grub

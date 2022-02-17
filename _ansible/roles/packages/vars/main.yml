@@ -71,10 +71,12 @@ python_modules:
 
 golang_packages:
   - golang
+  - shfmt
 
 golang_modules:
-  - golang.org/x/lint/golint
-  - golang.org/x/tools/cmd/goimports
-  - golang.org/x/tools/cmd/gorename
-  - golang.org/x/tools/cmd/guru
-  - mvdan.cc/sh/cmd/shfmt
+  - golang-x-lint
+  - golang-x-tools-goimports
+  - golang-x-tools-gorename
+  - golang-x-tools-guru
+  - golang-x-tools-gopls
+  - golang-github-golangci-lint-1

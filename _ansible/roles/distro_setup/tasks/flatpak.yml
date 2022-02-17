@@ -27,6 +27,7 @@
   with_items:
     - {key: "fedora", value: "oci+https://registry.fedoraproject.org"}
     - {key: "flathub", value: "https://flathub.org/repo/flathub.flatpakrepo"}
+    - {key: "flathub-beta", value: "https://flathub.org/beta-repo/flathub-beta.flatpakrepo"}
   when: use_flatpaks
   tags: flatpak_packages
 
