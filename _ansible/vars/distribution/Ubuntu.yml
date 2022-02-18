@@ -113,6 +113,7 @@ codecs_packages:
   - libva-x11-2
   - libva2
   - libvdpau-va-gl1
+  - mesa-dri-drivers
 
 my_packages:
   - flatpak

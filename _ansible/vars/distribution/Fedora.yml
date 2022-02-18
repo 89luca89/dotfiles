@@ -122,6 +122,7 @@ codecs_packages:
   - libva-utils
   - libva-vdpau-driver
   - libvdpau-va-gl
+  - mesa-dri-drivers
 
 ### gnome-extensions-app gnome-tweaks
 my_packages:
