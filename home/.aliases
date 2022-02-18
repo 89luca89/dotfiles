@@ -10,6 +10,8 @@ gnome-backup() {
 		"/org/gnome/desktop/input-sources"
 		"/org/gnome/desktop/interface"
 		"/org/gnome/desktop/peripherals/touchpad"
+		"/org/gnome/desktop/peripherals/mouse"
+		"/org/gnome/desktop/peripherals/trackball"
 		"/org/gnome/desktop/privacy"
 		"/org/gnome/desktop/sound"
 		"/org/gnome/desktop/wm/preferences"
@@ -61,14 +63,10 @@ rclone_clear_mount() {
 }
 # BASIC ALIASES
 alias cp='cp --reflink=auto'
-alias firefoxRestore="cat ~/Syncthing/notes/open_tabs.md | cut -d ']' -f2  | sed 's/(//g' | sed 's/)//g' | xargs firefox --new-tab &"
-alias firefoxSync='~/bin/get_firefox_tabs.py > ~/Syncthing/notes/open_tabs.md'
-alias git-clean="git fetch -p; git for-each-ref  --format='%(refname:short) %(upstream)'  refs/heads | awk '$2 !~/^refs\/remotes/' | xargs git branch -D"
+alias batinfo="grep --color . /sys/class/power_supply/BAT0/{capacity,energy_now,energy_full,status,cycle_count}"
 alias gnome-reload='DISPLAY=:0 xdotool key Alt+F2; sleep 1; DISPLAY=:0 xdotool key r;DISPLAY=:0  xdotool key Return'
-alias gogetsys="export GOPATH=~/.local/go; go get"
 alias ll='ls -Ahl --group-directories-first --color'
 alias open='xdg-open'
-alias rsyncProjecs='rsync -avHP --delete  -e "ssh -J tunnel" $HOME/Projects/ root@raspberrypi-1.lan:/usr/local/mnt/Vault/Projects/'
 alias rsyncthingD='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync --usermap=$(id -ru):1000 --groupmap=$(id -rg):1000 --archive --verbose --inplace --no-compress --progress --partial --delete -e "ssh -J jump" --exclude={.stversions,*.tmp}  root@raspberrypi-1:/usr/local/mnt/Vault/Syncthing/ ~/Syncthing/ && cd -'
 alias rsyncthingS='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync --usermap=$(id -ru):1000 --groupmap=$(id -rg):1000 --archive --verbose --inplace --no-compress --progress --partial --delete -e "ssh -J jump" --exclude={.stversions,*.tmp}  ~/Syncthing/ root@raspberrypi-1:/usr/local/mnt/Vault/Syncthing/ && cd -'
 alias saml2aws='saml2aws --disable-keychain'
