@@ -80,13 +80,39 @@ terminal_packages:
   - tig
   - tree
   # Cli packages
+  - acpi
+  - bc
+  - lm-sensors
   - rsync
   - tmux
   - vim
+  - wl-clipboard
+  - wmctrl
+  - x11-utils
   - xclip
-  - lm-sensors
-  - acpi
-  - bc
+  - xdotool
+
+codecs_packages:
+  - ffmpeg
+  - flac
+  - gstreamer1.0-libav
+  - gstreamer1.0-plugins-bad
+  - gstreamer1.0-plugins-base
+  - gstreamer1.0-plugins-base-apps
+  - gstreamer1.0-plugins-good
+  - gstreamer1.0-plugins-ugly
+  - gstreamer1.0-vaapi
+  - i965-va-driver
+  - intel-media-va-driver
+  - libigdgmm-dev
+  - libigdgmm11
+  - libva-dev
+  - libva-drm2
+  - libva-glx2
+  - libva-wayland2
+  - libva-x11-2
+  - libva2
+  - libvdpau-va-gl1
 
 my_packages:
   - flatpak
@@ -95,12 +121,6 @@ my_packages:
   - git
   - openssl
   - vim
-  # Generic X utility
-  - wl-clipboard
-  - wmctrl
-  - x11-utils
-  - xclip
-  - xdotool
 
 debloat_pkg:
   - apport

@@ -81,15 +81,47 @@ terminal_packages:
   - tmux
   - vim
   # miscrellanous
-  - htop
-  - powertop
-  - syncthing
-  - python3.8
-  - xclip
-  - lm_sensors
   - acpi
   - bc
+  - htop
+  - lm_sensors
+  - powertop
+  - python3.8
+  - syncthing
+  - wl-clipboard
+  - wmctrl
+  - xclip
+  - xdotool
+  - xlsclients
 
+codecs_packages:
+  - mpv
+  - compat-ffmpeg28
+  - compat-ffmpeg28-devel
+  - egl-utils
+  - egl-wayland
+  - flac
+  - ffmpeg
+  - ffmpeg-libs
+  - gstreamer1-libav
+  - gstreamer1-plugins-bad-free
+  - gstreamer1-plugins-bad-freeworld
+  - gstreamer1-plugins-base
+  - gstreamer1-plugins-base-tools
+  - gstreamer1-plugins-good
+  - gstreamer1-plugins-good-extras
+  - gstreamer1-plugins-ugly
+  - gstreamer1-plugins-ugly-free
+  - gstreamer1-svt-av1
+  - gstreamer1-svt-vp9
+  - gstreamer1-vaapi
+  - intel-media-driver
+  - libva-devel
+  - libva-intel-driver
+  - libva-intel-hybrid-driver
+  - libva-utils
+  - libva-vdpau-driver
+  - libvdpau-va-gl
 
 ### gnome-extensions-app gnome-tweaks
 my_packages:
@@ -103,11 +135,6 @@ my_packages:
   - vim
   # Generic X utility
   - libappindicator-gtk3
-  - wl-clipboard
-  - wmctrl
-  - xclip
-  - xdotool
-  - xlsclients
 
 debloat_pkg:
   - abrt

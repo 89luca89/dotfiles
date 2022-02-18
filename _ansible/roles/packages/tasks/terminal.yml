@@ -1,6 +1,13 @@
 # my_apps.yml
 ---
 
+- name: Install Programs (Codecs Packages)
+  package:
+    state: present
+    name: "{{ codecs_packages }}"
+  become: yes
+  tags: codecs,become
+
 - name: Install Programs (Programming Packages)
   package:
     state: present
