@@ -26,5 +26,5 @@
 
   roles:
     - {role: distro_setup, when: not is_container, become: yes}
-    - {role: packages, when: (container_enabled|bool == false) or is_container}
-    - dotfiles
+      #    - {role: packages, when: (container_enabled|bool == false) or is_container}
+      #    - dotfiles

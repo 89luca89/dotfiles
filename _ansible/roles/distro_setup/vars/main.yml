@@ -18,3 +18,14 @@ systemd_user_mask_services:
   - tracker-writeback
   - ubuntu-report.path
   - ubuntu-report.service
+
+systemd_root_mask_services:
+  - NetworkManager-wait-online.service
+  - auditd.service
+  - dnf-makecache.timer
+  - import-state.service
+  - kdump.service
+  - livesys-late.sevice
+  - livesys.service
+  - switcheroo-control.service
+  - unbound-anchor.timer

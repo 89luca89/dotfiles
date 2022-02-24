@@ -16,6 +16,24 @@
   delay: 3
   register: result
   until: result is not failed
+  tags: distro
+
+
+# Mask systemd services to free up memory
+- name: Mask services /2
+  systemd:
+    name: "{{ item }}"
+    state: stopped
+    enabled: no
+    masked: yes
+    daemon_reload: yes
+  with_items: "{{ systemd_root_mask_services }}"
+  become: yes
+  retries: 3
+  delay: 3
+  register: result
+  until: result is not failed
+  tags: distro,become
 
 - name: Include distro setup
   include: distro.yml

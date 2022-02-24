@@ -63,7 +63,7 @@ rclone_clear_mount() {
 }
 # BASIC ALIASES
 alias cp='cp --reflink=auto'
-alias batinfo="grep --color . /sys/class/power_supply/BAT0/{capacity,energy_now,energy_full,status,cycle_count}"
+alias batinfo="grep --color . /sys/class/power_supply/BAT0/{capacity,energy_now,energy_full,status,cycle_count,charge_stop_threshold}"
 alias gnome-reload='DISPLAY=:0 xdotool key Alt+F2; sleep 1; DISPLAY=:0 xdotool key r;DISPLAY=:0  xdotool key Return'
 alias ll='ls -Ahl --group-directories-first --color'
 alias open='xdg-open'

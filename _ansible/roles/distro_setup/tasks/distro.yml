@@ -7,16 +7,6 @@
     name: "{{ power_management_packages }}"
   tags: become,distro,powersave
 
-- name: Enable Power Management (Laptop)
-  systemd:
-    name: "{{ item }}"
-    state: started
-    enabled: yes
-    daemon_reload: yes
-  with_items:
-    - "{{ power_management_service }}"
-  tags: become,distro,powersave
-
 - name: Disable WIFI Mac address randomization on scan
   blockinfile:
     path: /etc/NetworkManager/conf.d/30-mac-randomization.conf
@@ -39,7 +29,7 @@
     - {name: kernel.nmi_watchdog, value: 0}
     - {name: vm.swappiness, value: 5}
     - {name: vm.oom_kill_allocating_task, value: 1}
-    - {name: vm.vfs_cache_pressure, value: 100}
+    - {name: vm.vfs_cache_pressure, value: 1000}
     - {name: vm.dirty_ratio, value: 90}
     - {name: vm.dirty_background_ratio, value: 50}
     - {name: vm.dirty_writeback_centisecs, value: 1500}
@@ -48,35 +38,60 @@
     - {name: net.ipv4.ip_default_ttl, value: 66}
   tags: become,distro
 
+- name: Set zram size
+  blockinfile:
+    path: /etc/systemd/zram-generator.conf
+    create: yes
+    block: |
+      [zram0]
+      zram-fraction=0.5
+      max-zram-size=16384
+    marker: "# {mark} ANSIBLE MANAGED BLOCK BY DOTFILES"
+    mode: 0600
+  tags: become,distro,zram
+
 - name: Set UDev Rules
   blockinfile:
     path: /etc/udev/rules.d/powersave.rules
     create: yes
     block: |
-      ACTION=="add", SUBSYSTEM=="pci", ATTR{power/control}="auto"
-      ACTION=="add", SUBSYSTEM=="ahci", ATTR{power/control}="auto"
-      ACTION=="add", SUBSYSTEM=="scsi_host", KERNEL=="host*", ATTR{link_power_management_policy}="min_power"
-      ACTION=="add", SUBSYSTEM=="scsi", ATTR{power/control}="auto"
-      ACTION=="add", SUBSYSTEM=="acpi", ATTR{power/control}="auto"
-      ACTION=="add", SUBSYSTEM=="block", ATTR{power/control}="auto"
-      ACTION=="add", SUBSYSTEM=="workqueue", ATTR{power/control}="auto"
-      ACTION=="add", SUBSYSTEM=="i2c", ATTR{power/control}="auto"
-      ACTION=="add", SUBSYSTEM=="net", KERNEL=="enp*", RUN+="/usr/sbin/ethtool -s %k wol d"
-      ACTION=="add", SUBSYSTEM=="net", KERNEL=="wlp*", RUN+="/usr/sbin/ethtool -s %k wol d"
-      ACTION=="add", SUBSYSTEM=="net", KERNEL=="wlp*", RUN+="/usr/sbin/iw dev %k set power_save on"
-      ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/read_ahead_kb}="65536"
-      ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="bfq"
-      ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="0", ATTR{queue/iosched/low_latency}="1"
-      ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq"
-      ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/iosched/low_latency}="1"
-      ACTION=="add|change", KERNEL=="sd[a-z]", RUN+="/usr/sbin/hdparm -B 1 /dev/%k"
-      SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="0",RUN+="/usr/sbin/iw dev wlp3s0 set power_save on"
-      SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="1",RUN+="/usr/sbin/iw dev wlp3s0 set power_save off"
-      # SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="0",RUN+="/bin/cpupower frequency-set -g powersave -u 2000MHz"
-      # SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="1",RUN+="/bin/cpupower frequency-set -g performance -u 4500MHz"
+      ACTION=="add|change", SUBSYSTEM=="acpi", ATTR{power/control}="auto"
+      ACTION=="add|change", SUBSYSTEM=="ahci", ATTR{power/control}="auto"
+      ACTION=="add|change", SUBSYSTEM=="block", ATTR{power/control}="auto"
+      ACTION=="add|change", SUBSYSTEM=="i2c", ATTR{power/control}="auto"
+      ACTION=="add|change", SUBSYSTEM=="net", KERNEL=="enp*", RUN+="/usr/sbin/ethtool -s %k wol d"
+      ACTION=="add|change", SUBSYSTEM=="net", KERNEL=="wlp*", RUN+="/usr/sbin/iw dev %k set power_save on"
+      ACTION=="add|change", SUBSYSTEM=="pci", ATTR{power/control}="auto"
+      ACTION=="add|change", SUBSYSTEM=="scsi", ATTR{power/control}="auto"
+      ACTION=="add|change", SUBSYSTEM=="scsi_host", KERNEL=="host*", ATTR{link_power_management_policy}="min_power"
+      ACTION=="add|change", SUBSYSTEM=="usb", ATTR{power/autosuspend}="1"
+      ACTION=="add|change", SUBSYSTEM=="workqueue", ATTR{power/control}="auto"
+      ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/iosched/low_latency}="1"
+      ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/scheduler}="bfq"
+      ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/read_ahead_kb}="4096"
+      ACTION=="add|change", KERNEL=="nvme[0-9]n[0-9]", ATTR{queue/read_ahead_kb}="4096"
+      SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_ONLINE}=="0", RUN+="/bin/cpupower frequency-set -g powersave"
+      SUBSYSTEM=="power_supply", ENV{POWER_SUPPLY_ONLINE}=="1", RUN+="/bin/cpupower frequency-set -g schedutil"
+      # ACTION=="add|change", SUBSYSTEM=="power_supply", RUN+="/usr/sbin/powertop --auto-tune"
+      # SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="0",RUN+="/usr/sbin/powertop --auto-tune"
     marker: "# {mark} ANSIBLE MANAGED BLOCK BY DOTFILES"
     mode: 0600
   tags: become,distro,powersave
+
+- name: Set audio driver options
+  blockinfile:
+    path: /etc/modprobe.d/powersave.conf
+    create: yes
+    block: |
+      options e1000e SmartPowerDownEnable=1
+      options i915 disable_power_well=0 enable_dc=2 enable_psr=1 enable_rc6=7 enable_fbc=1 powersave=1 enable_guc=3
+      options iwlwifi power_save=Y power_level=5 iwlmvm power_scheme=3
+      options snd_ac97_codec power_save=1
+      options snd_hda_intel power_save_controller=Y power_save=1
+      options thinkpad_acpi fan_control=1
+      options usbcore autosuspend=1
+    mode: 0644
+  tags: become,distro
 
 - name: Check if lvm.conf is present
   stat:
@@ -110,13 +125,54 @@
   when: crypt_file.stat.exists
   tags: become,distro
 
+- name: Deploy Grub Flags
+  replace:
+    path: /etc/default/grub
+    regexp: '^(GRUB_CMDLINE_LINUX=(?:(?![" ]{{ item.option | regex_escape }}=).)*)(?:[" ]{{ item.option | regex_escape }}=\S+)?(.*")$'
+    replace: '\1 {{ item.option }}={{ item.value }}\2'
+    backup: yes
+  with_items:
+    - {option: drm.debug, value: 0}
+    - {option: drm.vblankoffdelay, value: 1}
+    - {option: nvme_core.default_ps_max_latency_us, value: 200}
+    - {option: mmc_mod.use_blk_mq, value: 1}
+    - {option: scsi_mod.use_blk_mq, value: 1}
+    - {option: pcie_aspm.policy, value: powersupersave}
+    - {option: amdgpu.cik_support, value: 1}
+    - {option: amdgpu.dc, value: 1}
+    - {option: amdgpu.dcfeaturemask, value: '0xB'}
+    - {option: amdgpu.si_support, value: 1}
+    # - {option: pcie_aspm, value: force}
+  register: grub_conf
+  tags: become,distro,grub
+
+- name: Set Grub Rules
+  blockinfile:
+    path: /etc/default/grub
+    create: yes
+    block: |
+        GRUB_DISABLE_OS_PROBER=true
+        GRUB_DISABLE_RECOVERY=true
+        GRUB_DISABLE_SUBMENU=true
+        GRUB_GFXMODE=640x480
+        GRUB_RECORDFAIL_TIMEOUT=0
+        GRUB_TIMEOUT=0
+        GRUB_TIMEOUT_QUIET=true
+        GRUB_HIDDEN_TIMEOUT_QUIET=true
+        GRUB_TIMEOUT_STYLE=hidden
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+    mode: 0600
+  register: grub_setup
+  tags: distro,grub
+
 - name: Update Grub and Initramfs /RedHat
   command: "{{ item }}"
   with_items:
     - "grub2-mkconfig -o /boot/grub2/grub.cfg"
     - "dracut --force --regenerate-all -v"
   when: >
-    ((lvm_setup is defined and lvm_setup.changed) or
+    ((grub_setup is defined and grub_setup.changed) or
+    (lvm_setup is defined and lvm_setup.changed) or
     (crypt_setup is defined and crypt_setup.changed))
     and ansible_os_family == "RedHat"
   tags: become,distro,grub
@@ -127,7 +183,9 @@
     - "update-grub"
     - "update-initramfs -k all -u"
   when: >
-    ((lvm_setup is defined and lvm_setup.changed) or
+    ((grub_conf is defined and grub_conf.changed) or
+    (grub_setup is defined and grub_setup.changed) or
+    (lvm_setup is defined and lvm_setup.changed) or
     (crypt_setup is defined and crypt_setup.changed))
     and ansible_os_family == "Debian"
   tags: become,distro,grub
