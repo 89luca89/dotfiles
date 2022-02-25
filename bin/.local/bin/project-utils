@@ -130,14 +130,14 @@ case "$COMMAND" in
 				if file "$file" | grep -qi shell; then
 					# file is a shell script, we can shellcheck
 					shellcheck -o all -Cnever -Sstyle -a -f gcc -x "$file"
-					checkbashisms -elnpfx "$file"
+					# checkbashisms -elnpfx "$file"
 				fi
 
 			done
 		else
 
 			shellcheck -o all -Cnever -Sstyle -a -f gcc -x "$DIR"
-			checkbashisms -elnpfx "$DIR"
+			# checkbashisms -elnpfx "$DIR"
 		fi
 		;;
 
