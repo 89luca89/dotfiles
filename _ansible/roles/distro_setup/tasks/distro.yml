@@ -145,6 +145,7 @@
     path: /etc/modprobe.d/powersave.conf
     create: yes
     block: |
+      options amdgpu dc=1 si_support=1 cik_support=1 dcfeaturemask=0xB aspm=1
       options e1000e SmartPowerDownEnable=1
       options i915 disable_power_well=0 enable_dc=2 enable_psr=1 enable_rc6=7 enable_fbc=1 powersave=1 enable_guc=3
       options iwlwifi power_save=Y power_level=5 iwlmvm power_scheme=3
