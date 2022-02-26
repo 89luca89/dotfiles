@@ -140,15 +140,21 @@
     enabled: yes
   tags: become,distro,powersave
 
-- name: Set audio driver options
+- name: Set driver powersave options
   blockinfile:
     path: /etc/modprobe.d/powersave.conf
     create: yes
     block: |
       options amdgpu dc=1 si_support=1 cik_support=1 dcfeaturemask=0xB aspm=1
+      options dm_mod use_blk_mq=1
+      options drm debug=0 vblankoffdelay=1
       options e1000e SmartPowerDownEnable=1
       options i915 disable_power_well=0 enable_dc=2 enable_psr=1 enable_rc6=7 enable_fbc=1 powersave=1 enable_guc=3
-      options iwlwifi power_save=Y power_level=5 iwlmvm power_scheme=3
+      options iwlwifi power_save=Y power_level=5
+      options iwlmvm power_scheme=3
+      options mmc_mod use_blk_mq=1
+      options nvme_core default_ps_max_latency_us=20000 force_apst=1
+      options scsi_mod use_blk_mq=1
       options snd_ac97_codec power_save=1
       options snd_hda_intel power_save_controller=Y power_save=1
       options thinkpad_acpi fan_control=1
@@ -195,11 +201,9 @@
     replace: '\1 {{ item.option }}={{ item.value }}\2'
     backup: yes
   with_items:
-    - {option: drm.debug, value: 0}
-    - {option: drm.vblankoffdelay, value: 1}
-    - {option: nvme_core.default_ps_max_latency_us, value: 20000}
     - {option: mmc_mod.use_blk_mq, value: 1}
     - {option: scsi_mod.use_blk_mq, value: 1}
+    - {option: dm_mod.use_blk_mq, value: 1}
     - {option: pcie_aspm.policy, value: powersupersave}
     - {option: pcie_aspm, value: force}
   register: grub_conf
@@ -225,12 +229,13 @@
   tags: distro,grub
 
 - name: Update Grub and Initramfs /RedHat
-  command: "{{ item }}"
+  shell: "{{ item }}"
   with_items:
-    - "grub2-mkconfig -o /boot/grub2/grub.cfg"
-    - "dracut --force --regenerate-all -v"
+    - "for grub in $(find /boot -name grub.cfg); do grub2-mkconfig -o $grub; done"
+    - "dracut --force --regenerate-all"
   when: >
-    ((grub_setup is defined and grub_setup.changed) or
+    ((grub_conf is defined and grub_conf.changed) or
+    (grub_setup is defined and grub_setup.changed) or
     (lvm_setup is defined and lvm_setup.changed) or
     (crypt_setup is defined and crypt_setup.changed))
     and ansible_os_family == "RedHat"
