@@ -36,16 +36,22 @@ gnome-restore() {
 	done
 }
 update() {
+	if command -v fwupdmgr; then
+		sudo fwupdmgr refresh
+		sudo fwupdmgr get-updates
+	fi
 	if command -v apt; then
 		sudo apt update; sudo apt upgrade
 	elif command -v dnf; then
 		sudo dnf upgrade --refresh
 	fi
-	if ! flatpak update --user; then
-		flatpak repair --user
-		flatpak update --user
+	if command -v flatpak; then
+		if ! flatpak update --user; then
+			flatpak repair --user
+			flatpak update --user
+		fi
+		flatpak uninstall --user --unused
 	fi
-	flatpak uninstall --user --unused
 	vim +PlugUpdate +PlugInstall! +qall
 }
 update-grub() {
@@ -63,7 +69,7 @@ rclone_clear_mount() {
 }
 # BASIC ALIASES
 alias cp='cp --reflink=auto'
-alias batinfo="grep --color . /sys/class/power_supply/BAT0/{capacity,energy_now,energy_full,energy_full_design,status,cycle_count,charge_stop_threshold}"
+alias batinfo="grep --color . /sys/class/power_supply/BAT*/{capacity,energy_now,energy_full,energy_full_design,status,cycle_count,charge_stop_threshold}"
 alias gnome-reload='DISPLAY=:0 xdotool key Alt+F2; sleep 1; DISPLAY=:0 xdotool key r;DISPLAY=:0  xdotool key Return'
 alias ll='ls -Ahl --group-directories-first --color'
 alias open='xdg-open'
