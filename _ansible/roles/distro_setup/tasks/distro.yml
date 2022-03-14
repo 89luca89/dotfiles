@@ -91,13 +91,17 @@
       if grep -q Discharging /sys/class/power_supply/BAT*/status ; then
       # Battery mode.
           /usr/local/bin/ryzenadj --power-saving
+          echo "low-power" > /sys/firmware/acpi/platform_profile
           logger "Enabling powersave"
       else
       # AC Mode.
           /usr/local/bin/ryzenadj --max-performance
+          echo "performance" > /sys/firmware/acpi/platform_profile
           logger "Enabling performance"
       fi
-      # Ryzenadj use AUR to install.
+      if [ "$(cat /sys/block/nvme0n1/queue/read_ahead_kb)" != 16384 ]; then
+              /bin/udevadm trigger
+      fi
     mode: 0755
   tags: become,distro,powersave
 
@@ -125,8 +129,9 @@
       Description=powersaver
 
       [Timer]
-      OnCalendar=minutely
-      Persistent=true
+      OnActiveSec=0
+      OnUnitActiveSec=60
+      AccuracySec=500msec
 
       [Install]
       WantedBy=timers.target
@@ -188,7 +193,7 @@
   replace:
     path: /etc/crypttab
     regexp: 'none discard$'
-    replace: 'none discard no-read-workqueue no-write-workqueue'
+    replace: 'none discard,no-read-workqueue,no-write-workqueue'
     backup: yes
   register: crypt_setup
   when: crypt_file.stat.exists
@@ -201,11 +206,29 @@
     replace: '\1 {{ item.option }}={{ item.value }}\2'
     backup: yes
   with_items:
-    - {option: mmc_mod.use_blk_mq, value: 1}
-    - {option: scsi_mod.use_blk_mq, value: 1}
+    # Powersaving drivers
+    - {option: amdgpu.aspm, value: 1}
+    - {option: amdgpu.cik_support, value: 1}
+    - {option: amdgpu.dc, value: 1}
+    - {option: amdgpu.dcfeaturemask, value: '0xB'}
+    - {option: amdgpu.si_support, value: 1}
     - {option: dm_mod.use_blk_mq, value: 1}
-    - {option: pcie_aspm.policy, value: powersupersave}
+    - {option: drm.debug, value: 0}
+    - {option: drm.vblankoffdelay, value: 1}
+    - {option: i915.disable_power_well, value: 0}
+    - {option: i915.enable_dc, value: 2}
+    - {option: i915.enable_fbc, value: 1}
+    - {option: i915.enable_guc, value: 3}
+    - {option: i915.enable_psr, value: 1}
+    - {option: i915.enable_rc6, value: 7}
+    - {option: i915.powersave, value: 1}
+    - {option: mmc_mod.use_blk_mq, value: 1}
+    - {option: nvme_core.default_ps_max_latency_us, value: 20000}
+    - {option: nvme_core.force_apst, value: 1}
     - {option: pcie_aspm, value: force}
+    - {option: pcie_aspm.policy, value: powersupersave}
+    - {option: scsi_mod.use_blk_mq, value: 1}
+    - {option: usbcore.autosuspend, value: 1}
   register: grub_conf
   tags: become,distro,grub
 
