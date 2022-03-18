@@ -125,7 +125,7 @@ case "$COMMAND" in
 
 		if [ -d "$DIR" ]; then
 
-			for file in $(find "$DIR" -type f); do
+			for file in $(find "$DIR" -type f -not -path "*.git*"); do
 
 				if file "$file" | grep -qi shell; then
 					# file is a shell script, we can shellcheck
