@@ -23,7 +23,7 @@ Plug 'ap/vim-buftabline'
 Plug 'yggdroot/indentLine'
 " colorscheme
 Plug 'cormacrelf/vim-colors-github'
-Plug 'tomasiser/vim-code-dark'
+Plug 'tomasr/molokai'
 " Fzf
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
@@ -40,8 +40,7 @@ set termguicolors
 set background=dark
 set t_Co=256
 set t_ut=
-colorscheme codedark
-highlight SpecialKey ctermfg=242 guifg=#666666
+colorscheme molokai
 highlight link myFunction Function
 highlight link myDeclaration Identifier
 augroup general
@@ -172,8 +171,7 @@ endfunction
 function! ToggleTheme()
     if &background == 'light'
         set background=dark
-        colorscheme codedark
-        highlight SpecialKey ctermfg=242 guifg=#666666
+        colorscheme molokai
     else
         set background=light
         colorscheme github
