@@ -43,6 +43,7 @@ update() {
 	if command -v apt; then
 		sudo apt update; sudo apt upgrade
 	elif command -v dnf; then
+		~/bin/kernel-update
 		sudo dnf upgrade --refresh
 	fi
 	if command -v flatpak; then
@@ -69,7 +70,9 @@ rclone_clear_mount() {
 }
 # BASIC ALIASES
 alias cp='cp --reflink=auto'
-alias batinfo="grep --color . /sys/class/power_supply/BAT*/{capacity,energy_now,energy_full,energy_full_design,status,cycle_count,charge_stop_threshold}"
+alias batinfo="grep --color . /sys/class/power_supply/BAT*/{capacity,energy_now,energy_full,energy_full_design,status,cycle_count,charge_start_threshold,charge_stop_threshold}"
+alias batsave="echo 55 | sudo tee /sys/class/power_supply/BAT0/charge_start_threshold && echo 65 | sudo tee /sys/class/power_supply/BAT0/charge_stop_threshold"
+alias batstretch="echo 0 | sudo tee /sys/class/power_supply/BAT0/charge_start_threshold && echo 100 | sudo tee /sys/class/power_supply/BAT0/charge_stop_threshold"
 alias gnome-reload='DISPLAY=:0 xdotool key Alt+F2; sleep 1; DISPLAY=:0 xdotool key r;DISPLAY=:0  xdotool key Return'
 alias ll='ls -Ahl --group-directories-first --color'
 alias open='xdg-open'
@@ -77,9 +80,13 @@ alias rsyncthingD='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname 
 alias rsyncthingS='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync --usermap=$(id -ru):1000 --groupmap=$(id -rg):1000 --archive --verbose --inplace --no-compress --progress --partial --delete -e "ssh -J jump" --exclude={.stversions,*.tmp}  ~/Syncthing/ root@raspberrypi-1:/usr/local/mnt/Vault/Syncthing/ && cd -'
 alias saml2aws='saml2aws --disable-keychain'
 alias top='top -o %CPU'
+alias htop='top -o %CPU'
 alias vi='vim -u ~/.vimrc-minimal'
 if [ ! -e /run/.containerenv ] && [ ! -e /.dockerenv ]; then
 	alias vim='/usr/bin/vim -u ~/.vimrc-minimal'
+fi
+if [ -e /run/.containerenv ] || [ -e /.dockerenv ]; then
+	alias open='flatpak-spawn --host xdg-open'
 fi
 export LESSHISTFILE=-
 export EDITOR=vim
