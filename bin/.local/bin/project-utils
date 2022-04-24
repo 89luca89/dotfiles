@@ -17,255 +17,266 @@ COMMAND=$3
 
 case "$COMMAND" in
 
-###############################################################################
-"format")
+	###############################################################################
+	"format")
 
-	case "$LANGUAGE" in
-	"c")
+		case "$LANGUAGE" in
+			"c")
 
-		files=$(find "$DIR" -type f -name '*.c' -o -name '*.h')
-		for f in $files; do
-			clang-format -i -style=Chromium "$f"
-		done
+				files=$(find "$DIR" -type f -name '*.c' -o -name '*.h')
+				for f in $files; do
+					clang-format -i -style=Chromium "$f"
+				done
+				;;
+
+			"cpp")
+
+				files=$(find "$DIR" -type f -name '*.cpp' -o -name '*.h')
+				for f in $files; do
+					clang-format -i -style=Chromium "$f"
+				done
+				;;
+
+			"java")
+
+				files=$(find "$DIR" -type f -name '*.java')
+				for f in $files; do
+					clang-format -i -style=Chromium "$f"
+				done
+				;;
+			"go")
+
+				files=$(find "$DIR" -type f -name '*.go' -not -path "./vendor/*")
+				for f in $files; do
+					gofmt -s -w "$f"
+					goimports -w "$f"
+				done
+				;;
+
+			"python")
+
+				yapf -p --style facebook -i -r "$DIR" 2> /dev/null
+				isort -ac -rc "$DIR" 2> /dev/null
+				;;
+
+			"sh")
+
+				shfmt -s -ci -sr -kp -w "$DIR" 2> /dev/null
+				;;
+
+			"terraform")
+
+				files=$(find "$DIR" -type f -name '*.tf')
+				for f in $files; do
+					terraform fmt "$f"
+				done
+				;;
+
+			"json")
+
+				files=$(find "$DIR" -type f -name '*.json')
+				for f in $files; do
+					jsonlint -f -o "$f" "$f"
+				done
+				;;
+		esac
 		;;
 
-	"cpp")
+		##############################################################################
+	"lint")
+		case "$LANGUAGE" in
+			"go")
 
-		files=$(find "$DIR" -type f -name '*.cpp' -o -name '*.h')
-		for f in $files; do
-			clang-format -i -style=Chromium "$f"
-		done
-		;;
+				# golint
+				[ -d "$DIR" ] && DIR="$DIR/..."
 
-	"java")
+				golint -min_confidence 0 "$DIR"
 
-		files=$(find "$DIR" -type f -name '*.java')
-		for f in $files; do
-			clang-format -i -style=Chromium "$f"
-		done
-		;;
-	"go")
+				# golangci with the rest
+				LINES=$("$HOME/.local/go/bin/golangci-lint" run --color never --enable-all -D golint,funlen,gomodguard --out-format tab | grep "$(basename "$DIR")" | sed "s/  */ /g" | sort -u)
 
-		files=$(find "$DIR" -type f -name '*.go' -not -path "./vendor/*")
-		for f in $files; do
-			gofmt -s -w "$f"
-			goimports -w "$f"
-		done
-		;;
+				while IFS= read -r line; do
 
-	"python")
-
-		yapf -p --style facebook -i -r "$DIR" 2>/dev/null
-		isort -ac -rc "$DIR" 2>/dev/null
-		;;
-
-	"sh")
-
-		shfmt -s -w "$DIR" 2>/dev/null
-		;;
-
-	"terraform")
-
-		files=$(find "$DIR" -type f -name '*.tf')
-		for f in $files; do
-			terraform fmt "$f"
-		done
-		;;
-
-	"json")
-
-		files=$(find "$DIR" -type f -name '*.json')
-		for f in $files; do
-			jsonlint -f -o "$f" "$f"
-		done
-		;;
-	esac
-	;;
-
-	##############################################################################
-"lint")
-	case "$LANGUAGE" in
-	"go")
-
-		# golint
-		[ -d "$DIR" ] && DIR="$DIR/..."
-
-		golint -min_confidence 0 "$DIR"
-
-		# golangci with the rest
-		LINES=$("$HOME/.local/go/bin/golangci-lint" run --color never --enable-all -D golint,funlen,gomodguard --out-format tab | grep "$(basename "$DIR")" | sed "s/  */ /g" | sort -u)
-
-		while IFS= read -r line; do
-
-			is_formatted=$(echo "$line" | cut -d " " -f1 | cut -d ":" -f3)
-			is_multiline=$(echo "$line" | cut -d ":" -f2 | grep -Eo "^[0-9]")
-			if [ -z "$is_formatted" ]; then
-				echo "$line" | awk '{$1=$1":0"; print}'
-			elif [ -n "$is_multiline" ]; then
-				echo "$line"
-			fi
-
-		done <<<"$LINES"
-
-		if [ -d "$DIR" ]; then
-			find "$DIR" -name -0 "*.go" | xargs -I{} go vet {} 2>&1 | grep -v "#"
-		else
-			go vet "$DIR" 2>&1 | grep -v "#" | sed 's/vet: //g'
-		fi
-
-		;;
-	"python")
-
-		# flake8 with plugins:
-		# flake8-awesome flake8-mypy flake8-docstrings
-		flake8 -j auto --max-line-length 80 "$DIR" 2>/dev/null
-		;;
-
-	"sh")
-
-		if [ -d "$DIR" ]; then
-
-			for file in $(find "$DIR" -type f -not -path "*.git*"); do
-
-				if file "$file" | grep -qi shell; then
-					# file is a shell script, we can shellcheck
-					shellcheck -o all -Cnever -Sstyle -a -f gcc -x "$file"
-					# checkbashisms -elnpfx "$file"
-				fi
-
-			done
-		else
-
-			shellcheck -o all -Cnever -Sstyle -a -f gcc -x "$DIR"
-			# checkbashisms -elnpfx "$DIR"
-		fi
-		;;
-
-	"yaml")
-
-		yamllint -d "{extends: default, rules: {line-length: disable, truthy: disable, key-duplicates: enable, comments: {min-spaces-from-content: 1}}}" --format parsable "$DIR"
-		;;
-
-	*"ansible"*)
-
-		DIR=$(realpath --relative-to="$(pwd)" "$DIR")
-
-		yamllint -d "{extends: default, rules: {line-length: disable, truthy: disable, key-duplicates: enable, comments: {min-spaces-from-content: 1}}}" --format parsable "$DIR"
-
-		ansible-lint -p --nocolor -x yaml 2>/dev/null
-
-		if [ -d "$DIR" ]; then
-			if [ -d "$DIR/tasks" ]; then
-				LINES=$(ansible-later tasks 2>&1)
-			else
-				LINES=$(ansible-later roles 2>&1)
-			fi
-		else
-			LINES=$(ansible-later "$DIR" 2>&1)
-		fi
-
-		while IFS= read -r line; do
-			if [ "$(echo "$line" | wc -c)" -lt 2 ]; then
-				continue
-			else
-				if ! echo "$line" | grep -q ERROR; then
-					if ! echo "$line" | grep -q WARN; then
-						echo "$line" | cut -c5-
+					is_formatted=$(echo "$line" | cut -d " " -f1 | cut -d ":" -f3)
+					is_multiline=$(echo "$line" | cut -d ":" -f2 | grep -Eo "^[0-9]")
+					if [ -z "$is_formatted" ]; then
+						echo "$line" | awk '{$1=$1":0"; print}'
+					elif [ -n "$is_multiline" ]; then
+						echo "$line"
 					fi
+
+				done <<< "$LINES"
+
+				if [ -d "$DIR" ]; then
+					find "$DIR" -name -0 "*.go" | xargs -I{} go vet {} 2>&1 | grep -v "#"
+				else
+					go vet "$DIR" 2>&1 | grep -v "#" | sed 's/vet: //g'
 				fi
-			fi
-		done <<<"$LINES"
+
+				;;
+			"python")
+
+				# flake8 with plugins:
+				# flake8-awesome flake8-mypy flake8-docstrings
+				flake8 -j auto --max-line-length 80 "$DIR" 2> /dev/null
+				;;
+
+			"sh")
+
+				if [ -d "$DIR" ]; then
+
+					for file in $(find "$DIR" -type f -not -path "*.git*"); do
+
+						if file "$file" | grep -qi shell; then
+							# file is a shell script, we can shellcheck
+							shellcheck -s sh -a -f gcc -o all -Sstyle -x -e SC2310,SC2311,SC2312 "$file"
+							bashate -i E002,E003,E010,E011 --max-line-length 120 "$file" | grep -v "bashate"
+							checkbashisms -elnpfx "$file"
+						fi
+
+					done
+				else
+
+					shellcheck -s sh -a -f gcc -o all -Sstyle -x -e SC2310,SC2311,SC2312 "$DIR"
+					bashate -i E002,E003,E010,E011 --max-line-length 120 "$DIR" | grep -v "bashate"
+					checkbashisms -elnpfx "$DIR"
+				fi
+				;;
+
+			"yaml")
+
+				yamllint -d "{extends: default, rules: {line-length: disable, truthy: disable, key-duplicates: enable, comments: {min-spaces-from-content: 1}}}" --format parsable "$DIR"
+				;;
+
+			*"ansible"*)
+
+				DIR=$(realpath --relative-to="$(pwd)" "$DIR")
+
+				yamllint -d "{extends: default, rules: {line-length: disable, truthy: disable, key-duplicates: enable, comments: {min-spaces-from-content: 1}}}" --format parsable "$DIR"
+
+				ansible-lint -p --nocolor -x yaml 2> /dev/null
+
+				if [ -d "$DIR" ]; then
+					if [ -d "$DIR/tasks" ]; then
+						LINES=$(ansible-later tasks 2>&1)
+					else
+						LINES=$(ansible-later roles 2>&1)
+					fi
+				else
+					LINES=$(ansible-later "$DIR" 2>&1)
+				fi
+
+				while IFS= read -r line; do
+					if [ "$(echo "$line" | wc -c)" -lt 2 ]; then
+						continue
+					else
+						if ! echo "$line" | grep -q ERROR; then
+							if ! echo "$line" | grep -q WARN; then
+								echo "$line" | cut -c5-
+							fi
+						fi
+					fi
+				done <<< "$LINES"
+				;;
+
+			"xml")
+
+				if [ -d "$DIR" ]; then
+
+					for file in $(find "$DIR" -type f -iname "*.xml"); do
+						# file is xml, we can xmllint
+						xmllint --noout "$file" --format 2>&1 | head -n1 | awk '{$1=$1"0:"; print}'
+					done
+
+				else
+
+					xmllint --noout "$DIR" --format 2>&1 | head -n1 | awk '{$1=$1"0:"; print}'
+
+				fi
+				;;
+
+			"json")
+
+				if [ -d "$DIR" ]; then
+					find "$DIR" -type f -0 -iname "*.json" | xargs -I {} jsonlint {}
+				else
+					jsonlint "$DIR" 2>&1 | head -n1
+				fi
+				;;
+
+			"markdown")
+
+				if [ -d "$DIR" ]; then
+					markdownlint $(find . -name '*.md' | grep -vF './.git')
+				else
+					markdownlint "$DIR" 2>&1
+				fi
+				;;
+
+		esac
 		;;
 
-	"xml")
+		##############################################################################
+	"tags")
 
-		if [ -d "$DIR" ]; then
+		rm -f tags
 
-			for file in $(find "$DIR" -type f -iname "*.xml"); do
-				# file is xml, we can xmllint
-				xmllint --noout "$file" --format 2>&1 | head -n1 | awk '{$1=$1"0:"; print}'
-			done
+		case "$LANGUAGE" in
 
-		else
+			"c")
 
-			xmllint --noout "$DIR" --format 2>&1 | head -n1 | awk '{$1=$1"0:"; print}'
+				ctags -R --exclude=/usr/include/boost --exclude=/usr/include/c++ . /usr/include/ "$HOME/.local/include/" -a
+				;;
 
-		fi
+			"cpp")
+
+				ctags -R --exclude=/usr/include/boost /usr/include/ . "$HOME/.local/include/" -a
+				;;
+
+			"go")
+
+				DIRS="/usr/lib/golang/src/"
+
+				if [ -d "$HOME/.local/go/pkg/" ]; then
+					DIRS="$DIRS $HOME/.local/go/pkg/"
+				fi
+				if [ -f "$GOPATH"/pkg/ ]; then
+					DIRS="$DIRS $GOPATH/pkg/"
+				fi
+				ctags -R . $DIRS -a
+				;;
+
+			"python")
+
+				version=$(python --version | cut -d' ' -f2 | cut -d'.' -f1,2)
+				DIRS="/usr/include/python$version/"
+
+				for i in $(cat requirements.txt); do
+					if [ -d "/usr/lib/python$version/site-packages/$i" ]; then
+						DIRS="$DIRS /usr/lib/python$version/site-packages/*$i*"
+					fi
+					if [ -d "/usr/lib64/python$version/site-packages/$i" ]; then
+						DIRS="$DIRS /usr/lib64/python$version/site-packages/*$i*"
+					fi
+					if [ -d "$HOME/.local/lib/python$version/site-packages/$i" ]; then
+						DIRS="$DIRS $HOME/.local/lib/python$version/site-packages/*$i*"
+					fi
+
+				done
+				ctags -R . $DIRS -a
+				;;
+
+			*"ansible")
+
+				version=$(ansible --version | grep 'python version' | awk '{print $4}' | cut -d'.' -f1,2)
+
+				DIRS=$(ls -ad /usr/lib*/python"$version"/site-packages/*ansible*)
+				ctags -R . $DIRS -a
+				;;
+			*)
+				ctags -R .
+				;;
+
+		esac
 		;;
-
-	"json")
-
-		if [ -d "$DIR" ]; then
-			find "$DIR" -type f -0 -iname "*.json" | xargs -I {} jsonlint {}
-		else
-			jsonlint "$DIR" 2>&1 | head -n1
-		fi
-		;;
-
-	esac
-	;;
-
-	##############################################################################
-"tags")
-
-	rm -f tags
-
-	case "$LANGUAGE" in
-
-	"c")
-
-		ctags -R --exclude=/usr/include/boost --exclude=/usr/include/c++ . /usr/include/ "$HOME/.local/include/" -a
-		;;
-
-	"cpp")
-
-		ctags -R --exclude=/usr/include/boost /usr/include/ . "$HOME/.local/include/" -a
-		;;
-
-	"go")
-
-		DIRS="/usr/lib/golang/src/"
-
-		if [ -d "$HOME/.local/go/pkg/" ]; then
-			DIRS="$DIRS $HOME/.local/go/pkg/"
-		fi
-		if [ -f "$GOPATH"/pkg/ ]; then
-			DIRS="$DIRS $GOPATH/pkg/"
-		fi
-		ctags -R . $DIRS -a
-		;;
-
-	"python")
-
-		version=$(python --version | cut -d' ' -f2 | cut -d'.' -f1,2)
-		DIRS="/usr/include/python$version/"
-
-		for i in $(cat requirements.txt); do
-			if [ -d "/usr/lib/python$version/site-packages/$i" ]; then
-				DIRS="$DIRS /usr/lib/python$version/site-packages/*$i*"
-			fi
-			if [ -d "/usr/lib64/python$version/site-packages/$i" ]; then
-				DIRS="$DIRS /usr/lib64/python$version/site-packages/*$i*"
-			fi
-			if [ -d "$HOME/.local/lib/python$version/site-packages/$i" ]; then
-				DIRS="$DIRS $HOME/.local/lib/python$version/site-packages/*$i*"
-			fi
-
-		done
-		ctags -R . $DIRS -a
-		;;
-
-	*"ansible")
-
-		version=$(ansible --version | grep 'python version' | awk '{print $4}' | cut -d'.' -f1,2)
-
-		DIRS=$(ls -ad /usr/lib*/python"$version"/site-packages/*ansible*)
-		ctags -R . $DIRS -a
-		;;
-	*)
-		ctags -R .
-		;;
-
-	esac
-	;;
 esac
