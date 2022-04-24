@@ -1,0 +1,199 @@
+---
+# vars file for my_apps
+#
+
+use_flatpaks: yes
+container_enabled: yes
+
+os_unused_modules: ""
+proc_mnt_options: "rw,nosuid,nodev,noexec,relatime,hidepid=1"
+unwanted_services:
+  - kdump.service
+  - nfs.service
+  - rexec.socket
+  - rlogin.socket
+  - rsh.socket
+  - slapd.service
+  - smb.service
+  - telnet.service
+  - tftp.service
+  - vsftpd.service
+unwanted_pkg:
+  - mcstrans
+  - rsh
+  - rsh-server
+  - setroubleshoot
+  - talk
+  - telnet-server
+  - tftp
+  - tftp-server
+  - xinetd
+  - ypserv
+
+pkg_mngr: "dnf"
+
+rpmfusion_packages:
+  - https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_facts.distribution_version }}.noarch.rpm
+  - https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_facts.distribution_version }}.noarch.rpm
+
+archive_packages:
+  - cabextract
+  - lzip
+  - p7zip
+  - p7zip-plugins
+  - unzip
+  - zstd
+
+virtualization_packages:
+  - "@virtualization"
+  - bridge-utils
+  - qemu-user-static
+
+terminal_packages:
+  - ShellCheck
+  - bash-completion
+  - binwalk
+  - clang
+  - clang-tools-extra
+  - ctags
+  - devscripts
+  - dos2unix
+  - file
+  - git
+  - git-credential-libsecret
+  - golang
+  - iproute
+  - iputils
+  - lsof
+  - make
+  - net-tools
+  - nmap
+  - openssl
+  - procps
+  - python3-pip
+  - sqlite
+  - stow
+  - tcpdump
+  - tig
+  - tree
+  # Cli packages
+  - rsync
+  - tmux
+  - vim
+  # miscrellanous
+  - acpi
+  - bc
+  - htop
+  - lm_sensors
+  - powertop
+  - python3.8
+  - syncthing
+  - wl-clipboard
+  - wmctrl
+  - xclip
+  - xdotool
+  - xlsclients
+
+codecs_packages:
+  - mpv
+  - compat-ffmpeg28
+  - compat-ffmpeg28-devel
+  - egl-utils
+  - egl-wayland
+  - flac
+  - ffmpeg
+  - ffmpeg-libs
+  - gstreamer1-libav
+  - gstreamer1-plugins-bad-free
+  - gstreamer1-plugins-bad-freeworld
+  - gstreamer1-plugins-base
+  - gstreamer1-plugins-base-tools
+  - gstreamer1-plugins-good
+  - gstreamer1-plugins-good-extras
+  - gstreamer1-plugins-ugly
+  - gstreamer1-plugins-ugly-free
+  - gstreamer1-svt-av1
+  - gstreamer1-svt-vp9
+  - gstreamer1-vaapi
+  - intel-media-driver
+  - libva-devel
+  - libva-intel-driver
+  - libva-intel-hybrid-driver
+  - libva-utils
+  - libva-vdpau-driver
+  - libvdpau-va-gl
+  - mesa-dri-drivers
+
+### gnome-extensions-app gnome-tweaks
+my_packages:
+  - flatpak
+  - nautilus
+  - nautilus-extensions
+  # Terminal stuff
+  - git
+  - git-credential-libsecret
+  - htop
+  - openssl
+  - vim
+  # Generic X utility
+  - libappindicator-gtk3
+  - wl-clipboard
+  - wmctrl
+  - xclip
+  - xdotool
+  - xlsclients
+
+debloat_pkg:
+  - abrt
+  - abrt-addon-ccpp
+  - abrt-addon-kerneloops
+  - abrt-addon-pstoreoops
+  - abrt-addon-vmcore
+  - abrt-addon-xorg
+  - abrt-cli
+  - abrt-dbus
+  - abrt-desktop
+  - abrt-gui
+  - abrt-gui-libs
+  - abrt-java-connector
+  - abrt-libs
+  - abrt-plugin-bodhi
+  - abrt-retrace-client
+  - abrt-tui
+  - anaconda-install-env-deps
+  - evolution
+  - evolution-ews
+  - fedora-logos-httpd
+  - gnome-documents
+  - gnome-maps
+  - gnome-online-miners
+  - gnome-photos
+  - gnome-shell-extension-background-logo
+  - httpd
+  - hyperv-daemons
+  - hyperv-daemons-license
+  - hypervfcopyd
+  - hypervkvpd
+  - hypervvssd
+  - open-vm-tools-desktop
+  - qemu-guest-agent
+  - rsyslog
+  - spice-vdagent
+  - vim-minimal
+  - virtualbox-guest-additions
+  - yelp
+
+power_management_packages:
+  - acpi
+  - hdparm
+  - kernel-tools
+  - power-profiles-daemon # TLP removed to use this
+  - lm_sensors
+  - msr-tools
+  - powertop
+
+cpupower_pkg: "kernel-tools"
+
+power_management_service:
+  - power-profiles-daemon
+  - powertop

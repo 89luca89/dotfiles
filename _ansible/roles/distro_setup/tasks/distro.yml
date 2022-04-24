@@ -2,9 +2,7 @@
 # tasks file to setup become,distro to my liking
 
 - name: Install Power Management (Laptop)
-  package:
-    state: present
-    name: "{{ power_management_packages }}"
+  shell: "pkcon -y --allow-reinstall install {{ power_management_packages | join(' ') }}"
   tags: become,distro,powersave
 
 - name: Disable WIFI Mac address randomization on scan
@@ -192,7 +190,7 @@
     (grub_setup is defined and grub_setup.changed) or
     (lvm_setup is defined and lvm_setup.changed) or
     (crypt_setup is defined and crypt_setup.changed))
-    and ansible_os_family == "RedHat"
+    and (ansible_os_family == "RedHat" or ansible_os_family == "Suse")
   tags: become,distro,grub
 
 - name: Update Grub and Initramfs /Debian

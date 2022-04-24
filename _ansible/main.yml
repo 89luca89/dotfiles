@@ -8,7 +8,7 @@
   gather_facts: True
 
   vars_files:
-    - "vars/distribution/{{ ansible_distribution }}.yml"
+    - "vars/distribution/{{ ansible_distribution  | replace(' ', '_')}}.yml"
 
   pre_tasks:
 
