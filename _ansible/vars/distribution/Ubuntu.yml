@@ -30,8 +30,6 @@ unwanted_pkg:
   - xinetd
   - ypserv
 
-pkg_mngr: "apt"
-
 archive_packages:
   - cabextract
   - lzip

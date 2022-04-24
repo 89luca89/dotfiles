@@ -30,105 +30,19 @@ unwanted_pkg:
   - xinetd
   - ypserv
 
-pkg_mngr: "dnf"
-
-rpmfusion_packages:
-  - https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_facts.distribution_version }}.noarch.rpm
-  - https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_facts.distribution_version }}.noarch.rpm
-
-archive_packages:
-  - cabextract
-  - lzip
-  - p7zip
-  - p7zip-plugins
-  - unzip
-  - zstd
-
 virtualization_packages:
-  - "@virtualization"
   - bridge-utils
-  - qemu-user-static
-
-terminal_packages:
-  - ShellCheck
-  - bash-completion
-  - binwalk
-  - clang
-  - clang-tools-extra
-  - ctags
-  - devscripts
-  - dos2unix
-  - file
-  - git
-  - git-credential-libsecret
-  - golang
-  - iproute
-  - iputils
-  - lsof
-  - make
-  - net-tools
-  - nmap
-  - openssl
-  - procps
-  - python3-pip
-  - sqlite
-  - stow
-  - tcpdump
-  - tig
-  - tree
-  # Cli packages
-  - rsync
-  - tmux
-  - vim
-  # miscrellanous
-  - acpi
-  - bc
-  - htop
-  - lm_sensors
-  - powertop
-  - python3.8
-  - syncthing
-  - wl-clipboard
-  - wmctrl
-  - xclip
-  - xdotool
-  - xlsclients
-
-codecs_packages:
-  - mpv
-  - compat-ffmpeg28
-  - compat-ffmpeg28-devel
-  - egl-utils
-  - egl-wayland
-  - flac
-  - ffmpeg
-  - ffmpeg-libs
-  - gstreamer1-libav
-  - gstreamer1-plugins-bad-free
-  - gstreamer1-plugins-bad-freeworld
-  - gstreamer1-plugins-base
-  - gstreamer1-plugins-base-tools
-  - gstreamer1-plugins-good
-  - gstreamer1-plugins-good-extras
-  - gstreamer1-plugins-ugly
-  - gstreamer1-plugins-ugly-free
-  - gstreamer1-svt-av1
-  - gstreamer1-svt-vp9
-  - gstreamer1-vaapi
-  - intel-media-driver
-  - libva-devel
-  - libva-intel-driver
-  - libva-intel-hybrid-driver
-  - libva-utils
-  - libva-vdpau-driver
-  - libvdpau-va-gl
-  - mesa-dri-drivers
+  - libvirt-client
+  - libvirt-daemon
+  - qemu-kvm
+  - qemu-linux-user
+  - virt-manager
+  - virt-viewer
+  - virt-install
 
 my_packages:
-  - flatpak
-  - nautilus
-    # - transactional-update
-    # - transactional-update-zypp-config
+  - transactional-update
+  - transactional-update-zypp-config
 
 power_management_packages:
   - acpi

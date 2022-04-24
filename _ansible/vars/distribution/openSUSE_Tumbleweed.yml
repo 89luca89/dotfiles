@@ -30,12 +30,6 @@ unwanted_pkg:
   - xinetd
   - ypserv
 
-pkg_mngr: "dnf"
-
-rpmfusion_packages:
-  - https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_facts.distribution_version }}.noarch.rpm
-  - https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_facts.distribution_version }}.noarch.rpm
-
 archive_packages:
   - cabextract
   - lzip
@@ -45,9 +39,14 @@ archive_packages:
   - zstd
 
 virtualization_packages:
-  - "@virtualization"
   - bridge-utils
-  - qemu-user-static
+  - libvirt-client
+  - libvirt-daemon
+  - qemu-kvm
+  - qemu-linux-user
+  - virt-manager
+  - virt-viewer
+  - virt-install
 
 terminal_packages:
   - ShellCheck
