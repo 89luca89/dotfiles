@@ -19,12 +19,24 @@
   tags: virtualization,become
 
 - name: Install virtualization packages / Suse
-  shell: "pkcon -y --allow-reinstall install {{ virtualization_packages | join(' ') }}"
+  shell: "pkcon refresh; pkcon -y install {{ virtualization_packages | join(' ') }}"
   become: yes
+  retries: 3
+  delay: 30
+  register: result
+  until: result is not failed
+  changed_when: not result.stdout | regex_search('already installed')
+  failed_when: result.rc != 0 and (not result.stdout | regex_search('already installed'))
   when: ansible_os_family | lower | regex_search('suse')
   tags: virtualization,become
 
 - name: Install Main Programs
-  shell: "pkcon -y --allow-reinstall install {{ my_packages | join(' ') }}"
+  shell: "pkcon refresh; pkcon -y install {{ my_packages | join(' ') }}"
   become: yes
+  retries: 3
+  delay: 30
+  register: result
+  until: result is not failed
+  changed_when: not result.stdout | regex_search('already installed')
+  failed_when: result.rc != 0 and (not result.stdout | regex_search('already installed'))
   tags: desktop_packages,become
