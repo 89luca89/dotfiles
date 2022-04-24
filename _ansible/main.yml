@@ -17,6 +17,7 @@
       register: inside_container
       failed_when: no
       changed_when: no
+      become: yes
       tags: always
 
     - name: Set fact container

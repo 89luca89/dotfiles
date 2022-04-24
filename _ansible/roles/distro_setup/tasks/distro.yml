@@ -190,7 +190,7 @@
     (grub_setup is defined and grub_setup.changed) or
     (lvm_setup is defined and lvm_setup.changed) or
     (crypt_setup is defined and crypt_setup.changed))
-    and (ansible_os_family == "RedHat" or ansible_os_family == "Suse")
+    and (ansible_os_family == "RedHat" or (ansible_os_family | lower | regex_search('suse')))
   tags: become,distro,grub
 
 - name: Update Grub and Initramfs /Debian
