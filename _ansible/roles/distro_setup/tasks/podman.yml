@@ -18,13 +18,12 @@
       command: apt update
       changed_when: no
 
-  when: ansible_os_family == "Debian"
-  tags: podman,become
+    - name: Install podman
+      package:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - podman
 
-- name: Install podman
-  package:
-    name: "{{ item }}"
-    state: present
-  with_items:
-    - podman
+  when: ansible_os_family == "Debian"
   tags: podman,become

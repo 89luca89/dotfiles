@@ -30,6 +30,8 @@ unwanted_pkg:
   - xinetd
   - ypserv
 
+pkg_mngr_install: pkcon refresh; pkcon install -y
+
 virtualization_packages:
   - bridge-utils
   - libvirt-client

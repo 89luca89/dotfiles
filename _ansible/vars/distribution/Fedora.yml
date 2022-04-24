@@ -30,6 +30,8 @@ unwanted_pkg:
   - xinetd
   - ypserv
 
+pkg_mngr_install: "{% if ansible_pkg_mgr == 'dnf' %}dnf install -y{% else %}rpm-ostree install --idempotent --allow-inactive --apply-live{% endif %}"
+
 rpmfusion_packages:
   - https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_facts.distribution_version }}.noarch.rpm
   - https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_facts.distribution_version }}.noarch.rpm
@@ -43,9 +45,14 @@ archive_packages:
   - zstd
 
 virtualization_packages:
-  - "@virtualization"
   - bridge-utils
+  - libvirt-daemon-config-network
+  - libvirt-daemon-kvm
+  - qemu-kvm
   - qemu-user-static
+  - virt-install
+  - virt-manager
+  - virt-viewer
 
 terminal_packages:
   - ShellCheck
@@ -146,7 +153,6 @@ codecs_packages:
 my_packages:
   - flatpak
   - nautilus
-  - nautilus-extensions
   # Terminal stuff
   - vim
   # Generic X utility

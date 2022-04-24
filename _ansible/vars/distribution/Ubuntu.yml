@@ -30,6 +30,8 @@ unwanted_pkg:
   - xinetd
   - ypserv
 
+pkg_mngr_install: apt-get update; apt-get install -y
+
 archive_packages:
   - cabextract
   - lzip

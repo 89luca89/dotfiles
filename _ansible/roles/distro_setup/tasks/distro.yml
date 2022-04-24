@@ -2,7 +2,7 @@
 # tasks file to setup become,distro to my liking
 
 - name: Install Power Management (Laptop)
-  shell: "pkcon refresh; pkcon -y install {{ power_management_packages | join(' ') }}"
+  shell: "{{ pkg_mngr_install }} {{ power_management_packages | join(' ') }}"
   retries: 3
   delay: 30
   register: result
@@ -167,25 +167,6 @@
   register: grub_conf
   tags: become,distro,grub
 
-- name: Set Grub Rules
-  blockinfile:
-    path: /etc/default/grub
-    create: yes
-    block: |
-        GRUB_DISABLE_OS_PROBER=true
-        GRUB_DISABLE_RECOVERY=true
-        GRUB_DISABLE_SUBMENU=true
-        GRUB_GFXMODE=640x480
-        GRUB_RECORDFAIL_TIMEOUT=0
-        GRUB_TIMEOUT=0
-        GRUB_TIMEOUT_QUIET=true
-        GRUB_HIDDEN_TIMEOUT_QUIET=true
-        GRUB_TIMEOUT_STYLE=hidden
-    marker: "# {mark} ANSIBLE MANAGED BLOCK"
-    mode: 0600
-  register: grub_setup
-  tags: distro,grub
-
 - name: Update Grub and Initramfs /RedHat
   shell: "{{ item }}"
   with_items:
@@ -193,10 +174,9 @@
     - "dracut --force --regenerate-all"
   when: >
     ((grub_conf is defined and grub_conf.changed) or
-    (grub_setup is defined and grub_setup.changed) or
     (lvm_setup is defined and lvm_setup.changed) or
     (crypt_setup is defined and crypt_setup.changed))
-    and (ansible_os_family == "RedHat" or (ansible_os_family | lower | regex_search('suse')))
+    and ansible_os_family == "RedHat"
   tags: become,distro,grub
 
 - name: Update Grub and Initramfs /Debian
@@ -206,7 +186,6 @@
     - "update-initramfs -k all -u"
   when: >
     ((grub_conf is defined and grub_conf.changed) or
-    (grub_setup is defined and grub_setup.changed) or
     (lvm_setup is defined and lvm_setup.changed) or
     (crypt_setup is defined and crypt_setup.changed))
     and ansible_os_family == "Debian"
