@@ -23,7 +23,7 @@ Plug 'ap/vim-buftabline'
 Plug 'yggdroot/indentLine'
 " colorscheme
 Plug 'cormacrelf/vim-colors-github'
-Plug 'tomasr/molokai'
+Plug 'sainnhe/sonokai'
 " Fzf
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
@@ -40,9 +40,6 @@ set termguicolors
 set background=dark
 set t_Co=256
 set t_ut=
-colorscheme molokai
-highlight link myFunction Function
-highlight link myDeclaration Identifier
 augroup general
     autocmd! general
     " When editing a file, always jump to the last known cursor position.
@@ -53,6 +50,7 @@ augroup general
     "keep equal proportions when windows resized
     autocmd VimResized * wincmd =
     " Strip whitespaces and extra newlines
+    autocmd BufNewFile,BufFilePre,BufRead *.md set conceallevel=0
     autocmd BufWritePre * if &ft!~?'markdown'|%s/\($\n\s*\)\+\%$//e|endif
     autocmd BufWritePre * if &ft!~?'markdown'|%s/\s\+$//e|endif
     " Custom syntax highlight
@@ -119,7 +117,7 @@ augroup autoformat_settings
     autocmd FileType go           nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!gofmt -s %<CR>:%!goimports %<CR>:loadview<CR>
     autocmd FileType json         nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!jq .<CR>
     autocmd FileType python       nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!yapf --style=facebook %<CR>:w<CR>:%!isort --ac --float-to-top -d %<CR>:loadview<CR>
-    autocmd FileType sh           nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!shfmt -s %<CR>:loadview<CR>
+    autocmd FileType sh           nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!shfmt -s -ci -sr -kp %<CR>:loadview<CR>
     autocmd FileType terraform    nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:!terraform fmt %<CR>:loadview<CR><CR>
 augroup end
 " LSP SETUP --------------------------------------------------------------------
@@ -146,6 +144,7 @@ let g:ale_lint_on_enter = 0
 let g:ale_lint_on_text_changed = 0
 let g:ale_lint_on_save  = 1
 let g:ale_yaml_yamllint_options = '-d "{extends: default, rules: {line-length: disable, truthy: disable, key-duplicates: enable, comments: {min-spaces-from-content: 1}}}"'
+let g:ale_sh_bashate_options = '-i E002,E003,E010,E011 --max-line-length 120'
 let g:lsc_auto_completeopt='menu,menuone,popup,noselect,noinsert'
 let g:lsc_server_commands  = {
             \ 'c' : 'clangd',
@@ -168,15 +167,33 @@ endfunction
 function! Rename(old, new)
     call system("grep -rl " . shellescape(a:old) . " | xargs -P9 -I{} sed -i 's/" . shellescape(a:old) . "/" . shellescape(a:new) . "/g' {}")
 endfunction
-function! ToggleTheme()
-    if &background == 'light'
-        set background=dark
-        colorscheme molokai
-    else
-        set background=light
-        colorscheme github
-    endif
+function! SetDark()
+    set background=dark
+    colorscheme sonokai
     highlight link myFunction Function
     highlight link myDeclaration Identifier
     silent! edit
 endfunction
+function! SetLight()
+    set background=light
+    colorscheme github
+    highlight link myFunction Function
+    highlight link myDeclaration Identifier
+    silent! edit
+endfunction
+function! s:set_bg(timer_id)
+    silent call system("grep -q 'light' ~/.local/share/current_theme")
+    if v:shell_error == 0
+        if &background != 'light' || a:timer_id == 0
+            call SetLight()
+        endif
+    else
+        if &background == 'light' || a:timer_id == 0
+            call SetDark()
+        endif
+    endif
+endfun
+" Execute bg_sync every 5 seconds
+silent call timer_start(1000 * 5, function('s:set_bg'), {'repeat': -1})
+" Execute now to set theme
+silent call s:set_bg(0)
