@@ -124,12 +124,11 @@ codecs_packages:
   - libvdpau-va-gl
   - mesa-dri-drivers
 
-### gnome-extensions-app gnome-tweaks
 my_packages:
   - flatpak
   - nautilus
-  - transactional-update
-  - transactional-update-zypp-config
+    # - transactional-update
+    # - transactional-update-zypp-config
 
 power_management_packages:
   - acpi

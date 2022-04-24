@@ -22,6 +22,14 @@
   become: yes
   tags: terminal,python,become
 
+- name: Export Programs
+  shell: |
+    mkdir -p {{ ansible_env.HOME }}/.local/bin-distrobox
+    distrobox-export --bin $(which {{ item }}) --export-path {{ ansible_env.HOME }}/.local/bin-distrobox
+  with_items: "{{ export_packages }}"
+  become: no
+  tags: terminal,export,become
+
 - name: Install Programs (PIP Packages) - pip
   shell: 'pip3 install --user {{ item }} | sed "s/Requirement already satisfied.*//g"'
   register: pip_output

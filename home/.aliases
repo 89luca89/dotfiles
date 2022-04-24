@@ -103,6 +103,7 @@ export PATH=$HOME/.local/go/bin:$PATH
 export PATH=$HOME/bin:$PATH
 export PATH=$PATH:$GOPATH/bin
 export PATH=$PATH:$RUSTUP_HOME/bin
+export PATH=$PATH:/home/luca-linux/.local/bin-distrobox/
 export XDG_DESKTOP_DIR="$HOME/Desktop"
 export XDG_DOCUMENTS_DIR="$HOME/Documents"
 export XDG_DOWNLOAD_DIR="$HOME/Downloads"

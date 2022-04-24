@@ -92,6 +92,21 @@ terminal_packages:
   - xclip
   - xdotool
 
+export_packages:
+  - acpi
+  - bc
+  - git
+  - lm_sensors
+  - nmap
+  - syncthing
+  - tig
+  - tree
+  - wl-clipboard
+  - wmctrl
+  - xclip
+  - xdotool
+  - xlsclients
+
 codecs_packages:
   - ffmpeg
   - flac
@@ -118,16 +133,6 @@ codecs_packages:
 my_packages:
   - flatpak
   - nautilus
-  # Terminal stuff
-  - git
-  - openssl
-  - vim
-  # Generic X utility
-  - wl-clipboard
-  - wmctrl
-  - x11-utils
-  - xclip
-  - xdotool
 
 debloat_pkg:
   - apport

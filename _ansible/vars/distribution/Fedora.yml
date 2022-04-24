@@ -93,6 +93,28 @@ terminal_packages:
   - xdotool
   - xlsclients
 
+export_packages:
+  - 7z
+  - 7za
+  - acpi
+  - bc
+  - cabextract
+  - git
+  - nmap
+  - sensors
+  - sensors-detect
+  - syncthing
+  - tig
+  - tree
+  - unzip
+  - wl-copy
+  - wl-paste
+  - wmctrl
+  - xclip
+  - xdotool
+  - xlsclients
+  - zstd
+
 codecs_packages:
   - mpv
   - compat-ffmpeg28
@@ -123,70 +145,18 @@ codecs_packages:
   - libvdpau-va-gl
   - mesa-dri-drivers
 
-### gnome-extensions-app gnome-tweaks
 my_packages:
   - flatpak
   - nautilus
   - nautilus-extensions
   # Terminal stuff
-  - git
-  - git-credential-libsecret
-  - openssl
   - vim
   # Generic X utility
   - libappindicator-gtk3
-  - wl-clipboard
-  - wmctrl
-  - xclip
-  - xdotool
-  - xlsclients
-
-debloat_pkg:
-  - abrt
-  - abrt-addon-ccpp
-  - abrt-addon-kerneloops
-  - abrt-addon-pstoreoops
-  - abrt-addon-vmcore
-  - abrt-addon-xorg
-  - abrt-cli
-  - abrt-dbus
-  - abrt-desktop
-  - abrt-gui
-  - abrt-gui-libs
-  - abrt-java-connector
-  - abrt-libs
-  - abrt-plugin-bodhi
-  - abrt-retrace-client
-  - abrt-tui
-  - anaconda-install-env-deps
-  - evolution
-  - evolution-ews
-  - fedora-logos-httpd
-  - gnome-documents
-  - gnome-maps
-  - gnome-online-miners
-  - gnome-photos
-  - gnome-shell-extension-background-logo
-  - httpd
-  - hyperv-daemons
-  - hyperv-daemons-license
-  - hypervfcopyd
-  - hypervkvpd
-  - hypervvssd
-  - open-vm-tools-desktop
-  - qemu-guest-agent
-  - rsyslog
-  - spice-vdagent
-  - vim-minimal
-  - virtualbox-guest-additions
-  - yelp
 
 power_management_packages:
-  - acpi
-  - hdparm
   - kernel-tools
   - power-profiles-daemon # TLP removed to use this
-  - lm_sensors
   - msr-tools
   - powertop
 
