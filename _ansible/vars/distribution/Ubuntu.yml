@@ -120,7 +120,6 @@ my_packages:
   - nautilus
   # Terminal stuff
   - git
-  - htop
   - openssl
   - vim
   # Generic X utility

@@ -83,7 +83,6 @@ terminal_packages:
   # miscrellanous
   - acpi
   - bc
-  - htop
   - lm_sensors
   - powertop
   - python3.8
@@ -132,7 +131,6 @@ my_packages:
   # Terminal stuff
   - git
   - git-credential-libsecret
-  - htop
   - openssl
   - vim
   # Generic X utility
