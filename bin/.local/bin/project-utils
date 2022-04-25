@@ -131,7 +131,7 @@ case "$COMMAND" in
 							# file is a shell script, we can shellcheck
 							shellcheck -s sh -a -f gcc -o all -Sstyle -x -e SC2310,SC2311,SC2312 "$file"
 							bashate -i E002,E003,E010,E011 --max-line-length 120 "$file" | grep -v "bashate"
-							checkbashisms -elnpfx "$file"
+							# checkbashisms -elnpfx "$file"
 						fi
 
 					done
@@ -139,7 +139,7 @@ case "$COMMAND" in
 
 					shellcheck -s sh -a -f gcc -o all -Sstyle -x -e SC2310,SC2311,SC2312 "$DIR"
 					bashate -i E002,E003,E010,E011 --max-line-length 120 "$DIR" | grep -v "bashate"
-					checkbashisms -elnpfx "$DIR"
+					# checkbashisms -elnpfx "$DIR"
 				fi
 				;;
 
