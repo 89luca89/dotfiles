@@ -133,6 +133,10 @@ codecs_packages:
 my_packages:
   - flatpak
   - nautilus
+  - seahorse
+  # - radeontop
+  # - touchegg
+  # - v4l2loopback
 
 debloat_pkg:
   - apport

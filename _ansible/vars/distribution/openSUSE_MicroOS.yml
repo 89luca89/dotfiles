@@ -45,6 +45,10 @@ virtualization_packages:
 my_packages:
   - transactional-update
   - transactional-update-zypp-config
+  - seahorse
+  # - radeontop
+  # - touchegg
+  # - v4l2loopback
 
 power_management_packages:
   - acpi

@@ -153,10 +153,11 @@ codecs_packages:
 my_packages:
   - flatpak
   - nautilus
-  # Terminal stuff
-  - vim
-  # Generic X utility
   - libappindicator-gtk3
+  - seahorse
+  # - radeontop
+  # - touchegg
+  # - v4l2loopback
 
 power_management_packages:
   - kernel-tools
