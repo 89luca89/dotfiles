@@ -14,6 +14,7 @@ if ! command -v git >/dev/null ||
 	sudo $PKG install -y git ansible sshpass
 fi
 
+export ANSIBLE_HOST_KEY_CHECKING=False
 # ansible-playbook -i localhost, -c local -K "$DIR"/main.yml --diff $*
 ansible-playbook -i localhost, -kK "$DIR"/main.yml  --diff $*
 ansible-playbook -i localhost, -c local "$DIR"/main.yml  --diff $*
