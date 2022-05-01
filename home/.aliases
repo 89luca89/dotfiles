@@ -53,7 +53,7 @@ update() {
 		fi
 		flatpak uninstall --user --unused
 	fi
-	vim +PlugUpdate +PlugInstall! +qall
+	vim -u ~/.vimrc +PlugUpdate +PlugInstall! +qall
 }
 update-grub() {
 	CONFS=$(sudo find /boot -name "grub.cfg")
@@ -73,7 +73,7 @@ alias cp='cp --reflink=auto'
 alias batinfo="grep --color . /sys/class/power_supply/BAT*/{capacity,energy_now,energy_full,energy_full_design,status,cycle_count,charge_start_threshold,charge_stop_threshold}"
 alias batsave="echo 55 | sudo tee /sys/class/power_supply/BAT0/charge_start_threshold && echo 65 | sudo tee /sys/class/power_supply/BAT0/charge_stop_threshold"
 alias batstretch="echo 0 | sudo tee /sys/class/power_supply/BAT0/charge_start_threshold && echo 100 | sudo tee /sys/class/power_supply/BAT0/charge_stop_threshold"
-alias gnome-reload='DISPLAY=:0 xdotool key Alt+F2; sleep 1; DISPLAY=:0 xdotool key r;DISPLAY=:0  xdotool key Return'
+alias gnome-reload='xdotool key Alt+F2; sleep 1; xdotool key r; xdotool key Return'
 alias ll='ls -Ahl --group-directories-first --color'
 alias open='xdg-open'
 alias rsyncthingD='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync --usermap=$(id -ru):1000 --groupmap=$(id -rg):1000 --archive --verbose --inplace --no-compress --progress --partial --delete -e "ssh -J jump" --exclude={.stversions,*.tmp}  root@raspberrypi-1:/usr/local/mnt/Vault/Syncthing/ ~/Syncthing/ && cd -'
