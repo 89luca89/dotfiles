@@ -2,7 +2,18 @@
 ---
 
 - name: Install host packages
-  shell: "{{ pkg_mngr_install }} {{ virtualization_packages | join(' ') }} {{ my_packages | join(' ') }}"
+  shell: "{{ pkg_mngr_install }} {{ my_packages | join(' ') }}"
+  become: yes
+  retries: 3
+  delay: 30
+  register: result
+  until: result is not failed
+  changed_when: not result.stdout | regex_search('already installed')
+  failed_when: result.rc != 0 and (not result.stdout | regex_search('already installed'))
+  tags: packages,become
+
+- name: Install virt packages
+  shell: "{{ pkg_mngr_install }} {{ virtualization_packages | join(' ') }}"
   become: yes
   retries: 3
   delay: 30

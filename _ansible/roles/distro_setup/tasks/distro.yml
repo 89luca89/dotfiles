@@ -134,6 +134,16 @@
   when: crypt_file.stat.exists
   tags: become,distro
 
+- name: Deploy Crypttab Performance Flags /2
+  replace:
+    path: /etc/crypttab
+    regexp: 'x-initrd.attach$'
+    replace: 'x-initrd.attach,discard,no-read-workqueue,no-write-workqueue'
+    backup: yes
+  register: crypt_setup
+  when: crypt_file.stat.exists
+  tags: become,distro
+
 - name: Deploy Grub Flags
   replace:
     path: /etc/default/grub

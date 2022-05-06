@@ -30,24 +30,17 @@ unwanted_pkg:
   - xinetd
   - ypserv
 
-pkg_mngr_install: pkcon refresh; pkcon install -y
+pkg_mngr_install: tukit --continue execute zypper in -y --recommends
 
 virtualization_packages:
-  - bridge-utils
-  - libvirt-client
-  - libvirt-daemon
-  - qemu-kvm
-  - qemu-linux-user
-  - virt-manager
-  - virt-viewer
-  - virt-install
+  - -t pattern kvm_server kvm_tools
 
 my_packages:
-  - transactional-update
-  - transactional-update-zypp-config
+  # - transactional-update
+  # - transactional-update-zypp-config
   - seahorse
-  # - radeontop
-  # - touchegg
+  - radeontop
+  - touchegg
   # - v4l2loopback
 
 power_management_packages:
