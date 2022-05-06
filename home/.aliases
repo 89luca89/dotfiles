@@ -45,6 +45,8 @@ update() {
 	elif command -v dnf; then
 		~/bin/kernel-update
 		sudo dnf upgrade --refresh
+	elif command -v zypper; then
+		sudo tukit --discard --continue execute zypper dup
 	fi
 	if command -v flatpak; then
 		if ! flatpak update --user; then
@@ -53,7 +55,7 @@ update() {
 		fi
 		flatpak uninstall --user --unused
 	fi
-	vim -u ~/.vimrc +PlugUpdate +PlugInstall! +qall
+	~/.vim/vim -u ~/.vimrc +PlugUpdate +PlugInstall! +qall
 }
 update-grub() {
 	CONFS=$(sudo find /boot -name "grub.cfg")
