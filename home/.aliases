@@ -82,7 +82,7 @@ alias rsyncthingD='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname 
 alias rsyncthingS='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync --usermap=$(id -ru):1000 --groupmap=$(id -rg):1000 --archive --verbose --inplace --no-compress --progress --partial --delete -e "ssh -J jump" --exclude={.stversions,*.tmp}  ~/Syncthing/ root@raspberrypi-1:/usr/local/mnt/Vault/Syncthing/ && cd -'
 alias saml2aws='saml2aws --disable-keychain'
 alias top='top -o %CPU'
-alias htop='top -o %CPU'
+alias update-microos='sudo tukit --discard --continue execute sh -c "zypper dup && grub2-mkconfig -o /boot/grub2/grub.cfg && grub2-mkconfig -o /boot/efi/EFI/opensuse/grub.cfg && dracut --force --regenerate-all"'
 alias vi='vim -u ~/.vimrc-minimal'
 if [ ! -e /run/.containerenv ] && [ ! -e /.dockerenv ]; then
 	alias vim='/usr/bin/vim -u ~/.vimrc-minimal'
