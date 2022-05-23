@@ -5,12 +5,18 @@
 use_flatpaks: yes
 
 flatpak_packages:
-  # - com.slack.Slack
   - us.zoom.Zoom
+  # - com.slack.Slack
+  - app/org.gimp.GIMP/x86_64/stable
+  - com.github.jeromerobert.pdfarranger
   - com.github.tchx84.Flatseal
+  - im.riot.Riot
+  - io.mpv.Mpv
+  - org.chromium.Chromium
   - org.gnome.Calculator
   - org.gnome.Calendar
   - org.gnome.Characters
+  - org.gnome.Cheese
   - org.gnome.Connections
   - org.gnome.Contacts
   - org.gnome.Evince
@@ -26,16 +32,12 @@ flatpak_packages:
   - org.gnome.eog
   - org.gnome.font-viewer
   - org.gnome.gedit
+  - org.gnome.gitlab.somas.Apostrophe
   - org.libreoffice.LibreOffice
-  - org.chromium.Chromium
-  - org.chromium.Chromium.Codecs
-  # - org.mozilla.firefox
   - org.mozilla.Thunderbird
+  - org.mozilla.firefox
   - org.signal.Signal
   - org.telegram.desktop
-  - io.mpv.Mpv
-  - app/org.gimp.GIMP/x86_64/stable
-  - com.github.jeromerobert.pdfarranger
   # - com.github.polymeilex.neothesia
   - com.jgraph.drawio.desktop
   - de.haeckerfelix.Fragments

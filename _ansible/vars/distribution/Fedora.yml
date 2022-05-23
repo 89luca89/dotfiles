@@ -75,7 +75,6 @@ terminal_packages:
   - nmap
   - openssl
   - procps
-  - python3-pip
   - sqlite
   - stow
   - tcpdump
@@ -90,13 +89,18 @@ terminal_packages:
   - bc
   - lm_sensors
   - powertop
-  - python3.8
   - syncthing
   - wl-clipboard
   - wmctrl
   - xclip
   - xdotool
   - xlsclients
+
+python_packages:
+  - python3
+  - python3-pip
+  - python3-wheel
+  - python3-devel
 
 export_packages:
   - 7z

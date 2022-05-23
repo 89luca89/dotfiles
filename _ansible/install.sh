@@ -10,6 +10,7 @@ elif command -v apt >/dev/null; then
 fi
 
 if ! command -v git >/dev/null ||
+	 ! command -v sshpass >/dev/null ||
 	 ! command -v ansible >/dev/null; then
 	sudo $PKG install -y git ansible sshpass
 fi

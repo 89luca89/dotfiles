@@ -73,7 +73,6 @@ terminal_packages:
   - nmap
   - openssl
   - procps
-  - python3-pip
   - shellcheck
   - stow
   - tcpdump
@@ -91,6 +90,12 @@ terminal_packages:
   - x11-utils
   - xclip
   - xdotool
+
+python_packages:
+  - python3
+  - python3-pip
+  - python3-wheel
+  - python3-dev
 
 export_packages:
   - acpi

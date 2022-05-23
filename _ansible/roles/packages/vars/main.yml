@@ -5,6 +5,8 @@
 python_packages:
   - python3
   - python3-pip
+  - python3-wheel
+  - python3-devel
 
 python_modules:
   - "python-lsp-server[all]"
@@ -21,6 +23,7 @@ python_modules:
   - psutil
   - six
   - yamllint
+  - bashate
 
 golang_packages:
   - golang

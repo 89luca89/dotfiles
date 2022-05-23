@@ -30,10 +30,11 @@
   tags: terminal,python,become
 
 - name: Install Programs (PIP Packages) - pip
-  shell: 'pip3 install --user {{ item }} | sed "s/Requirement already satisfied.*//g"'
+  shell: 'pip3 install {{ item }} | sed "s/Requirement already satisfied.*//g"'
   register: pip_output
   changed_when: pip_output.stdout_lines|length > 0
   with_items: "{{ python_modules }}"
+  become: yes
   tags: terminal,python
 
 - name: Install Programs (golang)
@@ -56,4 +57,5 @@
     distrobox-export --bin $(which {{ item }}) --export-path {{ ansible_env.HOME }}/.local/bin-distrobox
   with_items: "{{ export_packages }}"
   become: no
-  tags: terminal,export,become
+  tags:
+    terminal,export,become
