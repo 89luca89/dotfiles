@@ -23,7 +23,7 @@ Plug 'ap/vim-buftabline'
 Plug 'yggdroot/indentLine'
 " colorscheme
 Plug 'cormacrelf/vim-colors-github'
-Plug 'sainnhe/sonokai'
+Plug 'tomasiser/vim-code-dark'
 " Fzf
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
@@ -169,7 +169,8 @@ function! Rename(old, new)
 endfunction
 function! SetDark()
     set background=dark
-    colorscheme sonokai
+    colorscheme codedark
+    highlight SpecialKey guifg=#404040
     highlight link myFunction Function
     highlight link myDeclaration Identifier
     silent! edit
