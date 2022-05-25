@@ -30,8 +30,6 @@ unwanted_pkg:
   - xinetd
   - ypserv
 
-pkg_mngr_install: apt-get update; apt-get install -y
-
 archive_packages:
   - cabextract
   - lzip
@@ -39,17 +37,6 @@ archive_packages:
   - p7zip-full
   - unzip
   - zstd
-
-virtualization_packages:
-  - bridge-utils
-  - libvirt-clients
-  - libvirt-daemon
-  - libvirt-daemon-system
-  - qemu-kvm
-  - qemu-user-static
-  - virt-manager
-  - virt-viewer
-  - virtinst
 
 terminal_packages:
   - bash-completion
@@ -136,28 +123,9 @@ codecs_packages:
   - mesa-dri-drivers
 
 my_packages:
+  - podman
   - flatpak
   - nautilus
-  - seahorse
-  # - radeontop
-  # - touchegg
-  # - v4l2loopback
-
-debloat_pkg:
-  - apport
-  - apport-gtk
-  - apport-symptoms
-  - evolution
-  - evolution-ews
-  - gnome-documents
-  - gnome-games
-  - gnome-maps
-  - gnome-online-miners
-  - gnome-photos
-  - update-manager
-  - yelp
-
-power_management_packages:
   - acpi
   - hdparm
   - lm-sensors
@@ -168,8 +136,3 @@ power_management_packages:
   - linux-image-generic-hwe-20.04-edge
   - linux-tools-generic-hwe-20.04-edge
   - linux-headers-generic-hwe-20.04-edge
-
-cpupower_pkg: "linux-tools-$(uname -r)"
-
-power_management_service:
-  - tlp

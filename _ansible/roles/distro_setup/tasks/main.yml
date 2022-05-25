@@ -39,15 +39,56 @@
   include: distro.yml
   tags: distro,become
 
-- name: Install Podman Packages
-  include: podman.yml
+- name: Install host packages
+  package:
+    name: "{{ my_packages }}"
+    state: present
   become: yes
-  tags: podman,become
-
-- name: Install Main Packages
-  include: packages.yml
+  when: my_packages is defined
   tags: packages,become
 
-- name: Install Flatpak Packages
-  include: flatpak.yml
-  tags: flatpak
+- name: Remove Programs (Flatpak Programs - system)
+  command: "{{ item }}"
+  changed_when: no
+  become: yes
+  failed_when: no
+  with_items:
+    - flatpak uninstall --all
+    - flatpak remote-delete fedora
+  when: use_flatpaks
+  tags: flatpak_packages
+
+- name: Install Programs (Flatpak Programs - flathub)
+  command: "flatpak remote-add --user --if-not-exists {{ item.key }} {{ item.value }}"
+  changed_when: no
+  become: no
+  with_items:
+    - {key: "flathub", value: "https://flathub.org/repo/flathub.flatpakrepo"}
+    - {key: "flathub-beta", value: "https://flathub.org/beta-repo/flathub-beta.flatpakrepo"}
+  when: use_flatpaks
+  tags: flatpak_packages
+
+- name: Flatpak disable home/host permission (Flatpak Programs)
+  command: "{{ item }}"
+  with_items:
+    - flatpak override --user --nofilesystem=host
+    - flatpak override --user --nofilesystem=home
+  become: no
+  when: use_flatpaks
+  tags: flatpak_packages
+
+- name: Install Programs (Flatpak Programs )
+  command: "flatpak --user install -y flathub {{ item }}"
+  with_items: "{{ flatpak_packages }}"
+  register: flatpak_out
+  changed_when: not 'already installed' in flatpak_out.stderr
+  become: no
+  when: use_flatpaks
+  tags: flatpak_packages
+
+- name: Env variables (Flatpak Programs)
+  command: "flatpak override --user --env={{ item.value }} {{ item.key }}"
+  with_items: "{{ flatpak_overrides }}"
+  become: no
+  when: use_flatpaks
+  tags: flatpak_packages

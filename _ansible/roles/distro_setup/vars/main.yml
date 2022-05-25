@@ -13,6 +13,7 @@ flatpak_packages:
   - im.riot.Riot
   - io.mpv.Mpv
   - org.chromium.Chromium
+  - org.gnome.Boxes
   - org.gnome.Calculator
   - org.gnome.Calendar
   - org.gnome.Characters
@@ -32,18 +33,17 @@ flatpak_packages:
   - org.gnome.eog
   - org.gnome.font-viewer
   - org.gnome.gedit
-  - org.gnome.gitlab.somas.Apostrophe
   - org.libreoffice.LibreOffice
   - org.mozilla.Thunderbird
   - org.mozilla.firefox
   - org.signal.Signal
   - org.telegram.desktop
-  # - com.github.polymeilex.neothesia
   - com.jgraph.drawio.desktop
   - de.haeckerfelix.Fragments
   - nl.hjdskes.gcolor3
   - com.mattjakeman.ExtensionManager
   - org.keepassxc.KeePassXC
+  # - com.github.polymeilex.neothesia
   # - io.typora.Typora
 
 

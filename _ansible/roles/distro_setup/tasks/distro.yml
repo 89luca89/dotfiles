@@ -1,16 +1,6 @@
 ---
 # tasks file to setup become,distro to my liking
 
-- name: Install Power Management (Laptop)
-  shell: "{{ pkg_mngr_install }} {{ power_management_packages | join(' ') }}"
-  retries: 3
-  delay: 30
-  register: result
-  until: result is not failed
-  changed_when: not result.stdout | regex_search('already installed')
-  failed_when: result.rc != 0 and (not result.stdout | regex_search('already installed'))
-  tags: become,distro,powersave
-
 - name: Disable WIFI Mac address randomization on scan
   blockinfile:
     path: /etc/NetworkManager/conf.d/30-mac-randomization.conf

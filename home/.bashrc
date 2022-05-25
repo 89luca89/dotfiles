@@ -3,6 +3,9 @@ if [[ $- == *i* ]]; then
 	[ -f /etc/bashrc ] && source /etc/bashrc
 
 if [ -e /run/.containerenv ] || [ -e /.dockerenv ]; then
+		command_not_found_handle() {
+			distrobox-host-exec "${@}"
+		}
 		function __git_status()  {
 			# setup a simple PROMPT/PS1
 			BGREEN='\[\033[1;32m\]'
