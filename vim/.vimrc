@@ -11,17 +11,16 @@ set path+=.,** wildmode=longest:full,full wildignorecase
 set splitbelow splitright
 set title number encoding=utf8 mouse=a
 set undodir=$HOME/.vim/undo undofile undolevels=10000
-set laststatus=0 ruler rulerformat=%40(%F%m%r%w\ [%c-%l/%L]\ %y%)\     " Modified+FileType+Ruler
+set laststatus=2
+" set laststatus=0 ruler rulerformat=%40(%F%m%r%w\ [%c-%l/%L]\ %y%)\     " Modified+FileType+Ruler
 filetype off
 call plug#begin('~/.vim/plugged')
 Plug 'airblade/vim-gitgutter'
-Plug 'tpope/vim-fugitive'
 " utilities
-Plug 'ap/vim-buftabline'
+Plug 'vim-airline/vim-airline'
 Plug 'yggdroot/indentLine'
 " colorscheme
-Plug 'cormacrelf/vim-colors-github'
-Plug 'tomasiser/vim-code-dark'
+Plug 'morhetz/gruvbox'
 " Fzf
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
@@ -32,15 +31,17 @@ Plug 'dense-analysis/ale'
 call plug#end()
 filetype plugin indent on
 syntax on
+let g:airline_extensions = ["ale", "fzf", "tabline"]
 " Theming
 set termguicolors
 set background=dark
+let g:gruvbox_contrast_dark="hard"
+let g:gruvbox_contrast_light="hard"
 augroup general
     autocmd! general
     "keep equal proportions when windows resized
     autocmd VimResized * wincmd =
     " Strip whitespaces and extra newlines
-    autocmd BufNewFile,BufFilePre,BufRead *.md set conceallevel=0
     autocmd BufWritePre * if &ft!~?'markdown'|%s/\($\n\s*\)\+\%$//e|endif
     autocmd BufWritePre * if &ft!~?'markdown'|%s/\s\+$//e|endif
     " Custom syntax highlight
@@ -48,7 +49,6 @@ augroup general
     autocmd Syntax * syntax match myDeclaration '\v\w+(,\s*\w+)*\ze(\s*:\=)'
     autocmd Syntax * syntax match myFunction    '\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\ze\%([a-zA-Z0-9]*(\)'
 augroup end
-let g:indentLine_fileTypeExclude = ['markdown', 'json']
 " Languages
 let g:go_highlight_build_constraints = 1
 let g:go_highlight_extra_types       = 1
@@ -62,6 +62,7 @@ let g:go_highlight_types             = 1
 let g:java_highlight_all             = 1
 let g:python_highlight_all  = 1
 let g:indentLine_char = '▏'
+let g:markdown_syntax_conceal=0
 """""""""""""""""""""
 "       Shortcuts   "
 """""""""""""""""""""
@@ -151,14 +152,14 @@ function! Rename(old, new)
 endfunction
 function! SetDark()
     set background=dark
-    colorscheme codedark
+    colorscheme gruvbox
     highlight SpecialKey guifg=#404040
     highlight link myFunction Function
     highlight link myDeclaration Identifier
 endfunction
 function! SetLight()
     set background=light
-    colorscheme github
+    colorscheme gruvbox
     highlight link myFunction Function
     highlight link myDeclaration Identifier
 endfunction
