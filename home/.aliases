@@ -1,10 +1,3 @@
-gnome-background() {
-	gsettings set org.gnome.desktop.background primary-color "$1"
-	gsettings set org.gnome.desktop.background secondary-color "$1"
-	gsettings set org.gnome.desktop.background color-shading-type 'solid'
-	gsettings set org.gnome.desktop.background picture-options 'none'
-	gsettings set org.gnome.desktop.background picture-uri '""'
-}
 gnome-backup() {
 	declare -a gnome_dconf_backup=(
 		"/org/gnome/desktop/input-sources"
@@ -36,10 +29,6 @@ gnome-restore() {
 	done
 }
 update() {
-	if command -v fwupdmgr; then
-		sudo fwupdmgr refresh
-		sudo fwupdmgr get-updates
-	fi
 	if command -v apt; then
 		sudo apt update; sudo apt upgrade
 	elif command -v rpm-ostree; then
@@ -60,12 +49,16 @@ update() {
 	~/.vim/vim -u ~/.vimrc +PlugUpdate +PlugInstall! +qall
 }
 update-grub() {
-	CONFS=$(sudo find /boot -name "grub.cfg")
-	for conf in $CONFS; do
-		echo "$conf"
-		sudo grub2-mkconfig -o "$conf"
-	done
-	sudo dracut --force --regenerate-all
+	if command -v rpm-ostree; then
+		for i in $(grep GRUB_CMDLINE_LINUX /etc/default/grub | grep -Eo "rhgb quiet.*" | cut -d' ' -f3- | tr -d '"'); do rpm-ostree kargs --append-if-missing=$i; done
+	else
+		CONFS=$(sudo find /boot -name "grub.cfg")
+		for conf in $CONFS; do
+			echo "$conf"
+			sudo grub2-mkconfig -o "$conf"
+		done
+		sudo dracut --force --regenerate-all
+	fi
 	sync
 }
 rclone_clear_mount() {
@@ -73,40 +66,37 @@ rclone_clear_mount() {
 	rclone mount Local-Crypt:"$1" "$2"
 }
 # BASIC ALIASES
-alias cp='cp --reflink=auto'
 alias batinfo="grep --color . /sys/class/power_supply/BAT*/{capacity,energy_now,energy_full,energy_full_design,status,cycle_count,charge_start_threshold,charge_stop_threshold}"
 alias batsave="echo 55 | sudo tee /sys/class/power_supply/BAT0/charge_start_threshold && echo 65 | sudo tee /sys/class/power_supply/BAT0/charge_stop_threshold"
 alias batstretch="echo 0 | sudo tee /sys/class/power_supply/BAT0/charge_start_threshold && echo 100 | sudo tee /sys/class/power_supply/BAT0/charge_stop_threshold"
-alias gnome-reload='xdotool key Alt+F2; sleep 1; xdotool key r; xdotool key Return'
+alias cp='cp --reflink=auto'
 alias ll='ls -Ahl --group-directories-first --color'
 alias open='xdg-open'
 alias rsyncthingD='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync --usermap=$(id -ru):1000 --groupmap=$(id -rg):1000 --archive --verbose --inplace --no-compress --progress --partial --delete -e "ssh -J jump" --exclude={.stversions,*.tmp}  root@raspberrypi-1:/usr/local/mnt/Vault/Syncthing/ ~/Syncthing/ && cd -'
 alias rsyncthingS='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync --usermap=$(id -ru):1000 --groupmap=$(id -rg):1000 --archive --verbose --inplace --no-compress --progress --partial --delete -e "ssh -J jump" --exclude={.stversions,*.tmp}  ~/Syncthing/ root@raspberrypi-1:/usr/local/mnt/Vault/Syncthing/ && rsync --usermap=$(id -ru):1000 --groupmap=$(id -rg):1000 --archive --verbose --inplace --no-compress --progress --partial --delete -e "ssh -J jump" --exclude={.stversions,*.tmp}  ~/Syncthing/ root@raspberrypi-2:/usr/local/mnt/Vault/Syncthing/ && cd -'
-alias saml2aws='saml2aws --disable-keychain'
-alias top='top -o %CPU'
-alias update-microos='sudo tukit --discard --continue execute sh -c "zypper dup && grub2-mkconfig -o /boot/grub2/grub.cfg && grub2-mkconfig -o /boot/efi/EFI/opensuse/grub.cfg && dracut --force --regenerate-all"'
 if [ ! -e /run/.containerenv ] && [ ! -e /.dockerenv ]; then
 	alias vim='/usr/bin/vim -u ~/.vimrc-minimal'
 fi
 if [ -e /run/.containerenv ] || [ -e /.dockerenv ]; then
 	alias open='flatpak-spawn --host xdg-open'
 fi
-export LESSHISTFILE=-
-export EDITOR=vim
 export CARGO_HOME=$HOME/.local/rust
-export RUSTUP_HOME=$HOME/.local/rust
-export RUST_SRC_PATH="$RUSTUP_HOME/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/src"
-export GOPATH=$HOME/Projects/goprojects
-export PATH=/bin:$PATH
-export PATH=/var/lib/flatpak/exports/bin:$PATH
-export PATH=$HOME/.local/share/flatpak/exports/bin:$PATH
+export EDITOR=vim
+export LESSHISTFILE=-
 export PATH=$HOME/.local/bin/node_modules/.bin:$PATH
 export PATH=$HOME/.local/bin:$PATH
 export PATH=$HOME/.local/go/bin:$PATH
+export PATH=$HOME/.local/share/flatpak/exports/bin:$PATH
 export PATH=$HOME/bin:$PATH
 export PATH=$PATH:$GOPATH/bin
 export PATH=$PATH:$RUSTUP_HOME/bin
 export PATH=$PATH:/home/luca-linux/.local/bin-distrobox/
+export PATH=/bin:$PATH
+export PATH=/var/lib/flatpak/exports/bin:$PATH
+export RUSTUP_HOME=$HOME/.local/rust
+export RUST_SRC_PATH="$RUSTUP_HOME/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/src"
+export TMUX_TMPDIR=/tmp
+# export TMUX_TMPDIR=/var/tmp
 export XDG_DESKTOP_DIR="$HOME/Desktop"
 export XDG_DOCUMENTS_DIR="$HOME/Documents"
 export XDG_DOWNLOAD_DIR="$HOME/Downloads"
@@ -115,4 +105,4 @@ export XDG_PICTURES_DIR="$HOME/Pictures"
 export XDG_PUBLICSHARE_DIR="$HOME/Public"
 export XDG_TEMPLATES_DIR="$HOME/Templates"
 export XDG_VIDEOS_DIR="$HOME/Videos"
-export TMUX_TMPDIR=/var/tmp
+export _ANSIBLE_HOME_=$HOME/.cache
