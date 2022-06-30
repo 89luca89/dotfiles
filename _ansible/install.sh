@@ -19,3 +19,14 @@ export ANSIBLE_HOST_KEY_CHECKING=False
 # ansible-playbook -i localhost, -c local -K "$DIR"/main.yml --diff $*
 ansible-playbook -i localhost, -kK "$DIR"/main.yml  --diff $*
 ansible-playbook -i localhost, -c local "$DIR"/main.yml  --diff $*
+
+ssh -t localhost "for luks in \$(/bin/ls -1 /dev/mapper/luks-*); do
+      sudo cryptsetup \
+        --allow-discards \
+        --perf-no_read_workqueue \
+        --perf-no_write_workqueue \
+        --persistent \
+        refresh \
+        \$(basename \$luks);
+    done
+"

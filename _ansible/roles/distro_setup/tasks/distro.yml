@@ -1,16 +1,6 @@
 ---
 # tasks file to setup become,distro to my liking
 
-- name: Disable WIFI Mac address randomization on scan
-  blockinfile:
-    path: /etc/NetworkManager/conf.d/30-mac-randomization.conf
-    create: yes
-    block: |
-      [device-mac-randomization]
-      wifi.scan-rand-mac-address=no
-    mode: 0644
-  tags: become,distro
-
 - name: Set sysctl variables
   sysctl:
     name: '{{ item.name }}'
@@ -68,28 +58,6 @@
       # SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="0",RUN+="/usr/sbin/powertop --auto-tune"
     marker: "# {mark} ANSIBLE MANAGED BLOCK BY DOTFILES"
     mode: 0600
-  tags: become,distro,powersave
-
-- name: Set driver powersave options
-  blockinfile:
-    path: /etc/modprobe.d/powersave.conf
-    create: yes
-    block: |
-      options amdgpu dc=1 si_support=1 cik_support=1 dcfeaturemask=0xB aspm=1
-      options dm_mod use_blk_mq=1
-      options drm debug=0 vblankoffdelay=1
-      options e1000e SmartPowerDownEnable=1
-      options i915 disable_power_well=0 enable_dc=2 enable_psr=1 enable_rc6=7 enable_fbc=1 powersave=1 enable_guc=3
-      options iwlwifi power_save=Y power_level=5
-      options iwlmvm power_scheme=3
-      options mmc_mod use_blk_mq=1
-      options nvme_core default_ps_max_latency_us=20000 force_apst=1
-      options scsi_mod use_blk_mq=1
-      options snd_ac97_codec power_save=1
-      options snd_hda_intel power_save_controller=Y power_save=1
-      options thinkpad_acpi fan_control=1
-      options usbcore autosuspend=1
-    mode: 0644
   tags: become,distro,powersave
 
 - name: Check if lvm.conf is present
@@ -150,6 +118,7 @@
     - {option: dm_mod.use_blk_mq, value: 1}
     - {option: drm.debug, value: 0}
     - {option: drm.vblankoffdelay, value: 1}
+    - {option: e1000e.SmartPowerDownEnable, value: 1}
     - {option: i915.disable_power_well, value: 0}
     - {option: i915.enable_dc, value: 2}
     - {option: i915.enable_fbc, value: 1}
@@ -157,36 +126,19 @@
     - {option: i915.enable_psr, value: 1}
     - {option: i915.enable_rc6, value: 7}
     - {option: i915.powersave, value: 1}
+    - {option: iwlmvm.power_scheme, value: 3}
+    - {option: iwlwifi.power_level, value: 5}
+    - {option: iwlwifi.power_save, value: Y}
     - {option: mmc_mod.use_blk_mq, value: 1}
     - {option: nvme_core.default_ps_max_latency_us, value: 20000}
     - {option: nvme_core.force_apst, value: 1}
     - {option: pcie_aspm, value: force}
     - {option: pcie_aspm.policy, value: powersupersave}
     - {option: scsi_mod.use_blk_mq, value: 1}
+    - {option: snd_ac97_codec.power_save, value: 1}
+    - {option: snd_hda_intel.power_save, value: 1}
+    - {option: snd_hda_intel.power_save_controller, value: Y}
+    - {option: thinkpad_acpi.fan_control, value: 1}
     - {option: usbcore.autosuspend, value: 1}
   register: grub_conf
-  tags: become,distro,grub
-
-- name: Update Grub and Initramfs /RedHat
-  shell: "{{ item }}"
-  with_items:
-    - "for grub in $(find /boot -name grub.cfg); do grub2-mkconfig -o $grub; done"
-    - "dracut --force --regenerate-all"
-  when: >
-    ((grub_conf is defined and grub_conf.changed) or
-    (lvm_setup is defined and lvm_setup.changed) or
-    (crypt_setup is defined and crypt_setup.changed))
-    and ansible_os_family == "RedHat"
-  tags: become,distro,grub
-
-- name: Update Grub and Initramfs /Debian
-  command: "{{ item }}"
-  with_items:
-    - "update-grub"
-    - "update-initramfs -k all -u"
-  when: >
-    ((grub_conf is defined and grub_conf.changed) or
-    (lvm_setup is defined and lvm_setup.changed) or
-    (crypt_setup is defined and crypt_setup.changed))
-    and ansible_os_family == "Debian"
   tags: become,distro,grub

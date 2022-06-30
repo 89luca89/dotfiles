@@ -68,15 +68,6 @@
   when: use_flatpaks
   tags: flatpak_packages
 
-- name: Flatpak disable home/host permission (Flatpak Programs)
-  command: "{{ item }}"
-  with_items:
-    - flatpak override --user --nofilesystem=host
-    - flatpak override --user --nofilesystem=home
-  become: no
-  when: use_flatpaks
-  tags: flatpak_packages
-
 - name: Install Programs (Flatpak Programs )
   command: "flatpak --user install -y flathub {{ item }}"
   with_items: "{{ flatpak_packages }}"
