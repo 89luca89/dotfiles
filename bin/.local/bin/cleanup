@@ -44,16 +44,15 @@ clean_folder() {
 }
 
 FOLDERS=(
-	"./.gnupg"
+	"./.cache"
+	"./.cert"
 	"./.config"
+	"./.gnupg"
 	"./.local"
 	"./.mozilla"
-	"./.thunderbird"
-	"./.purple"
-	"./.weechat"
-	"./.var"
-	"./.cache"
 	"./.ssh"
+	"./.thunderbird"
+	"./.var"
 	"./.vim"
 	"./Books"
 	"./Desktop"
@@ -72,7 +71,6 @@ FOLDERS=(
 	"./VirtualMachines"
 	"./bin"
 	"./dotfiles"
-	"./firmwares"
 )
 pushd ~/ || exit 127
 find . -maxdepth 1 -type d -empty -delete
@@ -84,6 +82,8 @@ done
 popd || exit 1
 
 CONFIG_FOLDERS=(
+	"./cni"
+	"./containers"
 	"./dconf"
 	"./gnome-control-center"
 	"./gnome-session"
@@ -92,6 +92,7 @@ CONFIG_FOLDERS=(
 	"./gtk-3.0"
 	"./gtk-4.0"
 	"./ibus"
+	"./libvirt"
 	"./nautilus"
 	"./pipewire"
 	"./pulse"
@@ -110,6 +111,9 @@ popd || exit 1
 LOCAL_FOLDERS=(
 	"./applications"
 	"./backgrounds"
+	"./containers"
+	"./icons"
+	"./man"
 	"./flatpak"
 	"./gnome-settings-daemon"
 	"./gnome-shell"
@@ -129,7 +133,7 @@ for dir in $(find . -maxdepth 1 -type d | tail -n+2); do
 done
 popd || exit 1
 
-FLATS=$(flatpak list --app --columns=application)
+FLATS="$(flatpak list --app --columns=application) citrix"
 for d in ~/.var/app/*; do
 	DIR=$(basename "$d")
 	if ! echo $FLATS | grep -q $DIR; then
