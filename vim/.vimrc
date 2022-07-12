@@ -20,7 +20,8 @@ Plug 'airblade/vim-gitgutter'
 Plug 'vim-airline/vim-airline'
 Plug 'yggdroot/indentLine'
 " colorscheme
-Plug 'morhetz/gruvbox'
+Plug 'cormacrelf/vim-colors-github'
+Plug 'tomasiser/vim-code-dark'
 " Fzf
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
@@ -35,8 +36,6 @@ let g:airline_extensions = ["ale", "fzf", "tabline"]
 " Theming
 set termguicolors
 set background=dark
-let g:gruvbox_contrast_dark="hard"
-let g:gruvbox_contrast_light="hard"
 augroup general
     autocmd! general
     "keep equal proportions when windows resized
@@ -152,14 +151,14 @@ function! Rename(old, new)
 endfunction
 function! SetDark()
     set background=dark
-    colorscheme gruvbox
+    colorscheme codedark
     highlight SpecialKey guifg=#404040
     highlight link myFunction Function
     highlight link myDeclaration Identifier
 endfunction
 function! SetLight()
     set background=light
-    colorscheme gruvbox
+    colorscheme github
     highlight link myFunction Function
     highlight link myDeclaration Identifier
 endfunction

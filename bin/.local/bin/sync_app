@@ -24,59 +24,59 @@ app_sync() {
 		password=$2
 	fi
 	case "$TARGET" in
-	"ssh")
-		[ -d ~/.ssh ] || (echo "No folder to backup" && exit 1)
-		cd ~ || exit 1
-		tar -czf /tmp/ssh-keys.tar.gz .ssh
-		openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in /tmp/ssh-keys.tar.gz -out /tmp/ssh-keys.tar.gz.enc -k "$password"
-		shred -n 25 -u -z /tmp/ssh-keys.tar.gz
-		cp /tmp/ssh-keys.tar.gz.enc ~/Syncthing/secured/
-		;;
-	"firefox")
-		[ -d ~/.mozilla ] || (echo "No folder to backup" && exit 1)
-		cd ~ || exit 1
-		find .mozilla -iname "favicons*" | xargs rm -rf
-		find ~/.mozilla/**/*/storage/ -type f  | grep http | xargs rm || true
-		find .mozilla -type d -iname "*cache*" | xargs rm -rf
-		# for f in ~/.mozilla/firefox/*/*.sqlite; do sqlite3 $f 'VACUUM;'; done
-		tar -c -z -f /tmp/firefox-profile.tar.gz --exclude="*cache*" --exclude=".mozilla/firefox/*/storage/default/http*" .mozilla
-		openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in /tmp/firefox-profile.tar.gz -out /tmp/firefox-profile.tar.gz.enc -k "$password"
-		shred -n 25 -u -z /tmp/firefox-profile.tar.gz
-		mv /tmp/firefox-profile.tar.gz.enc ~/Syncthing/secured/
-		;;
-	"thunderbird")
-		[ -d ~/.thunderbird ] || (echo "No folder to backup" && exit 1)
-		cd ~ || exit 1
-		tar -c -z -f /tmp/thunderbird-profile.tar.gz --exclude="*cache*" --exclude=.thunderbird/*/extensions/lang* --exclude=.thunderbird/*-default/ImapMail .thunderbird/
-		openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in /tmp/thunderbird-profile.tar.gz -out /tmp/thunderbird-profile.tar.gz.enc -k "$password"
-		shred -n 25 -u -z /tmp/thunderbird-profile.tar.gz
-		mv /tmp/thunderbird-profile.tar.gz.enc ~/Syncthing/secured/
-		;;
-	"chromium")
-		[ -d ~/.config/chromium ] || (echo "No folder to backup" && exit 1)
-		# pgrep chromium > /dev/null && (echo "Shutdown chrome before backup" && exit 1)
-		cd ~ || exit 1
-		tar --exclude=*Cache* -czf /tmp/chromium-profile.tar.gz .config/chromium .local/share/applications/chrome.png .local/share/applications/*hromium*.desktop bin/chromium-freeworld
-		openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in /tmp/chromium-profile.tar.gz -out /tmp/chromium-profile.tar.gz.enc -k "$password"
-		shred -n 25 -u -z /tmp/chromium-profile.tar.gz
-		mv /tmp/chromium-profile.tar.gz.enc ~/Syncthing/secured/
-		;;
-	"syncthing")
-		[ -d ~/.config/syncthing ] || (echo "No folder to backup" && exit 1)
-		cd ~ || exit 1
-		tar -czf /tmp/syncthing-profile-$(hostname).tar.gz .config/syncthing/
-		openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in /tmp/syncthing-profile-$(hostname).tar.gz -out /tmp/syncthing-profile-$(hostname).tar.gz.enc -k "$password"
-		shred -n 25 -u -z /tmp/syncthing-profile-$(hostname).tar.gz
-		mv /tmp/syncthing-profile-$(hostname).tar.gz.enc ~/Syncthing/secured/
-		;;
-	"flatpak")
-		[ -d ~/.var/app ] || (echo "No folder to backup" && exit 1)
-		cd ~/.var || exit 1
-		tar --exclude=*cache* --exclude={*Chromium*,*Webkit*,*Cache*} -c -z -f /tmp/flatpak-data.tar.gz app
-		openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in /tmp/flatpak-data.tar.gz -out /tmp/flatpak-data.tar.gz.enc -k "$password"
-		shred -n 25 -u -z /tmp/flatpak-data.tar.gz
-		mv /tmp/flatpak-data.tar.gz.enc ~/Syncthing/secured/
-		;;
+		"ssh")
+			[ -d ~/.ssh ] || (echo "No folder to backup" && exit 1)
+			cd ~ || exit 1
+			tar -czf /tmp/ssh-keys.tar.gz .ssh
+			openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in /tmp/ssh-keys.tar.gz -out /tmp/ssh-keys.tar.gz.enc -k "$password"
+			shred -n 25 -u -z /tmp/ssh-keys.tar.gz
+			cp /tmp/ssh-keys.tar.gz.enc ~/Syncthing/secured/
+			;;
+		"firefox")
+			[ -d ~/.mozilla ] || (echo "No folder to backup" && exit 1)
+			cd ~ || exit 1
+			find .mozilla -iname "favicons*" | xargs rm -rf
+			find ~/.mozilla/**/*/storage/ -type f | grep http | xargs rm || true
+			find .mozilla -type d -iname "*cache*" | xargs rm -rf
+			# for f in ~/.mozilla/firefox/*/*.sqlite; do sqlite3 $f 'VACUUM;'; done
+			tar -c -z -f /tmp/firefox-profile.tar.gz --exclude="*cache*" --exclude=".mozilla/firefox/*/storage/default/http*" .mozilla
+			openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in /tmp/firefox-profile.tar.gz -out /tmp/firefox-profile.tar.gz.enc -k "$password"
+			shred -n 25 -u -z /tmp/firefox-profile.tar.gz
+			mv /tmp/firefox-profile.tar.gz.enc ~/Syncthing/secured/
+			;;
+		"thunderbird")
+			[ -d ~/.thunderbird ] || (echo "No folder to backup" && exit 1)
+			cd ~ || exit 1
+			tar -c -z -f /tmp/thunderbird-profile.tar.gz --exclude="*cache*" --exclude=.thunderbird/*/extensions/lang* --exclude=.thunderbird/*-default/ImapMail .thunderbird/
+			openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in /tmp/thunderbird-profile.tar.gz -out /tmp/thunderbird-profile.tar.gz.enc -k "$password"
+			shred -n 25 -u -z /tmp/thunderbird-profile.tar.gz
+			mv /tmp/thunderbird-profile.tar.gz.enc ~/Syncthing/secured/
+			;;
+		"chromium")
+			[ -d ~/.config/chromium ] || (echo "No folder to backup" && exit 1)
+			# pgrep chromium > /dev/null && (echo "Shutdown chrome before backup" && exit 1)
+			cd ~ || exit 1
+			tar --exclude=*Cache* -czf /tmp/chromium-profile.tar.gz .config/chromium .local/share/applications/chrome.png .local/share/applications/*hromium*.desktop bin/chromium-freeworld
+			openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in /tmp/chromium-profile.tar.gz -out /tmp/chromium-profile.tar.gz.enc -k "$password"
+			shred -n 25 -u -z /tmp/chromium-profile.tar.gz
+			mv /tmp/chromium-profile.tar.gz.enc ~/Syncthing/secured/
+			;;
+		"syncthing")
+			[ -d ~/.config/syncthing ] || (echo "No folder to backup" && exit 1)
+			cd ~ || exit 1
+			tar -czf /tmp/syncthing-profile-$(hostname).tar.gz .config/syncthing/
+			openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in /tmp/syncthing-profile-$(hostname).tar.gz -out /tmp/syncthing-profile-$(hostname).tar.gz.enc -k "$password"
+			shred -n 25 -u -z /tmp/syncthing-profile-$(hostname).tar.gz
+			mv /tmp/syncthing-profile-$(hostname).tar.gz.enc ~/Syncthing/secured/
+			;;
+		"flatpak")
+			[ -d ~/.var/app ] || (echo "No folder to backup" && exit 1)
+			cd ~/.var || exit 1
+			tar --exclude=*cache* --exclude={*Chromium*,*Webkit*,*Cache*} -c -z -f /tmp/flatpak-data.tar.gz app
+			openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in /tmp/flatpak-data.tar.gz -out /tmp/flatpak-data.tar.gz.enc -k "$password"
+			shred -n 25 -u -z /tmp/flatpak-data.tar.gz
+			mv /tmp/flatpak-data.tar.gz.enc ~/Syncthing/secured/
+			;;
 	esac
 }
 
@@ -84,67 +84,67 @@ app_sync() {
 app_restore() {
 	TARGET=$1
 	case "$TARGET" in
-	"ssh")
-		openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -d -in ~/Syncthing/secured/ssh-keys.tar.gz.enc -out /tmp/ssh-keys.tar.gz
-		if [ ! -f /tmp/ssh-keys.tar.gz ]; then
-			echo "Failed to decrypt"
-			exit 1
-		fi
-		tar -xzf /tmp/ssh-keys.tar.gz -C ~/
-		shred -n 25 -u -z /tmp/ssh-keys.tar.gz
-		;;
-	"firefox")
-		openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -d -in ~/Syncthing/secured/firefox-profile.tar.gz.enc -out /tmp/firefox-profile.tar.gz
-		if [ ! -f /tmp/firefox-profile.tar.gz ]; then
-			echo "Failed to decrypt"
-			exit 1
-		fi
-		rm -rf ~/.mozilla
-		tar -xzf /tmp/firefox-profile.tar.gz -C ~/
-		shred -n 25 -u -z /tmp/firefox-profile.tar.gz
-		;;
-	"chromium")
-		openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -d -in ~/Syncthing/secured/chromium-profile.tar.gz.enc -out /tmp/chromium-profile.tar.gz
-		if [ ! -f /tmp/chromium-profile.tar.gz ]; then
-			echo "Failed to decrypt"
-			exit 1
-		fi
-		rm -rf ~/.config/chromium
-		tar -xzf /tmp/chromium-profile.tar.gz -C ~/
-		shred -n 25 -u -z /tmp/chromium-profile.tar.gz
-		;;
-	"thunderbird")
-		openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -d -in ~/Syncthing/secured/thunderbird-profile.tar.gz.enc -out /tmp/thunderbird-profile.tar.gz
-		if [ ! -f /tmp/thunderbird-profile.tar.gz ]; then
-			echo "Failed to decrypt"
-			exit 1
-		fi
-		rm -rf ~/.thunderbird
-		tar -xzf /tmp/thunderbird-profile.tar.gz -C ~/
-		shred -n 25 -u -z /tmp/thunderbird-profile.tar.gz
-		;;
-	"syncthing")
-		systemctl stop --user syncthing
-		openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -d -in ~/Syncthing/secured/syncthing-profile-$(hostname).tar.gz.enc -out /tmp/syncthing-profile-$(hostname).tar.gz
-		if [ ! -f /tmp/syncthing-profile-$(hostname).tar.gz ]; then
-			echo "Failed to decrypt"
-			exit 1
-		fi
-		rm -rf ~/.config/syncthing
-		tar -xzf /tmp/syncthing-profile-$(hostname).tar.gz -C ~/
-		shred -n 25 -u -z /tmp/syncthing-profile-$(hostname).tar.gz
-		systemctl restart --user syncthing
-		;;
-	"flatpak")
-		openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -d -in ~/Syncthing/secured/flatpak-data.tar.gz.enc -out /tmp/flatpak-data.tar.gz
-		if [ ! -f /tmp/flatpak-data.tar.gz ]; then
-			echo "Failed to decrypt"
-			exit 1
-		fi
-		rm -rf ~/.var/app
-		tar -xzf /tmp/flatpak-data.tar.gz -C ~/.var/
-		shred -n 25 -u -z /tmp/flatpak-data.tar.gz
-		;;
+		"ssh")
+			openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -d -in ~/Syncthing/secured/ssh-keys.tar.gz.enc -out /tmp/ssh-keys.tar.gz
+			if [ ! -f /tmp/ssh-keys.tar.gz ]; then
+				echo "Failed to decrypt"
+				exit 1
+			fi
+			tar -xzf /tmp/ssh-keys.tar.gz -C ~/
+			shred -n 25 -u -z /tmp/ssh-keys.tar.gz
+			;;
+		"firefox")
+			openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -d -in ~/Syncthing/secured/firefox-profile.tar.gz.enc -out /tmp/firefox-profile.tar.gz
+			if [ ! -f /tmp/firefox-profile.tar.gz ]; then
+				echo "Failed to decrypt"
+				exit 1
+			fi
+			rm -rf ~/.mozilla
+			tar -xzf /tmp/firefox-profile.tar.gz -C ~/
+			shred -n 25 -u -z /tmp/firefox-profile.tar.gz
+			;;
+		"chromium")
+			openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -d -in ~/Syncthing/secured/chromium-profile.tar.gz.enc -out /tmp/chromium-profile.tar.gz
+			if [ ! -f /tmp/chromium-profile.tar.gz ]; then
+				echo "Failed to decrypt"
+				exit 1
+			fi
+			rm -rf ~/.config/chromium
+			tar -xzf /tmp/chromium-profile.tar.gz -C ~/
+			shred -n 25 -u -z /tmp/chromium-profile.tar.gz
+			;;
+		"thunderbird")
+			openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -d -in ~/Syncthing/secured/thunderbird-profile.tar.gz.enc -out /tmp/thunderbird-profile.tar.gz
+			if [ ! -f /tmp/thunderbird-profile.tar.gz ]; then
+				echo "Failed to decrypt"
+				exit 1
+			fi
+			rm -rf ~/.thunderbird
+			tar -xzf /tmp/thunderbird-profile.tar.gz -C ~/
+			shred -n 25 -u -z /tmp/thunderbird-profile.tar.gz
+			;;
+		"syncthing")
+			systemctl stop --user syncthing
+			openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -d -in ~/Syncthing/secured/syncthing-profile-$(hostname).tar.gz.enc -out /tmp/syncthing-profile-$(hostname).tar.gz
+			if [ ! -f /tmp/syncthing-profile-$(hostname).tar.gz ]; then
+				echo "Failed to decrypt"
+				exit 1
+			fi
+			rm -rf ~/.config/syncthing
+			tar -xzf /tmp/syncthing-profile-$(hostname).tar.gz -C ~/
+			shred -n 25 -u -z /tmp/syncthing-profile-$(hostname).tar.gz
+			systemctl restart --user syncthing
+			;;
+		"flatpak")
+			openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -d -in ~/Syncthing/secured/flatpak-data.tar.gz.enc -out /tmp/flatpak-data.tar.gz
+			if [ ! -f /tmp/flatpak-data.tar.gz ]; then
+				echo "Failed to decrypt"
+				exit 1
+			fi
+			rm -rf ~/.var/app
+			tar -xzf /tmp/flatpak-data.tar.gz -C ~/.var/
+			shred -n 25 -u -z /tmp/flatpak-data.tar.gz
+			;;
 	esac
 }
 
