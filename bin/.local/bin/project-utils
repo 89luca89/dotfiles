@@ -93,7 +93,7 @@ case "$COMMAND" in
 				golint -min_confidence 0 "$DIR"
 
 				# golangci with the rest
-				LINES=$("$HOME/.local/go/bin/golangci-lint" run --color never --enable-all -D golint,funlen,gomodguard --out-format tab | grep "$(basename "$DIR")" | sed "s/  */ /g" | sort -u)
+				LINES=$(golangci-lint run --color never --enable-all -D golint,funlen,gomodguard --out-format tab | grep "$(basename "$DIR")" | sed "s/  */ /g" | sort -u)
 
 				while IFS= read -r line; do
 

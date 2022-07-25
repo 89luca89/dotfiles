@@ -77,9 +77,6 @@ alias rsyncthingS='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname 
 if [ ! -e /run/.containerenv ] && [ ! -e /.dockerenv ]; then
 	alias vim='/usr/bin/vim -u ~/.vimrc-minimal'
 fi
-if [ -e /run/.containerenv ] || [ -e /.dockerenv ]; then
-	alias open='flatpak-spawn --host xdg-open'
-fi
 export CARGO_HOME=$HOME/.local/rust
 export EDITOR=vim
 export LESSHISTFILE=-

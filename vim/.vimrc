@@ -5,7 +5,7 @@ set colorcolumn=80 cursorline
 set formatoptions=tcqj
 set grepprg=grep\ -rn hlsearch ignorecase clipboard+=unnamedplus
 set langnoremap langremap lazyredraw redrawtime=0 ttyfast
-set list lcs=tab:\▏\  " here is a space, goes in hand with indentLine
+set list
 set nomodeline nofsync nowrap noswapfile nowritebackup nobackup noshowmode noshowcmd nofoldenable
 set path+=.,** wildmode=longest:full,full wildignorecase
 set splitbelow splitright
