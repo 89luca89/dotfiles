@@ -3,9 +3,6 @@ if [[ $- == *i* ]]; then
 	[ -f /etc/bashrc ] && source /etc/bashrc
 
 	if [ -e /run/.containerenv ] || [ -e /.dockerenv ]; then
-		command_not_found_handle() {
-			distrobox-host-exec "${@}"
-		}
 		function __git_status() {
 			# setup a simple PROMPT/PS1
 			BGREEN='\[\033[1;32m\]'
@@ -14,18 +11,18 @@ if [[ $- == *i* ]]; then
 			RED='\[\033[91m\]'
 			ORANGE='\[\e[38;5;208m\]'
 			PS_CLEAR='\[\033[0m\]'
-			if   [ ! -e /usr/bin/git ]; then
-				export          PS1=${BGREEN}'\u'${PS_CLEAR}'@'${ORANGE}'\h'${PS_CLEAR}':'${BBLUE}'\w'${PS_CLEAR}'$ '
+			if [ ! -e /usr/bin/git ]; then
+				export PS1=${BGREEN}'\u'${PS_CLEAR}'@'${ORANGE}'\h'${PS_CLEAR}':'${BBLUE}'\w'${PS_CLEAR}'$ '
 				return
 			fi
-			STATUS=$(  git status 2> /dev/null || echo "norepo")
-			BRANCH=$(  echo $STATUS | grep -oP 'branch\s\K.*' | cut -d' ' -f1)
-			SYMBOL=$(  echo $STATUS | grep -q "not staged" && echo "*")
-			SYMBOL_2=$(  echo $STATUS | grep -q "Untracked" && echo "%")
-			if   [ "$STATUS" == "norepo" ]; then
-				export          PS1=${BGREEN}'\u'${PS_CLEAR}'@'${ORANGE}'\h'${PS_CLEAR}':'${BBLUE}'\w'${PS_CLEAR}'$ '
+			STATUS=$(git status 2> /dev/null || echo "norepo")
+			BRANCH=$(echo $STATUS | grep -oP 'branch\s\K.*' | cut -d' ' -f1)
+			SYMBOL=$(echo $STATUS | grep -q "not staged" && echo "*")
+			SYMBOL_2=$(echo $STATUS | grep -q "Untracked" && echo "%")
+			if [ "$STATUS" == "norepo" ]; then
+				export PS1=${BGREEN}'\u'${PS_CLEAR}'@'${ORANGE}'\h'${PS_CLEAR}':'${BBLUE}'\w'${PS_CLEAR}'$ '
 			else
-				export          PS1=${BGREEN}'\u'${PS_CLEAR}'@'${ORANGE}'\h'${PS_CLEAR}':'${BBLUE}'\w'${PS_CLEAR}${RED}"[${BRANCH}${SYMBOL}${SYMBOL_2}]"${PS_CLEAR}'$ '
+				export PS1=${BGREEN}'\u'${PS_CLEAR}'@'${ORANGE}'\h'${PS_CLEAR}':'${BBLUE}'\w'${PS_CLEAR}${RED}"[${BRANCH}${SYMBOL}${SYMBOL_2}]"${PS_CLEAR}'$ '
 			fi
 		}
 		# Path to the bash it configuration
@@ -36,9 +33,9 @@ if [[ $- == *i* ]]; then
 		# HISTORY SIZE
 		export HISTFILE="$HOME"/.histfile
 		export HISTCONTROL=ignoredups:erasedups # no duplicate entries
-		export HISTSIZE=100000           # big big history
-		export HISTFILESIZE=100000       # big big history
-		shopt -s histappend              # append to history, don't overwrite it
+		export HISTSIZE=100000 # big big history
+		export HISTFILESIZE=100000 # big big history
+		shopt -s histappend # append to history, don't overwrite it
 		shopt -s histreedit
 		shopt -s histverify
 		shopt -s cmdhist

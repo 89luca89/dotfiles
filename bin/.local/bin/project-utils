@@ -60,8 +60,15 @@ case "$COMMAND" in
 				;;
 
 			"sh")
-
-				shfmt -s -ci -sr -kp -w "$DIR" 2> /dev/null
+				result=0
+				host-spawn podman pull docker.io/peterdavehello/shfmt:latest
+				for file in $(find . -type f -not -path "*.git*"); do
+					if file "$file" | grep -qi shell; then
+						echo "### Checking file $file..."
+						host-spawn podman run --rm -v "$PWD:/mnt:Z" docker.io/peterdavehello/shfmt:latest shfmt -s -ci -sr -kp -w /mnt/$file
+						result=$((result + $?))
+					fi
+				done
 				;;
 
 			"terraform")
