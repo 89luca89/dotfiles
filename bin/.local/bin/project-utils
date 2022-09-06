@@ -61,11 +61,12 @@ case "$COMMAND" in
 
 			"sh")
 				result=0
-				host-spawn podman pull docker.io/peterdavehello/shfmt:latest
+				# host-spawn podman pull docker.io/peterdavehello/shfmt:latest
 				for file in $(find . -type f -not -path "*.git*"); do
 					if file "$file" | grep -qi shell; then
 						echo "### Checking file $file..."
 						host-spawn podman run --rm -v "$PWD:/mnt:Z" docker.io/peterdavehello/shfmt:latest shfmt -s -ci -sr -kp -w /mnt/$file
+						# shfmt -s -ci -sr -kp -w $file
 						result=$((result + $?))
 					fi
 				done
@@ -97,10 +98,11 @@ case "$COMMAND" in
 				# golint
 				[ -d "$DIR" ] && DIR="$DIR/..."
 
-				golint -min_confidence 0 "$DIR"
+				# golint -min_confidence 0.3 "$DIR"
 
 				# golangci with the rest
-				LINES=$(golangci-lint run --color never --enable-all -D golint,funlen,gomodguard --out-format tab | grep "$(basename "$DIR")" | sed "s/  */ /g" | sort -u)
+				LINES=$(golangci-lint run --color never --out-format tab 2> /dev/null | grep "$(basename "$DIR")" | sed "s/  */ /g" | sort -u)
+				# --enable-all -D golint,forcetypeassert,gofumpt,gomnd,nestif,funlen,gomodguard,gocognit,goerr113,wrapcheck
 
 				while IFS= read -r line; do
 
@@ -132,11 +134,12 @@ case "$COMMAND" in
 
 				if [ -d "$DIR" ]; then
 
-					for file in $(find "$DIR" -type f -not -path "*.git*"); do
+					for file in $(find . -type f -name ".*" -prune -o -print | grep -v '.git'); do
 
 						if file "$file" | grep -qi shell; then
 							# file is a shell script, we can shellcheck
-							shellcheck -s sh -a -f gcc -o all -Sstyle -x -e SC2310,SC2311,SC2312 "$file"
+							# shellcheck -s sh -a -f gcc -o all -Sstyle -x -e SC2310,SC2311,SC2312 "$file"
+							shellcheck -f gcc -a -Sstyle "$file"
 							bashate -i E002,E003,E010,E011 --max-line-length 120 "$file" | grep -v "bashate"
 							# checkbashisms -elnpfx "$file"
 						fi
