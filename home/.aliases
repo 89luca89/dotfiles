@@ -48,7 +48,11 @@ update() {
 }
 update-grub() {
 	if command -v rpm-ostree; then
-		for i in $(grep GRUB_CMDLINE_LINUX /etc/default/grub | grep -Eo "rhgb quiet.*" | cut -d' ' -f3- | tr -d '"'); do rpm-ostree kargs --append-if-missing=$i; done
+		update_cmd="rpm-ostree kargs"
+		for i in $(grep GRUB_CMDLINE_LINUX /etc/default/grub | cut -d'=' -f2- | tr -d '"'); do
+			update_cmd="$update_cmd --append-if-missing=$i"
+		done
+		eval $update_cmd
 	elif command -v zypper; then
 		sudo tukit --continue --discard execute sh -c "grub2-mkconfig -o /boot/grub2/grub.cfg; dracut --force --regenerate-all; cp /boot/grub2/grub.cfg /boot/efi/EFI/opensuse/grub.cfg"
 	else
