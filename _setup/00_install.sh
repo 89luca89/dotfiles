@@ -9,4 +9,4 @@ sudo "$DIR"/02_packages.sh
 
 "$DIR"/03_flatpak.sh
 "$DIR"/04_dotfiles.sh
-"$DIR"/05_distrobox.sh
+"$DIR"/05_syncthing.sh

@@ -35,9 +35,19 @@ SYSTEMD_SERVICES="
 echo "#### Disabling system bloat services..."
 for service in ${SYSTEMD_SERVICES}; do
 	if systemctl disable --now "${service}"; then
-		systemctl mask "${service}"
+		systemctl mask "${service}" ||:
 	fi
 done
+
+echo "#### Disabling network manager mac address randomization..."
+cat << EOF > /etc/NetworkManager/conf.d/90-disable-randomization.conf
+[device-mac-randomization]
+wifi.scan-rand-mac-address=no
+
+[connection-mac-randomization]
+ethernet.cloned-mac-address=random
+wifi.cloned-mac-address=random
+EOF
 
 echo "#### Setting up sysctl values..."
 SYSCTL_VALUES="
@@ -94,6 +104,9 @@ if [ -e /etc/crypttab ]; then
 	echo "Setting up crypttab performance..."
 	sed -i 's/none discard$/none discard,no-read-workqueue,no-write-workqueue/g' /etc/crypttab
 	sed -i 's/x-initrd.attach$/x-initrd.attach,discard,no-read-workqueue,no-write-workqueue/g' /etc/crypttab
+
+    volume="$(cat /etc/crypttab  | cut -d' ' -f1)"
+	cryptsetup --allow-discards --perf-no_read_workqueue --perf-no_write_workqueue --persistent refresh "$volume"
 fi
 
 GRUB_FLAGS="
@@ -133,6 +146,6 @@ echo "#### Setting up crypttab performance..."
 sed -i "s|mitigations=auto||g" /etc/default/grub
 for flag in $GRUB_FLAGS; do
 	if ! grep -q "${flag}" /etc/default/grub; then
-		sed -i "s|GRUB_CMDLINE_LINUX_DEFAULT=\"|GRUB_CMDLINE_LINUX_DEFAULT=\"${flag} |g" /etc/default/grub
+		sed -i "s|GRUB_CMDLINE_LINUX=\"|GRUB_CMDLINE_LINUX=\"${flag} |g" /etc/default/grub
 	fi
 done

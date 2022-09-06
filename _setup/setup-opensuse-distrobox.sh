@@ -21,7 +21,6 @@ append_if_not_exists() {
 	fi
 }
 
-
 ARCHIVE_PACKAGES="
   cabextract
   lzip
@@ -36,6 +35,7 @@ PYTHON_PACKAGES="
   python3-wheel
   python3-devel
 "
+  # openssl
 TERMINAL_PACKAGES="
   ShellCheck
   acpi
@@ -51,17 +51,20 @@ TERMINAL_PACKAGES="
   git
   git-credential-libsecret
   golang
+  helm
   iproute
   iputils
-  sensors
+  jq
+  kubernetes-client
   lsof
   make
   net-tools
   nmap
-  openssl
   powertop
   procps
+  psmisc
   rsync
+  sensors
   sqlite
   stow
   syncthing
@@ -77,4 +80,46 @@ TERMINAL_PACKAGES="
   xlsclients
 "
 
-sudo zypper install -y ${ARCHIVE_PACKAGES} ${PYTHON_PACKAGES} ${TERMINAL_PACKAGES}
+GOLANG_PACKAGES="
+  go
+  shfmt
+"
+sudo zypper install -y ${ARCHIVE_PACKAGES} ${PYTHON_PACKAGES} ${TERMINAL_PACKAGES} ${GOLANG_PACKAGES} # ${GOLANG_MODULES}
+
+PYTHON_MODULES="
+  python-lsp-server[all]
+  pyls-flake8
+  pyls-isort
+  flake8-awesome
+  flake8-docstrings
+  flake8-eradicate
+  setuptools
+  ansible-later
+  ansible-lint
+  demjson
+  neovim
+  psutil
+  six
+  yamllint
+  bashate
+"
+
+sudo pip3 install -U setuptools==57.5.0
+sudo pip3 install -U ${PYTHON_MODULES}
+
+GOLANG_MODULES="
+  golang.org/x/lint/golint@latest
+  golang.org/x/tools/cmd/goimports@latest
+  golang.org/x/tools/cmd/gorename@latest
+  golang.org/x/tools/cmd/guru@latest
+  golang.org/x/tools/gopls@latest
+"
+
+for gopkg in ${GOLANG_MODULES}; do
+	sudo GOBIN=/usr/local/bin go install "${gopkg}"
+done
+
+if [ ! -e /usr/local/bin/golangci-lint ]; then
+	curl -sSfL \
+		https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sudo sh -s -- -b /usr/local/bin
+fi

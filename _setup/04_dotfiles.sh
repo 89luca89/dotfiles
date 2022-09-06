@@ -27,7 +27,7 @@ SYSTEMD_USER_SERVICES="
 echo "#### Disabling user bloat services..."
 for service in ${SYSTEMD_USER_SERVICES}; do
 	if systemctl --user disable --now "${service}"; then
-		systemctl --user mask "${service}"
+		systemctl --user mask "${service}" ||:
 	fi
 done
 
