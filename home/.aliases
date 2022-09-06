@@ -29,15 +29,14 @@ gnome-restore() {
 	done
 }
 update() {
-	if command -v apt; then
-		sudo apt update; sudo apt upgrade
-	elif command -v rpm-ostree; then
+	set -e
+	# distrobox upgrade --all
+	if command -v rpm-ostree; then
 		rpm-ostree update
 	elif command -v dnf; then
-		~/bin/kernel-update
 		sudo dnf upgrade --refresh
-	elif command -v zypper; then
-		sudo tukit --discard --continue execute zypper dup
+	elif [ -e /sbin/transactional-update ]; then
+		sudo tukit --discard --continue execute sh -c "zypper dup; grub2-mkconfig -o /boot/grub2/grub.cfg; dracut --force --regenerate-all; cp /boot/grub2/grub.cfg /boot/efi/EFI/opensuse/grub.cfg"
 	fi
 	if command -v flatpak; then
 		if ! flatpak update --user; then
@@ -46,11 +45,12 @@ update() {
 		fi
 		flatpak uninstall --user --unused
 	fi
-	~/.vim/vim -u ~/.vimrc +PlugUpdate +PlugInstall! +qall
 }
 update-grub() {
 	if command -v rpm-ostree; then
 		for i in $(grep GRUB_CMDLINE_LINUX /etc/default/grub | grep -Eo "rhgb quiet.*" | cut -d' ' -f3- | tr -d '"'); do rpm-ostree kargs --append-if-missing=$i; done
+	elif command -v zypper; then
+		sudo tukit --continue --discard execute sh -c "grub2-mkconfig -o /boot/grub2/grub.cfg; dracut --force --regenerate-all; cp /boot/grub2/grub.cfg /boot/efi/EFI/opensuse/grub.cfg"
 	else
 		CONFS=$(sudo find /boot -name "grub.cfg")
 		for conf in $CONFS; do
@@ -71,7 +71,7 @@ alias batsave="echo 55 | sudo tee /sys/class/power_supply/BAT0/charge_start_thre
 alias batstretch="echo 0 | sudo tee /sys/class/power_supply/BAT0/charge_start_threshold && echo 100 | sudo tee /sys/class/power_supply/BAT0/charge_stop_threshold"
 alias cp='cp --reflink=auto'
 alias ll='ls -Ahl --group-directories-first --color'
-alias open='xdg-open'
+alias open='/usr/local/bin/xdg-open'
 alias rsyncthingD='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync --usermap=$(id -ru):1000 --groupmap=$(id -rg):1000 --archive --verbose --inplace --no-compress --progress --partial --delete -e "ssh -J jump" --exclude={.stversions,*.tmp}  root@raspberrypi-1:/usr/local/mnt/Vault/Syncthing/ ~/Syncthing/ && cd -'
 alias rsyncthingS='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync --usermap=$(id -ru):1000 --groupmap=$(id -rg):1000 --archive --verbose --inplace --no-compress --progress --partial --delete -e "ssh -J jump" --exclude={.stversions,*.tmp}  ~/Syncthing/ root@raspberrypi-1:/usr/local/mnt/Vault/Syncthing/ && rsync --usermap=$(id -ru):1000 --groupmap=$(id -rg):1000 --archive --verbose --inplace --no-compress --progress --partial --delete -e "ssh -J jump" --exclude={.stversions,*.tmp}  ~/Syncthing/ root@raspberrypi-2:/usr/local/mnt/Vault/Syncthing/ && cd -'
 if [ ! -e /run/.containerenv ] && [ ! -e /.dockerenv ]; then
