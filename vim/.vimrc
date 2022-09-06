@@ -47,6 +47,7 @@ augroup general
     autocmd Syntax * syntax match myDeclaration '\v[_.[:alnum:]]+(,\s*[_.[:alnum:]]+)*\ze(\s*([-^+|^\/%&]|\*|\<\<|\>\>|\&\^)?\=[^=])'
     autocmd Syntax * syntax match myDeclaration '\v\w+(,\s*\w+)*\ze(\s*:\=)'
     autocmd Syntax * syntax match myFunction    '\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\ze\%([a-zA-Z0-9]*(\)'
+    autocmd FileType markdown :IndentLinesDisable
 augroup end
 " Languages
 let g:go_highlight_build_constraints = 1
@@ -61,7 +62,6 @@ let g:go_highlight_types             = 1
 let g:java_highlight_all             = 1
 let g:python_highlight_all  = 1
 let g:indentLine_char = '▏'
-let g:markdown_syntax_conceal=0
 """""""""""""""""""""
 "       Shortcuts   "
 """""""""""""""""""""
