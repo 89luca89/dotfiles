@@ -29,22 +29,21 @@ gnome-restore() {
 	done
 }
 update() {
-	set -e
-	# distrobox upgrade --all
 	if command -v rpm-ostree; then
 		rpm-ostree update
-	elif command -v dnf; then
-		sudo dnf upgrade --refresh
 	elif [ -e /sbin/transactional-update ]; then
-		sudo tukit --discard --continue execute sh -c "zypper dup; grub2-mkconfig -o /boot/grub2/grub.cfg; dracut --force --regenerate-all; cp /boot/grub2/grub.cfg /boot/efi/EFI/opensuse/grub.cfg"
+		sudo tukit --discard --continue execute \
+			sh -c \
+			"zypper dup; grub2-mkconfig -o /boot/grub2/grub.cfg; dracut --force --regenerate-all; cp /boot/grub2/grub.cfg /boot/efi/EFI/opensuse/grub.cfg"
 	fi
-	if command -v flatpak; then
-		if ! flatpak update --user; then
-			flatpak repair --user
-			flatpak update --user
-		fi
-		flatpak uninstall --user --unused
+	if ! flatpak update --user; then
+		flatpak repair --user
+		flatpak update --user
 	fi
+	flatpak uninstall --user --unused
+	sudo fwupdmgr refresh
+	sudo fwupdmgr update
+	distrobox upgrade fedora-rawhide
 }
 update-grub() {
 	if command -v rpm-ostree; then
@@ -93,7 +92,6 @@ export PATH=$HOME/.local/share/flatpak/exports/bin:$PATH
 export PATH=$HOME/bin:$PATH
 export PATH=$PATH:$GOPATH/bin
 export PATH=$PATH:$RUSTUP_HOME/bin
-export PATH=$PATH:/home/luca-linux/.local/bin-distrobox/
 export PATH=/bin:$PATH
 export PATH=/var/lib/flatpak/exports/bin:$PATH
 export RUSTUP_HOME=$HOME/.local/rust
