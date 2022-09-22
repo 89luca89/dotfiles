@@ -64,9 +64,9 @@ case "$COMMAND" in
 				# host-spawn podman pull docker.io/peterdavehello/shfmt:latest
 				for file in $(find . -type f -not -path "*.git*"); do
 					if file "$file" | grep -qi shell; then
-						echo "### Checking file $file..."
-						host-spawn podman run --rm -v "$PWD:/mnt:Z" docker.io/peterdavehello/shfmt:latest shfmt -s -ci -sr -kp -w /mnt/$file
-						# shfmt -s -ci -sr -kp -w $file
+						# echo "### Checking file $file..."
+						# host-spawn podman run --rm -v "$PWD:/mnt:Z" docker.io/peterdavehello/shfmt:latest shfmt -s -ci -sr -kp -w /mnt/$file
+						shfmt -s -ci -sr -kp -w $file
 						result=$((result + $?))
 					fi
 				done
@@ -147,7 +147,7 @@ case "$COMMAND" in
 					done
 				else
 
-					shellcheck -s sh -a -f gcc -o all -Sstyle -x -e SC2310,SC2311,SC2312 "$DIR"
+					shellcheck -f gcc -a -Sstyle "$DIR"
 					bashate -i E002,E003,E010,E011 --max-line-length 120 "$DIR" | grep -v "bashate"
 					# checkbashisms -elnpfx "$DIR"
 				fi
