@@ -17,10 +17,10 @@ if ! podman inspect --type container syncthing > /dev/null; then
 		-p 127.0.0.1:8384:8384 \
 		docker.io/syncthing/syncthing:latest
 fi
-if [ ! -e "$HOME/.config/systemd/user/podman-syncthing.service" ]; then
 	podman generate systemd --restart-policy=always -t 1 syncthing > "$HOME/.config/systemd/user/podman-syncthing.service"
+
+	systemctl --user daemon-reload
 	systemctl --user enable --now podman-syncthing.service
-fi
 # 	podman run --rm -ti --userns keep-id --security-opt label=disable \
 # 		--volume ~/.config/syncthing:/var/syncthing/config \
 # 		--volume "$HOME":"$HOME" \

@@ -17,18 +17,13 @@ FLATPAK_PACKAGES="
 	com.jgraph.drawio.desktop
 	com.mattjakeman.ExtensionManager
 	com.obsproject.Studio
-	com.slack.Slack
-	de.haeckerfelix.Fragments
 	io.mpv.Mpv
 	net.pcsx2.PCSX2
 	nl.hjdskes.gcolor3
 	org.chromium.Chromium
 	org.gimp.GIMP
-	org.gnome.baobab
-	org.gnome.Boxes
 	org.gnome.Calculator
 	org.gnome.Calendar
-	org.gnome.Characters
 	org.gnome.Cheese
 	org.gnome.clocks
 	org.gnome.Connections
@@ -36,16 +31,11 @@ FLATPAK_PACKAGES="
 	org.gnome.eog
 	org.gnome.Evince
 	org.gnome.FileRoller
-	org.gnome.font-viewer
 	org.gnome.gedit
 	org.gnome.gitlab.somas.Apostrophe
-	org.gnome.Logs
-	org.gnome.Maps
 	org.gnome.NautilusPreviewer
 	org.gnome.NetworkDisplays
 	org.gnome.Rhythmbox3
-	org.gnome.seahorse.Application
-	org.gnome.Weather
 	org.keepassxc.KeePassXC
 	org.libreoffice.LibreOffice
 	org.mozilla.firefox

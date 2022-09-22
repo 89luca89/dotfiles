@@ -98,7 +98,6 @@ TERMINAL_PACKAGES="
 
 GOLANG_PACKAGES="
   golang
-  shfmt
 "
 
 sudo dnf install -y ${ARCHIVE_PACKAGES} ${PYTHON_PACKAGES} ${TERMINAL_PACKAGES} ${GOLANG_PACKAGES}
@@ -130,6 +129,7 @@ GOLANG_MODULES="
   golang.org/x/tools/cmd/gorename@latest
   golang.org/x/tools/cmd/guru@latest
   golang.org/x/tools/gopls@latest
+  mvdan.cc/sh/v3/cmd/shfmt@latest
 "
 
 for gopkg in ${GOLANG_MODULES}; do
