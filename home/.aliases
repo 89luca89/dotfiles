@@ -1,3 +1,9 @@
+gnome-background() {
+	gsettings set org.gnome.desktop.background picture-uri none
+	gsettings set org.gnome.desktop.background picture-uri-dark none
+	gsettings set org.gnome.desktop.background color-shading-type 'solid'
+	gsettings set org.gnome.desktop.background primary-color "$1"
+}
 gnome-backup() {
 	declare -a gnome_dconf_backup=(
 		"/org/gnome/desktop/input-sources"
@@ -17,7 +23,7 @@ gnome-backup() {
 	dest_folder="$HOME/dotfiles/_desktop/$(gnome-shell --version | sed 's/ /-/g' | tr '[:upper:]' '[:lower:]')"
 	mkdir -p $dest_folder
 	for f in ${gnome_dconf_backup[@]}; do
-		dconf dump $f/ >$dest_folder/$(echo $f | sed 's/\//./g').conf
+		dconf dump $f/ > $dest_folder/$(echo $f | sed 's/\//./g').conf
 	done
 }
 gnome-restore() {
@@ -32,9 +38,9 @@ update() {
 	if command -v rpm-ostree; then
 		rpm-ostree update
 	elif [ -e /sbin/transactional-update ]; then
-		sudo tukit --discard --continue execute \
-			sh -c \
-			"zypper dup; grub2-mkconfig -o /boot/grub2/grub.cfg; dracut --force --regenerate-all; cp /boot/grub2/grub.cfg /boot/efi/EFI/opensuse/grub.cfg"
+		sudo tukit --continue --discard execute \
+			sh -c "zypper dup; grub2-mkconfig -o /boot/grub2/grub.cfg; \
+			cp /boot/grub2/grub.cfg /boot/efi/EFI/opensuse/grub.cfg"
 	fi
 	if ! flatpak update --user; then
 		flatpak repair --user
@@ -53,7 +59,10 @@ update-grub() {
 		done
 		eval $update_cmd
 	elif command -v zypper; then
-		sudo tukit --continue --discard execute sh -c "grub2-mkconfig -o /boot/grub2/grub.cfg; dracut --force --regenerate-all; cp /boot/grub2/grub.cfg /boot/efi/EFI/opensuse/grub.cfg"
+		sudo tukit --continue --discard execute \
+			sh -c "grub2-mkconfig -o /boot/grub2/grub.cfg; \
+			dracut --force --regenerate-all; \
+			cp /boot/grub2/grub.cfg /boot/efi/EFI/opensuse/grub.cfg"
 	else
 		CONFS=$(sudo find /boot -name "grub.cfg")
 		for conf in $CONFS; do
@@ -77,14 +86,16 @@ alias ll='ls -Ahl --group-directories-first --color'
 alias open='/usr/local/bin/xdg-open'
 alias rsyncthingD='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync --usermap=$(id -ru):1000 --groupmap=$(id -rg):1000 --archive --verbose --inplace --no-compress --progress --partial --delete -e "ssh -J jump" --exclude={.stversions,*.tmp}  root@raspberrypi-1:/usr/local/mnt/Vault/Syncthing/ ~/Syncthing/ && cd -'
 alias rsyncthingS='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync --usermap=$(id -ru):1000 --groupmap=$(id -rg):1000 --archive --verbose --inplace --no-compress --progress --partial --delete -e "ssh -J jump" --exclude={.stversions,*.tmp}  ~/Syncthing/ root@raspberrypi-1:/usr/local/mnt/Vault/Syncthing/ && rsync --usermap=$(id -ru):1000 --groupmap=$(id -rg):1000 --archive --verbose --inplace --no-compress --progress --partial --delete -e "ssh -J jump" --exclude={.stversions,*.tmp}  ~/Syncthing/ root@raspberrypi-2:/usr/local/mnt/Vault/Syncthing/ && cd -'
-if [ ! -e /run/.containerenv ] && [ ! -e /.dockerenv ]; then
+alias vi='/usr/bin/vim -u ~/.vimrc-minimal'
+if [ ! -e /run/.containerenv ]; then
 	alias vim='/usr/bin/vim -u ~/.vimrc-minimal'
-else
-	alias vi='/usr/bin/vim -u ~/.vimrc-minimal'
 fi
 export CARGO_HOME=$HOME/.local/rust
 export EDITOR=vim
 export LESSHISTFILE=-
+export GOPATH=$HOME/.local/share/go
+export RUSTUP_HOME=$HOME/.local/rust
+export RUST_SRC_PATH="$RUSTUP_HOME/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/src"
 export PATH=$HOME/.local/bin/node_modules/.bin:$PATH
 export PATH=$HOME/.local/bin:$PATH
 export PATH=$HOME/.local/go/bin:$PATH
@@ -92,12 +103,8 @@ export PATH=$HOME/.local/share/flatpak/exports/bin:$PATH
 export PATH=$HOME/bin:$PATH
 export PATH=$PATH:$GOPATH/bin
 export PATH=$PATH:$RUSTUP_HOME/bin
-export PATH=/bin:$PATH
 export PATH=/var/lib/flatpak/exports/bin:$PATH
-export RUSTUP_HOME=$HOME/.local/rust
-export RUST_SRC_PATH="$RUSTUP_HOME/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/src"
 export TMUX_TMPDIR=/tmp
-# export TMUX_TMPDIR=/var/tmp
 export XDG_DESKTOP_DIR="$HOME/Desktop"
 export XDG_DOCUMENTS_DIR="$HOME/Documents"
 export XDG_DOWNLOAD_DIR="$HOME/Downloads"
@@ -106,5 +113,4 @@ export XDG_PICTURES_DIR="$HOME/Pictures"
 export XDG_PUBLICSHARE_DIR="$HOME/Public"
 export XDG_TEMPLATES_DIR="$HOME/Templates"
 export XDG_VIDEOS_DIR="$HOME/Videos"
-export GOPATH=$HOME/.local/share/go
 export _ANSIBLE_HOME_=$HOME/.cache
