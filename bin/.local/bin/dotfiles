@@ -3,12 +3,25 @@
 cd "$HOME/dotfiles"
 
 for i in $(ls -d */ | grep -vE "^_"); do
-    echo "$i"
-    stow -t ~ -D "$i"
-    stow -t ~ -S "$i"
+	# echo "$i"
+	currdir=$(pwd)
+	cd $i
+	for i in $(find . | tail -n+2); do
+        destfile="$(echo $i | sed "s|\./|$HOME/|g")"
+		if [ -e $destfile ]; then
+			continue
+		else
+		    echo $destfile
+            ln -sf $(realpath $i) $destfile
+            sleep 0.22
+		fi
+	done
+	cd $currdir
+	# stow -t ~ -D "$i"
+	# stow -t ~ -S "$i"
 done
 
-ln -sf "Syncthing/conf/.histfile" "$HOME/.histfile"
-ln -sfn "Syncthing/bin" "$HOME/bin"
+ln -sf "$HOME/Syncthing/conf/.histfile" "$HOME/.histfile"
+ln -sfn "$HOME/Syncthing/bin" "$HOME/bin"
 
 cd -

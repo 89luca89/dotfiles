@@ -56,7 +56,7 @@ app_sync() {
 			[ -d ~/.config/chromium ] || (echo "No folder to backup" && exit 1)
 			# pgrep chromium > /dev/null && (echo "Shutdown chrome before backup" && exit 1)
 			cd ~ || exit 1
-			tar --exclude=*Cache* -czf /tmp/chromium-profile.tar.gz .config/chromium .local/share/applications/chrome.png .local/share/applications/*hromium*.desktop bin/chromium-freeworld
+			tar --exclude=*Cache* -czf /tmp/chromium-profile.tar.gz .config/chromium .local/share/applications/*hromium*.desktop bin/chromium-freeworld
 			openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in /tmp/chromium-profile.tar.gz -out /tmp/chromium-profile.tar.gz.enc -k "$password"
 			shred -n 25 -u -z /tmp/chromium-profile.tar.gz
 			mv /tmp/chromium-profile.tar.gz.enc ~/Syncthing/secured/
