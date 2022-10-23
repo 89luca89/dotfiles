@@ -51,4 +51,4 @@ if [ ! -e "${HOME}/.vim/autoload/plug.vim" ]; then
 fi
 
 # echo "#### Setting stow dotfiles..."
-# "${HOME}"/dotfiles/bin/.local/bin/dotfiles
+"${HOME}"/dotfiles/bin/.local/bin/dotfiles

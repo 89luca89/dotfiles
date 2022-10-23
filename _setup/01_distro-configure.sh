@@ -7,20 +7,6 @@ fi
 set -o errexit
 set -o nounset
 
-# Append line to file only if does not exist.
-# Arguments:
-#   string_to_append
-#   file_to_target
-# Outputs:
-#   none
-append_if_not_exists() {
-	string="${1}"
-	file="${2}"
-	if ! grep -q "${string}" "${file}" 2> /dev/null; then
-		echo "${string}" >> "${file}"
-	fi
-}
-
 SYSTEMD_SERVICES="
   NetworkManager-wait-online.service
   auditd.service
@@ -29,6 +15,8 @@ SYSTEMD_SERVICES="
   kdump.service
   livesys-late.sevice
   livesys.service
+  nis-domainname.service
+  sssd.service
   switcheroo-control.service
   unbound-anchor.timer
 "
@@ -38,41 +26,6 @@ for service in ${SYSTEMD_SERVICES}; do
 		systemctl mask "${service}" ||:
 	fi
 done
-
-echo "#### Disabling network manager mac address randomization..."
-cat << EOF > /etc/NetworkManager/conf.d/90-disable-randomization.conf
-[device-mac-randomization]
-wifi.scan-rand-mac-address=no
-
-[connection-mac-randomization]
-ethernet.cloned-mac-address=random
-wifi.cloned-mac-address=random
-EOF
-
-echo "#### Setting up sysctl values..."
-SYSCTL_VALUES="
-  vm.laptop_mode=5
-  kernel.nmi_watchdog=0
-  vm.swappiness=5
-  vm.oom_kill_allocating_task=1
-  vm.vfs_cache_pressure=1000
-  vm.dirty_ratio=90
-  vm.dirty_background_ratio=50
-  vm.dirty_writeback_centisecs=1500
-  vm.dirty_expire_centisecs=60000
-  fs.inotify.max_user_watches=524288
-  net.ipv4.ip_default_ttl=66
-"
-for value in ${SYSCTL_VALUES}; do
-	append_if_not_exists "${value}" /etc/sysctl.d/99-sysctl.conf
-done
-
-echo "#### Setting up zram values..."
-cat << EOF > /etc/systemd/zram-generator.conf
-[zram0]
-zram-fraction=0.5
-max-zram-size=16384
-EOF
 
 echo "#### Setting up udev powersave values..."
 cat << EOF > /etc/udev/rules.d/powersave.rules
@@ -142,10 +95,29 @@ GRUB_FLAGS="
  thinkpad_acpi.fan_control=1
  usbcore.autosuspend=1
 "
-echo "#### Setting up crypttab performance..."
+echo "#### Setting up grub flags..."
 sed -i "s|mitigations=auto||g" /etc/default/grub
 for flag in $GRUB_FLAGS; do
 	if ! grep -q "${flag}" /etc/default/grub; then
 		sed -i "s|GRUB_CMDLINE_LINUX=\"|GRUB_CMDLINE_LINUX=\"${flag} |g" /etc/default/grub
 	fi
 done
+
+echo "#### Removing unused system flatpaks..."
+flatpak --system uninstall --all
+flatpak --system remote-delete fedora || :
+
+# echo "#### Setting up distro packages..."
+# if command -v rpm-ostree > /dev/null; then
+# 	rpm-ostree override remove gnome-software gnome-software-rpm-ostree firefox
+# 	for i in $(grep GRUB_CMDLINE_LINUX /etc/default/grub | grep -Eo "rhgb quiet.*" | cut -d' ' -f3- | tr -d '"'); do
+# 		rpm-ostree kargs --append-if-missing=$i
+# 	done
+# elif command -v tukit > /dev/null; then
+# 	tukit --discard --continue execute bash -c "
+# 	zypper addlock yast2;
+# 	zypper rm -y gnome-software;
+# 	find /boot -name "grub.cfg" | xargs -I{} grub2-mkconfig -o {};
+#         dracut --force --regenerate-all;
+#     "
+# fi
