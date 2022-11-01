@@ -1,27 +1,25 @@
 #!/bin/sh
 
-cd "$HOME/dotfiles"
+if ! cd "$HOME/dotfiles" > /dev/null; then
+	exit 1
+fi
 
 for i in $(ls -d */ | grep -vE "^_"); do
-	# echo "$i"
-	currdir=$(pwd)
-	cd $i
-	for i in $(find . | tail -n+2); do
-        destfile="$(echo $i | sed "s|\./|$HOME/|g")"
-		if [ -e $destfile ]; then
+	pushd $i >/dev/null
+	for j in $(find . | tail -n+2); do
+		destfile="$(echo "$j" | sed "s|\./|$HOME/|g")"
+		if [ -e "$destfile" ]; then
+			# ls -ld $destfile | grep "\->" | cut -d' ' -f9-
 			continue
 		else
-		    echo $destfile
-            ln -sf $(realpath $i) $destfile
-            sleep 0.22
+			echo "$destfile"
+			ln -sf "$(realpath "$j")" "$destfile"
+			sync
+			sleep 0.25
 		fi
 	done
-	cd $currdir
-	# stow -t ~ -D "$i"
-	# stow -t ~ -S "$i"
+	popd >/dev/null
 done
 
 ln -sf "$HOME/Syncthing/conf/.histfile" "$HOME/.histfile"
 ln -sfn "$HOME/Syncthing/bin" "$HOME/bin"
-
-cd -

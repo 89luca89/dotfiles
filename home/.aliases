@@ -39,8 +39,7 @@ update() {
 		rpm-ostree update
 	elif [ -e /sbin/transactional-update ]; then
 		sudo tukit --continue --discard execute \
-			sh -c "zypper dup; grub2-mkconfig -o /boot/grub2/grub.cfg; \
-			cp /boot/grub2/grub.cfg /boot/efi/EFI/opensuse/grub.cfg"
+			sh -c "zypper dup && cp /boot/grub2/grub.cfg /boot/efi/EFI/opensuse/grub.cfg"
 	fi
 	if ! flatpak update --user; then
 		flatpak repair --user
