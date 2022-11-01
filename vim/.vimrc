@@ -21,7 +21,7 @@ Plug 'vim-airline/vim-airline'
 Plug 'yggdroot/indentLine'
 " colorscheme
 Plug 'cormacrelf/vim-colors-github'
-Plug 'tomasiser/vim-code-dark'
+Plug 'tomasr/molokai'
 " Fzf
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
@@ -151,7 +151,7 @@ function! Rename(old, new)
 endfunction
 function! SetDark()
     set background=dark
-    colorscheme codedark
+    colorscheme molokai
     highlight SpecialKey guifg=#404040
     highlight link myFunction Function
     highlight link myDeclaration Identifier
