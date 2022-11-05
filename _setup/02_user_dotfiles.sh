@@ -8,27 +8,23 @@ set -o errexit
 set -o nounset
 
 SYSTEMD_USER_SERVICES="
-  evolution-addressbook-factory
-  evolution-calendar-factory
-  evolution-source-registry
-  gamemoded.service
-  goa-daemon
-  goa-identity-service
-  gvfs-goa-volume-monitor
-  tracker-extract
-  tracker-miner-fs
-  tracker-miner-fs-3
-  tracker-miner-rss
-  tracker-store
-  tracker-writeback
-  ubuntu-report.path
-  ubuntu-report.service
+  evolution-addressbook-factory.service
+  evolution-calendar-factory.service
+  evolution-source-registry.service
+  evolution-user-prompter.service
+  gamemoded.service.service
+  gvfs-goa-volume-monitor.service
+  tracker-extract-3.service
+  tracker-miner-fs-3.service
+  tracker-miner-fs-control-3.service
+  tracker-miner-rss-3.service
+  tracker-writeback-3.service
+  tracker-xdg-portal-3.service
 "
 echo "#### Disabling user bloat services..."
 for service in ${SYSTEMD_USER_SERVICES}; do
-	if systemctl --user disable --now "${service}"; then
-		systemctl --user mask "${service}" ||:
-	fi
+	systemctl --user disable --now "${service}" || :
+	systemctl --user mask "${service}" || :
 done
 
 VIM_DIRS="

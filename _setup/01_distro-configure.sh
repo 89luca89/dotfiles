@@ -9,22 +9,12 @@ set -o nounset
 
 SYSTEMD_SERVICES="
   NetworkManager-wait-online.service
-  auditd.service
-  dnf-makecache.timer
-  import-state.service
-  kdump.service
-  livesys-late.sevice
-  livesys.service
-  nis-domainname.service
-  sssd.service
-  switcheroo-control.service
-  unbound-anchor.timer
+  packagekit.service
 "
 echo "#### Disabling system bloat services..."
 for service in ${SYSTEMD_SERVICES}; do
-	if systemctl disable --now "${service}"; then
-		systemctl mask "${service}" ||:
-	fi
+	systemctl disable --now "${service}" || :
+	systemctl mask "${service}" || :
 done
 
 echo "#### Setting up udev powersave values..."
@@ -58,7 +48,7 @@ if [ -e /etc/crypttab ]; then
 	sed -i 's/none discard$/none discard,no-read-workqueue,no-write-workqueue/g' /etc/crypttab
 	sed -i 's/x-initrd.attach$/x-initrd.attach,discard,no-read-workqueue,no-write-workqueue/g' /etc/crypttab
 
-    volume="$(cat /etc/crypttab  | cut -d' ' -f1)"
+	volume="$(cat /etc/crypttab | cut -d' ' -f1)"
 	cryptsetup --allow-discards --perf-no_read_workqueue --perf-no_write_workqueue --persistent refresh "$volume"
 fi
 
@@ -106,18 +96,3 @@ done
 echo "#### Removing unused system flatpaks..."
 flatpak --system uninstall --all
 flatpak --system remote-delete fedora || :
-
-# echo "#### Setting up distro packages..."
-# if command -v rpm-ostree > /dev/null; then
-# 	rpm-ostree override remove gnome-software gnome-software-rpm-ostree firefox
-# 	for i in $(grep GRUB_CMDLINE_LINUX /etc/default/grub | grep -Eo "rhgb quiet.*" | cut -d' ' -f3- | tr -d '"'); do
-# 		rpm-ostree kargs --append-if-missing=$i
-# 	done
-# elif command -v tukit > /dev/null; then
-# 	tukit --discard --continue execute bash -c "
-# 	zypper addlock yast2;
-# 	zypper rm -y gnome-software;
-# 	find /boot -name "grub.cfg" | xargs -I{} grub2-mkconfig -o {};
-#         dracut --force --regenerate-all;
-#     "
-# fi
