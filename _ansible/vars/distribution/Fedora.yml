@@ -1,0 +1,143 @@
+---
+# vars file for my_apps
+#
+
+use_flatpaks: yes
+container_enabled: yes
+
+os_unused_modules: ""
+proc_mnt_options: "rw,nosuid,nodev,noexec,relatime,hidepid=1"
+unwanted_services:
+  - kdump.service
+  - nfs.service
+  - rexec.socket
+  - rlogin.socket
+  - rsh.socket
+  - slapd.service
+  - smb.service
+  - telnet.service
+  - tftp.service
+  - vsftpd.service
+unwanted_pkg:
+  - mcstrans
+  - rsh
+  - rsh-server
+  - setroubleshoot
+  - talk
+  - telnet-server
+  - tftp
+  - tftp-server
+  - xinetd
+  - ypserv
+
+rpmfusion_packages:
+  - https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_facts.distribution_version }}.noarch.rpm
+  - https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_facts.distribution_version }}.noarch.rpm
+
+archive_packages:
+  - cabextract
+  - lzip
+  - p7zip
+  - p7zip-plugins
+  - unzip
+  - zstd
+
+terminal_packages:
+  - ShellCheck
+  - bash-completion
+  - binwalk
+  - clang
+  - clang-tools-extra
+  - ctags
+  - devscripts
+  - dos2unix
+  - file
+  - git
+  - git-credential-libsecret
+  - golang
+  - iproute
+  - iputils
+  - lsof
+  - make
+  - net-tools
+  - nmap
+  - openssl
+  - procps
+  - sqlite
+  - stow
+  - tcpdump
+  - tig
+  - tree
+  # Cli packages
+  - rsync
+  - tmux
+  - vim
+  # miscrellanous
+  - acpi
+  - bc
+  - lm_sensors
+  - powertop
+  - syncthing
+  - wl-clipboard
+  - wmctrl
+  - xclip
+  - xdotool
+  - xlsclients
+
+python_packages:
+  - python3
+  - python3-pip
+  - python3-wheel
+  - python3-devel
+
+export_packages:
+  - 7z
+  - 7za
+  - acpi
+  - bc
+  - cabextract
+  - git
+  - nmap
+  - sensors
+  - sensors-detect
+  - syncthing
+  - tig
+  - tree
+  - unzip
+  - wl-copy
+  - wl-paste
+  - wmctrl
+  - xclip
+  - xdotool
+  - xlsclients
+  - zstd
+
+codecs_packages:
+  - mpv
+  - compat-ffmpeg28
+  - compat-ffmpeg28-devel
+  - egl-utils
+  - egl-wayland
+  - flac
+  - ffmpeg
+  - ffmpeg-libs
+  - gstreamer1-libav
+  - gstreamer1-plugins-bad-free
+  - gstreamer1-plugins-bad-freeworld
+  - gstreamer1-plugins-base
+  - gstreamer1-plugins-base-tools
+  - gstreamer1-plugins-good
+  - gstreamer1-plugins-good-extras
+  - gstreamer1-plugins-ugly
+  - gstreamer1-plugins-ugly-free
+  - gstreamer1-svt-av1
+  - gstreamer1-svt-vp9
+  - gstreamer1-vaapi
+  - intel-media-driver
+  - libva-devel
+  - libva-intel-driver
+  - libva-intel-hybrid-driver
+  - libva-utils
+  - libva-vdpau-driver
+  - libvdpau-va-gl
+  - mesa-dri-drivers

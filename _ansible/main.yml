@@ -1,0 +1,15 @@
+# Creation Date: 2019-06-17
+#
+# Author: Luca Di Maio
+---
+# file: main.yml
+
+- hosts: all
+  gather_facts: True
+
+  vars_files:
+    - "vars/distribution/{{ ansible_distribution  | replace(' ', '_')}}.yml"
+
+  roles:
+    - {role: distro_setup, become: yes}
+    - {role: dotfiles, become: no}

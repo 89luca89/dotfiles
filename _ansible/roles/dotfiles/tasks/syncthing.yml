@@ -1,0 +1,49 @@
+---
+
+- name: Enable podman auto-update
+  systemd:
+    name: "podman-auto-update.timer"
+    state: started
+    enabled: yes
+    masked: no
+    daemon_reload: yes
+    scope: user
+  become: no
+  retries: 3
+  delay: 3
+  register: result
+  until: result is not failed
+
+- name: Create syncthing container
+  containers.podman.podman_container:
+    name: syncthing
+    state: started
+    userns: keep-id
+    user: 1000:1000
+    security_opt: "label=disable"
+    image: "docker.io/syncthing/syncthing:latest"
+    ports:
+      - "127.0.0.1:8384:8384"
+    volume:
+      - "{{ ansible_env.HOME }}/.config/syncthing:/var/syncthing/config"
+      - "/home/{{ ansible_env.USER }}:/home/{{ ansible_env.USER }}"
+    labels:
+      io.containers.autoupdate: registry
+    generate_systemd:
+      names: true
+      path: "{{ ansible_env.HOME }}/.config/systemd/user"
+      time: 5
+
+- name: Enable syncthing
+  systemd:
+    name: "container-syncthing.service"
+    state: started
+    enabled: yes
+    masked: no
+    daemon_reload: yes
+    scope: user
+  become: no
+  retries: 3
+  delay: 3
+  register: result
+  until: result is not failed

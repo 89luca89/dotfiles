@@ -1,0 +1,62 @@
+---
+# tasks file for dotfiles
+
+- name: Check if Vim Baseline folder is present
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0700
+  with_items:
+    - "{{ ansible_env.HOME }}/.vim"
+    - "{{ ansible_env.HOME }}/.vim/autoload"
+    - "{{ ansible_env.HOME }}/.vim/swap"
+    - "{{ ansible_env.HOME }}/.vim/syntax"
+    - "{{ ansible_env.HOME }}/.vim/undo"
+    - "{{ ansible_env.HOME }}/.vim/view"
+  register: firstrun
+
+- name: Install vim-plug
+  get_url:
+    url: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0755
+  with_items:
+    - {
+      src: "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim",
+      dest: "{{ ansible_env.HOME }}/.vim/autoload",
+    }
+
+- name: Include Dotfiles
+  include_tasks: dotfiles.yml
+  loop:
+    - "{{ ansible_env.HOME }}/.aliases"
+    - "{{ ansible_env.HOME }}/.bashrc"
+    - "{{ ansible_env.HOME }}/.clang-format"
+    - "{{ ansible_env.HOME }}/.ctags"
+    - "{{ ansible_env.HOME }}/.gitconfig"
+    - "{{ ansible_env.HOME }}/.golangci.yml"
+    - "{{ ansible_env.HOME }}/.histfile"
+    - "{{ ansible_env.HOME }}/.rclone.conf"
+    - "{{ ansible_env.HOME }}/.tmux.conf"
+    - "{{ ansible_env.HOME }}/.toprc"
+    - "{{ ansible_env.HOME }}/.vimrc"
+    - "{{ ansible_env.HOME }}/.vimrc-minimal"
+    - "{{ ansible_env.HOME }}/.zshrc"
+
+- name: Link dotfiles
+  command: "{{ ansible_env.HOME }}/dotfiles/bin/.local/bin/dotfiles"
+  register: result
+  changed_when: result.stdout != ""
+
+- name: Check if distrobox is installed
+  stat:
+    path: "{{ ansible_env.HOME }}/.local/bin/distrobox"
+  register: distrobox
+
+- name: Install distrobox
+  shell: |
+      curl -s https://raw.githubusercontent.com/89luca89/distrobox/main/install | sh -s -- --next --prefix ~/.local
+  when: not distrobox.stat.exists
+
+- name: Include Syncthing
+  include_tasks: syncthing.yml

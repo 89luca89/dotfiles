@@ -1,0 +1,62 @@
+---
+# vars file for debloat
+#
+
+use_flatpaks: yes
+
+flatpak_packages:
+  - com.github.jeromerobert.pdfarranger
+  - com.github.tchx84.Flatseal
+  - com.jgraph.drawio.desktop
+  - com.mattjakeman.ExtensionManager
+  - com.obsproject.Studio
+  - com.slack.Slack
+  - im.riot.Riot
+  - io.mpv.Mpv
+  - net.pcsx2.PCSX2
+  - nl.hjdskes.gcolor3
+  - org.chromium.Chromium
+  - org.gimp.GIMP
+  - org.gnome.Calculator
+  - org.gnome.Calendar
+  - org.gnome.Cheese
+  - org.gnome.Connections
+  - org.gnome.Evince
+  - org.gnome.FileRoller
+  - org.gnome.NautilusPreviewer
+  - org.gnome.NetworkDisplays
+  - org.gnome.Rhythmbox3
+  - org.gnome.TextEditor
+  - org.gnome.eog
+  - org.gnome.gitlab.somas.Apostrophe
+  - org.gnome.seahorse.Application
+  - org.keepassxc.KeePassXC
+  - org.libreoffice.LibreOffice
+  - org.mozilla.Thunderbird
+  - org.mozilla.firefox
+  - org.telegram.desktop
+
+flatpak_overrides:
+  - {key: "org.mozilla.firefox", value: "MOZ_ENABLE_WAYLAND=1"}
+  - {key: "org.mozilla.firefox", value: "MOZ_USE_XINPUT2=1"}
+  - {key: "org.mozilla.Thunderbird", value: "MOZ_ENABLE_WAYLAND=1"}
+  - {key: "org.mozilla.Thunderbird", value: "MOZ_USE_XINPUT2=1"}
+
+systemd_user_mask_services:
+  - evolution-addressbook-factory.service
+  - evolution-addressbook-factory.service
+  - evolution-calendar-factory.service
+  - evolution-source-registry.service
+  - evolution-user-prompter.service
+  - gamemoded.service.service
+  - gvfs-goa-volume-monitor.service
+  - tracker-extract-3.service
+  - tracker-miner-fs-3.service
+  - tracker-miner-fs-control-3.service
+  - tracker-miner-rss-3.service
+  - tracker-writeback-3.service
+  - tracker-xdg-portal-3.service
+
+systemd_root_mask_services:
+  - NetworkManager-wait-online.service
+  - packagekit.service
