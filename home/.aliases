@@ -4,36 +4,6 @@ gnome-background() {
 	gsettings set org.gnome.desktop.background color-shading-type 'solid'
 	gsettings set org.gnome.desktop.background primary-color "$1"
 }
-gnome-backup() {
-	declare -a gnome_dconf_backup=(
-		"/org/gnome/desktop/input-sources"
-		"/org/gnome/desktop/interface"
-		"/org/gnome/desktop/peripherals/touchpad"
-		"/org/gnome/desktop/peripherals/mouse"
-		"/org/gnome/desktop/peripherals/trackball"
-		"/org/gnome/desktop/privacy"
-		"/org/gnome/desktop/sound"
-		"/org/gnome/desktop/wm/preferences"
-		"/org/gnome/mutter"
-		"/org/gnome/shell"
-		"/org/gnome/nautilus"
-		"/org/gnome/settings-daemon/plugins/media-keys"
-		"/org/gnome/terminal/legacy"
-	)
-	dest_folder="$HOME/dotfiles/_desktop/$(gnome-shell --version | sed 's/ /-/g' | tr '[:upper:]' '[:lower:]')"
-	mkdir -p $dest_folder
-	for f in ${gnome_dconf_backup[@]}; do
-		dconf dump $f/ > $dest_folder/$(echo $f | sed 's/\//./g').conf
-	done
-}
-gnome-restore() {
-	dest_folder="$HOME/dotfiles/_desktop/$(gnome-shell --version | sed 's/ /-/g' | tr '[:upper:]' '[:lower:]')"
-	cd $dest_folder
-	for f in .*.conf; do
-		dconf_path=$(echo $f | sed 's/conf//g' | sed 's/\./\//g')
-		dconf load $dconf_path < $f
-	done
-}
 update() {
 	if command -v rpm-ostree; then
 		rpm-ostree update
@@ -85,6 +55,7 @@ alias open='/usr/local/bin/xdg-open'
 alias rsyncthingD='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync --usermap=$(id -ru):1000 --groupmap=$(id -rg):1000 --archive --verbose --inplace --no-compress --progress --partial --delete -e "ssh -J jump" --exclude={.stversions,*.tmp}  root@raspberrypi-1:/usr/local/mnt/Vault/Syncthing/ ~/Syncthing/ && cd -'
 alias rsyncthingS='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync --usermap=$(id -ru):1000 --groupmap=$(id -rg):1000 --archive --verbose --inplace --no-compress --progress --partial --delete -e "ssh -J jump" --exclude={.stversions,*.tmp}  ~/Syncthing/ root@raspberrypi-1:/usr/local/mnt/Vault/Syncthing/ && rsync --usermap=$(id -ru):1000 --groupmap=$(id -rg):1000 --archive --verbose --inplace --no-compress --progress --partial --delete -e "ssh -J jump" --exclude={.stversions,*.tmp}  ~/Syncthing/ root@raspberrypi-2:/usr/local/mnt/Vault/Syncthing/ && cd -'
 alias vi='/usr/bin/vim -u ~/.vimrc-minimal'
+alias htop='top -o%CPU'
 if [ ! -e /run/.containerenv ]; then
 	alias vim='/usr/bin/vim -u ~/.vimrc-minimal'
 fi
