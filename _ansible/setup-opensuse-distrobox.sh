@@ -67,7 +67,6 @@ TERMINAL_PACKAGES="
   sensors
   sqlite
   stow
-  syncthing
   tcpdump
   tig
   tmux
@@ -82,9 +81,9 @@ TERMINAL_PACKAGES="
 
 GOLANG_PACKAGES="
   go
-  shfmt
 "
-sudo zypper install -y ${ARCHIVE_PACKAGES} ${PYTHON_PACKAGES} ${TERMINAL_PACKAGES} ${GOLANG_PACKAGES} # ${GOLANG_MODULES}
+sudo zypper install -y --recommends \
+  ${ARCHIVE_PACKAGES} ${PYTHON_PACKAGES} ${TERMINAL_PACKAGES} ${GOLANG_PACKAGES}
 
 PYTHON_MODULES="
   python-lsp-server[all]
@@ -113,6 +112,7 @@ GOLANG_MODULES="
   golang.org/x/tools/cmd/gorename@latest
   golang.org/x/tools/cmd/guru@latest
   golang.org/x/tools/gopls@latest
+  mvdan.cc/sh/v3/cmd/shfmt@latest
 "
 
 for gopkg in ${GOLANG_MODULES}; do

@@ -83,7 +83,6 @@ TERMINAL_PACKAGES="
   rsync
   sqlite
   stow
-  syncthing
   tcpdump
   tig
   tmux
@@ -100,7 +99,8 @@ GOLANG_PACKAGES="
   golang
 "
 
-sudo dnf install -y ${ARCHIVE_PACKAGES} ${PYTHON_PACKAGES} ${TERMINAL_PACKAGES} ${GOLANG_PACKAGES}
+sudo dnf install -y \
+  ${ARCHIVE_PACKAGES} ${PYTHON_PACKAGES} ${TERMINAL_PACKAGES} ${GOLANG_PACKAGES}
 
 PYTHON_MODULES="
   python-lsp-server[all]
@@ -121,7 +121,7 @@ PYTHON_MODULES="
 "
 
 sudo pip3 install -U setuptools==57.5.0
-sudo pip3 install ${PYTHON_MODULES}
+sudo pip3 install -U ${PYTHON_MODULES}
 
 GOLANG_MODULES="
   golang.org/x/lint/golint@latest

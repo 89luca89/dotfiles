@@ -18,7 +18,6 @@
   until: result is not failed
   tags: distro
 
-
 # Mask systemd services to free up memory
 - name: Mask system services
   systemd:
@@ -47,7 +46,6 @@
   with_items:
     - flatpak uninstall --all
     - flatpak remote-delete fedora
-  when: use_flatpaks
   tags: flatpak_packages
 
 - name: Install Programs (Flatpak Programs - flathub)
@@ -57,7 +55,6 @@
   with_items:
     - {key: "flathub", value: "https://flathub.org/repo/flathub.flatpakrepo"}
     - {key: "flathub-beta", value: "https://flathub.org/beta-repo/flathub-beta.flatpakrepo"}
-  when: use_flatpaks
   tags: flatpak_packages
 
 - name: Install Programs (Flatpak Programs )
@@ -66,12 +63,17 @@
   register: flatpak_out
   changed_when: not 'already installed' in flatpak_out.stderr
   become: no
-  when: use_flatpaks
   tags: flatpak_packages
 
 - name: Env variables (Flatpak Programs)
-  command: "flatpak override --user --env={{ item.value }} {{ item.key }}"
+  shell: |
+    if flatpak override --user --show {{ item.key }} | grep -q {{ item.value }}; then
+      echo ok
+    else
+      flatpak override --user --env={{ item.value }} {{ item.key }}
+    fi
   with_items: "{{ flatpak_overrides }}"
+  register: override_out
+  changed_when: not 'ok' in override_out.stdout
   become: no
-  when: use_flatpaks
   tags: flatpak_packages
