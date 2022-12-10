@@ -58,11 +58,12 @@ TERMINAL_PACKAGES="
   bc
   binwalk
   clang
-  clang-tools-extra
+  cmake
   ctags
   devscripts
   dos2unix
   file
+  gcc-c++
   git
   git-credential-libsecret
   golang

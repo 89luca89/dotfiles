@@ -5,6 +5,7 @@
 flatpak_packages:
   - com.github.tchx84.Flatseal
   - com.mattjakeman.ExtensionManager
+  - org.gtk.Gtk3theme.Adwaita-dark
   - org.gimp.GIMP
   - org.gnome.Boxes
   - org.gnome.Calculator
