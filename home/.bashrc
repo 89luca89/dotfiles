@@ -19,8 +19,8 @@ if  [ -e /run/.containerenv ] || [ -e /.dockerenv ]; then
 
 	export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
 	# Complete using arrow up/down
-	bind '"\e[A": history-search-backward'
-	bind '"\e[B": history-search-forward'
+	bind '"\e[A": history-search-backward' 2>/dev/null
+	bind '"\e[B": history-search-forward' 2>/dev/null
 
 	[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 	[ -f ~/.localrc ] && source ~/.localrc
