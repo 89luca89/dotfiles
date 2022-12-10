@@ -12,7 +12,6 @@ set splitbelow splitright
 set title number encoding=utf8 mouse=a
 set undodir=$HOME/.vim/undo undofile undolevels=10000
 set laststatus=2
-" set laststatus=0 ruler rulerformat=%40(%F%m%r%w\ [%c-%l/%L]\ %y%)\     " Modified+FileType+Ruler
 filetype off
 call plug#begin('~/.vim/plugged')
 Plug 'airblade/vim-gitgutter'
@@ -28,11 +27,11 @@ Plug 'junegunn/fzf.vim'
 " Lang Packs
 Plug 'sheerun/vim-polyglot'
 " LSP & Diagnostics
-Plug 'dense-analysis/ale'
+Plug 'ycm-core/YouCompleteMe',  { 'do': './install.py --clangd-completer --go-completer --rust-completer' }
 call plug#end()
 filetype plugin indent on
 syntax on
-let g:airline_extensions = ["ale", "fzf", "tabline"]
+let g:airline_extensions = ["fzf", "tabline"]
 " Theming
 set termguicolors
 set background=dark
@@ -110,10 +109,11 @@ augroup end
 augroup lspbindings
     autocmd!
     " IDE-like keybindings
-    autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>gd  :<C-u>vert ALEGoToDefinition<CR>
-    autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>r  :<C-u>ALERename<CR>
-    autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>rf :<C-u>ALEFindReferences<CR>
-    autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> K  :<C-u>ALEHover<CR>
+    autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>gd  :<C-u>vert YcmCompleter GoTo<CR>
+    autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>r  :<C-u>YcmCompleter RefactorRename<CR>
+    autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>rf :<C-u>YcmCompleter GoToReferences<CR>
+    autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>m :<C-u>YcmCompleter FixIt<CR>
+    autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> K  <plug>(YCMHover)
 augroup end
 " Fix ansible file detection
 augroup ansible_vim_fthosts
@@ -123,24 +123,13 @@ augroup ansible_vim_fthosts
     autocmd BufNewFile,BufRead */*vars/*/**.yml set filetype=yaml.ansible
     autocmd BufNewFile,BufRead */roles/**/*.yml set filetype=yaml.ansible
 augroup END
-" ALE + LSP -------------------------------------------------------------------
-set omnifunc=ale#completion#OmniFunc
+" YCM + LSP -------------------------------------------------------------------
 set completeopt=menu,menuone,popup,noselect,noinsert
-let g:ale_completion_enabled = 1
-let g:ale_enabled            = 1
-let g:ale_fix_on_save        = 1
-let g:ale_floating_preview   = 1
-let g:ale_lint_on_enter      = 1
-let g:ale_lint_on_save       = 1
-let g:ale_lint_on_text_changed = 0
-let g:ale_sh_bashate_options = '-i E002,E003,E010,E011 --max-line-length 120'
-let g:ale_yaml_yamllint_options = '-d "{extends: default, rules: {line-length: disable, truthy: disable, key-duplicates: enable, comments: {min-spaces-from-content: 1}}}"'
-let g:ale_linters = {
-            \   'c': ['cc', 'ccls', 'clangd', 'clangtidy', 'cppcheck', 'cpplint', 'cquery', 'cspell', 'flawfinder'],
-            \   'cpp': ['cc', 'ccls', 'clangd', 'clangtidy', 'cppcheck', 'cpplint', 'cquery', 'cspell', 'flawfinder'],
-            \   'go': ['gofmt', 'golint', 'gopls', 'govet'],
-            \   'python': ['flake8', 'mypy', 'pylint', 'pyright', 'pylsp'],
-            \}
+let g:ycm_add_preview_to_completeopt    = 1
+let g:ycm_always_populate_location_list = 1
+let g:ycm_show_detailed_diag_in_popup   = 1
+let g:ycm_goto_buffer_command = 'split'
+let g:ycm_key_list_stop_completion = ['<C-m>']
 " FUNCTIONS --------------------------------------------------------------------
 function! Grep(...)
     cgetexpr system(&grepprg . ' "' . join(a:000, ' ') . '"' )
