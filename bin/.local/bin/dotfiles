@@ -23,3 +23,4 @@ done
 
 ln -sf "$HOME/Syncthing/conf/.histfile" "$HOME/.histfile"
 ln -sfn "$HOME/Syncthing/bin" "$HOME/bin"
+cp "$HOME/.local/share/flatpak/exports/share/applications/me.kozec.syncthingtk.desktop" "$HOME/.config/autostart/"

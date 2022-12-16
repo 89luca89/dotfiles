@@ -63,6 +63,3 @@
     curl -s https://raw.githubusercontent.com/89luca89/distrobox/main/install | \
     sh -s -- --next --prefix ~/.local
   when: not distrobox.stat.exists
-
-- name: Include Syncthing
-  include_tasks: syncthing.yml

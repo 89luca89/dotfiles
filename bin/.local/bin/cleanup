@@ -45,7 +45,6 @@ clean_folder() {
 
 FOLDERS=(
 	"./.cache"
-	"./.cert"
 	"./.config"
 	"./.gnupg"
 	"./.local"
@@ -82,6 +81,8 @@ done
 popd || exit 1
 
 CONFIG_FOLDERS=(
+	"./autostart"
+	"./chromium"
 	"./cni"
 	"./containers"
 	"./dconf"
@@ -96,7 +97,6 @@ CONFIG_FOLDERS=(
 	"./nautilus"
 	"./pipewire"
 	"./pulse"
-	"./syncthing"
 	"./systemd"
 )
 pushd ~/.config || exit 127
@@ -111,16 +111,18 @@ popd || exit 1
 LOCAL_FOLDERS=(
 	"./applications"
 	"./backgrounds"
+	"./bash-completion"
 	"./containers"
-	"./icons"
-	"./man"
 	"./flatpak"
 	"./gnome-settings-daemon"
 	"./gnome-shell"
 	"./gvfs-metadata"
 	"./icc"
+	"./icons"
 	"./keyrings"
+	"./man"
 	"./nautilus"
+	"./systemd"
 	"./xorg"
 )
 
@@ -138,5 +140,12 @@ for d in ~/.var/app/*; do
 	DIR=$(basename "$d")
 	if ! echo $FLATS | grep -q $DIR; then
 		clean_folder "$d"
+	fi
+done
+
+for i in $(find ~ -type l -o -path ~/.local/share/flatpak -prune -o -path ~/.local/share/containers -prune); do
+	if ! test -e "$i"; then
+		ls -l --color "$i"
+		clean_folder "$i"
 	fi
 done

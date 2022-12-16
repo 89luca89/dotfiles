@@ -31,6 +31,7 @@ flatpak_packages:
   - org.gnome.gThumb
   - org.gnome.gitlab.somas.Apostrophe
   - org.gnome.seahorse.Application
+  - me.kozec.syncthingtk
   - org.keepassxc.KeePassXC
   - nl.hjdskes.gcolor3
   - com.obsproject.Studio
