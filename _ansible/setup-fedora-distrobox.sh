@@ -84,6 +84,7 @@ TERMINAL_PACKAGES="
   rsync
   sqlite
   stow
+  tar
   tcpdump
   tig
   tmux
@@ -101,6 +102,7 @@ GOLANG_PACKAGES="
 "
 
 sudo dnf install -y \
+  virt-manager \
   ${ARCHIVE_PACKAGES} ${PYTHON_PACKAGES} ${TERMINAL_PACKAGES} ${GOLANG_PACKAGES}
 
 PYTHON_MODULES="
@@ -141,3 +143,11 @@ if [ ! -e /usr/local/bin/golangci-lint ]; then
 	curl -sSfL \
 		https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sudo sh -s -- -b /usr/local/bin
 fi
+
+PATH=/usr/bin:/usr/local/bin:/bin:/sbin:/usr/sbin
+distrobox-export --app virt-manager
+for i in $TERMINAL_PACKAGES; do
+  if command -v $i 2>/dev/null; then
+    distrobox-export --bin "$(command -v $i)" --export-path $HOME/.local/distrobox-bin
+  fi
+done
