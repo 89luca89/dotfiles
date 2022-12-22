@@ -35,7 +35,6 @@ PYTHON_PACKAGES="
   python3-wheel
   python3-devel
 "
-  # openssl
 TERMINAL_PACKAGES="
   ShellCheck
   acpi
@@ -61,6 +60,7 @@ TERMINAL_PACKAGES="
   make
   net-tools
   nmap
+  openssl
   powertop
   procps
   psmisc

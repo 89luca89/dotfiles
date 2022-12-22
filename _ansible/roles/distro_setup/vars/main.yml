@@ -67,3 +67,14 @@ systemd_user_mask_services:
 systemd_root_mask_services:
   - NetworkManager-wait-online.service
   - packagekit.service
+
+systemd_user_services:
+  - distrobox-upgrade-automatic.service
+  - distrobox-upgrade-automatic.timer
+  - flatpak-upgrade-automatic.service
+  - flatpak-upgrade-automatic.timer
+
+systemd_system_services:
+  - fstrim.service
+  - fstrim.timer
+  - zram.service

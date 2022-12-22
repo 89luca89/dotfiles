@@ -1,5 +1,5 @@
 ---
-# tasks file to setup become,distro to my liking
+# tasks file to setup distro to my liking
 
 - name: Set sysctl variables
   sysctl:
@@ -13,7 +13,7 @@
     - {name: kernel.nmi_watchdog, value: 0}
     - {name: vm.swappiness, value: 5}
     - {name: vm.oom_kill_allocating_task, value: 1}
-  tags: become,distro
+  tags: distro,sysctl
 
 - name: Set UDev Rules
   blockinfile:
@@ -39,13 +39,13 @@
       # SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="0",RUN+="/usr/sbin/powertop --auto-tune"
     marker: "# {mark} ANSIBLE MANAGED BLOCK BY DOTFILES"
     mode: 0600
-  tags: become,distro,powersave
+  tags: distro,powersave
 
 - name: Check if lvm.conf is present
   stat:
     path: /etc/lvm/lvm.conf
   register: lvm_file
-  tags: become,distro
+  tags: distro,lvm
 
 - name: Deploy lvm.conf Flags
   replace:
@@ -55,13 +55,13 @@
     backup: yes
   register: lvm_setup
   when: lvm_file.stat.exists
-  tags: become,distro
+  tags: distro,lvm
 
 - name: Check if Crypttab is present
   stat:
     path: /etc/crypttab
   register: crypt_file
-  tags: become,distro
+  tags: distro,crypttab
 
 - name: Deploy Crypttab Performance Flags
   replace:
@@ -71,7 +71,7 @@
     backup: yes
   register: crypt_setup
   when: crypt_file.stat.exists
-  tags: become,distro
+  tags: distro,crypttab
 
 - name: Deploy Crypttab Performance Flags /2
   replace:
@@ -81,7 +81,7 @@
     backup: yes
   register: crypt_setup
   when: crypt_file.stat.exists
-  tags: become,distro
+  tags: distro,crypttab
 
 - name: Deploy Grub Flags
   replace:
@@ -123,10 +123,10 @@
     - {option: thinkpad_acpi.fan_control, value: 1}
     - {option: usbcore.autosuspend, value: 1}
   register: grub_conf
-  tags: become,distro,grub
+  tags: distro,grub
 
 - name: Validate Grub Config
   command: grub2-mkconfig
   changed_when: no
   become: yes
-  tags: become,distro,grub
+  tags: distro,grub

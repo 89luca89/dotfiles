@@ -17,7 +17,7 @@ if [ ! -e /run/.containerenv ]; then
 			registry.fedoraproject.org/fedora sleep infinity
 	fi
 	podman start ansible
-	podman exec -ti ansible "$(realpath $0)"
+	podman exec -ti ansible "$(realpath $0)" $*
 	podman stop -t1 ansible
 	exit
 fi
