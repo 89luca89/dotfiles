@@ -90,10 +90,11 @@ nnoremap <leader>i  :<C-u>mkview<CR>:%s/\($\n\s*\)\+\%$//e<CR>:%s/\s\+$//e<CR>=G
 nnoremap <leader>I  :<C-u>call system('project-utils ' . &filetype . " . format")<CR>
 nnoremap <leader>T  :<C-u>call system('project-utils ' . &filetype . " . tags")<CR>
 nnoremap <leader>f  :<C-u>call Grep("")<Left><Left>
+nnoremap <leader>td :<C-u>call Grep("TODO<bar>FIXME")<CR>
+nnoremap <C-]> :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
+nnoremap <leader>d :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
 nnoremap <leader>r  :<C-u>call Rename("<c-r>=expand("<cword>")<CR>", "")<Left><Left>
 nnoremap <leader>rf :<C-u>call Grep("<c-r>=expand("<cword>")<CR>")<CR>
-nnoremap <leader>td :<C-u>call Grep("TODO<bar>FIXME")<CR>
-nnoremap <leader>gd :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
 " Override <leader>i formatting with corresponding formatter for each lang
 augroup autoformat_settings
     autocmd!
@@ -109,10 +110,11 @@ augroup end
 augroup lspbindings
     autocmd!
     " IDE-like keybindings
-    autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>gd  :<C-u>vert YcmCompleter GoTo<CR>
+    autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <C-]>  :<C-u>vert YcmCompleter GoTo<CR>
+    autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>d  :<C-u>vert YcmCompleter GoTo<CR>
+    autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>m :<C-u>YcmCompleter FixIt<CR>
     autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>r  :<C-u>YcmCompleter RefactorRename<CR>
     autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>rf :<C-u>YcmCompleter GoToReferences<CR>
-    autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>m :<C-u>YcmCompleter FixIt<CR>
     autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> K  <plug>(YCMHover)
 augroup end
 " Fix ansible file detection
