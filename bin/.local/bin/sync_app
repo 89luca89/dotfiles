@@ -24,6 +24,14 @@ app_sync() {
 		password=$2
 	fi
 	case "$TARGET" in
+		"gpg")
+			[ -d ~/.gnupg ] || (echo "No folder to backup" && exit 1)
+			cd ~ || exit 1
+			tar -czf /tmp/gnupg-keys.tar.gz .gnupg
+			openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -salt -in /tmp/gnupg-keys.tar.gz -out /tmp/gnupg-keys.tar.gz.enc -k "$password"
+			shred -n 25 -u -z /tmp/gnupg-keys.tar.gz
+			cp /tmp/gnupg-keys.tar.gz.enc ~/Syncthing/secured/
+			;;
 		"ssh")
 			[ -d ~/.ssh ] || (echo "No folder to backup" && exit 1)
 			cd ~ || exit 1
@@ -84,6 +92,15 @@ app_sync() {
 app_restore() {
 	TARGET=$1
 	case "$TARGET" in
+		"gpg")
+			openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -d -in ~/Syncthing/secured/gnupg-keys.tar.gz.enc -out /tmp/gnupg-keys.tar.gz
+			if [ ! -f /tmp/gnupg-keys.tar.gz ]; then
+				echo "Failed to decrypt"
+				exit 1
+			fi
+			tar -xzf /tmp/gnupg-keys.tar.gz -C ~/
+			shred -n 25 -u -z /tmp/gnupg-keys.tar.gz
+			;;
 		"ssh")
 			openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -d -in ~/Syncthing/secured/ssh-keys.tar.gz.enc -out /tmp/ssh-keys.tar.gz
 			if [ ! -f /tmp/ssh-keys.tar.gz ]; then
