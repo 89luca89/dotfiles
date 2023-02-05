@@ -46,7 +46,7 @@ augroup general
     autocmd Syntax * syntax match myDeclaration '\v[_.[:alnum:]]+(,\s*[_.[:alnum:]]+)*\ze(\s*([-^+|^\/%&]|\*|\<\<|\>\>|\&\^)?\=[^=])'
     autocmd Syntax * syntax match myDeclaration '\v\w+(,\s*\w+)*\ze(\s*:\=)'
     autocmd Syntax * syntax match myFunction    '\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\ze\%([a-zA-Z0-9]*(\)'
-    autocmd FileType markdown :IndentLinesDisable
+    autocmd FileType markdown,markdown.* :IndentLinesDisable
 augroup end
 " Languages
 let g:go_highlight_build_constraints = 1
@@ -80,8 +80,9 @@ map <leader><Tab>    :<C-u>Buffers<CR>
 map <leader><leader> :<C-u>Files<CR>
 map <leader>t  :<C-u>Tags<CR>
 " Easier completion shortcuts
-inoremap <C-L> <C-X><C-L>
-inoremap <C-F> <C-X><C-F>
+inoremap <C-K> <plug>(fzf-complete-word)
+inoremap <C-F> <plug>(fzf-complete-path)
+inoremap <C-L> <plug>(fzf-complete-line)
 " Code help using external scripts: Lint File, Lint Project, Format, DeepTags, Grep in project
 " Default IDE-Style keybindings: definition, indent, rename, references
 nnoremap <leader>l  :<C-u>cgete system('project-utils ' . &filetype . " " .  expand('%') . " lint")<CR>:copen<CR>
@@ -99,7 +100,7 @@ nnoremap <leader>rf :<C-u>call Grep("<c-r>=expand("<cword>")<CR>")<CR>
 augroup autoformat_settings
     autocmd!
     autocmd FileType c,cpp,objc,objcpp,cc,java nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!clang-format -style=file %<CR>:loadview<CR>
-    autocmd FileType go           nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!gofmt -s %<CR>:%!goimports %<CR>:loadview<CR>
+    autocmd FileType go           nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!gofmt %<CR>:loadview<CR>
     autocmd FileType json         nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!jq .<CR>
     autocmd FileType python       nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!yapf --style=facebook %<CR>:w<CR>:%!isort --ac --float-to-top -d %<CR>:loadview<CR>
     autocmd FileType sh           nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!shfmt -s -ci -sr -kp %<CR>:loadview<CR>
@@ -110,12 +111,11 @@ augroup end
 augroup lspbindings
     autocmd!
     " IDE-like keybindings
-    autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <C-]>  :<C-u>vert YcmCompleter GoTo<CR>
+    autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> K  <plug>(YCMHover)
     autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>d  :<C-u>vert YcmCompleter GoTo<CR>
     autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>m :<C-u>YcmCompleter FixIt<CR>
-    autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>r  :<C-u>YcmCompleter RefactorRename<CR>
+    autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>r  :<C-u>YcmCompleter RefactorRename
     autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>rf :<C-u>YcmCompleter GoToReferences<CR>
-    autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> K  <plug>(YCMHover)
 augroup end
 " Fix ansible file detection
 augroup ansible_vim_fthosts

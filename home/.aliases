@@ -8,8 +8,7 @@ update() {
 	if command -v rpm-ostree; then
 		rpm-ostree update
 	elif [ -e /sbin/transactional-update ]; then
-		sudo tukit --continue --discard execute \
-			sh -c "zypper dup"
+		sudo transactional-update -c -d dup
 	fi
 	if ! flatpak update --user; then
 		flatpak repair --user
