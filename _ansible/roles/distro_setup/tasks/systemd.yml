@@ -1,5 +1,20 @@
 ---
 
+- name: Set systemd timeout
+  blockinfile:
+    path: "{{ item }}"
+    create: yes
+    block: |
+      [Manager]
+      DefaultTimeoutStopSec=10s
+    marker: "# {mark} ANSIBLE MANAGED BLOCK BY DOTFILES"
+    mode: 0600
+  with_items:
+    - /etc/systemd/system.conf.d/system.conf
+    - /etc/systemd/system.conf.d/user.conf
+  become: yes
+  tags: distro,sysctl
+
 # Mask systemd services to free up memory
 - name: Mask user services
   systemd:

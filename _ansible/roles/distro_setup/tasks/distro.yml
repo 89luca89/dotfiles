@@ -15,6 +15,21 @@
     - {name: vm.oom_kill_allocating_task, value: 1}
   tags: distro,sysctl
 
+- name: Fix audio
+  blockinfile:
+    path: /etc/pipewire/pipewire.conf.d/fix.conf
+    create: yes
+    block: |
+      context.properties = {
+        default.clock.allowed-rates  = [ 48000 ]
+        default.clock.quantum = 4096
+        default.clock.min-quantum = 2048
+        default.clock.max-quantum = 8192
+      }
+    marker: "# {mark} ANSIBLE MANAGED BLOCK BY DOTFILES"
+    mode: 0644
+  tags: distro,audio
+
 - name: Set UDev Rules
   blockinfile:
     path: /etc/udev/rules.d/powersave.rules
@@ -117,16 +132,15 @@
     - {option: pcie_aspm, value: force}
     - {option: pcie_aspm.policy, value: powersupersave}
     - {option: scsi_mod.use_blk_mq, value: 1}
-    - {option: snd_ac97_codec.power_save, value: 1}
-    - {option: snd_hda_intel.power_save, value: 1}
-    - {option: snd_hda_intel.power_save_controller, value: "Y"}
     - {option: thinkpad_acpi.fan_control, value: 1}
     - {option: usbcore.autosuspend, value: 1}
   register: grub_conf
   tags: distro,grub
+# - {option: snd_ac97_codec.power_save, value: 1}
+# - {option: snd_hda_intel.power_save, value: 1}
+# - {option: snd_hda_intel.power_save_controller, value: "Y"}
 
 - name: Validate Grub Config
   command: grub2-mkconfig
   changed_when: no
-  become: yes
   tags: distro,grub

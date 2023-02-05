@@ -66,7 +66,6 @@ TERMINAL_PACKAGES="
   gcc-c++
   git
   git-credential-libsecret
-  golang
   helm
   iproute
   iputils
@@ -106,17 +105,10 @@ sudo dnf install -y \
   ${ARCHIVE_PACKAGES} ${PYTHON_PACKAGES} ${TERMINAL_PACKAGES} ${GOLANG_PACKAGES}
 
 PYTHON_MODULES="
-  python-lsp-server[all]
-  pyls-flake8
-  pyls-isort
-  flake8-awesome
-  flake8-docstrings
-  flake8-eradicate
   setuptools
   ansible-later
   ansible-lint
   demjson
-  neovim
   psutil
   six
   yamllint
@@ -126,12 +118,12 @@ PYTHON_MODULES="
 sudo pip3 install -U setuptools==57.5.0
 sudo pip3 install -U ${PYTHON_MODULES}
 
+#  golang.org/x/lint/golint@latest
+#  golang.org/x/tools/cmd/goimports@latest
+#  golang.org/x/tools/cmd/gorename@latest
+#  golang.org/x/tools/cmd/guru@latest
+#  golang.org/x/tools/gopls@latest
 GOLANG_MODULES="
-  golang.org/x/lint/golint@latest
-  golang.org/x/tools/cmd/goimports@latest
-  golang.org/x/tools/cmd/gorename@latest
-  golang.org/x/tools/cmd/guru@latest
-  golang.org/x/tools/gopls@latest
   mvdan.cc/sh/v3/cmd/shfmt@latest
 "
 
