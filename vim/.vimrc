@@ -1,76 +1,82 @@
 source $VIMRUNTIME/defaults.vim
-set autoindent copyindent expandtab shiftwidth=4 softtabstop=4 tabstop=4 smartcase smartindent smarttab
+set autoindent copyindent expandtab shiftwidth=4 softtabstop=4 tabstop=4 smartindent smarttab
 set autoread autowrite hidden
-set colorcolumn=80 cursorline
-set formatoptions=tcqj
-set grepprg=grep\ -rn hlsearch ignorecase clipboard+=unnamedplus
-set langnoremap langremap lazyredraw redrawtime=0 ttyfast
-set list
-set nomodeline nofsync nowrap noswapfile nowritebackup nobackup noshowmode noshowcmd nofoldenable
-set path+=.,** wildmode=longest:full,full wildignorecase
-set splitbelow splitright
+set colorcolumn=80 cursorline cursorcolumn showmatch
+set hlsearch ignorecase smartcase
+set lazyredraw redrawtime=0 ttyfast
+set nomodeline nofsync nowrap noswapfile nowritebackup nobackup noshowmode nofoldenable
+set path+=** wildmode=longest:full,full wildignore+=**/tags wildignorecase
+set splitbelow splitright sidescroll=1 sidescrolloff=7
 set title number encoding=utf8 mouse=a
 set undodir=$HOME/.vim/undo undofile undolevels=10000
-set laststatus=2
+set completeopt=menu,menuone,popup,noselect,noinsert
+set laststatus=2 statusline=%m\ %f\ %y\ %{&fileencoding?&fileencoding:&encoding}\ %=%(C:%c\ L:%l\ %P%)
 filetype off
+" Auto-install vim-plug
+if empty(glob('~/.vim/autoload/plug.vim'))
+    silent !curl -sfLo ~/.vim/autoload/plug.vim --create-dirs
+                \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync |:q| source $MYVIMRC
+endif
 call plug#begin('~/.vim/plugged')
-Plug 'airblade/vim-gitgutter'
 " utilities
-Plug 'vim-airline/vim-airline'
-Plug 'yggdroot/indentLine'
-" colorscheme
-Plug 'cormacrelf/vim-colors-github'
-Plug 'tomasr/molokai'
+Plug 'airblade/vim-gitgutter'
+Plug 'ap/vim-buftabline'
+Plug 'preservim/nerdtree'
 " Fzf
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } } | Plug 'junegunn/fzf.vim'
+" " colorscheme
+Plug 'gruvbox-community/gruvbox'
+Plug 'cormacrelf/vim-colors-github'
 " Lang Packs
 Plug 'sheerun/vim-polyglot'
 " LSP & Diagnostics
-Plug 'ycm-core/YouCompleteMe',  { 'do': './install.py --clangd-completer --go-completer --rust-completer' }
+Plug 'dense-analysis/ale'
 call plug#end()
 filetype plugin indent on
 syntax on
-let g:airline_extensions = ["fzf", "tabline"]
 " Theming
+let base16colorspace=256
+set t_Co=256
 set termguicolors
 set background=dark
 augroup general
     autocmd! general
     "keep equal proportions when windows resized
     autocmd VimResized * wincmd =
-    " Strip whitespaces and extra newlines
-    autocmd BufWritePre * if &ft!~?'markdown'|%s/\($\n\s*\)\+\%$//e|endif
+        " Strip whitespaces and extra newlines
+        autocmd BufWritePre * if &ft!~?'markdown'|%s/\($\n\s*\)\+\%$//e|endif
     autocmd BufWritePre * if &ft!~?'markdown'|%s/\s\+$//e|endif
     " Custom syntax highlight
     autocmd Syntax * syntax match myDeclaration '\v[_.[:alnum:]]+(,\s*[_.[:alnum:]]+)*\ze(\s*([-^+|^\/%&]|\*|\<\<|\>\>|\&\^)?\=[^=])'
     autocmd Syntax * syntax match myDeclaration '\v\w+(,\s*\w+)*\ze(\s*:\=)'
     autocmd Syntax * syntax match myFunction    '\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\ze\%([a-zA-Z0-9]*(\)'
-    autocmd FileType markdown,markdown.* :IndentLinesDisable
 augroup end
 " Languages
-let g:go_highlight_build_constraints = 1
-let g:go_highlight_extra_types       = 1
-let g:go_highlight_fields            = 1
-let g:go_highlight_function_calls    = 1
-let g:go_highlight_function_parameters = 1
-let g:go_highlight_functions         = 1
-let g:go_highlight_generate_tags     = 1
-let g:go_highlight_operators         = 1
-let g:go_highlight_types             = 1
-let g:java_highlight_all             = 1
-let g:python_highlight_all  = 1
-let g:indentLine_char = '▏'
+let g:go_highlight_build_constraints    = 1
+let g:go_highlight_extra_types          = 1
+let g:go_highlight_fields               = 1
+let g:go_highlight_function_calls       = 1
+let g:go_highlight_function_parameters  = 1
+let g:go_highlight_functions            = 1
+let g:go_highlight_generate_tags        = 1
+let g:go_highlight_operators            = 1
+let g:go_highlight_types                = 1
+let g:java_highlight_all                = 1
+let g:python_highlight_all              = 1
 """""""""""""""""""""
 "       Shortcuts   "
 """""""""""""""""""""
 " do last action on a visual selection
-vnoremap . :normal .<CR>
+vnoremap .  :normal .<CR>
+vnoremap > >gv
+vnoremap < <gv
 " navigate tabs Tab (fwd) S-Tab (prev)
-map <Tab>   :<C-u>bn<CR>
+map <C-T>   :<C-u>tabnew<CR>
 map <S-Tab> :<C-u>bp<CR>
+map <Tab>   :<C-u>bn<CR>
 " C-c close buffer
-map <C-c> :<C-u>bp<BAR>sp<BAR>bn<BAR>bd<CR>
+map <C-c>   :<C-u>bp<BAR>sp<BAR>bn<BAR>bd<CR>
 " copy to clipboard on a visual selection
 vnoremap <C-c> :w !xclip -sel clip<CR><CR>
 " Leader map
@@ -78,80 +84,58 @@ let mapleader = ' '
 " Utility shortcuts with leader:
 map <leader><Tab>    :<C-u>Buffers<CR>
 map <leader><leader> :<C-u>Files<CR>
-map <leader>t  :<C-u>Tags<CR>
+map <leader>t        :<C-u>Tags<CR>
 " Easier completion shortcuts
-inoremap <C-K> <plug>(fzf-complete-word)
-inoremap <C-F> <plug>(fzf-complete-path)
-inoremap <C-L> <plug>(fzf-complete-line)
+inoremap <C-F> <C-X><C-F>
+inoremap <C-L> <C-X><C-L>
 " Code help using external scripts: Lint File, Lint Project, Format, DeepTags, Grep in project
-" Default IDE-Style keybindings: definition, indent, rename, references
-nnoremap <leader>l  :<C-u>cgete system('project-utils ' . &filetype . " " .  expand('%') . " lint")<CR>:copen<CR>
-nnoremap <leader>L  :<C-u>cgete system('project-utils ' . &filetype . " . lint")<CR>:copen<CR>
-nnoremap <leader>i  :<C-u>mkview<CR>:%s/\($\n\s*\)\+\%$//e<CR>:%s/\s\+$//e<CR>=G:loadview<CR>
-nnoremap <leader>I  :<C-u>call system('project-utils ' . &filetype . " . format")<CR>
-nnoremap <leader>T  :<C-u>call system('project-utils ' . &filetype . " . tags")<CR>
-nnoremap <leader>f  :<C-u>call Grep("")<Left><Left>
-nnoremap <leader>td :<C-u>call Grep("TODO<bar>FIXME")<CR>
-nnoremap <C-]> :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
-nnoremap <leader>d :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
-nnoremap <leader>r  :<C-u>call Rename("<c-r>=expand("<cword>")<CR>", "")<Left><Left>
-nnoremap <leader>rf :<C-u>call Grep("<c-r>=expand("<cword>")<CR>")<CR>
+nnoremap <expr> <leader>e g:NERDTree.IsOpen() ? ':NERDTreeClose<CR>' : @% == '' ? ':NERDTree<CR>' : ':NERDTreeFind<CR>'
+nnoremap <leader>T   :<C-u>!ctags -R .<CR><CR>
+nnoremap <leader>gs  :<C-u>!tig -C . status<CR><CR>
+nnoremap <leader>gd  :<C-u>!clear && git diff <C-r>=expand('%:p')<CR><CR>
+nnoremap <leader>gb  :<C-u>!tig blame +<C-r>=line('.')<CR> -- <C-r>=expand('%')<CR><CR>
+" Default IDE-Style keybindings: indent/format, definition, find, references
+nnoremap <leader>i   :<C-u>mkview<CR>:w<CR>ggVG=:loadview<CR>
+nnoremap <C-]>       :<C-u>stag <c-r>=expand("<cword>")<CR><CR>
+nnoremap <leader>d   :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
+nnoremap <leader>f   :<C-u>vimgrep //gj **/* **/.* <bar>copen<C-Left><C-Left><C-Left><C-Left><Right>
+nnoremap <leader>rf  :<C-u>vimgrep /<c-r>=expand("<cword>")<CR>/gj **/* **/.* <bar>copen<CR>
 " Override <leader>i formatting with corresponding formatter for each lang
 augroup autoformat_settings
     autocmd!
-    autocmd FileType c,cpp,objc,objcpp,cc,java nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!clang-format -style=file %<CR>:loadview<CR>
-    autocmd FileType go           nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!gofmt %<CR>:loadview<CR>
-    autocmd FileType json         nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!jq .<CR>
-    autocmd FileType python       nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!yapf --style=facebook %<CR>:w<CR>:%!isort --ac --float-to-top -d %<CR>:loadview<CR>
-    autocmd FileType sh           nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!shfmt -s -ci -sr -kp %<CR>:loadview<CR>
-    autocmd FileType terraform    nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:!terraform fmt %<CR>:loadview<CR><CR>
+    autocmd FileType c,cpp,cc  nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!clang-format -style=file %<CR>:loadview<CR>
+    autocmd FileType go        nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!gofmt %<CR>:%!goimports %<CR>:loadview<CR>
+    autocmd FileType json      nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!jq .<CR>
+    autocmd FileType python    nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!yapf --style=facebook %<CR>:w<CR>:%!isort --ac --float-to-top -d %<CR>:loadview<CR>
+    autocmd FileType sh        nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!shfmt -s -ci -sr -kp %<CR>:loadview<CR>
 augroup end
 " LSP SETUP --------------------------------------------------------------------
 " Override IDE-Style keybindings: definition, rename, references
 augroup lspbindings
     autocmd!
     " IDE-like keybindings
-    autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> K  <plug>(YCMHover)
-    autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>d  :<C-u>vert YcmCompleter GoTo<CR>
-    autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>m :<C-u>YcmCompleter FixIt<CR>
-    autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>r  :<C-u>YcmCompleter RefactorRename
-    autocmd Filetype c,cc,cpp,python,go nnoremap <buffer> <leader>rf :<C-u>YcmCompleter GoToReferences<CR>
+    autocmd Filetype c,cc,cpp,go,python nnoremap <buffer> K          :<C-u>ALEHover<CR>
+    autocmd Filetype c,cc,cpp,go,python nnoremap <buffer> <C-]>      :<C-u>ALEGoToDefinition<CR>
+    autocmd Filetype c,cc,cpp,go,python nnoremap <buffer> <leader>d  :<C-u>ALEGoToDefinition -vsplit<CR>
+    autocmd Filetype c,cc,cpp,go,python nnoremap <buffer> <leader>m  :<C-u>ALEFix<CR>
+    autocmd Filetype c,cc,cpp,go,python nnoremap <buffer> <leader>r  :<C-u>ALERename<CR>
+    autocmd Filetype c,cc,cpp,go,python nnoremap <buffer> <leader>rf :<C-u>ALEFindReferences<CR>
 augroup end
-" Fix ansible file detection
-augroup ansible_vim_fthosts
-    autocmd!
-    autocmd BufNewFile,BufRead */*.j2 set filetype=jinja2
-    autocmd BufNewFile,BufRead */*inventory*.yml set filetype=yaml.ansible
-    autocmd BufNewFile,BufRead */*vars/*/**.yml set filetype=yaml.ansible
-    autocmd BufNewFile,BufRead */roles/**/*.yml set filetype=yaml.ansible
-augroup END
-" YCM + LSP -------------------------------------------------------------------
-set completeopt=menu,menuone,popup,noselect,noinsert
-let g:ycm_add_preview_to_completeopt    = 1
-let g:ycm_always_populate_location_list = 1
-let g:ycm_show_detailed_diag_in_popup   = 1
-let g:ycm_goto_buffer_command = 'split'
-let g:ycm_key_list_stop_completion = ['<C-m>']
-" FUNCTIONS --------------------------------------------------------------------
-function! Grep(...)
-    cgetexpr system(&grepprg . ' "' . join(a:000, ' ') . '"' )
-    copen
-endfunction
-function! Rename(old, new)
-    call system("grep -rl " . shellescape(a:old) . " | xargs -P9 -I{} sed -i 's/" . shellescape(a:old) . "/" . shellescape(a:new) . "/g' {}")
-endfunction
+" AUTO LIGHT/DARK MODE --------------------------------------------------------
 function! SetDark()
+    let g:gruvbox_contrast_dark = "hard"
     set background=dark
-    colorscheme molokai
-    highlight SpecialKey guifg=#404040
-    highlight link myFunction Function
+    try | colorscheme gruvbox | catch | endtry
+    highlight link BufTabLineActive CursorColumn
+    highlight link BufTabLineCurrent PmenuSel
     highlight link myDeclaration Identifier
+    highlight link myFunction Function
 endfunction
 function! SetLight()
     set background=light
-    colorscheme github
-    highlight link myFunction Function
+    try | colorscheme github | catch | endtry
     highlight link myDeclaration Identifier
+    highlight link myFunction Function
 endfunction
 function! s:set_bg(timer_id)
     silent call system("grep -q 'light' ~/.local/share/current_theme")
@@ -169,3 +153,22 @@ endfun
 silent call timer_start(1000 * 5, function('s:set_bg'), {'repeat': -1})
 " Execute now to set theme
 silent call s:set_bg(0)
+" ALE + LSP -------------------------------------------------------------------
+set omnifunc=ale#completion#OmniFunc
+let g:ale_completion_enabled    = 1
+let g:ale_enabled               = 1
+let g:ale_fix_on_save           = 1
+let g:ale_floating_preview      = 1
+let g:ale_lint_on_enter         = 1
+let g:ale_lint_on_save          = 1
+let g:ale_lint_on_text_changed  = 0
+let g:ale_go_golangci_lint_executable = "/usr/local/bin/golangci-lint"
+let g:ale_go_golangci_lint_options = ""
+let g:ale_yaml_yamllint_options = '-d "{extends: default, rules: {line-length: disable, truthy: disable, key-duplicates: enable, comments: {min-spaces-from-content: 1}}}"'
+"let g:ale_disable_lsp = 1
+let g:ale_linters = {
+            \   'c': ['clangd', 'gcc'],
+            \   'cpp': ['clangd', 'gcc'],
+            \   'go': ['gofmt', 'govet', 'gopls', 'golangci-lint'],
+            \   'python': ['flake8', 'pylint', 'pylsp'],
+            \}
