@@ -30,6 +30,32 @@
     mode: 0644
   tags: distro,audio
 
+- name: Fix network privacy - mac randomization
+  blockinfile:
+    path: /etc/NetworkManager/conf.d/00-macrandomize.conf
+    create: yes
+    block: |
+      [device]
+      wifi.scan-rand-mac-address=yes
+
+      [connection]
+      wifi.cloned-mac-address=random
+      ethernet.cloned-mac-address=random
+    marker: "# {mark} ANSIBLE MANAGED BLOCK BY DOTFILES"
+    mode: 0644
+  tags: distro,network
+
+- name: Fix network privacy - hostname
+  blockinfile:
+    path: /etc/NetworkManager/conf.d/01-transient-hostname.conf
+    create: yes
+    block: |
+      [main]
+      hostname-mode=none
+    marker: "# {mark} ANSIBLE MANAGED BLOCK BY DOTFILES"
+    mode: 0644
+  tags: distro,network
+
 - name: Set UDev Rules
   blockinfile:
     path: /etc/udev/rules.d/powersave.rules
@@ -125,7 +151,6 @@
     - {option: iwlmvm.power_scheme, value: 3}
     - {option: iwlwifi.power_level, value: 5}
     - {option: iwlwifi.power_save, value: "Y"}
-    - {option: mitigations, value: "off"}
     - {option: mmc_mod.use_blk_mq, value: 1}
     - {option: nvme_core.default_ps_max_latency_us, value: 20000}
     - {option: nvme_core.force_apst, value: 1}
@@ -139,6 +164,7 @@
 # - {option: snd_ac97_codec.power_save, value: 1}
 # - {option: snd_hda_intel.power_save, value: 1}
 # - {option: snd_hda_intel.power_save_controller, value: "Y"}
+# - {option: mitigations, value: "off"}
 
 - name: Validate Grub Config
   command: grub2-mkconfig

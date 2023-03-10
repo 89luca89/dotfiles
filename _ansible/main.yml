@@ -9,4 +9,3 @@
 
   roles:
     - {role: distro_setup, become: yes}
-    - {role: dotfiles, become: no}
