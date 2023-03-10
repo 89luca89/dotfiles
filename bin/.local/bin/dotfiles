@@ -5,22 +5,24 @@ if ! cd "$HOME/dotfiles" > /dev/null; then
 fi
 
 for i in $(ls -d */ | grep -vE "^_"); do
-	pushd $i >/dev/null
-	for j in $(find . | tail -n+2); do
+	pushd $i > /dev/null
+	for j in $(find . -type f | tail -n+2); do
 		destfile="$(echo "$j" | sed "s|\./|$HOME/|g")"
 		if [ -e "$destfile" ]; then
-			# ls -ld $destfile | grep "\->" | cut -d' ' -f9-
-			continue
-		else
+			if [ ! -L "$destfile" ]; then
+				rm -i "$destfile"
+			fi
 			echo "$destfile"
+			mkdir -p "$(dirname "${destfile}")"
 			ln -sf "$(realpath "$j")" "$destfile"
 			sync
 			sleep 0.25
 		fi
 	done
-	popd >/dev/null
+	popd > /dev/null
 done
 
-ln -sf "$HOME/Syncthing/conf/.histfile" "$HOME/.histfile"
-ln -sfn "$HOME/Syncthing/bin" "$HOME/bin"
-cp "$HOME/.local/share/flatpak/exports/share/applications/me.kozec.syncthingtk.desktop" "$HOME/.config/autostart/"
+ln -sf "/home/luca-linux/Syncthing/conf/.histfile" "$HOME/.histfile"
+ln -sfn "/home/luca-linux/Syncthing/bin" "$HOME/bin"
+mkdir -p "$HOME/.config/autostart/"
+cp "/home/luca-linux/.local/share/flatpak/exports/share/applications/me.kozec.syncthingtk.desktop" "$HOME/.config/autostart/"
