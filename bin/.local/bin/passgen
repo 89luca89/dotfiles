@@ -1,3 +1,0 @@
-#!/bin/sh
-
-< /dev/urandom tr -dc '!@#$%^&*()_+{}[]:";<>?,./_ A-Z-a-z-0-9' | head -c${1:-$1};echo;

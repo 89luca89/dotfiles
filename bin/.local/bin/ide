@@ -1,4 +1,0 @@
-#!/bin/bash
-tmux split-window -h -p 40  -c "#{pane_current_path}"
-#tmux split-window -v -p 60  -c "#{pane_current_path}"
-tmux split-window -v -p 30  -c "#{pane_current_path}"
