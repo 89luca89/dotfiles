@@ -1,5 +1,14 @@
 source $VIMRUNTIME/defaults.vim
 set bg=dark
-set nofoldenable
-set number
-set nowrap
+set autoindent copyindent expandtab shiftwidth=4 softtabstop=4 tabstop=4 smartindent smarttab
+set autoread autowrite hidden
+set colorcolumn=80 cursorline cursorcolumn showmatch
+set hlsearch ignorecase smartcase
+set lazyredraw redrawtime=0 ttyfast
+set nomodeline nofsync nowrap noswapfile nowritebackup nobackup noshowmode nofoldenable
+set path+=** wildmode=longest:full,full wildignore+=**/tags wildignorecase
+set splitbelow splitright
+set title number encoding=utf8 mouse=a
+set undodir=$HOME/.vim/undo undofile undolevels=10000
+highlight CursorLine cterm=bold term=reverse ctermbg=238
+highlight CursorColumn term=reverse ctermbg=238
