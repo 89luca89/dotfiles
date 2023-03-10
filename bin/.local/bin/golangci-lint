@@ -1,0 +1,24 @@
+#!/bin/sh
+
+DIR="$1"
+
+set -e
+
+if [ ! -e /usr/local/bin/golangci-lint ]; then
+	exit 127
+fi
+
+[ -d "$DIR" ] && DIR="$DIR/..."
+LINES=$(/usr/local/bin/golangci-lint run "$DIR" --color never --out-format tab 2> /dev/null | sed "s/  */ /g" | sort -u)
+
+IFS='
+'
+for line in $LINES; do
+	is_formatted=$(echo "$line" | cut -d " " -f1 | cut -d ":" -f3)
+	is_multiline=$(echo "$line" | cut -d ":" -f2 | grep -Eo "^[0-9]")
+	if [ -z "$is_formatted" ]; then
+		echo "$line" | awk '{$1=$1":0"; print}'
+	elif [ -n "$is_multiline" ]; then
+		echo "$line"
+	fi
+done
