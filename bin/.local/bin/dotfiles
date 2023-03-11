@@ -6,9 +6,8 @@ fi
 
 for i in $(ls -d */ | grep -vE "^_"); do
 	pushd $i > /dev/null
-	for j in $(find . -type f | tail -n+2); do
+	for j in $(find . -type f); do
 		destfile="$(echo "$j" | sed "s|\./|$HOME/|g")"
-		if [ -e "$destfile" ]; then
 			if [ ! -L "$destfile" ]; then
 				rm -i "$destfile"
 			fi
@@ -17,7 +16,6 @@ for i in $(ls -d */ | grep -vE "^_"); do
 			ln -sf "$(realpath "$j")" "$destfile"
 			sync
 			sleep 0.25
-		fi
 	done
 	popd > /dev/null
 done
