@@ -1,21 +1,23 @@
 source $VIMRUNTIME/defaults.vim
 set autoindent copyindent expandtab shiftwidth=4 softtabstop=4 tabstop=4 smartindent smarttab
 set autoread autowrite hidden
-set colorcolumn=80 cursorline cursorcolumn showmatch
+set colorcolumn=80 cursorline showmatch
 set hlsearch ignorecase smartcase
 set lazyredraw redrawtime=0 ttyfast
 set nomodeline nofsync nowrap noswapfile nowritebackup nobackup noshowmode nofoldenable
 set path+=** wildmode=longest:full,full wildignore+=**/tags wildignorecase
 set splitbelow splitright sidescroll=1 sidescrolloff=7
-set title number encoding=utf8 mouse=a
+set title number encoding=utf8 mouse=a nrformats+=unsigned isfname-==
 set undodir=$HOME/.vim/undo undofile undolevels=10000
 set completeopt=menu,menuone,popup,noselect,noinsert
+set list listchars=tab:\|\ " there is a space
 set laststatus=2 statusline=%m\ %f\ %y\ %{&fileencoding?&fileencoding:&encoding}\ %=%(C:%c\ L:%l\ %P%)
 filetype off
 " Auto-install vim-plug
 if empty(glob('~/.vim/autoload/plug.vim'))
     silent !curl -sfLo ~/.vim/autoload/plug.vim --create-dirs
                 \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    silent !mkdir -p $HOME/.vim/undo $HOME/.vim/view
     autocmd VimEnter * PlugInstall --sync |:q| source $MYVIMRC
 endif
 call plug#begin('~/.vim/plugged')
@@ -30,6 +32,7 @@ Plug 'gruvbox-community/gruvbox'
 Plug 'cormacrelf/vim-colors-github'
 " Lang Packs
 Plug 'sheerun/vim-polyglot'
+Plug 'editorconfig/editorconfig-vim'
 " LSP & Diagnostics
 Plug 'dense-analysis/ale'
 call plug#end()
@@ -44,9 +47,11 @@ augroup general
     autocmd! general
     "keep equal proportions when windows resized
     autocmd VimResized * wincmd =
-        " Strip whitespaces and extra newlines
-        autocmd BufWritePre * if &ft!~?'markdown'|%s/\($\n\s*\)\+\%$//e|endif
+    " Strip whitespaces and extra newlines
+    autocmd BufWritePre * if &ft!~?'markdown'|%s/\($\n\s*\)\+\%$//e|endif
     autocmd BufWritePre * if &ft!~?'markdown'|%s/\s\+$//e|endif
+    " Help indentation guides on yaml/json
+    autocmd FileType json,yaml,yaml.* setlocal cursorcolumn
     " Custom syntax highlight
     autocmd Syntax * syntax match myDeclaration '\v[_.[:alnum:]]+(,\s*[_.[:alnum:]]+)*\ze(\s*([-^+|^\/%&]|\*|\<\<|\>\>|\&\^)?\=[^=])'
     autocmd Syntax * syntax match myDeclaration '\v\w+(,\s*\w+)*\ze(\s*:\=)'
@@ -81,6 +86,7 @@ map <C-c>   :<C-u>bp<BAR>sp<BAR>bn<BAR>bd<CR>
 vnoremap <C-c> :w !xclip -sel clip<CR><CR>
 " Leader map
 let mapleader = ' '
+nnoremap <leader><esc> :<C-u>noh<CR>
 " Utility shortcuts with leader:
 map <leader><Tab>    :<C-u>Buffers<CR>
 map <leader><leader> :<C-u>Files<CR>
@@ -90,10 +96,14 @@ inoremap <C-F> <C-X><C-F>
 inoremap <C-L> <C-X><C-L>
 " Code help using external scripts: Lint File, Lint Project, Format, DeepTags, Grep in project
 nnoremap <expr> <leader>e g:NERDTree.IsOpen() ? ':NERDTreeClose<CR>' : @% == '' ? ':NERDTree<CR>' : ':NERDTreeFind<CR>'
+nnoremap <leader>I   :<C-u>cgetexpr system('project-utils format ' . &filetype . " .")<bar>mkview<bar>e!<CR>
+nnoremap <leader>l   :<C-u>cgetexpr system('project-utils lint ' . &filetype . " " .  expand('%'))<bar>copen<CR>
+nnoremap <leader>L   :<C-u>cgetexpr system('project-utils lint ' . &filetype . " .")<bar>copen<CR>
 nnoremap <leader>T   :<C-u>!ctags -R .<CR><CR>
+nnoremap <leader>gb  :<C-u>!tig blame +<C-r>=line('.')<CR> -- <C-r>=expand('%')<CR><CR>
 nnoremap <leader>gs  :<C-u>!tig -C . status<CR><CR>
 nnoremap <leader>gd  :<C-u>!clear && git diff <C-r>=expand('%:p')<CR><CR>
-nnoremap <leader>gb  :<C-u>!tig blame +<C-r>=line('.')<CR> -- <C-r>=expand('%')<CR><CR>
+nnoremap <leader>td   :<C-u>vimgrep /\<NOTE\>\\|\<OPTIMIZE\>\\|\<TODO\>\\|\<HACK\>\\|\<FIXME\>\\|\<BUG\>\\|\<XXX\>\C/gj **/* **/.* <bar>copen<CR>
 " Default IDE-Style keybindings: indent/format, definition, find, references
 nnoremap <leader>i   :<C-u>mkview<CR>:w<CR>ggVG=:loadview<CR>
 nnoremap <C-]>       :<C-u>stag <c-r>=expand("<cword>")<CR><CR>
@@ -134,6 +144,8 @@ endfunction
 function! SetLight()
     set background=light
     try | colorscheme github | catch | endtry
+    highlight link BufTabLineActive CursorColumn
+    highlight link BufTabLineCurrent PmenuSel
     highlight link myDeclaration Identifier
     highlight link myFunction Function
 endfunction
