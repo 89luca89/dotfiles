@@ -98,6 +98,7 @@ CONFIG_FOLDERS=(
 	"./pipewire"
 	"./pulse"
 	"./systemd"
+	"./mpv"
 )
 pushd ~/.config || exit 127
 find . -maxdepth 1 -type d -empty -delete
@@ -114,6 +115,7 @@ LOCAL_FOLDERS=(
 	"./bash-completion"
 	"./containers"
 	"./flatpak"
+	"./go"
 	"./gnome-settings-daemon"
 	"./gnome-shell"
 	"./gvfs-metadata"

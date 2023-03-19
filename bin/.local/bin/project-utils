@@ -27,7 +27,7 @@ DEPS="
 if [ "${COMMAND}" != "setup" ]; then
 	for dep in ${DEPS}; do
 		if ! command -v "${dep}" > /dev/null; then
-			echo missing $dep
+			echo "missing ${dep}"
 			exit 1
 		fi
 	done
@@ -37,6 +37,7 @@ case "$COMMAND" in
 	"setup")
 		echo "Installing golang modules..."
 		GOLANG_MODULES="
+		  github.com/segmentio/golines@latest
 		  golang.org/x/tools/cmd/goimports@latest
 		  golang.org/x/tools/cmd/guru@latest
 		  golang.org/x/tools/gopls@latest
@@ -56,12 +57,10 @@ case "$COMMAND" in
 		sudo pip3 install -U setuptools \
 			ansible-later ansible-lint \
 			demjson psutil six \
-			python-language-server[all]
+			"python-language-server[all]"
 
 		echo "Installing markdownlint..."
 		sudo npm install -g markdownlint-cli
-
-		vim +PlugInstall! +PlugClean! +qall
 		;;
 		###############################################################################
 	"format")
@@ -83,23 +82,24 @@ case "$COMMAND" in
 				;;
 
 			"go")
-				files=$(find "$DIR" -type f -name '*.go' -not -path "./vendor/*")
+				files=$(find "$DIR" -type f -name '*.go' -not -path "$DIR/vendor/*")
 				for f in $files; do
 					gofmt -w "$f"
 					goimports -w "$f"
+					golines -w "$f"
 				done
 				;;
 
 			"python")
 				yapf -p --style facebook -i -r "$DIR" 2> /dev/null
-				isort -ac -rc "$DIR" 2> /dev/null
+				isort --ac --float-to-top "$DIR" 2> /dev/null
 				;;
 
 			"sh")
 				result=0
 				for file in $(find . -type f -not -path "*.git*"); do
 					if file "$file" | grep -qi shell; then
-						shfmt -s -ci -sr -kp -w $file
+						shfmt -s -ci -sr -kp -w "${file}"
 						result=$((result + $?))
 					fi
 				done
@@ -112,7 +112,24 @@ case "$COMMAND" in
 	"lint")
 		case "$LANGUAGE" in
 			"go")
-				golangci-lint "$DIR"
+				[ -d "$DIR" ] && DIR="$DIR/..."
+				LINES=$(/usr/local/bin/golangci-lint run "$DIR" --color never --out-format tab 2> /dev/null | sed "s/  */ /g" | sort -u)
+
+				IFS='
+				'
+				for line in $LINES; do
+					is_formatted=$(echo "$line" | cut -d " " -f1 | cut -d ":" -f3)
+					is_multiline=$(echo "$line" | cut -d ":" -f2 | grep -Eo "^[0-9]")
+					if [ -z "$is_formatted" ]; then
+						echo "$line" | awk '{$1=$1":0"; print}'
+					elif [ -n "$is_multiline" ]; then
+						echo "$line"
+					fi
+				done
+
+				# Find possible optimizations
+				go build -o /dev/null \
+					-gcflags="-m=2 -d=ssa/check_bce/debug=1 -d=ssa/prove/debug=2" 2>&1
 				;;
 			"python")
 				flake8 -j auto --max-line-length 80 "$DIR" 2> /dev/null
@@ -124,7 +141,7 @@ case "$COMMAND" in
 
 						if file "$file" | grep -qi shell; then
 							# file is a shell script, we can shellcheck
-							shellcheck -f gcc -a -Sstyle $file
+							shellcheck -f gcc -a -Sstyle "${file}"
 						fi
 
 					done
@@ -134,13 +151,13 @@ case "$COMMAND" in
 				;;
 
 			"yaml")
-				yamllint -d "{extends: default, rules: {line-length: disable, truthy: disable, key-duplicates: enable, comments: {min-spaces-from-content: 1}}}" --format parsable "$DIR"
+				yamllint # -d "{extends: default, rules: {line-length: disable, truthy: disable, key-duplicates: enable, comments: {min-spaces-from-content: 1}}}" --format parsable "$DIR"
 				;;
 
 			*"ansible"*)
 				DIR=$(realpath --relative-to="$(pwd)" "$DIR")
 
-				yamllint -d "{extends: default, rules: {line-length: disable, truthy: disable, key-duplicates: enable, comments: {min-spaces-from-content: 1}}}" --format parsable "$DIR"
+				yamllint # -d "{extends: default, rules: {line-length: disable, truthy: disable, key-duplicates: enable, comments: {min-spaces-from-content: 1}}}" --format parsable "$DIR"
 				ansible-lint -p --nocolor -x yaml 2> /dev/null
 				if [ -d "$DIR" ]; then
 					if [ -d "$DIR/tasks" ]; then
@@ -152,8 +169,8 @@ case "$COMMAND" in
 					LINES=$(ansible-later "$DIR" 2>&1)
 				fi
 
-				while IFS= read -r line; do
-					if [ "$(echo "$line" | wc -c)" -lt 2 ]; then
+				for line in ${LINES}; do
+					if [ "$(echo "${line}" | wc -c)" -lt 2 ]; then
 						continue
 					else
 						if ! echo "$line" | grep -q ERROR; then
@@ -162,12 +179,12 @@ case "$COMMAND" in
 							fi
 						fi
 					fi
-				done <<< "$LINES"
+				done
 				;;
 
 			"markdown")
 				if [ -d "$DIR" ]; then
-					markdownlint $(find . -name '*.md' | grep -vF './.git')
+					markdownlint $(find . -type f -iname "*.md" -a -not -path "*.git*" -a -not -path "*vendor*")
 				else
 					markdownlint "$DIR" 2>&1
 				fi

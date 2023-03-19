@@ -1,26 +1,24 @@
-#!/bin/sh
+#!/bin/bash
 
 if ! cd "$HOME/dotfiles" > /dev/null; then
 	exit 1
 fi
 
 for i in $(ls -d */ | grep -vE "^_"); do
-	pushd $i > /dev/null
+	pushd $i > /dev/null || return
 	for j in $(find . -type f); do
 		destfile="$(echo "$j" | sed "s|\./|$HOME/|g")"
-			if [ ! -L "$destfile" ]; then
-				rm -i "$destfile"
-			fi
-			echo "$destfile"
-			mkdir -p "$(dirname "${destfile}")"
-			ln -sf "$(realpath "$j")" "$destfile"
-			sync
-			sleep 0.25
+		if [ ! -L "$destfile" ]; then
+			rm -i "$destfile"
+		fi
+		echo "$destfile"
+		mkdir -p "$(dirname "${destfile}")"
+		ln -sf "$(realpath "$j")" "$destfile"
 	done
-	popd > /dev/null
+	popd > /dev/null || return
 done
 
-ln -sf "/home/luca-linux/Syncthing/conf/.histfile" "$HOME/.histfile"
-ln -sfn "/home/luca-linux/Syncthing/bin" "$HOME/bin"
+ln -sf "$HOME/Syncthing/conf/.histfile" "$HOME/.histfile"
+ln -sfn "$HOME/Syncthing/bin" "$HOME/bin"
 mkdir -p "$HOME/.config/autostart/"
-cp "/home/luca-linux/.local/share/flatpak/exports/share/applications/me.kozec.syncthingtk.desktop" "$HOME/.config/autostart/"
+cp "$HOME/.local/share/flatpak/exports/share/applications/me.kozec.syncthingtk.desktop" "$HOME/.config/autostart/"
