@@ -1,3 +1,11 @@
+" Auto-install vim-plug -------------------------------------------------------
+if empty(glob('~/.vim/autoload/plug.vim'))
+    silent !mkdir -p $HOME/.vim/{autoload,plugged,undo,view,spell}
+    silent !curl -sfLo ~/.vim/autoload/plug.vim --create-dirs
+                \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync |qall| source $MYVIMRC
+endif
+" -----------------------------------------------------------------------------
 source $VIMRUNTIME/defaults.vim
 set autoindent copyindent expandtab shiftwidth=4 softtabstop=4 tabstop=4 smartindent smarttab
 set autoread autowrite hidden
@@ -13,13 +21,6 @@ set completeopt=menu,menuone,popup,noselect,noinsert
 set list listchars=tab:\|\ " there is a space
 set laststatus=2 statusline=%m\ %f\ %y\ %{&fileencoding?&fileencoding:&encoding}\ %=%(C:%c\ L:%l\ %P%)
 filetype off
-" Auto-install vim-plug
-if empty(glob('~/.vim/autoload/plug.vim'))
-    silent !mkdir -p $HOME/.vim/{autoload,plugged,undo,view}
-    silent !curl -sfLo ~/.vim/autoload/plug.vim --create-dirs
-                \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    autocmd VimEnter * PlugInstall --sync |qall| source $MYVIMRC
-endif
 call plug#begin('~/.vim/plugged')
 " utilities
 Plug 'airblade/vim-gitgutter'
@@ -28,7 +29,7 @@ Plug 'preservim/nerdtree'
 " Fzf
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } } | Plug 'junegunn/fzf.vim'
 " " colorscheme
-Plug 'rakr/vim-one'
+Plug 'gruvbox-community/gruvbox'
 " Lang Packs
 Plug 'sheerun/vim-polyglot'
 " LSP & Diagnostics
@@ -39,9 +40,6 @@ syntax on
 " Theming
 let NERDTreeShowHidden=1
 let $FZF_DEFAULT_COMMAND='find . \! \( -type d -path ./.git -prune \) \! -type d -printf ''%P\n'''
-set t_Co=256
-set termguicolors
-set background=dark
 augroup general
     autocmd! general
     "keep equal proportions when windows resized
@@ -76,13 +74,13 @@ vnoremap .  :normal .<CR>
 vnoremap > >gv
 vnoremap < <gv
 " navigate tabs Tab (fwd) S-Tab (prev)
-map <C-T>   :<C-u>tabnew<CR>
-map <S-Tab> :<C-u>bp<CR>
-map <Tab>   :<C-u>bn<CR>
+nnoremap <C-T>   :<C-u>tabnew<CR>
+nnoremap <S-Tab> :<C-u>bp<CR>
+nnoremap <Tab>   :<C-u>bn<CR>
 " C-c close buffer
-map <C-c>   :<C-u>bp<BAR>sp<BAR>bn<BAR>bd<CR>
+nnoremap <C-c>   :<C-u>bp<BAR>sp<BAR>bn<BAR>bd<CR>
 " copy to clipboard on a visual selection
-vnoremap <C-c> :w !xclip -sel clip<CR><CR>
+vnoremap <C-c>   :w !xclip -sel clip<CR><CR>
 " Leader map
 let mapleader = ' '
 nnoremap <leader><esc> /<C-u>slkdjcsd<CR>
@@ -134,21 +132,25 @@ augroup lspbindings
 augroup end
 " AUTO LIGHT/DARK MODE --------------------------------------------------------
 function! s:set_bg(timer_id)
-    silent call system("grep -q 'light' ~/.local/share/current_theme")
-    if v:shell_error == 0
-        if &background != 'light' || a:timer_id == 0
-            set background=light
-            try | colorscheme one | catch | endtry
-        endif
+    let g:theme_changed = 1
+    let g:theme = system("cat $HOME/.local/share/current_theme")
+    if g:theme == 'light' && (&background != 'light' || a:timer_id == 0)
+        set background=light
+        set notermguicolors
+        colorscheme default
+    elseif g:theme == 'dark' && (&background == 'light' || a:timer_id == 0)
+        set background=dark
+        set termguicolors
+        try | colorscheme gruvbox | catch | endtry
     else
-        if &background == 'light' || a:timer_id == 0
-            set background=dark
-            try | colorscheme one | catch | endtry
-        endif
+        let g:theme_changed = 0
     endif
-    highlight Normal guibg=NONE
-    highlight link myDeclaration Special
-    highlight link myFunction Type
+    if g:theme_changed == 1
+        highlight SignColumn    ctermbg=NONE    guibg=NONE
+        highlight TabLineFill   cterm=NONE      gui=NONE
+        highlight link myDeclaration Special
+        highlight link myFunction Type
+    endif
 endfun
 " Execute bg_sync every 5 seconds
 silent call timer_start(1000 * 5, function('s:set_bg'), {'repeat': -1})
