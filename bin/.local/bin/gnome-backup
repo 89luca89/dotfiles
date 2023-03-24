@@ -19,7 +19,7 @@ declare  -a gnome_dconf_backup=(
 	"/org/gnome/shell"
 	"/org/gnome/terminal/legacy"
 )
-dest_folder="$HOME/dotfiles/_desktop/$( gnome-shell --version | sed 's/ /-/g' | tr '[:upper:]' '[:lower:]')"
+dest_folder="$HOME/dotfiles/_desktop/$(gnome-shell --version | sed 's/ /-/g' | sed -E 's/\.[0-9]+//g' | tr '[:upper:]' '[:lower:]')"
 mkdir  -p "${dest_folder}"
 for f in  ${gnome_dconf_backup[@]}; do
 	dconf dump "${f}/" > "${dest_folder}/$(echo "${f}" | sed 's/\//./g').conf"

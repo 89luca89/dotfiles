@@ -3,7 +3,7 @@
 set -o errexit
 set -o nounset
 
-dest_folder="$HOME/dotfiles/_desktop/$( gnome-shell --version | sed 's/ /-/g' | tr '[:upper:]' '[:lower:]')"
+dest_folder="$HOME/dotfiles/_desktop/$(gnome-shell --version | sed 's/ /-/g' | sed -E 's/\.[0-9]+//g' | tr '[:upper:]' '[:lower:]')"
 cd "${dest_folder}"
 for f in  .*.conf; do
 	dconf_path="$(echo "${f}" | sed 's/conf//g' | sed 's/\./\//g')"
