@@ -1,0 +1,85 @@
+#!/bin/sh
+
+### BATTERY COUNTER FOR TEST_BAT
+### CHECK POWER EACH 5s
+set -e
+
+MIN_BAT=1000.000
+MAX_BAT=0.000
+TOTALCOUNT=0
+TOTALCONSUME=0
+
+while true; do
+	clear
+	ACPI=$(acpi -a)
+	TOTALCOUNT=$(echo $TOTALCOUNT+1 | bc -l)
+	#Number of iterations we do, needed for make an estimation for power consumption TOTALCONSUME/TOTALCOUNT
+	POWER_PERCENT=0
+	ACTUALCONSUME_uW=0
+	for bat in /sys/class/power_supply/BAT*; do
+		POWER_PERCENT=$(echo "scale=3; "$POWER_PERCENT"+$(cat "$bat"/energy_now)" | bc -l)
+		#Current consume
+		ACTUALCONSUME_uW=$(echo "scale=3; "$ACTUALCONSUME_uW"+$(cat "$bat"/power_now)" | bc -l)
+	done
+	# From microWatt to Watt
+	ACTUALCONSUME=$(echo "scale=3; $ACTUALCONSUME_uW/1000000" | bc -l)
+
+	# if [ "$ACTUALCONSUME" -gt "$MAX_BAT" ]; then
+	if [ 1 -eq "$(echo "${MAX_BAT} < ${ACTUALCONSUME}" | bc)" ]; then
+		MAX_BAT=$ACTUALCONSUME
+	fi
+	if [ 1 -eq "$(echo "${ACTUALCONSUME} < ${MIN_BAT}" | bc)" ]; then
+		MIN_BAT=$ACTUALCONSUME
+	fi
+	TOTALCONSUME=$(echo $TOTALCONSUME+"$ACTUALCONSUME" | bc -l)
+
+	MEDIAN_CONSUME=$(echo "scale=3; $TOTALCONSUME/$TOTALCOUNT" | bc -l)
+	# From Watt to microWatt
+	MEDIAN_CONSUME_uW=$(echo "($MEDIAN_CONSUME*1000000)/1" | bc -l)
+
+	CUR_LIFE=$(echo "scale=3; $POWER_PERCENT/$ACTUALCONSUME_uW" | bc -l)
+	CUR_LIFE=$(echo "scale=0; $CUR_LIFE*60" | bc -l)
+	CUR_HOURS=$(echo "scale=0; $CUR_LIFE/60" | bc -l)
+	CUR_MINUTES=$(echo "scale=0; ($CUR_LIFE-($CUR_HOURS*60))/1" | bc -l)
+
+	MED_LIFE=$(echo "scale=3; $POWER_PERCENT/$MEDIAN_CONSUME_uW" | bc -l)
+	MED_LIFE=$(echo "scale=0; $MED_LIFE*60" | bc -l)
+	MED_HOURS=$(echo "scale=0; $MED_LIFE/60" | bc -l)
+	MED_MINUTES=$(echo "scale=0; ($MED_LIFE-($MED_HOURS*60))/1" | bc -l)
+
+	echo " 🔋 ( $MED_HOURS h $MED_MINUTES'm )"
+	echo "---"
+	echo 'Current Power    ' "$ACTUALCONSUME" 'W'
+	echo ''
+	echo 'Min Power        ' "$MIN_BAT" 'W'
+	echo 'Max Power        ' "$MAX_BAT" 'W'
+	echo 'Median Power     ' "$MEDIAN_CONSUME" 'W'
+	if echo "$ACPI" | grep -q off-line; then
+		echo 'Remaining Life         ' "$CUR_HOURS"'h ' "$CUR_MINUTES"'m'
+		echo 'Remaining Life (Median)' "$MED_HOURS"'h ' "$MED_MINUTES"'m'
+	else
+		echo " 🔋 ⚡ "
+		echo "---"
+	fi
+	#
+	TOTAL=0
+	for bat in /sys/class/power_supply/BAT*; do
+		TOTAL=$(echo "scale=3; "$TOTAL"+$(cat "$bat"/energy_full)" | bc -l)
+		#Current consume
+	done
+	REMAINING=0
+	for bat in /sys/class/power_supply/BAT*; do
+		REMAINING=$(echo "scale=3; "$REMAINING"+$(cat "$bat"/energy_now)" | bc -l)
+		#Current consume
+	done
+	echo "Capacity Remaining: "$(echo "scale=1; $REMAINING/1000000" | bc -l)"/"$(echo "scale=1; $TOTAL/1000000" | bc -l)"Wh"
+	echo "---"
+	echo "Sensors"
+	#FAN=$([ -f /proc/acpi/ibm/fan ] && grep 'speed:' /proc/acpi/ibm/fan)
+	FAN=$(sensors | grep fan | sed 's/(.*)//')
+	CPU=$(sensors | grep CPU | sed 's/(.*)//')
+
+	echo "fan $FAN"
+	echo "$CPU"
+	sleep 5
+done

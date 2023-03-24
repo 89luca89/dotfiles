@@ -1,0 +1,28 @@
+#!/bin/sh
+
+# Light theme variables
+LIGHT_THEME="Adwaita"
+LIGHT_ICONS="Adwaita"
+# Dark theme variables
+DARK_THEME="Adwaita-dark"
+DARK_ICONS="Adwaita"
+
+if grep -q "dark" "${HOME}"/.local/share/current_theme 2> /dev/null; then
+	printf "light" > "${HOME}"/.local/share/current_theme
+	THEME=$LIGHT_THEME
+	ICONS=$LIGHT_ICONS
+	PREFER="prefer-light"
+else
+	printf "dark" > "${HOME}"/.local/share/current_theme
+	THEME=$DARK_THEME
+	ICONS=$DARK_ICONS
+	PREFER="prefer-dark"
+
+fi
+
+# gsettings detection
+if which gsettings > /dev/null; then
+	gsettings set org.gnome.desktop.interface gtk-theme "$THEME"
+	gsettings set org.gnome.desktop.interface icon-theme "$ICONS"
+	gsettings set org.gnome.desktop.interface color-scheme "$PREFER"
+fi
