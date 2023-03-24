@@ -48,9 +48,7 @@ FOLDERS=(
 	"./.config"
 	"./.gnupg"
 	"./.local"
-	"./.mozilla"
 	"./.ssh"
-	"./.thunderbird"
 	"./.var"
 	"./.vim"
 	"./Books"
@@ -93,12 +91,10 @@ CONFIG_FOLDERS=(
 	"./gtk-3.0"
 	"./gtk-4.0"
 	"./ibus"
-	"./libvirt"
 	"./nautilus"
 	"./pipewire"
 	"./pulse"
 	"./systemd"
-	"./mpv"
 )
 pushd ~/.config || exit 127
 find . -maxdepth 1 -type d -empty -delete
