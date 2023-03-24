@@ -4,51 +4,39 @@
 
 flatpak_packages:
   - com.github.tchx84.Flatseal
+  - com.jgraph.drawio.desktop
   - com.mattjakeman.ExtensionManager
-  - org.gtk.Gtk3theme.Adwaita-dark
+  - com.obsproject.Studio
+  - me.kozec.syncthingtk
+  - nl.hjdskes.gcolor3
+  - org.chromium.Chromium
   - org.gimp.GIMP
-  - org.gnome.Boxes
   - org.gnome.Calculator
   - org.gnome.Calendar
   - org.gnome.Cheese
   - org.gnome.Connections
   - org.gnome.Contacts
-  - org.gnome.Epiphany
   - org.gnome.Evince
   - org.gnome.FileRoller
-  - org.gnome.Maps
   - org.gnome.NautilusPreviewer
   - org.gnome.NetworkDisplays
-  - org.gnome.PowerStats
   - org.gnome.Rhythmbox3
   - org.gnome.SoundRecorder
   - org.gnome.TextEditor
-  - org.gnome.Totem
   - org.gnome.Weather
   - org.gnome.baobab
   - org.gnome.clocks
   - org.gnome.eog
-  - org.gnome.gThumb
-  - org.gnome.gitlab.somas.Apostrophe
   - org.gnome.seahorse.Application
-  - me.kozec.syncthingtk
+  - org.gtk.Gtk3theme.Adwaita-dark
   - org.keepassxc.KeePassXC
-  - nl.hjdskes.gcolor3
-  - com.obsproject.Studio
-  - io.mpv.Mpv
-  - org.chromium.Chromium
   - org.libreoffice.LibreOffice
-  - org.mozilla.Thunderbird
   - org.mozilla.firefox
-  - org.telegram.desktop
-  - net.pcsx2.PCSX2
-  - com.jgraph.drawio.desktop
+  - org.videolan.VLC
 
 flatpak_overrides:
   - {key: "org.mozilla.firefox", value: "MOZ_ENABLE_WAYLAND=1"}
   - {key: "org.mozilla.firefox", value: "MOZ_USE_XINPUT2=1"}
-  - {key: "org.mozilla.Thunderbird", value: "MOZ_ENABLE_WAYLAND=1"}
-  - {key: "org.mozilla.Thunderbird", value: "MOZ_USE_XINPUT2=1"}
 
 systemd_user_mask_services:
   - evolution-addressbook-factory.service
