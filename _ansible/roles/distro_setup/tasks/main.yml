@@ -2,13 +2,16 @@
 ---
 
 - name: Include systemd setup
-  include: systemd.yml
+  import_tasks: systemd.yml
+  become: yes
   tags: systemd
 
 - name: Include distro setup
-  include: distro.yml
+  import_tasks: distro.yml
+  become: yes
   tags: distro
 
 - name: Include flatpak setup
-  include: distro.yml
+  import_tasks: flatpak.yml
+  become: no
   tags: flatpak

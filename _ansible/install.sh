@@ -3,7 +3,7 @@
 DIR="$(dirname $0)"
 PATH=$PATH:$HOME/.local/bin
 
-if [ ! -e /run/.containerenv ]; then
+if ! grep -q 'name="ansible"' /run/.containerenv; then
 	if ! podman inspect -t container ansible > /dev/null 2>&1; then
 		podman create \
 			--dns 1.1.1.1 \
@@ -16,6 +16,7 @@ if [ ! -e /run/.containerenv ]; then
 			--volume "$HOME":"$HOME" \
 			registry.fedoraproject.org/fedora sleep infinity
 	fi
+	podman stop -t1 ansible
 	podman start ansible
 	podman exec -ti ansible "$(realpath $0)" $*
 	podman stop -t1 ansible

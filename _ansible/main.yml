@@ -8,4 +8,4 @@
   gather_facts: True
 
   roles:
-    - {role: distro_setup, become: yes}
+    - distro_setup
