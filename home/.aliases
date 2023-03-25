@@ -88,3 +88,5 @@ export LC_CTYPE="en_US.UTF-8"
 alias kind="systemd-run --user --scope --property=Delegate=yes kind"
 export DOCKER_HOST=unix://${XDG_RUNTIME_DIR}/podman/podman.sock
 export KIND_EXPERIMENTAL_PROVIDER=podman
+export GPG_TTY=$(tty)
+
