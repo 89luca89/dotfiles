@@ -1,0 +1,23 @@
+#!/bin/sh
+
+LANGUAGE="$1"
+
+while true; do
+
+	case "$LANGUAGE" in
+		"go")
+			inotifywait -e modify,delete,create -r . --include '\.go'
+			go build
+			;;
+
+		*)
+			inotifywait  -e modify,delete,create -r .
+			make
+			;;
+
+	esac
+
+    echo "$(date) DONE"
+
+	sleep 5
+done
