@@ -14,14 +14,14 @@ DEPS="
 	gofmt
 	goimports
 	golangci-lint
-	guru
 	isort
 	jq
-	markdownlint
 	shellcheck
 	shfmt
 	yamllint
 	yapf
+	kind
+	ginkgo
 "
 
 if [ "${COMMAND}" != "setup" ]; then
@@ -35,27 +35,21 @@ fi
 
 case "$COMMAND" in
 	"setup")
-		echo "Installing golang modules..."
-		GOLANG_MODULES="
-		  github.com/segmentio/golines@latest
-		  golang.org/x/tools/cmd/goimports@latest
-		  golang.org/x/tools/gopls@latest
-		"
-		for gopkg in ${GOLANG_MODULES}; do
-			echo " - $gopkg"
-			sudo GOBIN=/usr/local/bin go install "${gopkg}"
-		done
-
 		echo "Installing golangci-lint..."
-		curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh |
-			sudo sh -s -- -b /usr/local/bin/
+		if [ ! -e /usr/local/bin/golangci-lint ]; then
+			curl -sSfL "https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh" |
+				sudo sh -s -- -b /usr/local/bin
+		fi
 
 		echo "Installing pythong modules..."
-		sudo pip3 install -U setuptools==57.5.0
-		sudo pip3 install -U setuptools "python-language-server[all]"
+		sudo sh -c "PIPX_HOME=/usr/local/pipx/ PIPX_BIN_DIR=/usr/local/bin/ pipx install --include-deps 'python-language-server[all]'"
+		sudo sh -c "PIPX_HOME=/usr/local/pipx/ PIPX_BIN_DIR=/usr/local/bin/ pipx install yt-dlp"
 
-		echo "Installing markdownlint..."
-		sudo npm install -g markdownlint-cli
+		echo "Installing kind..."
+		if [ ! -e /usr/local/bin/kind ]; then
+			sudo curl -Lo /usr/local/bin/kind https://kind.sigs.k8s.io/dl/v0.17.0/kind-linux-amd64
+			sudo chmod +x /usr/local/bin/kind
+		fi
 		;;
 		###############################################################################
 	"format")
@@ -81,7 +75,6 @@ case "$COMMAND" in
 				for f in $files; do
 					gofmt -w "$f"
 					goimports -w "$f"
-					golines -w "$f"
 				done
 				;;
 
@@ -175,14 +168,6 @@ case "$COMMAND" in
 						fi
 					fi
 				done
-				;;
-
-			"markdown")
-				if [ -d "$DIR" ]; then
-					markdownlint $(find . -type f -iname "*.md" -a -not -path "*.git*" -a -not -path "*vendor*")
-				else
-					markdownlint "$DIR" 2>&1
-				fi
 				;;
 
 		esac
