@@ -52,7 +52,6 @@ alias open='/usr/local/bin/xdg-open'
 alias rsyncthingD='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync --usermap=$(id -ru):1000 --groupmap=$(id -rg):1000 --archive --verbose --inplace --no-compress --progress --partial --delete -e "ssh -J jump" --exclude={.stversions,*.tmp}  root@raspberrypi-1:/usr/local/mnt/Vault/Syncthing/ ~/Syncthing/ && cd -'
 alias rsyncthingS='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync --usermap=$(id -ru):1000 --groupmap=$(id -rg):1000 --archive --verbose --inplace --no-compress --progress --partial --delete -e "ssh -J jump" --exclude={.stversions,*.tmp}  ~/Syncthing/ root@raspberrypi-1:/usr/local/mnt/Vault/Syncthing/ && rsync --usermap=$(id -ru):1000 --groupmap=$(id -rg):1000 --archive --verbose --inplace --no-compress --progress --partial --delete -e "ssh -J jump" --exclude={.stversions,*.tmp}  ~/Syncthing/ root@raspberrypi-2:/usr/local/mnt/Vault/Syncthing/ && cd -'
 alias vi='/usr/bin/vim -u ~/.vimrc-minimal'
-alias htop='top -o%CPU'
 alias tree='tree -I ".git" -a'
 if [ ! -e /run/.containerenv ]; then
 	alias vim='/usr/bin/vim -u ~/.vimrc-minimal'
@@ -85,8 +84,6 @@ export _ANSIBLE_HOME_=$HOME/.cache
 export LANG="en_US.UTF-8"
 export LC_CTYPE="en_US.UTF-8"
 # kind setup
-alias kind="systemd-run --user --scope --property=Delegate=yes kind"
 export DOCKER_HOST=unix://${XDG_RUNTIME_DIR}/podman/podman.sock
 export KIND_EXPERIMENTAL_PROVIDER=podman
-export GPG_TTY=$(tty)
-
+alias kind="systemd-run --user --scope --property=Delegate=yes /usr/local/bin/kind"
