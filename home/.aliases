@@ -83,6 +83,7 @@ export XDG_VIDEOS_DIR="$HOME/Videos"
 export _ANSIBLE_HOME_=$HOME/.cache
 export LANG="en_US.UTF-8"
 export LC_CTYPE="en_US.UTF-8"
+export GPG_TTY=$(tty)
 # kind setup
 export DOCKER_HOST=unix://${XDG_RUNTIME_DIR}/podman/podman.sock
 export KIND_EXPERIMENTAL_PROVIDER=podman
