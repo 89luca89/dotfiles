@@ -1,23 +1,10 @@
 #!/bin/sh
-
-LANGUAGE="$1"
-
+set -x
+EXTENSION="$1"
+shift
 while true; do
-
-	case "$LANGUAGE" in
-		"go")
-			inotifywait -e modify,delete,create -r . --include '\.go'
-			go build
-			;;
-
-		*)
-			inotifywait  -e modify,delete,create -r .
-			make
-			;;
-
-	esac
-
-    echo "$(date) DONE"
-
+	inotifywait -e modify,delete,create -r . --include "\.${EXTENSION}"
+	eval $@
+	echo  "$(date) DONE"
 	sleep 5
 done
