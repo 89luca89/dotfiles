@@ -123,7 +123,7 @@ augroup lspbindings
     " IDE-like keybindings
     autocmd Filetype c,cc,cpp,go,python,rust nnoremap <buffer> K          :<C-u>LSClientShowHover<CR>
     autocmd Filetype c,cc,cpp,go,python,rust nnoremap <buffer> <C-]>      :<C-u>LSClientGoToDefinition<CR>
-    autocmd Filetype c,cc,cpp,go,python,rust nnoremap <buffer> <leader>d  :<C-u>LSClientGoToDefinitionSplit<CR>
+    autocmd Filetype c,cc,cpp,go,python,rust nnoremap <buffer> <leader>d  :<C-u>vert LSClientGoToDefinitionSplit<CR>
     autocmd Filetype c,cc,cpp,go,python,rust nnoremap <buffer> <leader>l  :<C-u>ALEPopulateQuickfix<bar>copen<CR>
     autocmd Filetype c,cc,cpp,go,python,rust nnoremap <buffer> <leader>m  :<C-u>LSClientFindCodeActions<CR>
     autocmd Filetype c,cc,cpp,go,python,rust nnoremap <buffer> <leader>r  :<C-u>LSClientRename<CR>
