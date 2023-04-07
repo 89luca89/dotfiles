@@ -141,6 +141,8 @@ for d in ~/.var/app/*; do
 	fi
 done
 
+find $HOME/.var/app -iname cache -type d -exec rm -rf {} +
+
 for i in $(find ~ -type l -o -path ~/.local/share/flatpak -prune -o -path ~/.local/share/containers -prune); do
 	if ! test -e "$i"; then
 		ls -l --color "$i"

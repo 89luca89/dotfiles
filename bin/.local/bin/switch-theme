@@ -9,14 +9,14 @@ DARK_ICONS="Adwaita"
 
 if grep -q "dark" "${HOME}"/.local/share/current_theme 2> /dev/null; then
 	printf "light" > "${HOME}"/.local/share/current_theme
-	COLOR="#008080"
+	COLOR="#0080A0"
 	ICONS=$LIGHT_ICONS
 	NIGHT_LIGHT=false
 	PREFER="prefer-light"
 	THEME=$LIGHT_THEME
 else
 	printf "dark" > "${HOME}"/.local/share/current_theme
-	COLOR="#004545"
+	COLOR="#005070"
 	ICONS=$DARK_ICONS
 	NIGHT_LIGHT=true
 	PREFER="prefer-dark"
