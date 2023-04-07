@@ -3,5 +3,5 @@ Description=distrobox-upgrade Automatic Update
 
 [Service]
 Type=simple
-ExecStart=/home/luca-linux/.local/bin/distrobox-upgrade main_distrobox
+ExecStart=/home/luca-linux/.local/bin/distrobox-upgrade fedora_distrobox tumbleweed_distrobox
 StandardOutput=null
