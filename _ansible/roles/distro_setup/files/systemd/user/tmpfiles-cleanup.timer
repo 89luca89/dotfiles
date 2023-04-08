@@ -1,0 +1,10 @@
+[Unit]
+Description=Tmpfiles Automatic Cleanup Trigger
+Documentation=man:find(1)
+
+[Timer]
+OnBootSec=1h
+OnUnitInactiveSec=1w
+
+[Install]
+WantedBy=timers.target

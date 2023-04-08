@@ -61,6 +61,8 @@ systemd_user_services:
   - distrobox-upgrade-automatic.timer
   - flatpak-upgrade-automatic.service
   - flatpak-upgrade-automatic.timer
+  - tmpfiles-cleanup.service
+  - tmpfiles-cleanup.timer
 
 systemd_system_services:
   - fstrim.service

@@ -1,0 +1,12 @@
+[Unit]
+Description=Tmpfiles Automatic Cleanup Service
+Documentation=man:find(1)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c "/usr/bin/find /home/luca-linux/.cache/ /var/tmp/ -mtime +30 -type f -delete ||:"
+
+[Install]
+WantedBy=multi-user.target
