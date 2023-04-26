@@ -56,10 +56,8 @@ alias tree='tree -I ".git" -a'
 if [ ! -e /run/.containerenv ]; then
 	alias vim='/usr/bin/vim -u ~/.vimrc-minimal'
 fi
-export CARGO_HOME=$HOME/.local/rust
-export EDITOR=vim
-export LESSHISTFILE=-
 export GOPATH=$HOME/.local/share/go
+export CARGO_HOME=$HOME/.local/rust
 export RUSTUP_HOME=$HOME/.local/rust
 export RUST_SRC_PATH="$RUSTUP_HOME/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/src"
 export PATH=$HOME/.local/bin/node_modules/.bin:$PATH
@@ -68,7 +66,7 @@ export PATH=$HOME/.local/go/bin:$PATH
 export PATH=$HOME/.local/share/flatpak/exports/bin:$PATH
 export PATH=$HOME/bin:$PATH
 export PATH=$PATH:$GOPATH/bin
-export PATH=$PATH:$RUSTUP_HOME/bin
+export PATH=$PATH:$RUSTUP_HOME/toolchains/stable-x86_64-unknown-linux-gnu/bin
 export PATH=$HOME/.local/distrobox-bin:$PATH
 export PATH=/var/lib/flatpak/exports/bin:$PATH
 export TMUX_TMPDIR=/tmp
@@ -87,4 +85,5 @@ export GPG_TTY=$(tty)
 # kind setup
 export DOCKER_HOST=unix://${XDG_RUNTIME_DIR}/podman/podman.sock
 export KIND_EXPERIMENTAL_PROVIDER=podman
-alias kind="systemd-run --user --scope --property=Delegate=yes /usr/local/bin/kind"
+# alias kind="systemd-run --user --scope --property=Delegate=yes /usr/local/bin/kind"
+alias kind="systemd-run --user --scope --property=Delegate=yes ~/.local/bin/kind"
