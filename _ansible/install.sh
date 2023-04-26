@@ -26,7 +26,7 @@ fi
 set -e
 
 if ! command -v ansible || ! command -v sshpass || ! command -v ssh; then
-	sudo dnf install -y ansible sshpass openssh-clients
+	sudo dnf install -y ansible ansible-collection-* sshpass openssh-clients
 	sudo ansible-galaxy collection install community.general -p /usr/share/ansible/collections
 	sudo ansible-galaxy collection install containers.podman -p /usr/share/ansible/collections
 fi

@@ -75,6 +75,7 @@
       ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/iosched/low_latency}="1"
       ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/scheduler}="bfq"
       ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/read_ahead_kb}="4096"
+      ACTION=="add|change", KERNEL=="nvme[0-9]n[0-9]", ATTR{queue/scheduler}="kyber"
       ACTION=="add|change", KERNEL=="nvme[0-9]n[0-9]", ATTR{queue/read_ahead_kb}="16384"
       # ACTION=="add|change", SUBSYSTEM=="power_supply", RUN+="/usr/sbin/powertop --auto-tune"
       # SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="0",RUN+="/usr/sbin/powertop --auto-tune"
