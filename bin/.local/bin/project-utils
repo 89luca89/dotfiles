@@ -25,34 +25,14 @@ DEPS="
 	ginkgo
 "
 
-if [ "${COMMAND}" != "setup" ]; then
-	for dep in ${DEPS}; do
-		if ! command -v "${dep}" > /dev/null; then
-			echo "missing ${dep}"
-			exit 1
-		fi
-	done
-fi
+for dep in  ${DEPS}; do
+	if ! command -v "${dep}" > /dev/null; then
+		echo "missing ${dep}"
+		exit 1
+	fi
+done
 
 case "$COMMAND" in
-	"setup")
-		echo "Installing golangci-lint..."
-		if [ ! -e /usr/local/bin/golangci-lint ]; then
-			curl -sSfL "https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh" |
-				sudo sh -s -- -b /usr/local/bin
-		fi
-
-		echo "Installing pythong modules..."
-		sudo sh -c "PIPX_HOME=/usr/local/pipx/ PIPX_BIN_DIR=/usr/local/bin/ pipx install --include-deps 'python-language-server[all]'"
-		sudo sh -c "PIPX_HOME=/usr/local/pipx/ PIPX_BIN_DIR=/usr/local/bin/ pipx install yt-dlp"
-
-		echo "Installing kind..."
-		if [ ! -e /usr/local/bin/kind ]; then
-			sudo curl -Lo /usr/local/bin/kind https://kind.sigs.k8s.io/dl/v0.17.0/kind-linux-amd64
-			sudo chmod +x /usr/local/bin/kind
-		fi
-		;;
-		###############################################################################
 	"format")
 		case "$LANGUAGE" in
 			"c")
