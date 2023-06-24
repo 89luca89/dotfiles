@@ -124,7 +124,7 @@ case "$COMMAND" in
 				;;
 
 			"spell")
-				codespell --skip=".git,*.pdf,*.1" # -d "{extends: default, rules: {line-length: disable, truthy: disable, key-duplicates: enable, comments: {min-spaces-from-content: 1}}}" --format parsable "$DIR"
+				codespell --skip .git,*.pdf,*.1,*.css,*.lock # -d "{extends: default, rules: {line-length: disable, truthy: disable, key-duplicates: enable, comments: {min-spaces-from-content: 1}}}" --format parsable "$DIR"
 				;;
 
 			*"ansible"*)
