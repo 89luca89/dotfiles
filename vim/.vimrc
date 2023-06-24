@@ -26,7 +26,6 @@ call plug#begin('~/.vim/plugged')
 " utilities
 Plug 'airblade/vim-gitgutter'
 Plug 'ap/vim-buftabline'
-Plug 'preservim/nerdtree'
 " Fzf
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } } | Plug 'junegunn/fzf.vim'
 " " colorscheme
@@ -35,11 +34,9 @@ Plug 'gruvbox-community/gruvbox'
 Plug 'sheerun/vim-polyglot'
 " LSP & Diagnostics
 Plug 'dense-analysis/ale'
-Plug 'natebosch/vim-lsc'
 call plug#end()
 filetype plugin indent on
 syntax on
-let NERDTreeShowHidden=1
 let $FZF_DEFAULT_COMMAND='find . \! \( -type d -path ./.git -prune \) \! -type d -printf ''%P\n'''
 augroup general
     autocmd! general
@@ -92,7 +89,6 @@ map <leader>t        :<C-u>Tags<CR>
 inoremap <C-F> <C-X><C-F>
 inoremap <C-L> <C-X><C-L>
 " Code help using external scripts: Lint File, Lint Project, Format, DeepTags, Grep in project
-nnoremap <expr> <leader>e g:NERDTree.IsOpen() ? ':NERDTreeClose<CR>' : @% == '' ? ':NERDTree<CR>' : ':NERDTreeFind<CR>'
 nnoremap <leader>I   :<C-u>call system('project-utils format ' . &filetype . " .")<bar>mkview<bar>e!<CR>
 nnoremap <leader>l   :<C-u>cgetexpr system('project-utils lint ' . &filetype . " " .  expand('%'))<bar>copen<CR>
 nnoremap <leader>L   :<C-u>cgetexpr system('project-utils lint ' . &filetype . " .")<bar>copen<CR>
@@ -121,13 +117,13 @@ augroup end
 augroup lspbindings
     autocmd!
     " IDE-like keybindings
-    autocmd Filetype c,cc,cpp,go,python,rust nnoremap <buffer> K          :<C-u>LSClientShowHover<CR>
-    autocmd Filetype c,cc,cpp,go,python,rust nnoremap <buffer> <C-]>      :<C-u>LSClientGoToDefinition<CR>
-    autocmd Filetype c,cc,cpp,go,python,rust nnoremap <buffer> <leader>d  :<C-u>vert LSClientGoToDefinitionSplit<CR>
+    autocmd Filetype c,cc,cpp,go,python,rust nnoremap <buffer> K          :<C-u>ALEHover<CR>
+    autocmd Filetype c,cc,cpp,go,python,rust nnoremap <buffer> <C-]>      :<C-u>ALEGoToDefinition<CR>
+    autocmd Filetype c,cc,cpp,go,python,rust nnoremap <buffer> <leader>d  :<C-u>ALEGoToDefinition -vsplit<CR>
     autocmd Filetype c,cc,cpp,go,python,rust nnoremap <buffer> <leader>l  :<C-u>ALEPopulateQuickfix<bar>copen<CR>
-    autocmd Filetype c,cc,cpp,go,python,rust nnoremap <buffer> <leader>m  :<C-u>LSClientFindCodeActions<CR>
-    autocmd Filetype c,cc,cpp,go,python,rust nnoremap <buffer> <leader>r  :<C-u>LSClientRename<CR>
-    autocmd Filetype c,cc,cpp,go,python,rust nnoremap <buffer> <leader>rf :<C-u>LSClientFindReferences<CR>
+    autocmd Filetype c,cc,cpp,go,python,rust nnoremap <buffer> <leader>m  :<C-u>ALEFix<CR>
+    autocmd Filetype c,cc,cpp,go,python,rust nnoremap <buffer> <leader>r  :<C-u>ALERename<CR>
+    autocmd Filetype c,cc,cpp,go,python,rust nnoremap <buffer> <leader>rf :<C-u>ALEFindReferences<CR>
 augroup end
 " AUTO LIGHT/DARK MODE ########################################################
 function! s:set_bg(timer_id)
@@ -142,12 +138,15 @@ function! s:set_bg(timer_id)
     else
         let g:theme_changed = 0
     endif
+
     if g:theme_changed == 1
-        highlight Normal  ctermbg=NONE guibg=NONE
-        highlight SignColumn  ctermbg=NONE guibg=NONE
-        highlight TabLineFill cterm=NONE   gui=NONE
-        highlight link myDeclaration Special
-        highlight link myFunction Type
+        highlight CursorColumn  ctermbg=254
+        highlight CursorLine    ctermbg=254 cterm=NONE
+        highlight Normal        ctermbg=NONE guibg=NONE
+        highlight SignColumn    ctermbg=NONE guibg=NONE
+        highlight TabLineFill   cterm=NONE   gui=NONE
+        highlight link myDeclaration Identifier
+        highlight link myFunction Special
     endif
 endfun
 " Execute bg_sync every 5 seconds
@@ -155,36 +154,38 @@ silent call timer_start(1000 * 5, function('s:set_bg'), {'repeat': -1})
 " Execute now to set theme
 silent call s:set_bg(0)
 " ALE + LSP ###################################################################
-let g:ale_disable_lsp           = 1
+set omnifunc=ale#completion#OmniFunc
+let g:ale_completion_enabled    = 1
 let g:ale_enabled               = 1
+let g:ale_floating_preview      = 1
+let g:ale_hover_cursor          = 0 " this triggers too many LSP starts.
 let g:ale_lint_on_enter         = 0
 let g:ale_lint_on_insert_leave  = 0
 let g:ale_lint_on_save          = 1
 let g:ale_lint_on_text_changed  = 0
-let g:lsc_server_commands  = {
-            \ 'c' : 'clangd',
-            \ 'cpp' : 'clangd',
-            \ "go": {
-            \    "command": "gopls serve",
-            \    "log_level": -1,
-            \  },
-            \ 'python': 'pylsp',
-            \ 'rust' : 'rust-analyzer',
+let g:ale_virtualtext_cursor = 0
+let g:ale_linters = {
+            \   'c':      ['cc', 'ccls', 'clangd'],
+            \   'cpp':    ['cc', 'ccls', 'clangd'],
+            \   'go':     ['gobuild', 'gofmt', 'golangci-lint', 'golint', 'gopls', 'govet'],
+            \   'python': ['flake8', 'mypy', 'pycodestyle', 'pydocstyle', 'pyflakes', 'pylint', 'pylsp'],
+            \   'rust':   ['analyzer', 'cargo', 'clippy', 'rls', 'rustc'],
             \}
 " LSP AUTOSTOP ################################################################
 " Disable LSP after 5 minutes if in inactivity in normal mode.
 let g:stoplsp = 1
-augroup lspidlesaving
+augroup lsp_idle_saving
     autocmd!
-    autocmd InsertEnter  * LSClientEnable
+    autocmd InsertEnter  * ALEEnable
     autocmd BufLeave     * let g:stoplsp = 1
     autocmd CursorHold   * let g:stoplsp = 1
+    autocmd CursorMoved  * let g:stoplsp = 0
     autocmd CursorMovedI * let g:stoplsp = 0
     autocmd InsertEnter  * let g:stoplsp = 0
 augroup end
 function! s:disable_lsp(timer_id)
     if g:stoplsp == 1
-        LSClientDisable
+        ALEStopAllLSPs
     endif
 endfun
 silent call timer_start(1000 * 300, function('s:disable_lsp'), {'repeat': -1})
