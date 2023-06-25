@@ -1,0 +1,20 @@
+#!/bin/sh
+flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
+if [ -z "${flatpak_packages}" ]; then
+	exit
+fi
+
+for flatpak in ${flatpak_packages}; do
+	flatpak install --user --noninteractive --assumeyes flathub "${flatpak}"
+done
+
+installed_apps="$( flatpak list --user --app --columns=app | tail -n +1)"
+for app in ${installed_apps}; do
+	if ! echo "$app" | grep -qE "$(echo $flatpak_packages | tr ' ' '|')"; then
+		flatpak uninstall --user --noninteractive --assumeyes $app
+	fi
+done
+
+flatpak uninstall --user --noninteractive --assumeyes --unused
+flatpak override --user --env=MOZ_ENABLE_WAYLAND=1 --env=MOZ_USE_XINPUT2=1 org.mozilla.firefox

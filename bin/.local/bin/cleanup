@@ -63,10 +63,8 @@ FOLDERS=(
 	"./Projects"
 	"./Public"
 	"./Syncthing"
-	"./Templates"
 	"./Videos"
 	"./VirtualMachines"
-	"./bin"
 	"./dotfiles"
 )
 pushd ~/ || exit 127
@@ -80,11 +78,9 @@ popd || exit 1
 
 CONFIG_FOLDERS=(
 	"./autostart"
-	"./chromium"
 	"./cni"
 	"./containers"
 	"./dconf"
-	"./gnome-control-center"
 	"./gnome-session"
 	"./goa-1.0"
 	"./gtk-2.0"
@@ -107,21 +103,20 @@ popd || exit 1
 
 LOCAL_FOLDERS=(
 	"./applications"
-	"./backgrounds"
 	"./bash-completion"
 	"./containers"
 	"./flatpak"
-	"./go"
 	"./gnome-settings-daemon"
 	"./gnome-shell"
+	"./go"
 	"./gvfs-metadata"
 	"./icc"
 	"./icons"
 	"./keyrings"
 	"./man"
 	"./nautilus"
+	"./system-go"
 	"./systemd"
-	"./xorg"
 )
 
 pushd ~/.local/share || exit 127
@@ -142,10 +137,3 @@ for d in ~/.var/app/*; do
 done
 
 find $HOME/.var/app -iname cache -type d -exec rm -rf {} +
-
-for i in $(find ~ -type l -o -path ~/.local/share/flatpak -prune -o -path ~/.local/share/containers -prune); do
-	if ! test -e "$i"; then
-		ls -l --color "$i"
-		clean_folder "$i"
-	fi
-done
