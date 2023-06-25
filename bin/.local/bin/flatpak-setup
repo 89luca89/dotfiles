@@ -1,9 +1,11 @@
 #!/bin/sh
 flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
-if [ -z "${flatpak_packages}" ]; then
+if [ ! -e "${HOME}/dotfiles/flatpak-packages" ]; then
 	exit
 fi
+
+flatpak_packages="$(cat ${HOME}/dotfiles/flatpak-packages)"
 
 for flatpak in ${flatpak_packages}; do
 	flatpak install --user --noninteractive --assumeyes flathub "${flatpak}"
