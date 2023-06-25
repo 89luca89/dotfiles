@@ -108,13 +108,13 @@
     gnome-tour
     simple-scan
   ]) ++ (with pkgs.gnome; [
-    cheese 
+    cheese
     eog
-    epiphany 
+    epiphany
     evince
-    evince 
-    geary 
-    gedit 
+    evince
+    geary
+    gedit
     gnome-calculator
     gnome-calendar
     gnome-characters
@@ -165,7 +165,7 @@
   # Flatpak setup
   security.polkit.enable = true;
   services.flatpak.enable = true;
-  # This fixes flatpak icons/fonts access 
+  # This fixes flatpak icons/fonts access
   system.fsPackages = [ pkgs.bindfs ];
   fileSystems = let
     mkRoSymBind = path: {
@@ -183,53 +183,40 @@
     "/usr/share/icons" = mkRoSymBind (config.system.path + "/share/icons");
     "/usr/share/fonts" = mkRoSymBind (aggregatedFonts + "/share/fonts");
   };
-  environment.etc."flatpak-setup".text = ''
-   flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-   
-   flatpak_packages="
-      com.github.tchx84.Flatseal
-      com.jgraph.drawio.desktop
-      com.mattjakeman.ExtensionManager
-      com.obsproject.Studio
-      me.kozec.syncthingtk
-      nl.hjdskes.gcolor3
-      org.chromium.Chromium
-      org.gimp.GIMP
-      org.gnome.NetworkDisplays
-      org.gnome.SoundRecorder
-      org.gnome.seahorse.Application
-      org.gtk.Gtk3theme.Adwaita-dark
-      org.keepassxc.KeePassXC
-      org.libreoffice.LibreOffice
-      org.mozilla.firefox
-      org.videolan.VLC
-      org.gnome.Calculator
-      org.gnome.Calendar
-      org.gnome.Cheese
-      org.gnome.Connections
-      org.gnome.Contacts
-      org.gnome.Evince
-      org.gnome.Rhythmbox3
-      org.gnome.TextEditor
-      org.gnome.Weather
-      org.gnome.baobab
-      org.gnome.clocks
-      org.gnome.eog
-   "
-   
-   for flatpak in ''${flatpak_packages}; do
-       flatpak install --user --noninteractive --assumeyes flathub "''${flatpak}"
-   done
-   
-   installed_apps="$(flatpak list --user --app --columns=app | tail -n +1)"
-   for app in ''${installed_apps}; do
-       if ! echo "$app" | grep -qE "$(echo $flatpak_packages | tr ' ' '|')"; then
-           flatpak uninstall --user --noninteractive --assumeyes $app
-       fi
-   done
-   flatpak uninstall --user --noninteractive --assumeyes --unused
-   flatpak override --user --env=MOZ_ENABLE_WAYLAND=1 --env=MOZ_USE_XINPUT2=1 org.mozilla.firefox
-  '';
+
+   environment.sessionVariables = rec {
+     flatpak_packages="
+       com.github.tchx84.Flatseal
+       com.mattjakeman.ExtensionManager
+       com.obsproject.Studio
+       me.kozec.syncthingtk
+       net.pcsx2.PCSX2
+       nl.hjdskes.gcolor3
+       org.chromium.Chromium
+       org.gimp.GIMP
+       org.gnome.Calculator
+       org.gnome.Calendar
+       org.gnome.Connections
+       org.gnome.Contacts
+       org.gnome.Evince
+       org.gnome.FileRoller
+       org.gnome.NautilusPreviewer
+       org.gnome.NetworkDisplays
+       org.gnome.Rhythmbox3
+       org.gnome.SoundRecorder
+       org.gnome.TextEditor
+       org.gnome.Weather
+       org.gnome.baobab
+       org.gnome.clocks
+       org.gnome.eog
+       org.gnome.gitlab.somas.Apostrophe
+       org.gnome.seahorse.Application
+       org.keepassxc.KeePassXC
+       org.libreoffice.LibreOffice
+       org.mozilla.firefox
+       org.videolan.VLC
+    "
+  };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -284,7 +271,7 @@
         Unit = "flatpak-update.service";
       };
   };
-  
+
   systemd.user.services."flatpak-update" = {
     enable = true;
     script = ''
@@ -304,7 +291,7 @@
         Unit = "distrobox-update.service";
       };
   };
-  
+
   systemd.user.services."distrobox-update" = {
     enable = true;
     script = ''
