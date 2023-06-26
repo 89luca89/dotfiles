@@ -1,8 +1,6 @@
 com.github.tchx84.Flatseal
 com.mattjakeman.ExtensionManager
 com.obsproject.Studio
-me.kozec.syncthingtk
-net.pcsx2.PCSX2
 nl.hjdskes.gcolor3
 org.chromium.Chromium
 org.gimp.GIMP
@@ -22,7 +20,6 @@ org.gnome.baobab
 org.gnome.clocks
 org.gnome.eog
 org.gnome.gitlab.somas.Apostrophe
-org.gnome.seahorse.Application
 org.keepassxc.KeePassXC
 org.libreoffice.LibreOffice
 org.mozilla.firefox
