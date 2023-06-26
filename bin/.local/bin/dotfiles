@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if ! cd "$HOME/dotfiles" > /dev/null; then
 	exit 1

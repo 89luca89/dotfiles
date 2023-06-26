@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Using bash instead of posix sh, to use arrays
 
 # -y don't ask anything

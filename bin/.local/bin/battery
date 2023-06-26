@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 ### BATTERY COUNTER FOR TEST_BAT
 ### CHECK POWER EACH 5s

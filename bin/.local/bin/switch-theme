@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # Light theme variables
 LIGHT_THEME="Adwaita"

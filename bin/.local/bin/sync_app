@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Sync target app via syncthing.
 # Create tar.gz of app config/data folder and protect it with gpg.
 

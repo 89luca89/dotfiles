@@ -1,9 +1,9 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 set -e errexit
 set -e nounset
 
-cp "${HOME}/dotfiles/confiuration.nix" /etc/nixos/
+sudo cp "${HOME}/dotfiles/configuration.nix" /etc/nixos/
 sudo nixos-rebuild switch
 
 setup-flatpak
