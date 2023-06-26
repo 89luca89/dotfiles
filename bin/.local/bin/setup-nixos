@@ -6,4 +6,4 @@ set -e nounset
 cp "${HOME}/dotfiles/confiuration.nix" /etc/nixos/
 sudo nixos-rebuild switch
 
-flatpak-setup
+setup-flatpak

@@ -18,7 +18,10 @@ for i in $(ls -d */ | grep -vE "^_"); do
 	popd > /dev/null || return
 done
 
-ln -sf "$HOME/Syncthing/conf/.histfile" "$HOME/.histfile"
-ln -sfn "$HOME/Syncthing/bin" "$HOME/bin"
-mkdir -p "$HOME/.config/autostart/"
-cp "$HOME/.local/share/flatpak/exports/share/applications/me.kozec.syncthingtk.desktop" "$HOME/.config/autostart/"
+# Cleanup broken symlinks
+find -L $HOME \
+	-path "$HOME/.local/share/flatpak" -prune \
+	-o \
+	-path "$HOME/.local/share/containers" -prune \
+	-o \
+	-type l -print | xargs rm
