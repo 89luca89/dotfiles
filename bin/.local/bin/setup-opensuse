@@ -93,6 +93,8 @@ sudo transactional-update -c grub.cfg
 sudo transactional-update -c apply
 
 sudo systemctl enable --now virtqemud.socket virtnetworkd.socket virtstoraged.socket virtnodedevd.socket docker.service
+sudo usermod -aG docker luca-linux
+sudo usermod -aG libvirt luca-linux
 
 setup-flatpak
 # distrobox-auto-update
