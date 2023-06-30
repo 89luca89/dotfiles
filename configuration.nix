@@ -7,8 +7,8 @@
 {
   imports =
     [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+    ./hardware-configuration.nix
+  ];
 
   # Bootloader.
   boot = {
@@ -69,15 +69,13 @@
     };
   };
 
-  networking.hostName = "nixos"; # Define your hostname.
 
   # Enable networking
+  networking.hostName = "nixos"; # Define your hostname.
   networking.networkmanager.enable = true;
 
   # Set your time zone.
   time.timeZone = "Europe/Rome";
-
-  fonts.fontDir.enable = true;
 
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
@@ -93,48 +91,57 @@
     LC_TIME = "it_IT.UTF-8";
   };
 
-  # Enable the X11 windowing system.
-  services.xserver.enable = true;
-
   # Enable the GNOME Desktop Environment.
+  services.xserver.enable = true;
+  services.xserver.layout = "us";
+  services.xserver.xkbVariant = "altgr-intl";
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
+  services.xserver.excludePackages = [ pkgs.xterm ];
   # Minimal gnome installation
-  environment.gnome.excludePackages = (with pkgs; [
-    gnome-connections
-    gnome-extension-manager
-    gnome-photos
-    gnome-text-editor
-    gnome-tour
-    simple-scan
-  ]) ++ (with pkgs.gnome; [
-    cheese
-    eog
-    epiphany
-    evince
-    evince
-    geary
-    gedit
-    gnome-calculator
-    gnome-calendar
-    gnome-characters
-    gnome-clocks
-    gnome-contacts
-    gnome-font-viewer
-    gnome-logs
-    gnome-maps
-    gnome-music
-    gnome-software
-    gnome-terminal
-    gnome-weather
-    totem
-    yelp
-  ]);
+  environment.gnome.excludePackages = [
+    pkgs.simple-scan
+    pkgs.gnome-connections
+    pkgs.gnome-console
+    pkgs.gnome-photos
+    pkgs.gnome-text-editor
+    pkgs.gnome-tour
+    pkgs.gnome.cheese
+    pkgs.gnome.eog
+    pkgs.gnome.epiphany
+    pkgs.gnome.evince
+    pkgs.gnome.geary
+    pkgs.gnome.gedit
+    pkgs.gnome.gnome-calculator
+    pkgs.gnome.gnome-calendar
+    pkgs.gnome.gnome-characters
+    pkgs.gnome.gnome-clocks
+    pkgs.gnome.gnome-contacts
+    pkgs.gnome.gnome-font-viewer
+    pkgs.gnome.gnome-logs
+    pkgs.gnome.gnome-maps
+    pkgs.gnome.gnome-music
+    pkgs.gnome.gnome-shell-extensions
+    pkgs.gnome.gnome-software
+    pkgs.gnome.gnome-terminal
+    pkgs.gnome.gnome-weather
+    pkgs.gnome.totem
+    pkgs.gnome.yelp
+  ];
 
-  # Configure keymap in X11
-  services.xserver = {
-    layout = "us";
-    xkbVariant = "altgr-intl";
+  # List packages installed in system profile. To search, run:
+  # $ nix search wget
+  environment.systemPackages = with pkgs; [
+    flatpak
+    fuse-overlayfs
+    gnome.gnome-terminal
+    gnome.seahorse
+    virt-manager
+  ];
+
+  qt = {
+    enable = true;
+    platformTheme = "gnome";
   };
 
   # Enable sound with pipewire.
@@ -146,7 +153,7 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
-    #jack.enable = true;
+    jack.enable = true;
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -155,16 +162,13 @@
     description = "luca-linux";
     extraGroups = [ "networkmanager" "wheel" "docker" "libvirtd" ];
     packages = with pkgs; [
-      git
-      vim
-      flatpak
-      virt-manager
     ];
   };
 
   # Flatpak setup
   security.polkit.enable = true;
   services.flatpak.enable = true;
+  services.dbus.packages = with pkgs; [ gnome2.GConf ];
   # This fixes flatpak icons/fonts access
   system.fsPackages = [ pkgs.bindfs ];
   fileSystems = let
@@ -184,12 +188,16 @@
     "/usr/share/fonts" = mkRoSymBind (aggregatedFonts + "/share/fonts");
   };
 
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
-  environment.systemPackages = with pkgs; [
-  ];
+  # List services that you want to enable:
+  programs.dconf.enable = true;
+  services.fstrim.enable = true;
+  services.openssh.enable = true;
+  services.printing.enable = true;
+  zramSwap.enable = true;
 
   # List services that you want to disable:
+  systemd.services.NetworkManager-wait-online.enable = false;
+  systemd.services.packagekit.enable = false;
   systemd.user.services.evolution-addressbook-factory.enable = false;
   systemd.user.services.evolution-calendar-factory.enable = false;
   systemd.user.services.evolution-source-registry.enable = false;
@@ -202,15 +210,6 @@
   systemd.user.services.tracker-miner-rss-3.enable = false;
   systemd.user.services.tracker-writeback-3.enable = false;
   systemd.user.services.tracker-xdg-portal-3.enable = false;
-  systemd.services.NetworkManager-wait-online.enable = false;
-  systemd.services.packagekit.enable = false;
-
-  # List services that you want to enable:
-  programs.dconf.enable = true;
-  services.fstrim.enable = true;
-  services.openssh.enable = true;
-  services.printing.enable = true;
-  zramSwap.enable = true;
 
   services.udev.extraRules = ''
     ACTION=="add|change", SUBSYSTEM=="acpi", ATTR{power/control}="auto"
@@ -231,11 +230,11 @@
   systemd.user.timers."flatpak-update" = {
     enable = true;
     wantedBy = [ "timers.target" ];
-      timerConfig = {
-        OnBootSec = "1h";
-        OnUnitActiveSec = "1d";
-        Unit = "flatpak-update.service";
-      };
+    timerConfig = {
+      OnBootSec = "1h";
+      OnUnitActiveSec = "1d";
+      Unit = "flatpak-update.service";
+    };
   };
 
   systemd.user.services."flatpak-update" = {
@@ -251,11 +250,11 @@
   systemd.user.timers."distrobox-update" = {
     enable = true;
     wantedBy = [ "timers.target" ];
-      timerConfig = {
-        OnBootSec = "1h";
-        OnUnitActiveSec = "1d";
-        Unit = "distrobox-update.service";
-      };
+    timerConfig = {
+      OnBootSec = "1h";
+      OnUnitActiveSec = "1d";
+      Unit = "distrobox-update.service";
+    };
   };
 
   systemd.user.services."distrobox-update" = {
@@ -288,6 +287,7 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
+  documentation.nixos.enable = false;
   system.stateVersion = "23.05"; # Did you read the comment?
   system.autoUpgrade.enable = true;
   # Allow unfree packages
