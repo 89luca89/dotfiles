@@ -10,11 +10,11 @@ source $VIMRUNTIME/defaults.vim
 set autoindent copyindent expandtab shiftwidth=4 softtabstop=4 tabstop=4 smartindent smarttab
 set autoread autowrite hidden
 set colorcolumn=80 cursorline showmatch
-set grepprg=grep\ --exclude=tags\ --exclude-dir=\".git\"\ -Irn
+set grepprg=grep\ --exclude=tags\ --exclude-dir={.git,vendor,node_modules,target}\ -Irn
 set hlsearch ignorecase smartcase
-set lazyredraw redrawtime=0 ttyfast
+set lazyredraw redrawtime=0 ttyfast notermguicolors
 set nomodeline nofsync nowrap noswapfile nowritebackup nobackup noshowmode nofoldenable
-set path+=** wildmode=longest:full,full wildignore+=**/tags wildignorecase
+set path+=** wildmode=longest:full,full wildignore+=**/tags wildignorecase wildmode=longest:full wildoptions+=fuzzy wildoptions+=pum
 set splitbelow splitright sidescroll=1 sidescrolloff=7
 set title number encoding=utf8 mouse=a nrformats+=unsigned isfname-==
 set undodir=$HOME/.vim/undo undofile undolevels=10000
@@ -79,7 +79,6 @@ nnoremap <C-c>   :<C-u>bp<BAR>sp<BAR>bn<BAR>bd<CR>
 vnoremap <C-c>   :w !xclip -sel clip<CR><CR>
 " Leader map
 let mapleader = ' '
-nnoremap <leader><esc> :<C-u>let @/ = ""<CR>
 " Utility shortcuts with leader:
 map <leader><Tab>    :<C-u>Buffers<CR>
 map <leader><leader> :<C-u>Files<CR>
@@ -90,18 +89,16 @@ inoremap <C-F> <C-X><C-F>
 inoremap <C-L> <C-X><C-L>
 " Code help using external scripts: Lint File, Lint Project, Format, DeepTags, Grep in project
 nnoremap <leader>I   :<C-u>call system('project-utils format ' . &filetype . " .")<bar>mkview<bar>e!<CR>
-nnoremap <leader>l   :<C-u>cgetexpr system('project-utils lint ' . &filetype . " " .  expand('%'))<bar>copen<CR>
+nnoremap <leader>l   :<C-u>cgetexpr system('project-utils lint ' . &filetype . " " . expand('%'))<bar>copen<CR>
 nnoremap <leader>L   :<C-u>cgetexpr system('project-utils lint ' . &filetype . " .")<bar>copen<CR>
-nnoremap <leader>T   :<C-u>!ctags -R .<CR><CR>
 nnoremap <leader>gb  :<C-u>!tig blame +<C-r>=line('.')<CR> -- <C-r>=expand('%')<CR><CR>
-nnoremap <leader>gd  :<C-u>!clear && git diff <C-r>=expand('%:p')<CR><CR>
+nnoremap <leader>gd  :<C-u>!git diff <C-r>=expand('%:p')<bar>tig<CR><CR>
 nnoremap <leader>gs  :<C-u>!tig -C . status<CR><CR>
-nnoremap <leader>td  :<C-u>cgetexpr system(&grepprg . ' "\<NOTE\>\\|\<OPTIMIZE\>\\|\<TODO\>\\|\<HACK\>\\|\<FIXME\>\\|\<BUG\>\\|\<XXX\>" .')<bar>copen<CR>
 " Default IDE-Style keybindings: indent/format, definition, find, references
 nnoremap <leader>i   :<C-u>mkview<CR>:w<CR>ggVG=:loadview<CR>
 nnoremap <C-]>       :<C-u>stag <c-r>=expand("<cword>")<CR><CR>
 nnoremap <leader>d   :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
-nnoremap <leader>f   :<C-u>cgetexpr system(&grepprg . ' "\<\>"')<bar>copen<C-Left><Right><Right><Right>
+nnoremap <leader>f   :<C-u>cgetexpr system(&grepprg . ' ""')<bar>copen<C-Left><Right>
 nnoremap <leader>F   :<C-u>cgetexpr system(&grepprg . ' "\<<c-r>=expand("<cword>")<CR>\>"')<bar>copen<CR>
 augroup autoformat_settings
     autocmd!
@@ -130,21 +127,21 @@ function! s:set_bg(timer_id)
     let g:theme_changed = 1
     let g:theme = system("cat $HOME/.local/share/current_theme")
     if g:theme == 'light' && (&background != 'light' || a:timer_id == 0)
-        set background=light notermguicolors
-        colorscheme default
+        set background=light
+        " colorscheme default
+        try | colorscheme gruvbox | catch | endtry
     elseif g:theme == 'dark' && (&background == 'light' || a:timer_id == 0)
-        set background=dark  termguicolors
+        set background=dark
         try | colorscheme gruvbox | catch | endtry
     else
         let g:theme_changed = 0
     endif
 
     if g:theme_changed == 1
-        highlight CursorColumn  ctermbg=254
-        highlight CursorLine    ctermbg=254 cterm=NONE
-        highlight Normal        ctermbg=NONE guibg=NONE
-        highlight SignColumn    ctermbg=NONE guibg=NONE
-        highlight TabLineFill   cterm=NONE   gui=NONE
+        highlight BufTabLineFill ctermbg=NONE guibg=NONE
+        highlight Normal         ctermbg=NONE guibg=NONE
+        highlight SignColumn     ctermbg=NONE guibg=NONE
+        highlight TabLineFill    cterm=NONE   gui=NONE
         highlight link myDeclaration Identifier
         highlight link myFunction Special
     endif
