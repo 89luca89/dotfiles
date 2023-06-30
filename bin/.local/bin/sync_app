@@ -7,7 +7,7 @@ set -o errexit
 
 app_sync() {
 	TARGET=$1
-	if [ -z $2 ]; then
+	if [ -z "$2" ]; then
 		echo -n "Password: "
 		read -s password
 		echo
@@ -24,6 +24,21 @@ app_sync() {
 		password=$2
 	fi
 	case "$TARGET" in
+		"all")
+			for data in $(cat "${0}" | grep -v '#' | grep '")' | sort -u | cut -d'"' -f2 | grep -v all); do
+
+				read -p "Backup $data? [y/N] " SURE
+				if [[ $SURE =~ ^[yY]$ ]]; then
+					echo "### Syncing $data..."
+					sync_app sync "${data}" "${password}"
+				elif [[ $SURE =~ ^[nN]$ ]] || [ -z "${SURE}" ]; then
+					continue
+				else
+					echo "### Invalid response"
+					exit 1
+				fi
+			done
+			;;
 		"gpg")
 			[ -d ~/.gnupg ] || (echo "No folder to backup" && exit 1)
 			cd ~ || exit 1
@@ -72,6 +87,20 @@ app_sync() {
 app_restore() {
 	TARGET=$1
 	case "$TARGET" in
+		"all")
+			for data in $(cat "${0}" | grep -v '#' | grep '")' | sort -u | cut -d'"' -f2 | grep -v all); do
+				read -p "Restore $data? [y/N] " SURE
+				if [[ $SURE =~ ^[yY]$ ]]; then
+					echo "### Restoring $data..."
+					sync_app restore "${data}" "${password}"
+				elif [[ $SURE =~ ^[nN]$ ]] || [ -z "${SURE}" ]; then
+					continue
+				else
+					echo "### Invalid response"
+					exit 1
+				fi
+			done
+			;;
 		"gpg")
 			openssl enc -aes-256-cbc -md sha512 -pbkdf2 -iter 100000 -d -in ~/Syncthing/secured/gnupg-keys.tar.gz.enc -out /tmp/gnupg-keys.tar.gz
 			if [ ! -f /tmp/gnupg-keys.tar.gz ]; then
@@ -125,10 +154,10 @@ app_restore() {
 
 if [ "$1" = "sync" ]; then
 	shift 1
-	app_sync $@
+	app_sync "$@"
 elif [ "$1" = "restore" ]; then
 	shift 1
-	app_restore $@
+	app_restore "$@"
 else
 	echo "Example: sync_app sync firefox"
 	echo "Example: sync_app restore firefox"
