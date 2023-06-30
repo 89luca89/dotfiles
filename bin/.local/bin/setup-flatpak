@@ -6,18 +6,23 @@ if [ ! -e "${HOME}/dotfiles/flatpak-packages" ]; then
 	exit
 fi
 
-flatpak_packages="$(cat ${HOME}/dotfiles/flatpak-packages)"
+flatpak_packages="$(cat "${HOME}/dotfiles/flatpak-packages")"
 
-for flatpak in ${flatpak_packages}; do
-	flatpak install --user --noninteractive --assumeyes flathub "${flatpak}"
-done
+# shellcheck disable=SC2086
+flatpak install --user --noninteractive --assumeyes flathub ${flatpak_packages}
 
 installed_apps="$( flatpak list --user --app --columns=app | tail -n +1)"
+unwanted_apps=""
 for app in ${installed_apps}; do
-	if ! echo "$app" | grep -qE "$(echo $flatpak_packages | tr ' ' '|')"; then
-		flatpak uninstall --user --noninteractive --assumeyes $app
+	if ! echo "${app}" | grep -qE "$(echo "${flatpak_packages}" | tr ' ' '|')"; then
+		unwanted_apps="${unwanted_apps} ${app}"
 	fi
 done
 
-flatpak uninstall --user --noninteractive --assumeyes --unused
+if [ -n "${unwanted_apps}" ]; then
+	# shellcheck disable=SC2086
+	flatpak uninstall --user --noninteractive --assumeyes ${unwanted_apps}
+	flatpak uninstall --user --noninteractive --assumeyes --unused --delete-data
+fi
+
 flatpak override --user --env=MOZ_ENABLE_WAYLAND=1 --env=MOZ_USE_XINPUT2=1 org.mozilla.firefox
