@@ -22,6 +22,8 @@ if  [ -e /run/.containerenv ] || [ -e /.dockerenv ]; then
 	bind '"\e[A": history-search-backward' 2>/dev/null
 	bind '"\e[B": history-search-forward' 2>/dev/null
 
+	killall -9 gnome-software  2> /dev/null
+
 	[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 	[ -f ~/.localrc ] && source ~/.localrc
 	BGREEN='\[\033[1;32m\]'
