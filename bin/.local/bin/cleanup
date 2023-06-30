@@ -15,20 +15,20 @@ read_bool_config() {
 
 	while true; do
 		read -p "$question  [$default]: " result
-		if [ ! -z "$result" ]; then
-			if [ ! -z "$expected" ]; then
+		if [ -n "$result" ]; then
+			if [ -n "$expected" ]; then
 				if [[ $result =~ ^[yYnN]$ ]]; then
 					break
 				else
 					echo >&2 "Please reply Y or N."
 				fi
 			fi
-		elif [ ! -z "$default" ]; then
+		elif [ -n "$default" ]; then
 			result=$default
 			break
 		fi
 	done
-	echo $result
+	echo "${result}"
 }
 
 clean_folder() {
@@ -39,7 +39,7 @@ clean_folder() {
 		SURE=$G_SURE
 	fi
 	if [[ $SURE =~ ^[yY]$ ]]; then
-		rm -rf $dir
+		rm -rf "${dir}"
 	fi
 }
 
@@ -131,9 +131,9 @@ popd || exit 1
 FLATS="$(flatpak list --app --columns=application) citrix"
 for d in ~/.var/app/*; do
 	DIR=$(basename "$d")
-	if ! echo $FLATS | grep -q $DIR; then
+	if ! echo "$FLATS" | grep -q "$DIR"; then
 		clean_folder "$d"
 	fi
 done
 
-find $HOME/.var/app -iname cache -type d -exec rm -rf {} +
+find "$HOME/.var/app" -iname cache -type d -exec rm -rf {} +

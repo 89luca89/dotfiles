@@ -5,7 +5,7 @@ if ! cd "$HOME/dotfiles" > /dev/null; then
 fi
 
 for i in $(ls -d */ | grep -vE "^_"); do
-	pushd $i > /dev/null || return
+	pushd "$i" > /dev/null || return
 	for j in $(find . -type f); do
 		destfile="$(echo "$j" | sed "s|\./|$HOME/|g")"
 		if [ ! -L "$destfile" ]; then
@@ -19,9 +19,9 @@ for i in $(ls -d */ | grep -vE "^_"); do
 done
 
 # Cleanup broken symlinks
-find -L $HOME \
+find -L "$HOME" \
 	-path "$HOME/.local/share/flatpak" -prune \
 	-o \
 	-path "$HOME/.local/share/containers" -prune \
 	-o \
-	-type l -print | xargs rm
+	-type l -print | xargs rm || :
