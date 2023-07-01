@@ -131,7 +131,7 @@ if command -v rpm-ostree 2> /dev/null; then
 	sudo systemctl enable docker.service
 	sudo systemctl enable libvirtd.socket
 
-elif command -v transactional-update 2> /dev/null; then
+elif command -v transactional-update-notifier 2> /dev/null; then
 
 	sudo sed -i 's|GRUB_CMDLINE_LINUX=""|GRUB_CMDLINE_LINUX="amdgpu.aspm=1 amdgpu.cik_support=1 amdgpu.dc=1 amdgpu.dcfeaturemask="0xB" amdgpu.si_support=1 dm_mod.use_blk_mq=1 drm.debug=0 drm.vblankoffdelay=1 e1000e.SmartPowerDownEnable=1 i915.disable_power_well=0 i915.enable_dc=2 i915.enable_fbc=1 i915.enable_guc=3 i915.enable_psr=1 i915.enable_rc6=7 i915.powersave=1 iwlmvm.power_scheme=3 iwlwifi.power_level=5 iwlwifi.power_save="Y" mmc_mod.use_blk_mq=1 nvme_core.default_ps_max_latency_us=20000 nvme_core.force_apst=1 pcie_aspm=force pcie_aspm.policy=powersupersave scsi_mod.use_blk_mq=1 thinkpad_acpi.fan_control=1 usbcore.autosuspend=1"|g' /etc/default/grub
 	if ! command -v docker || ! command -v virsh; then
