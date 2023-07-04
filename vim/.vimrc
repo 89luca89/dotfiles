@@ -14,7 +14,7 @@ set grepprg=grep\ --exclude=tags\ --exclude-dir={.git,vendor,node_modules,target
 set hlsearch ignorecase smartcase
 set lazyredraw redrawtime=0 ttyfast notermguicolors
 set nomodeline nofsync nowrap noswapfile nowritebackup nobackup noshowmode nofoldenable
-set path+=** wildmode=longest:full,full wildignore+=**/tags wildignorecase wildmode=longest:full wildoptions+=fuzzy wildoptions+=pum
+set path+=** wildmode=longest:full,full wildignore+=**/tags,vendor/**,node_modules/**  wildignorecase wildmode=longest:full wildoptions+=fuzzy wildoptions+=pum
 set splitbelow splitright sidescroll=1 sidescrolloff=7
 set title number encoding=utf8 mouse=a nrformats+=unsigned isfname-==
 set undodir=$HOME/.vim/undo undofile undolevels=10000
