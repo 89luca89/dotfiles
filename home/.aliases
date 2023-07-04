@@ -1,13 +1,3 @@
-gnome-background() {
-	gsettings set org.gnome.desktop.background picture-uri none
-	gsettings set org.gnome.desktop.background picture-uri-dark none
-	gsettings set org.gnome.desktop.background color-shading-type 'solid'
-	gsettings set org.gnome.desktop.background primary-color "$1"
-}
-rclone_clear_mount() {
-	mkdir -p "$2"
-	rclone mount Local-Crypt:"$1" "$2"
-}
 # BASIC ALIASES
 alias cp='cp --reflink=auto'
 alias docker-distrobox="DBX_CONTAINER_MANAGER=docker distrobox"

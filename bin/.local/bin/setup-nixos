@@ -13,4 +13,5 @@ driver = "overlay"
 [storage.options.overlay]
 mount_program = "/run/current-system/sw/bin/fuse-overlayfs"' > ~/.config/containers/storage.conf
 
+setup-gnome
 setup-flatpak

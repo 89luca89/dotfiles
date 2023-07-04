@@ -150,6 +150,8 @@ fi
 
 ln -sf /dev/null "${HOME}/.local/share/applications/firefox.desktop"
 
+setup-gnome
 setup-flatpak
 # distrobox-auto-update
 # flatpak-auto-update
+# gnome-auto-backup/restore

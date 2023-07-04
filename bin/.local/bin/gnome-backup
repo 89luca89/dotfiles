@@ -3,6 +3,8 @@
 set -o errexit
 set -o nounset
 
+gsettings set org.gnome.shell app-picker-layout "[{}]"
+
 declare  -a gnome_dconf_backup=(
 	"/org/gnome/desktop/input-sources"
 	"/org/gnome/desktop/interface"
@@ -16,6 +18,7 @@ declare  -a gnome_dconf_backup=(
 	"/org/gnome/nautilus"
 	"/org/gnome/settings-daemon/plugins/color"
 	"/org/gnome/settings-daemon/plugins/media-keys"
+	"/org/gnome/settings-daemon/plugins/power"
 	"/org/gnome/shell"
 	"/org/gnome/terminal/legacy"
 )

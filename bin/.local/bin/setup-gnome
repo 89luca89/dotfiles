@@ -1,0 +1,24 @@
+#!/bin/sh
+
+EXTENSIONS="
+Vitals@CoreCoding.com
+appindicatorsupport@rgcjonas.gmail.com
+scroll-workspaces@gfxmonk.net
+"
+
+# https://extensions.gnome.org/extension-data/VitalsCoreCoding.com.v61.shell-extension.zip
+for extension in $EXTENSIONS; do
+	if ! gnome-extensions list | grep --quiet "${extension}"; then
+		busctl --user call org.gnome.Shell.Extensions \
+			/org/gnome/Shell/Extensions org.gnome.Shell.Extensions \
+			InstallRemoteExtension s "${extension}"
+	fi
+done
+
+dconf reset -f /org/gnome
+gnome-restore
+gsettings set org.gnome.desktop.background picture-uri none
+gsettings set org.gnome.desktop.background picture-uri-dark none
+gsettings set org.gnome.desktop.background color-shading-type 'solid'
+gsettings set org.gnome.desktop.background primary-color "#002B36"
+gnome-backup
