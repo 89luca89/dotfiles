@@ -20,8 +20,6 @@ done
 
 # Cleanup broken symlinks
 find -L "$HOME" \
-	-path "$HOME/.local/share/flatpak" -prune \
-	-o \
-	-path "$HOME/.local/share/containers" -prune \
+	-path "$HOME/.local/share/*" -prune \
 	-o \
 	-type l -print | xargs rm || :
