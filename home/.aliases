@@ -7,6 +7,7 @@ alias rsyncthingD='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname 
 alias rsyncthingS='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync --usermap=$(id -ru):1000 --groupmap=$(id -rg):1000 --archive --verbose --inplace --no-compress --progress --partial --delete -e "ssh -J jump" --exclude={.stversions,*.tmp}  ~/Syncthing/ root@raspberrypi-1:/usr/local/mnt/Vault/Syncthing/ && rsync --usermap=$(id -ru):1000 --groupmap=$(id -rg):1000 --archive --verbose --inplace --no-compress --progress --partial --delete -e "ssh -J jump" --exclude={.stversions,*.tmp}  ~/Syncthing/ root@raspberrypi-2:/usr/local/mnt/Vault/Syncthing/ && cd -'
 alias tree='tree -I ".git" -a'
 alias vi='vim -u ~/.vimrc-minimal'
+alias batinfo="grep --color . /sys/class/power_supply/BAT*/{capacity,energy_now,energy_full,energy_full_design,status,cycle_count,charge_start_threshold,charge_stop_threshold}"
 if [ ! -e /run/.containerenv ]; then
 	alias vim='vim -u ~/.vimrc-minimal'
 fi
@@ -27,11 +28,3 @@ export PATH=/var/lib/flatpak/exports/bin:$PATH
 export RUSTUP_HOME=$HOME/.local/rust
 export RUST_SRC_PATH="$RUSTUP_HOME/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/src"
 export TMUX_TMPDIR=/var/tmp
-export XDG_DESKTOP_DIR="$HOME/Desktop"
-export XDG_DOCUMENTS_DIR="$HOME/Documents"
-export XDG_DOWNLOAD_DIR="$HOME/Downloads"
-export XDG_MUSIC_DIR="$HOME/Music"
-export XDG_PICTURES_DIR="$HOME/Pictures"
-export XDG_PUBLICSHARE_DIR="$HOME/Public"
-export XDG_TEMPLATES_DIR="$HOME/Templates"
-export XDG_VIDEOS_DIR="$HOME/Videos"
