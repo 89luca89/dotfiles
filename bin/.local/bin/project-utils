@@ -14,6 +14,9 @@ DEPS="
 	flake8
 	gofmt
 	goimports
+	golines
+	gci
+	gofumpt
 	golangci-lint
 	isort
 	jq
@@ -21,7 +24,6 @@ DEPS="
 	shfmt
 	yamllint
 	yapf
-	kind
 	ginkgo
 "
 
@@ -56,6 +58,9 @@ case "$COMMAND" in
 				for f in $files; do
 					gofmt -w "$f"
 					goimports -w "$f"
+					golines -m 100 -w "$f"
+					gci -w "$f"
+					gofumpt -w "$f"
 				done
 				;;
 
@@ -96,9 +101,9 @@ case "$COMMAND" in
 					fi
 				done
 
-				# Find possible optimizations
-				go build -o /dev/null \
-					-gcflags="-m=2 -d=ssa/check_bce/debug=1 -d=ssa/prove/debug=2" 2>&1
+				# # Find possible optimizations
+				# go build -o /dev/null \
+				# 	-gcflags="-m=2 -d=ssa/check_bce/debug=1 -d=ssa/prove/debug=2" 2>&1
 				;;
 			"python")
 				flake8 -j auto --max-line-length 80 "$DIR" 2> /dev/null
@@ -124,7 +129,7 @@ case "$COMMAND" in
 				;;
 
 			"spell")
-				codespell --skip .git,*.pdf,*.1,*.css,*.lock # -d "{extends: default, rules: {line-length: disable, truthy: disable, key-duplicates: enable, comments: {min-spaces-from-content: 1}}}" --format parsable "$DIR"
+				codespell --skip .git,vendor,*.pdf,*.1,*.css,*.lock # -d "{extends: default, rules: {line-length: disable, truthy: disable, key-duplicates: enable, comments: {min-spaces-from-content: 1}}}" --format parsable "$DIR"
 				;;
 
 			*"ansible"*)
