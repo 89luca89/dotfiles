@@ -9,14 +9,12 @@ DARK_ICONS="Adwaita"
 
 if grep -q "dark" "${HOME}"/.local/share/current_theme 2> /dev/null; then
 	printf "light" > "${HOME}"/.local/share/current_theme
-	COLOR="#0080A0"
 	ICONS=$LIGHT_ICONS
 	NIGHT_LIGHT=false
 	PREFER="prefer-light"
 	THEME=$LIGHT_THEME
 else
 	printf "dark" > "${HOME}"/.local/share/current_theme
-	COLOR="#005070"
 	ICONS=$DARK_ICONS
 	NIGHT_LIGHT=true
 	PREFER="prefer-dark"
@@ -25,10 +23,6 @@ fi
 
 # gsettings detection
 if which gsettings > /dev/null; then
-	gsettings set org.gnome.desktop.background color-shading-type 'solid'
-	gsettings set org.gnome.desktop.background picture-uri none
-	gsettings set org.gnome.desktop.background picture-uri-dark none
-	gsettings set org.gnome.desktop.background primary-color "$COLOR"
 	gsettings set org.gnome.desktop.interface color-scheme "$PREFER"
 	gsettings set org.gnome.desktop.interface gtk-theme "$THEME"
 	gsettings set org.gnome.desktop.interface icon-theme "$ICONS"
