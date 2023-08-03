@@ -10,11 +10,11 @@ source $VIMRUNTIME/defaults.vim
 set autoindent copyindent expandtab shiftwidth=4 softtabstop=4 tabstop=4 smartindent smarttab
 set autoread autowrite hidden
 set colorcolumn=80 cursorline showmatch
-set grepprg=grep\ --exclude=tags\ --exclude-dir={.git,vendor,node_modules,target}\ -Irn
+set grepprg=grep\ --exclude=tags\ --exclude-dir={.git,vendor,node_modules,coverage,target}\ -EIrn
 set hlsearch ignorecase smartcase
 set lazyredraw redrawtime=0 ttyfast notermguicolors
 set nomodeline nofsync nowrap noswapfile nowritebackup nobackup noshowmode nofoldenable
-set path+=** wildmode=longest:full,full wildignore+=**/tags,vendor/**,node_modules/**  wildignorecase wildmode=longest:full wildoptions+=fuzzy wildoptions+=pum
+set path+=** wildmode=longest:full,full wildignore+=**/tags,vendor/**,coverage/**target/**,node_modules/** wildignorecase wildmode=longest:full
 set splitbelow splitright sidescroll=1 sidescrolloff=7
 set title number encoding=utf8 mouse=a nrformats+=unsigned isfname-==
 set undodir=$HOME/.vim/undo undofile undolevels=10000
@@ -99,14 +99,14 @@ nnoremap <leader>i   :<C-u>mkview<CR>:w<CR>ggVG=:loadview<CR>
 nnoremap <C-]>       :<C-u>stag <c-r>=expand("<cword>")<CR><CR>
 nnoremap <leader>d   :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
 nnoremap <leader>f   :<C-u>cgetexpr system(&grepprg . ' ""')<bar>copen<C-Left><Right>
-nnoremap <leader>F   :<C-u>cgetexpr system(&grepprg . ' "\<<c-r>=expand("<cword>")<CR>\>"')<bar>copen<CR>
+nnoremap <leader>rf  :<C-u>cgetexpr system(&grepprg . ' "\<<c-r>=expand("<cword>")<CR>\>"')<bar>copen<CR>
 augroup autoformat_settings
     autocmd!
     autocmd FileType c,cpp     nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!clang-format -style=Chromium %<CR>:loadview<CR>
-    autocmd FileType go        nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!gofmt %<CR>:%!goimports %<CR>:loadview<CR>
+    autocmd FileType go        nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:!gofmt -w %<CR>:!goimports -w %<CR>:!golines -m 100 -w %<CR>:!gci -w %<CR>:!gofumpt -w %<CR>:loadview<CR>
     autocmd FileType json      nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!jq .<CR>
     autocmd FileType python    nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!yapf --style=facebook %<CR>:w<CR>:%!isort --ac --float-to-top -d %<CR>:loadview<CR>
-    autocmd FileType rust      nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:!rustfmt %<CR><CR>:loadview<CR>
+    autocmd FileType rust      nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:!rustfmt --edition 2021 %<CR><CR>:loadview<CR>
     autocmd FileType sh        nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!shfmt -s -ci -sr -kp %<CR>:loadview<CR>
 augroup end
 " LSP SETUP ####################################################################
@@ -120,7 +120,7 @@ augroup lspbindings
     autocmd Filetype c,cc,cpp,go,python,rust nnoremap <buffer> <leader>l  :<C-u>ALEPopulateQuickfix<bar>copen<CR>
     autocmd Filetype c,cc,cpp,go,python,rust nnoremap <buffer> <leader>m  :<C-u>ALEFix<CR>
     autocmd Filetype c,cc,cpp,go,python,rust nnoremap <buffer> <leader>r  :<C-u>ALERename<CR>
-    autocmd Filetype c,cc,cpp,go,python,rust nnoremap <buffer> <leader>rf :<C-u>ALEFindReferences<CR>
+    autocmd Filetype c,cc,cpp,go,python,rust nnoremap <buffer> <leader>R  :<C-u>ALEFindReferences<CR>
 augroup end
 " AUTO LIGHT/DARK MODE ########################################################
 function! s:set_bg(timer_id)
@@ -130,7 +130,7 @@ function! s:set_bg(timer_id)
         set background=light
         " colorscheme default
         try | colorscheme gruvbox | catch | endtry
-    elseif g:theme == 'dark' && (&background == 'light' || a:timer_id == 0)
+    elseif (g:theme == 'dark'|| g:theme == '') && (&background == 'light' || a:timer_id == 0)
         set background=dark
         try | colorscheme gruvbox | catch | endtry
     else
@@ -160,7 +160,7 @@ let g:ale_lint_on_enter         = 0
 let g:ale_lint_on_insert_leave  = 0
 let g:ale_lint_on_save          = 1
 let g:ale_lint_on_text_changed  = 0
-let g:ale_virtualtext_cursor = 0
+let g:ale_virtualtext_cursor    = 0
 let g:ale_linters = {
             \   'c':      ['cc', 'ccls', 'clangd'],
             \   'cpp':    ['cc', 'ccls', 'clangd'],
