@@ -8,7 +8,7 @@ alias rsyncthingS='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname 
 alias tree='tree -I ".git" -a'
 alias vi='vim -u ~/.vimrc-minimal'
 alias batinfo="grep --color . /sys/class/power_supply/BAT*/{capacity,energy_now,energy_full,energy_full_design,status,cycle_count,charge_start_threshold,charge_stop_threshold}"
-if [ ! -e /run/.containerenv ]; then
+if [ -z $CONTAINER_ID ]; then
 	alias vim='vim -u ~/.vimrc-minimal'
 fi
 export CARGO_HOME=$HOME/.local/rust

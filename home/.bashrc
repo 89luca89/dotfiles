@@ -1,7 +1,7 @@
 [  -f /etc/bashrc ] && source /etc/bashrc
 [  -f ~/.aliases ] && source ~/.aliases
 
-if  [ -e /run/.containerenv ] || [ -e /.dockerenv ]; then
+if [ ! -z $CONTAINER_ID ]; then
 	# Path to the bash it configuration
 	if [ ! -d "$HOME/.local/bin/fzf" ]; then
 		git clone --depth 1 https://github.com/junegunn/fzf.git "$HOME/.local/bin/fzf"
