@@ -14,7 +14,6 @@ DEPS="
 	flake8
 	gofmt
 	goimports
-	golines
 	gci
 	gofumpt
 	golangci-lint
@@ -58,7 +57,6 @@ case "$COMMAND" in
 				for f in $files; do
 					gofmt -w "$f"
 					goimports -w "$f"
-					golines -m 100 -w "$f"
 					gci -w "$f"
 					gofumpt -w "$f"
 				done
