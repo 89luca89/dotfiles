@@ -103,7 +103,7 @@ nnoremap <leader>rf  :<C-u>cgetexpr system(&grepprg . ' "\<<c-r>=expand("<cword>
 augroup autoformat_settings
     autocmd!
     autocmd FileType c,cpp     nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!clang-format -style=Chromium %<CR>:loadview<CR>
-    autocmd FileType go        nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:!gofmt -w %<CR>:!goimports -w %<CR>:!golines -m 100 -w %<CR>:!gci -w %<CR>:!gofumpt -w %<CR>:loadview<CR>
+    autocmd FileType go        nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:!gofmt -w %<CR><CR>:!goimports -w %<CR><CR>:!gci -w %<CR><CR>:!gofumpt -w %<CR><CR>:loadview<CR>
     autocmd FileType json      nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!jq .<CR>
     autocmd FileType python    nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!yapf --style=facebook %<CR>:w<CR>:%!isort --ac --float-to-top -d %<CR>:loadview<CR>
     autocmd FileType rust      nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:!rustfmt --edition 2021 %<CR><CR>:loadview<CR>
