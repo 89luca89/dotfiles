@@ -1,9 +1,7 @@
 #!/bin/sh
 
 EXTENSIONS="
-appindicatorsupport@rgcjonas.gmail.com
 scroll-workspaces@gfxmonk.net
-batime@martin.zurowietz.de
 "
 
 # https://extensions.gnome.org/extension-data/VitalsCoreCoding.com.v61.shell-extension.zip
