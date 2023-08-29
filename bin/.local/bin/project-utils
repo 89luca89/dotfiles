@@ -8,7 +8,6 @@ LANGUAGE=$2
 DIR=$3
 
 DEPS="
-	ansible-lint
 	codespell
 	clang-format
 	flake8
@@ -128,34 +127,6 @@ case "$COMMAND" in
 
 			"spell")
 				codespell --skip .git,vendor,*.pdf,*.1,*.css,*.lock # -d "{extends: default, rules: {line-length: disable, truthy: disable, key-duplicates: enable, comments: {min-spaces-from-content: 1}}}" --format parsable "$DIR"
-				;;
-
-			*"ansible"*)
-				DIR=$(realpath --relative-to="$(pwd)" "$DIR")
-
-				yamllint # -d "{extends: default, rules: {line-length: disable, truthy: disable, key-duplicates: enable, comments: {min-spaces-from-content: 1}}}" --format parsable "$DIR"
-				ansible-lint -p --nocolor -x yaml 2> /dev/null
-				if [ -d "$DIR" ]; then
-					if [ -d "$DIR/tasks" ]; then
-						LINES=$(ansible-later tasks 2>&1)
-					else
-						LINES=$(ansible-later roles 2>&1)
-					fi
-				else
-					LINES=$(ansible-later "$DIR" 2>&1)
-				fi
-
-				for line in ${LINES}; do
-					if [ "$(echo "${line}" | wc -c)" -lt 2 ]; then
-						continue
-					else
-						if ! echo "$line" | grep -q ERROR; then
-							if ! echo "$line" | grep -q WARN; then
-								echo "$line" | cut -c5-
-							fi
-						fi
-					fi
-				done
 				;;
 
 		esac
