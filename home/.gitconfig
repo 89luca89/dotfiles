@@ -11,7 +11,8 @@
 [commit]
 	gpgsign = true
 [credential]
-	helper = libsecret
+	helper = /usr/libexec/git/git-credential-libsecret
+	# helper = /usr/lib/git-core/git-credential-libsecret
 	# helper = /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret
 [fetch]
 	prune = true

@@ -7,6 +7,7 @@ alias rsyncthingD='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname 
 alias rsyncthingS='cd ~/Syncthing && find ~/Syncthing/ -iname "*.tmp" -o -iname "*conflict*" | xargs rm -f && rsync --usermap=$(id -ru):1000 --groupmap=$(id -rg):1000 --archive --verbose --inplace --no-compress --progress --partial --delete -e "ssh -J jump" --exclude={.stversions,*.tmp}  ~/Syncthing/ root@raspberrypi-1:/usr/local/mnt/Vault/Syncthing/ && rsync --usermap=$(id -ru):1000 --groupmap=$(id -rg):1000 --archive --verbose --inplace --no-compress --progress --partial --delete -e "ssh -J jump" --exclude={.stversions,*.tmp}  ~/Syncthing/ root@raspberrypi-2:/usr/local/mnt/Vault/Syncthing/ && cd -'
 alias tree='tree -I ".git" -a'
 alias vi='vim -u ~/.vimrc-minimal'
+alias git='DBUS_SESSION_BUS_ADDRESS=unix:path=/run/host/run/user/$(id -ru)/bus git'
 alias batinfo="grep --color . /sys/class/power_supply/BAT*/{capacity,energy_now,energy_full,energy_full_design,status,cycle_count,charge_start_threshold,charge_stop_threshold}"
 if [ -z $CONTAINER_ID ]; then
 	alias vim='vim -u ~/.vimrc-minimal'
