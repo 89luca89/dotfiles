@@ -18,8 +18,4 @@ for i in $(ls -d */ | grep -vE "^_"); do
 	popd > /dev/null || return
 done
 
-# Cleanup broken symlinks
-find -L "$HOME" \
-	-path "$HOME/.local/share/*" -prune \
-	-o \
-	-type l -print | xargs rm || :
+find "$HOME/.local/bin/" -xtype l -delete
