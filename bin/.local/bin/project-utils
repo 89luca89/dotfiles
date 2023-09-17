@@ -13,7 +13,6 @@ DEPS="
 	flake8
 	gofmt
 	goimports
-	gci
 	gofumpt
 	golangci-lint
 	isort
@@ -56,7 +55,6 @@ case "$COMMAND" in
 				for f in $files; do
 					gofmt -w "$f"
 					goimports -w "$f"
-					gci -w "$f"
 					gofumpt -w "$f"
 				done
 				;;
@@ -84,7 +82,7 @@ case "$COMMAND" in
 		case "$LANGUAGE" in
 			"go")
 				[ -d "$DIR" ] && DIR="$DIR/..."
-				LINES=$(/usr/local/bin/golangci-lint run "$DIR" --color never --out-format tab 2> /dev/null | sed "s/  */ /g" | sort -u)
+				LINES=$(golangci-lint run "$DIR" --color never --out-format tab 2> /dev/null | sed "s/  */ /g" | sort -u)
 
 				IFS='
 				'
