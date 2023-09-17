@@ -1,11 +1,13 @@
 com.github.tchx84.Flatseal
-io.github.nokse22.asciidraw
 com.mattjakeman.ExtensionManager
 com.obsproject.Studio
+io.github.nokse22.asciidraw
+io.mpv.Mpv
 me.kozec.syncthingtk
 nl.hjdskes.gcolor3
 org.chromium.Chromium
 org.gimp.GIMP
+org.gnome.Boxes
 org.gnome.Calculator
 org.gnome.Calendar
 org.gnome.Connections
@@ -25,4 +27,3 @@ org.gnome.gitlab.somas.Apostrophe
 org.keepassxc.KeePassXC
 org.libreoffice.LibreOffice
 org.mozilla.firefox
-io.mpv.Mpv
