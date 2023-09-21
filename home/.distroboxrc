@@ -1,0 +1,6 @@
+container_manager=lilipod
+# container_manager=docker
+# container_manager=podman
+container_generate_entry=0
+container_image_default="registry.opensuse.org/opensuse/distrobox:latest"
+non_interactive="false"
