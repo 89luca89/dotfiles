@@ -9,3 +9,6 @@ for f in  .*.conf; do
 	dconf_path="$(echo "${f}" | sed 's/conf//g' | sed 's/\./\//g')"
 	dconf load "${dconf_path}" < "${f}"
 done
+grep color-scheme ".org.gnome.desktop.interface.conf" |
+    cut -d'=' -f2- | cut -d'-' -f2- |
+    tr -d "\\\'" | tr -d '[:space:]' > ~/.local/share/current_theme
