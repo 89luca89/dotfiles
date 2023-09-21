@@ -2,6 +2,7 @@
 
 EXTENSIONS="
 scroll-workspaces@gfxmonk.net
+Vitals@CoreCoding.com
 "
 
 # https://extensions.gnome.org/extension-data/VitalsCoreCoding.com.v61.shell-extension.zip
@@ -14,9 +15,5 @@ for extension in $EXTENSIONS; do
 done
 
 dconf reset -f /
-
 gnome-restore
-
-xdg-settings set default-web-browser org.chromium.Chromium.desktop
-
 gnome-backup
