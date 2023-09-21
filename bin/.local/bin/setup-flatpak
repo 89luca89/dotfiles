@@ -21,8 +21,6 @@ done
 
 if [ -n "${unwanted_apps}" ]; then
 	# shellcheck disable=SC2086
-	flatpak uninstall --user --noninteractive --assumeyes ${unwanted_apps}
-	flatpak uninstall --user --noninteractive --assumeyes --unused --delete-data
+	flatpak uninstall --user ${unwanted_apps} --delete-data
+	flatpak uninstall --user --unused --delete-data
 fi
-
-flatpak override --user --env=MOZ_ENABLE_WAYLAND=1 --env=MOZ_USE_XINPUT2=1 org.mozilla.firefox
