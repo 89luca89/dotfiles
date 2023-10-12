@@ -115,6 +115,7 @@ LOCAL_FOLDERS=(
 	"./keyrings"
 	"./man"
 	"./nautilus"
+	"./pipx"
 	"./system-go"
 	"./systemd"
 )
@@ -130,6 +131,9 @@ popd || exit 1
 
 FLATS="$(flatpak list --app --columns=application) citrix"
 for d in ~/.var/app/*; do
+    if echo "$d" | grep -q syncthing; then
+        continue
+    fi
 	DIR=$(basename "$d")
 	if ! echo "$FLATS" | grep -q "$DIR"; then
 		clean_folder "$d"
