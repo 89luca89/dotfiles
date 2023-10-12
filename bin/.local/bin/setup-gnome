@@ -1,8 +1,8 @@
 #!/bin/sh
 
+# scroll-workspaces@gfxmonk.net
+# Vitals@CoreCoding.com
 EXTENSIONS="
-scroll-workspaces@gfxmonk.net
-Vitals@CoreCoding.com
 "
 
 # https://extensions.gnome.org/extension-data/VitalsCoreCoding.com.v61.shell-extension.zip
@@ -15,5 +15,16 @@ for extension in $EXTENSIONS; do
 done
 
 dconf reset -f /
-gnome-restore
+
+# Restore gnome settings
+dest_folder="$HOME/dotfiles/_desktop/$(gnome-shell --version | sed 's/ /-/g' | sed -E 's/\.[0-9a-z]+//g' | tr '[:upper:]' '[:lower:]')"
+d "${dest_folder}"
+for f in  .*.conf; do
+	dconf_path="$(echo "${f}" | sed 's/conf//g' | sed 's/\./\//g')"
+	dconf load "${dconf_path}" < "${f}"
+done
+grep color-scheme ".org.gnome.desktop.interface.conf" |
+	cut -d'=' -f2- | cut -d'-' -f2- |
+	tr -d "\\\'" | tr -d '[:space:]' > ~/.local/share/current_theme
+
 gnome-backup
