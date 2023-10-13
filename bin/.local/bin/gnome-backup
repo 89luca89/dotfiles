@@ -31,3 +31,5 @@ mkdir  -p "${dest_folder}"
 for f in  ${gnome_dconf_backup[@]}; do
 	dconf dump "${f}/" > "${dest_folder}/$(echo "${f}" | sed 's/\//./g').conf"
 done
+
+cp ~/.config/background "$dest_folder"

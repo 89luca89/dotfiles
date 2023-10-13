@@ -16,8 +16,12 @@ done
 
 dconf reset -f /
 
-# Restore gnome settings
 dest_folder="$HOME/dotfiles/_desktop/$(gnome-shell --version | sed 's/ /-/g' | sed -E 's/\.[0-9a-z]+//g' | tr '[:upper:]' '[:lower:]')"
+
+# Restore background
+cp "$dest_folder/background" ~/.config/background
+
+# Restore gnome settings
 cd "${dest_folder}"
 for f in  .*.conf; do
 	dconf_path="$(echo "${f}" | sed 's/conf//g' | sed 's/\./\//g')"
