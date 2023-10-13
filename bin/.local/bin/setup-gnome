@@ -18,7 +18,7 @@ dconf reset -f /
 
 # Restore gnome settings
 dest_folder="$HOME/dotfiles/_desktop/$(gnome-shell --version | sed 's/ /-/g' | sed -E 's/\.[0-9a-z]+//g' | tr '[:upper:]' '[:lower:]')"
-d "${dest_folder}"
+cd "${dest_folder}"
 for f in  .*.conf; do
 	dconf_path="$(echo "${f}" | sed 's/conf//g' | sed 's/\./\//g')"
 	dconf load "${dconf_path}" < "${f}"

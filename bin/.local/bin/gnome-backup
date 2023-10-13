@@ -14,6 +14,7 @@ declare  -a gnome_dconf_backup=(
 	"/org/gnome/desktop/peripherals/trackball"
 	"/org/gnome/desktop/privacy"
 	"/org/gnome/desktop/sound"
+	"/org/gnome/desktop/wm/keybindings"
 	"/org/gnome/desktop/wm/preferences"
 	"/org/gnome/mutter"
 	"/org/gnome/nautilus"
@@ -22,8 +23,8 @@ declare  -a gnome_dconf_backup=(
 	"/org/gnome/settings-daemon/plugins/power"
 	"/org/gnome/shell"
 	"/org/gnome/terminal/legacy"
-	"/org/gtk/settings/file-chooser"
 	"/org/gtk/gtk4/settings/file-chooser"
+	"/org/gtk/settings/file-chooser"
 )
 dest_folder="$HOME/dotfiles/_desktop/$(gnome-shell --version | sed 's/ /-/g' | sed -E 's/\.[0-9]+//g' | tr '[:upper:]' '[:lower:]')"
 mkdir  -p "${dest_folder}"
