@@ -19,3 +19,4 @@ for i in $(ls -d */ | grep -vE "^_"); do
 done
 
 find "$HOME/.local/bin/" -xtype l -delete
+cleanup
