@@ -1,22 +1,25 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-if ! cd "$HOME/dotfiles" > /dev/null; then
+mkdir -p ~/.config ~/.local/bin
+
+if ! cd "$HOME/dotfiles" >/dev/null; then
 	exit 1
 fi
 
-for i in $(ls -d */ | grep -vE "^_"); do
-	pushd "$i" > /dev/null || return
-	for j in $(find . -type f); do
-		destfile="$(echo "$j" | sed "s|\./|$HOME/|g")"
-		if [ ! -L "$destfile" ]; then
-			rm -i "$destfile"
-		fi
-		echo "$destfile"
-		mkdir -p "$(dirname "${destfile}")"
-		ln -sf "$(realpath "$j")" "$destfile"
-	done
-	popd > /dev/null || return
+# alacritty/.config/alacritty
+FOLDERS="
+bin/.local/bin
+home/
+linters/.config
+pipewire/.config/pipewire
+ssh/.ssh
+vim/
+"
+
+for i in $FOLDERS; do
+	TARGET_DIR="$(echo "$i" | cut -d'/' -f2-)"
+	mkdir -p "$HOME/$TARGET_DIR"
+	find "$i" -mindepth 1 -maxdepth 1 -exec sh -xc "ln -sf ${HOME}/dotfiles/\$0 ${HOME}/${TARGET_DIR}/" {} \;
 done
 
-find "$HOME/.local/bin/" -xtype l -delete
-cleanup
+find "$HOME/.local/" "$HOME/.config" -not -path "$HOME/.local/share/flatpak/*" -a -not -path "$HOME/.local/share/containers/*" -xtype l -delete 2>/dev/null || :

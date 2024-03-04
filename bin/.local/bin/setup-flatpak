@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
@@ -25,72 +25,75 @@ if [ -n "${unwanted_apps}" ]; then
 	flatpak uninstall --user --unused --delete-data
 fi
 
+default_archive="org.gnome.FileRoller.desktop"
+default_audio="io.mpv.Mpv.desktop"
 default_browser="org.chromium.Chromium.desktop"
+# default_browser="org.mozilla.firefox.desktop"
+default_image="org.gnome.Loupe.desktop"
 default_video="io.mpv.Mpv.desktop"
-default_image="org.gnome.eog.desktop"
 
 xdg-settings set default-web-browser "${default_browser}"
-xdg-mime default "${default_video}" audio/3gpp
-xdg-mime default "${default_video}" audio/3gpp2
-xdg-mime default "${default_video}" audio/AMR
-xdg-mime default "${default_video}" audio/aac
-xdg-mime default "${default_video}" audio/ac3
-xdg-mime default "${default_video}" audio/aiff
-xdg-mime default "${default_video}" audio/amr-wb
-xdg-mime default "${default_video}" audio/dv
-xdg-mime default "${default_video}" audio/eac3
-xdg-mime default "${default_video}" audio/flac
-xdg-mime default "${default_video}" audio/m3u
-xdg-mime default "${default_video}" audio/m4a
-xdg-mime default "${default_video}" audio/mp1
-xdg-mime default "${default_video}" audio/mp2
-xdg-mime default "${default_video}" audio/mp3
-xdg-mime default "${default_video}" audio/mp4
-xdg-mime default "${default_video}" audio/mpeg
-xdg-mime default "${default_video}" audio/mpeg2
-xdg-mime default "${default_video}" audio/mpeg3
-xdg-mime default "${default_video}" audio/mpegurl
-xdg-mime default "${default_video}" audio/mpg
-xdg-mime default "${default_video}" audio/musepack
-xdg-mime default "${default_video}" audio/ogg
-xdg-mime default "${default_video}" audio/opus
-xdg-mime default "${default_video}" audio/rn-mpeg
-xdg-mime default "${default_video}" audio/scpls
-xdg-mime default "${default_video}" audio/vnd.dolby.heaac.1
-xdg-mime default "${default_video}" audio/vnd.dolby.heaac.2
-xdg-mime default "${default_video}" audio/vnd.dts
-xdg-mime default "${default_video}" audio/vnd.dts.hd
-xdg-mime default "${default_video}" audio/vnd.rn-realaudio
-xdg-mime default "${default_video}" audio/vorbis
-xdg-mime default "${default_video}" audio/wav
-xdg-mime default "${default_video}" audio/webm
-xdg-mime default "${default_video}" audio/x-aac
-xdg-mime default "${default_video}" audio/x-adpcm
-xdg-mime default "${default_video}" audio/x-aiff
-xdg-mime default "${default_video}" audio/x-ape
-xdg-mime default "${default_video}" audio/x-m4a
-xdg-mime default "${default_video}" audio/x-matroska
-xdg-mime default "${default_video}" audio/x-mp1
-xdg-mime default "${default_video}" audio/x-mp2
-xdg-mime default "${default_video}" audio/x-mp3
-xdg-mime default "${default_video}" audio/x-mpegurl
-xdg-mime default "${default_video}" audio/x-mpg
-xdg-mime default "${default_video}" audio/x-ms-asf
-xdg-mime default "${default_video}" audio/x-ms-wma
-xdg-mime default "${default_video}" audio/x-musepack
-xdg-mime default "${default_video}" audio/x-pls
-xdg-mime default "${default_video}" audio/x-pn-au
-xdg-mime default "${default_video}" audio/x-pn-realaudio
-xdg-mime default "${default_video}" audio/x-pn-wav
-xdg-mime default "${default_video}" audio/x-pn-windows-pcm
-xdg-mime default "${default_video}" audio/x-realaudio
-xdg-mime default "${default_video}" audio/x-scpls
-xdg-mime default "${default_video}" audio/x-shorten
-xdg-mime default "${default_video}" audio/x-tta
-xdg-mime default "${default_video}" audio/x-vorbis
-xdg-mime default "${default_video}" audio/x-vorbis+ogg
-xdg-mime default "${default_video}" audio/x-wav
-xdg-mime default "${default_video}" audio/x-wavpack
+xdg-mime default "${default_audio}" audio/3gpp
+xdg-mime default "${default_audio}" audio/3gpp2
+xdg-mime default "${default_audio}" audio/AMR
+xdg-mime default "${default_audio}" audio/aac
+xdg-mime default "${default_audio}" audio/ac3
+xdg-mime default "${default_audio}" audio/aiff
+xdg-mime default "${default_audio}" audio/amr-wb
+xdg-mime default "${default_audio}" audio/dv
+xdg-mime default "${default_audio}" audio/eac3
+xdg-mime default "${default_audio}" audio/flac
+xdg-mime default "${default_audio}" audio/m3u
+xdg-mime default "${default_audio}" audio/m4a
+xdg-mime default "${default_audio}" audio/mp1
+xdg-mime default "${default_audio}" audio/mp2
+xdg-mime default "${default_audio}" audio/mp3
+xdg-mime default "${default_audio}" audio/mp4
+xdg-mime default "${default_audio}" audio/mpeg
+xdg-mime default "${default_audio}" audio/mpeg2
+xdg-mime default "${default_audio}" audio/mpeg3
+xdg-mime default "${default_audio}" audio/mpegurl
+xdg-mime default "${default_audio}" audio/mpg
+xdg-mime default "${default_audio}" audio/musepack
+xdg-mime default "${default_audio}" audio/ogg
+xdg-mime default "${default_audio}" audio/opus
+xdg-mime default "${default_audio}" audio/rn-mpeg
+xdg-mime default "${default_audio}" audio/scpls
+xdg-mime default "${default_audio}" audio/vnd.dolby.heaac.1
+xdg-mime default "${default_audio}" audio/vnd.dolby.heaac.2
+xdg-mime default "${default_audio}" audio/vnd.dts
+xdg-mime default "${default_audio}" audio/vnd.dts.hd
+xdg-mime default "${default_audio}" audio/vnd.rn-realaudio
+xdg-mime default "${default_audio}" audio/vorbis
+xdg-mime default "${default_audio}" audio/wav
+xdg-mime default "${default_audio}" audio/webm
+xdg-mime default "${default_audio}" audio/x-aac
+xdg-mime default "${default_audio}" audio/x-adpcm
+xdg-mime default "${default_audio}" audio/x-aiff
+xdg-mime default "${default_audio}" audio/x-ape
+xdg-mime default "${default_audio}" audio/x-m4a
+xdg-mime default "${default_audio}" audio/x-matroska
+xdg-mime default "${default_audio}" audio/x-mp1
+xdg-mime default "${default_audio}" audio/x-mp2
+xdg-mime default "${default_audio}" audio/x-mp3
+xdg-mime default "${default_audio}" audio/x-mpegurl
+xdg-mime default "${default_audio}" audio/x-mpg
+xdg-mime default "${default_audio}" audio/x-ms-asf
+xdg-mime default "${default_audio}" audio/x-ms-wma
+xdg-mime default "${default_audio}" audio/x-musepack
+xdg-mime default "${default_audio}" audio/x-pls
+xdg-mime default "${default_audio}" audio/x-pn-au
+xdg-mime default "${default_audio}" audio/x-pn-realaudio
+xdg-mime default "${default_audio}" audio/x-pn-wav
+xdg-mime default "${default_audio}" audio/x-pn-windows-pcm
+xdg-mime default "${default_audio}" audio/x-realaudio
+xdg-mime default "${default_audio}" audio/x-scpls
+xdg-mime default "${default_audio}" audio/x-shorten
+xdg-mime default "${default_audio}" audio/x-tta
+xdg-mime default "${default_audio}" audio/x-vorbis
+xdg-mime default "${default_audio}" audio/x-vorbis+ogg
+xdg-mime default "${default_audio}" audio/x-wav
+xdg-mime default "${default_audio}" audio/x-wavpack
 xdg-mime default "${default_video}" video/3gp
 xdg-mime default "${default_video}" video/3gpp
 xdg-mime default "${default_video}" video/3gpp2
@@ -167,3 +170,30 @@ xdg-mime default "${default_image}" image/x-xcf
 xdg-mime default "${default_image}" image/x-xcursor
 xdg-mime default "${default_image}" image/x-xpixmap
 xdg-mime default "${default_image}" image/x-xwindowdump
+xdg-mime default "${default_archive}" application/bzip2
+xdg-mime default "${default_archive}" application/gzip
+xdg-mime default "${default_archive}" application/vnd.rar
+xdg-mime default "${default_archive}" application/x-7z-compressed
+xdg-mime default "${default_archive}" application/x-7z-compressed-tar
+xdg-mime default "${default_archive}" application/x-app-package
+xdg-mime default "${default_archive}" application/x-bzip
+xdg-mime default "${default_archive}" application/x-bzip-compressed-tar
+xdg-mime default "${default_archive}" application/x-cd-image
+xdg-mime default "${default_archive}" application/x-compress
+xdg-mime default "${default_archive}" application/x-compressed-tar
+xdg-mime default "${default_archive}" application/x-cpio
+xdg-mime default "${default_archive}" application/x-deb
+xdg-mime default "${default_archive}" application/x-gzip
+xdg-mime default "${default_archive}" application/x-lha
+xdg-mime default "${default_archive}" application/x-lzip
+xdg-mime default "${default_archive}" application/x-lzip-compressed-tar
+xdg-mime default "${default_archive}" application/x-lzma
+xdg-mime default "${default_archive}" application/x-lzma-compressed-tar
+xdg-mime default "${default_archive}" application/x-tar
+xdg-mime default "${default_archive}" application/x-tarz
+xdg-mime default "${default_archive}" application/x-xar
+xdg-mime default "${default_archive}" application/x-xz
+xdg-mime default "${default_archive}" application/x-xz-compressed-tar
+xdg-mime default "${default_archive}" application/x-zstd-compressed-tar
+xdg-mime default "${default_archive}" application/zip
+xdg-mime default "${default_archive}" application/zstd

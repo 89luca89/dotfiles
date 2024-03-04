@@ -1,34 +1,34 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 set -o errexit
 set -o nounset
 
 gsettings set org.gnome.shell app-picker-layout "[{}]"
 
-declare  -a gnome_dconf_backup=(
-	"/org/gnome/desktop/background"
-	"/org/gnome/desktop/input-sources"
-	"/org/gnome/desktop/interface"
-	"/org/gnome/desktop/peripherals/mouse"
-	"/org/gnome/desktop/peripherals/touchpad"
-	"/org/gnome/desktop/peripherals/trackball"
-	"/org/gnome/desktop/privacy"
-	"/org/gnome/desktop/sound"
-	"/org/gnome/desktop/wm/keybindings"
-	"/org/gnome/desktop/wm/preferences"
-	"/org/gnome/mutter"
-	"/org/gnome/nautilus"
-	"/org/gnome/settings-daemon/plugins/color"
-	"/org/gnome/settings-daemon/plugins/media-keys"
-	"/org/gnome/settings-daemon/plugins/power"
-	"/org/gnome/shell"
-	"/org/gnome/terminal/legacy"
-	"/org/gtk/gtk4/settings/file-chooser"
-	"/org/gtk/settings/file-chooser"
-)
-dest_folder="$HOME/dotfiles/_desktop/$(gnome-shell --version | sed 's/ /-/g' | sed -E 's/\.[0-9]+//g' | tr '[:upper:]' '[:lower:]')"
+gnome_dconf_backup="
+	/org/gnome/desktop/background
+	/org/gnome/desktop/input-sources
+	/org/gnome/desktop/interface
+	/org/gnome/desktop/peripherals/mouse
+	/org/gnome/desktop/peripherals/touchpad
+	/org/gnome/desktop/peripherals/trackball
+	/org/gnome/desktop/privacy
+	/org/gnome/desktop/sound
+	/org/gnome/desktop/wm/keybindings
+	/org/gnome/desktop/wm/preferences
+	/org/gnome/mutter
+	/org/gnome/nautilus
+	/org/gnome/settings-daemon/plugins/color
+	/org/gnome/settings-daemon/plugins/media-keys
+	/org/gnome/settings-daemon/plugins/power
+	/org/gnome/shell
+	/org/gnome/terminal/legacy
+	/org/gtk/gtk4/settings/file-chooser
+	/org/gtk/settings/file-chooser
+"
+dest_folder="$HOME/dotfiles/_desktop/"
 mkdir  -p "${dest_folder}"
-for f in  ${gnome_dconf_backup[@]}; do
+for f in  ${gnome_dconf_backup}; do
 	dconf dump "${f}/" > "${dest_folder}/$(echo "${f}" | sed 's/\//./g').conf"
 done
 

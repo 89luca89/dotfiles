@@ -1,30 +1,19 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-# Light theme variables
-LIGHT_THEME="Adwaita"
-LIGHT_ICONS="Adwaita"
-# Dark theme variables
-DARK_THEME="Adwaita-dark"
-DARK_ICONS="Adwaita"
-
-if grep -q "dark" "${HOME}"/.local/share/current_theme 2> /dev/null; then
-	printf "light" > "${HOME}"/.local/share/current_theme
-	ICONS=$LIGHT_ICONS
+if [ "$(dconf read /org/gnome/desktop/interface/color-scheme)" = "'prefer-dark'" ]; then
 	NIGHT_LIGHT=false
 	PREFER="prefer-light"
-	THEME=$LIGHT_THEME
+	THEME="Adwaita"
+	sed -i 's/dark/light/g' "${HOME}/.config/alacritty/alacritty.yml"
+	sed -i 's/dark/light/g' "${HOME}/.config/alacritty/alacritty.toml"
 else
-	printf "dark" > "${HOME}"/.local/share/current_theme
-	ICONS=$DARK_ICONS
 	NIGHT_LIGHT=true
 	PREFER="prefer-dark"
-	THEME=$DARK_THEME
+	THEME="Adwaita-dark"
+	sed -i 's/light/dark/g' "${HOME}/.config/alacritty/alacritty.yml"
+	sed -i 's/light/dark/g' "${HOME}/.config/alacritty/alacritty.toml"
 fi
 
-# gsettings detection
-if which gsettings > /dev/null; then
-	gsettings set org.gnome.desktop.interface color-scheme "$PREFER"
-	gsettings set org.gnome.desktop.interface gtk-theme "$THEME"
-	gsettings set org.gnome.desktop.interface icon-theme "$ICONS"
-	gsettings set org.gnome.settings-daemon.plugins.color night-light-enabled "$NIGHT_LIGHT"
-fi
+dconf write /org/gnome/desktop/interface/color-scheme "'$PREFER'"
+dconf write /org/gnome/desktop/interface/gtk-theme "'$THEME'"
+dconf write /org/gnome/settings-daemon/plugins/color/night-light-enabled "$NIGHT_LIGHT"
