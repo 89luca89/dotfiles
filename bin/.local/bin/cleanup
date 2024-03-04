@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 # Using bash instead of posix sh, to use arrays
 
 # -y don't ask anything
@@ -43,6 +43,21 @@ clean_folder() {
 	fi
 }
 
+FILES=(
+	"./.bash_history"
+	"./.localrc"
+	"./.fzf.bash"
+	"./.histfile"
+)
+pushd ~/ || exit 127
+find . -maxdepth 1 -type f -empty -delete
+for dir in $(find . -maxdepth 1 -type f | tail -n+2); do
+	if [[ ! " ${FILES[@]} " =~ " ${dir} " ]]; then
+		clean_folder "$dir"
+	fi
+done
+popd || exit 1
+
 FOLDERS=(
 	"./.cache"
 	"./.config"
@@ -51,17 +66,13 @@ FOLDERS=(
 	"./.ssh"
 	"./.var"
 	"./.vim"
-	"./Books"
 	"./Desktop"
 	"./Documents"
 	"./Downloads"
-	"./Games"
 	"./Music"
-	"./PhoneCamera"
+	"./DCIM"
 	"./Pictures"
-	"./Programs"
 	"./Projects"
-	"./Public"
 	"./Syncthing"
 	"./Videos"
 	"./VirtualMachines"
@@ -79,10 +90,8 @@ popd || exit 1
 CONFIG_FOLDERS=(
 	"./autostart"
 	"./cni"
-	"./containers"
 	"./dconf"
 	"./gnome-session"
-	"./goa-1.0"
 	"./gtk-2.0"
 	"./gtk-3.0"
 	"./gtk-4.0"
@@ -102,6 +111,21 @@ done
 popd || exit 1
 
 LOCAL_FOLDERS=(
+	"./bin"
+	"./share"
+	"./state"
+	"./rust"
+)
+pushd ~/.local/ || exit 127
+find . -maxdepth 1 -type d -empty -delete
+for dir in $(find . -maxdepth 1 -type d | tail -n+2); do
+	if [[ ! " ${LOCAL_FOLDERS[@]} " =~ " ${dir} " ]]; then
+		clean_folder "$dir"
+	fi
+done
+popd || exit 1
+
+LOCAL_FOLDERS=(
 	"./applications"
 	"./bash-completion"
 	"./containers"
@@ -109,15 +133,13 @@ LOCAL_FOLDERS=(
 	"./gnome-settings-daemon"
 	"./gnome-shell"
 	"./go"
+	"./system-go"
 	"./gvfs-metadata"
 	"./icc"
 	"./icons"
 	"./keyrings"
 	"./man"
 	"./nautilus"
-	"./pipx"
-	"./system-go"
-	"./systemd"
 )
 
 pushd ~/.local/share || exit 127
@@ -129,11 +151,11 @@ for dir in $(find . -maxdepth 1 -type d | tail -n+2); do
 done
 popd || exit 1
 
-FLATS="$(flatpak list --app --columns=application) citrix"
+FLATS="$(flatpak list --app --columns=application)"
 for d in ~/.var/app/*; do
-    if echo "$d" | grep -q syncthing; then
-        continue
-    fi
+	if echo "$d" | grep -q syncthing; then
+		continue
+	fi
 	DIR=$(basename "$d")
 	if ! echo "$FLATS" | grep -q "$DIR"; then
 		clean_folder "$d"
