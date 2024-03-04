@@ -1,8 +1,9 @@
 #!/bin/sh
 
 # scroll-workspaces@gfxmonk.net
-# Vitals@CoreCoding.com
 EXTENSIONS="
+Vitals@CoreCoding.com
+scroll-workspaces@gfxmonk.net
 "
 
 # https://extensions.gnome.org/extension-data/VitalsCoreCoding.com.v61.shell-extension.zip
@@ -16,7 +17,7 @@ done
 
 dconf reset -f /
 
-dest_folder="$HOME/dotfiles/_desktop/$(gnome-shell --version | sed 's/ /-/g' | sed -E 's/\.[0-9a-z]+//g' | tr '[:upper:]' '[:lower:]')"
+dest_folder="$HOME/dotfiles/_desktop/"
 
 # Restore background
 cp "$dest_folder/background" ~/.config/background
@@ -27,8 +28,3 @@ for f in  .*.conf; do
 	dconf_path="$(echo "${f}" | sed 's/conf//g' | sed 's/\./\//g')"
 	dconf load "${dconf_path}" < "${f}"
 done
-grep color-scheme ".org.gnome.desktop.interface.conf" |
-	cut -d'=' -f2- | cut -d'-' -f2- |
-	tr -d "\\\'" | tr -d '[:space:]' > ~/.local/share/current_theme
-
-gnome-backup
