@@ -17,7 +17,7 @@ if empty(glob('$HOME/.vim/autoload/plug.vim'))
                 \ "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
     autocmd VimEnter * PlugInstall --sync|qall
 endif
-set grepprg=grep\ --exclude=tags\ --exclude-dir={.git,node_modules,coverage,target}\ -EIrn
+set grepprg=grep\ --exclude={tags,*.lock,*.svg,*.png}\ --exclude-dir={.git,node_modules,vendor,coverage,target}\ -EIrn
 set statusline=%{toupper(mode())}\ %<%f%m\ %{fugitive#statusline()}\ %=\ L:%l\/%L\ C:%c%V\ \[%{&ff}]:%y
 set laststatus=2 termguicolors
 set list listchars=tab:\|\ " there is a space
@@ -142,7 +142,7 @@ let g:ale_c_clangformat_options   = "--style=Chromium"
 let g:ale_cpp_clangformat_options = "--style=Chromium"
 let g:ale_python_isort_options    = "--ac --float-to-top"
 let g:ale_rust_rustfmt_options    = "--edition 2021"
-let g:ale_sh_shfmt_options        = "-s -ci -sr -kp"
+let g:ale_sh_shfmt_options        = "shfmt -s -ci -sr -kp -fn -i=0 -p"
 let g:ale_linters = {
             \   'c':      ['cc', 'ccls', 'clangd'],
             \   'cpp':    ['cc', 'ccls', 'clangd'],
@@ -170,6 +170,7 @@ function! s:set_bg(timer_id)
     endif
     highlight link myDeclaration Identifier
     highlight link myFunction Special
+    highlight Normal guibg=NONE
 endfun
 " Execute bg_sync every 5 seconds
 silent call timer_start(1000 * 5, function('s:set_bg'), {'repeat': -1})

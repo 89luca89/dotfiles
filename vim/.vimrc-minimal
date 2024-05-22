@@ -1,4 +1,3 @@
-unlet! skip_defaults_vim
 source $VIMRUNTIME/defaults.vim
 set autoindent shiftwidth=4 softtabstop=4 tabstop=4 smartindent smarttab
 set autoread autowrite hidden
