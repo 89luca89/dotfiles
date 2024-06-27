@@ -16,4 +16,4 @@ fi
 
 dconf write /org/gnome/desktop/interface/color-scheme "'$PREFER'"
 dconf write /org/gnome/desktop/interface/gtk-theme "'$THEME'"
-dconf write /org/gnome/settings-daemon/plugins/color/night-light-enabled "$NIGHT_LIGHT"
+# dconf write /org/gnome/settings-daemon/plugins/color/night-light-enabled "$NIGHT_LIGHT"
