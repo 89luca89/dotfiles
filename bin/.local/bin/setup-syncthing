@@ -1,0 +1,36 @@
+#!/bin/sh
+
+reset="$1"
+
+if [ "$1" = "reset" ]; then
+	systemctl --user stop syncthing
+	podman run --rm -ti \
+		--privileged --network host --dns 1.1.1.1 \
+		--userns keep-id --user 1000 \
+		-v "/home/$USER/Music:/home/$USER/Music:z" \
+		-v "/home/$USER/Pictures:/home/$USER/Pictures:z" \
+		-v "/home/$USER/DCIM/Camera:/home/$USER/PhoneCamera:z" \
+		-v "/home/$USER/Syncthing:/home/$USER/Syncthing:z" \
+		-v "$HOME/.var/app/syncthing-$(hostname):/var/syncthing/:z" \
+		-e STGUIADDRESS=127.0.0.1:8384 \
+		--entrypoint /bin/syncthing \
+		docker.io/syncthing/syncthing \
+		--reset-deltas
+	exit
+fi
+
+if ! podman inspect --type container syncthing > /dev/null; then
+	podman create --name syncthing \
+		--privileged --network host --dns 1.1.1.1 \
+		--userns keep-id --user 1000 \
+		-v "/home/$USER/Music:/home/$USER/Music:z" \
+		-v "/home/$USER/Pictures:/home/$USER/Pictures:z" \
+		-v "/home/$USER/DCIM/Camera:/home/$USER/PhoneCamera:z" \
+		-v "/home/$USER/Syncthing:/home/$USER/Syncthing:z" \
+		-v "$HOME/.var/app/syncthing-$(hostname):/var/syncthing/:z" \
+		-e STGUIADDRESS=127.0.0.1:8384 \
+		docker.io/syncthing/syncthing
+	podman generate systemd -n syncthing > "$HOME/.config/systemd/user/syncthing.service"
+	systemctl --user daemon-reload
+	systemctl --user enable syncthing.service
+fi
