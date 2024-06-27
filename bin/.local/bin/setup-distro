@@ -1,59 +1,70 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 set -x
 set -o errexit
 set -o nounset
 
-echo "
-vm.laptop_mode=5
-kernel.nmi_watchdog=0
-vm.swappiness=5
-vm.oom_kill_allocating_task=1
-" | sudo tee /etc/sysctl.d/config.conf > /dev/null
+minkb="$(awk '/MemTotal/ {printf "%.0f", $2 * 0.01}' /proc/meminfo)"
+echo "# Zram setup
+kernel.nmi_watchdog = 0
+vm.dirty_writeback_centisecs = 1500
+vm.laptop_mode = 5
+vm.min_free_kbytes=${minkb}
+vm.page-cluster = 0
+vm.swappiness = 180
+vm.watermark_boost_factor = 0
+vm.watermark_scale_factor = 125"  | sudo tee /etc/sysctl.d/99-sysctl-custom.conf > /dev/null
+sudo sysctl --system --quiet || :
 
-echo "
-[device]
-wifi.scan-rand-mac-address=yes
+echo "[zram0]
+zram-size = ram" | sudo tee /etc/systemd/zram-generator.conf > /dev/null
 
-[connection]
-wifi.cloned-mac-address=random
-ethernet.cloned-mac-address=random
-" | sudo tee /etc/NetworkManager/conf.d/00-macrandomize.conf > /dev/null
+# shellcheck disable=SC2016
+echo '#!/bin/sh
+[ -e /sys/block/nvme*n* ] && echo "16384" | tee /sys/block/nvme*n*/queue/read_ahead_kb
+[ -e /sys/block/nvme*n* ] && echo "none" | tee /sys/block/nvme*n*/queue/scheduler
+[ -e /sys/block/sd* ] && echo "1" | tee /sys/block/sd*/queue/iosched/low_latency
+[ -e /sys/block/sd* ] && echo "4096" | tee /sys/block/sd*/queue/read_ahead_kb
+[ -e /sys/block/sd* ] && echo "bfq" | tee /sys/block/sd*/queue/scheduler
 
-echo "
-[main]
-hostname-mode=none
-" | sudo tee /etc/NetworkManager/conf.d/01-transient-hostname.conf > /dev/null
+if [ -e /usr/local/bin/ryzenadj ]; then
+	if [ "$(cat /sys/class/power_supply/AC*/online)" -eq 0 ]; then
+		/usr/local/bin/ryzenadj --power-saving
+		echo battery | sudo tee /sys/class/drm/card*/device/power_dpm_state
+		echo low | sudo tee /sys/class/drm/card*/device/power_dpm_force_performance_level
+	else
+		/usr/local/bin/ryzenadj --max-performance
+		echo performance | sudo tee /sys/class/drm/card*/device/power_dpm_state
+		echo auto | sudo tee /sys/class/drm/card*/device/power_dpm_force_performance_level
+	fi
+fi
 
-echo '
-ACTION=="add|change", TEST=="power/control", SUBSYSTEM=="acpi", ATTR{power/control}="auto"
-ACTION=="add|change", TEST=="power/control", SUBSYSTEM=="ahci", ATTR{power/control}="auto"
-ACTION=="add|change", TEST=="power/control", SUBSYSTEM=="block", ATTR{power/control}="auto"
-ACTION=="add|change", TEST=="power/control", SUBSYSTEM=="i2c", ATTR{power/control}="auto"
-ACTION=="add|change", TEST=="power/control", SUBSYSTEM=="pci", ATTR{power/control}="auto"
-ACTION=="add|change", TEST=="power/control", SUBSYSTEM=="scsi", ATTR{power/control}="auto"
-ACTION=="add|change", TEST=="power/control", SUBSYSTEM=="workqueue", ATTR{power/control}="auto"
-ACTION=="add|change", TEST=="power/autosuspend", SUBSYSTEM=="usb", ATTR{power/autosuspend}="1"
-ACTION=="add|change", SUBSYSTEM=="net", KERNEL=="enp*", RUN+="/usr/sbin/ethtool -s %k wol d"
-ACTION=="add|change", SUBSYSTEM=="net", KERNEL=="wlp*", RUN+="/usr/sbin/iw dev %k set power_save on"
-ACTION=="add|change", TEST=="link_power_management_policy", SUBSYSTEM=="scsi_host", KERNEL=="host*", ATTR{link_power_management_policy}="min_power"
-ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/iosched/low_latency}="1"
-ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/scheduler}="bfq"
-ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/read_ahead_kb}="4096"
-ACTION=="add|change", KERNEL=="nvme[0-9]n[0-9]", ATTR{queue/scheduler}="kyber"
-ACTION=="add|change", KERNEL=="nvme[0-9]n[0-9]", ATTR{queue/read_ahead_kb}="16384"
-# SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="0",RUN+="/usr/local/bin/powersaver powersave"
-# SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="1",RUN+="/usr/local/bin/powersaver performance"
-' | sudo tee /etc/udev/rules.d/powersave.rules > /dev/null
+find /sys/ -wholename "*power/autosuspend" -exec sh -c "echo 1 > {}" \;
+find /sys/ -wholename "*power/control" -exec sh -c "echo auto > {}" \;' | sudo tee /etc/udev/powersave.sh > /dev/null
+sudo chmod +x /etc/udev/powersave.sh
+
+echo '# Trigger again when sleep/resume
+ACTION=="add | change | remove",KERNEL=="msr1",RUN+="/etc/udev/powersave.sh"
+ACTION=="add | change | remove",SUBSYSTEM=="power_supply",RUN+="/etc/udev/powersave.sh"
+SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="0",RUN+="/etc/udev/powersave.sh"
+SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="1",RUN+="/etc/udev/powersave.sh"
+# SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="0",RUN+="/usr/local/bin/ryzenadj --power-saving"
+# SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="1",RUN+="/usr/local/bin/ryzenadj --max-performance"
+# Trigger on AC/BAT'  | sudo tee /etc/udev/rules.d/powersave.rules > /dev/null
+sudo udevadm control --reload
+sudo udevadm trigger
 
 if [ -e /etc/lvm/lvm.conf ]; then
 	sudo sed -i 's|# issue_discards = 0|issue_discards = 1|g' /etc/lvm/lvm.conf
 fi
 
 if [ -e /etc/crypttab ]; then
+	sudo sed -i 's|none luks$|none luks,discard,no-read-workqueue,no-write-workqueue|g' /etc/crypttab
 	sudo sed -i 's|none discard$|none discard,no-read-workqueue,no-write-workqueue|g' /etc/crypttab
 	sudo sed -i 's|x-initrd.attach$|x-initrd.attach,discard,no-read-workqueue,no-write-workqueue|g' /etc/crypttab
+	sudo cryptsetup --perf-no_read_workqueue --perf-no_write_workqueue --allow-discards --persistent refresh "$(sudo cat /etc/crypttab | cut -d' ' -f1)"
 fi
+sudo systemctl enable fstrim.timer
 
 systemd_user_services="
 evolution-addressbook-factory.service
@@ -62,6 +73,7 @@ evolution-source-registry.service
 evolution-user-prompter.service
 gamemoded.service.service
 gvfs-goa-volume-monitor.service
+org.freedesktop.IBus.session.GNOME.service
 tracker-extract-3.service
 tracker-miner-fs-3.service
 tracker-miner-fs-control-3.service
@@ -71,89 +83,34 @@ tracker-xdg-portal-3.service
 "
 for systemd_user_service in ${systemd_user_services}; do
 	systemctl --user disable --now "${systemd_user_service}" 2> /dev/null || :
-	systemctl --user mask "${systemd_user_service}" 2> /dev/null || :
+	systemctl --user mask --now "${systemd_user_service}" 2> /dev/null || :
 done
 
-systemd_system_services="
-NetworkManager-wait-online.service
-packagekit.service
+xdg_user_services="
+geoclue-demo-agent.desktop
+orca-autostart.desktop
+org.gnome.Evolution-alarm-notify.desktop
+org.gnome.Software.desktop
+tracker-miner-fs-3.desktop
+tracker-miner-rss-3.desktop
 "
-for systemd_system_service in ${systemd_system_services}; do
-	sudo systemctl disable --now "${systemd_system_service}" 2> /dev/null || :
-	sudo systemctl mask "${systemd_system_service}" 2> /dev/null || :
+for xdg_user_service in ${xdg_user_services}; do
+	sudo rm -f "/etc/xdg/autostart/${xdg_user_service}"
 done
 
-sudo systemctl enable fstrim.timer
-
-if command -v rpm-ostree 2> /dev/null; then
-
-	sudo rpm-ostree kargs \
-		--append-if-missing=amdgpu.aspm=1 \
-		--append-if-missing=amdgpu.cik_support=1 \
-		--append-if-missing=amdgpu.dc=1 \
-		--append-if-missing=amdgpu.dcfeaturemask='0xB' \
-		--append-if-missing=amdgpu.si_support=1 \
-		--append-if-missing=dm_mod.use_blk_mq=1 \
-		--append-if-missing=drm.debug=0 \
-		--append-if-missing=drm.vblankoffdelay=1 \
-		--append-if-missing=e1000e.SmartPowerDownEnable=1 \
-		--append-if-missing=i915.disable_power_well=0 \
-		--append-if-missing=i915.enable_dc=2 \
-		--append-if-missing=i915.enable_fbc=1 \
-		--append-if-missing=i915.enable_guc=3 \
-		--append-if-missing=i915.enable_psr=1 \
-		--append-if-missing=i915.enable_rc6=7 \
-		--append-if-missing=i915.powersave=1 \
-		--append-if-missing=iwlmvm.power_scheme=3 \
-		--append-if-missing=iwlwifi.power_level=5 \
-		--append-if-missing=iwlwifi.power_save="Y" \
-		--append-if-missing=mmc_mod.use_blk_mq=1 \
-		--append-if-missing=nvme_core.default_ps_max_latency_us=20000 \
-		--append-if-missing=nvme_core.force_apst=1 \
-		--append-if-missing=pcie_aspm=force \
-		--append-if-missing=pcie_aspm.policy=powersupersave \
-		--append-if-missing=scsi_mod.use_blk_mq=1 \
-		--append-if-missing=thinkpad_acpi.fan_control=1 \
-		--append-if-missing=preempt=full \
-		--append-if-missing=usbcore.autosuspend=1
-	# Remove flatpaks from system fedora repo
-	if sudo flatpak remotes | grep -q "fedora.*system,oci"; then
-		sudo flatpak uninstall --all --delete-data
-		sudo flatpak remote-delete fedora
-	fi
-	sudo rpm-ostree install --idempotent --apply-live \
-		docker pciutils \
-		libvirt-daemon-config-network libvirt-daemon-kvm qemu-kvm \
-		virt-install virt-manager virt-viewer
-
-	grep -E '^libvirt:|^docker:' /usr/lib/group | sudo tee -a /etc/group
-	sudo usermod -aG docker "${USER}"
-	sudo usermod -aG libvirt "${USER}"
-	sudo systemctl enable docker.service
-	sudo systemctl enable libvirtd.socket
-
-elif command -v transactional-update-notifier 2> /dev/null; then
-
-	sudo sed -i 's|GRUB_CMDLINE_LINUX=".*"|GRUB_CMDLINE_LINUX="amdgpu.aspm=1 amdgpu.cik_support=1 amdgpu.dc=1 amdgpu.dcfeaturemask=0xB amdgpu.si_support=1 amd_pstate.shared_mem=1 amd_pstate=active dm_mod.use_blk_mq=1 drm.debug=0 drm.vblankoffdelay=1 e1000e.SmartPowerDownEnable=1 i915.disable_power_well=0 i915.enable_dc=2 i915.enable_fbc=1 i915.enable_guc=3 i915.enable_psr=1 i915.enable_rc6=7 i915.powersave=1 iwlmvm.power_scheme=3 iwlwifi.power_level=5 iwlwifi.power_save=Y mmc_mod.use_blk_mq=1 nvme_core.default_ps_max_latency_us=20000 nvme_core.force_apst=1 pcie_aspm.policy=powersupersave pcie_aspm=force preempt=full scsi_mod.use_blk_mq=1 thinkpad_acpi.fan_control=1 usbcore.autosuspend=1"|g' /etc/default/grub
-	if ! command -v docker || ! command -v virsh; then
-		sudo transactional-update -c pkg install \
-			docker docker-compose crun pciutils \
-			patterns-glibc-hwcaps-x86_64_v3 patterns-server-kvm_server patterns-server-kvm_tools
-		sudo transactional-update -c grub.cfg
-		sudo transactional-update -c apply
-	fi
-
-	sudo systemctl enable virtqemud.socket virtnetworkd.socket virtstoraged.socket virtnodedevd.socket docker.service
-	sudo usermod -aG docker luca-linux
-	sudo usermod -aG libvirt luca-linux
-
+if [ -e /etc/default/grub ]; then
+	sudo  sed -i 's|quiet"|quiet splash"|g' /etc/default/grub
+	sudo  sed -i 's|GRUB_CMDLINE_LINUX=".*"|GRUB_CMDLINE_LINUX="nowatchdog iomem=relaxed amdgpu.abmlevel=1 amdgpu.sg_display=0 drm.debug=0 drm.vblankoffdelay=1 nmi_watchdog=0 e1000e.SmartPowerDownEnable=1 i915.disable_power_well=1 i915.enable_dc=2 i915.enable_fbc=1 i915.enable_guc=3 i915.enable_psr=2 i915.enable_rc6=7 i915.modeset=1 i915.powersave=1 iwlmvm.power_scheme=3 iwlwifi.power_level=5 iwlwifi.power_save=Y pcie_aspm.policy=powersupersave pcie_aspm=force usbcore.autosuspend=1"|g' /etc/default/grub
 fi
 
-ln -sf /dev/null "${HOME}/.local/share/applications/firefox.desktop"
+if [ -e /boot/efi/loader ]; then
+	sudo  sed -i 's|options.*quiet|options nowatchdog iomem=relaxed amdgpu.abmlevel=1 amdgpu.sg_display=0 drm.debug=0 drm.vblankoffdelay=1 nmi_watchdog=0 e1000e.SmartPowerDownEnable=1 i915.disable_power_well=1 i915.enable_dc=2 i915.enable_fbc=1 i915.enable_guc=3 i915.enable_psr=2 i915.enable_rc6=7 i915.modeset=1 i915.powersave=1 iwlmvm.power_scheme=3 iwlwifi.power_level=5 iwlwifi.power_save=Y pcie_aspm.policy=powersupersave pcie_aspm=force usbcore.autosuspend=1 quiet|g' /boot/loader/entries/*.conf
+fi
 
-setup-gnome
-setup-flatpak
-dotfiles
-# distrobox-auto-update
-# flatpak-auto-update
-# gnome-auto-backup/restore
+# 	if ! command -v docker; then
+# 		sudo rpm-ostree install --idempotent --apply-live gnome-themes-extra zenity openssl
+# 		sudo rpm-ostree initramfs --enable --arg="-a fido2 tpm2-tss"
+# 		# sudo systemd-cryptenroll --wipe-slot tpm2 --tpm2-device auto --tpm2-pcrs "0+1+2+3+4+5+7+9" /dev/nvme0n1p3
+# 		# sudo systemd-cryptenroll --fido2-device=auto /dev/nvme0n1p3
+# 	fi
+# fi
