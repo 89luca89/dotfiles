@@ -31,6 +31,7 @@ default_browser="org.chromium.Chromium.desktop"
 # default_browser="org.mozilla.firefox.desktop"
 default_image="org.gnome.Loupe.desktop"
 default_video="io.mpv.Mpv.desktop"
+default_pdf="org.gnome.Evince.desktop"
 
 xdg-settings set default-web-browser "${default_browser}"
 xdg-mime default "${default_audio}" audio/3gpp
@@ -170,6 +171,7 @@ xdg-mime default "${default_image}" image/x-xcf
 xdg-mime default "${default_image}" image/x-xcursor
 xdg-mime default "${default_image}" image/x-xpixmap
 xdg-mime default "${default_image}" image/x-xwindowdump
+xdg-mime default "${default_pdf}" application/pdf
 xdg-mime default "${default_archive}" application/bzip2
 xdg-mime default "${default_archive}" application/gzip
 xdg-mime default "${default_archive}" application/vnd.rar
