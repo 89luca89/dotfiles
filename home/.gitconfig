@@ -11,8 +11,6 @@
 [commit]
 	gpgsign = true
 [credential]
-	helper = /usr/libexec/git/git-credential-libsecret
-	# helper = /usr/lib/git-core/git-credential-libsecret
-	# helper = /usr/share/doc/git/contrib/credential/libsecret/git-credential-libsecret
+	helper = /home/luca-linux/.local/bin/git-credential-libsecret
 [fetch]
 	prune = true
