@@ -1,28 +1,29 @@
 # BASIC ALIASES
-alias :qa='exit'
-alias batinfo="find /sys/class/power_supply/BAT0/ -type f -exec grep . --color --with-filename {} 2>/dev/null \;"
 alias cp='cp --reflink=auto'
 alias ll='ls -Ahl --group-directories-first --color'
-alias open='xdg-open'
 alias tree='tree -I ".git" -a'
 alias vi='vim -u ~/.vimrc-minimal'
-alias android-batinfo="adb shell cat /sys/class/power_supply/battery/uevent"
+alias scrcpy="scrcpy --always-on-top --no-power-on --turn-screen-off --no-cleanup"
+alias tailscale-up="sudo systemctl start tailscaled && tailscale up"
+alias tailscale-down="tailscale down && sudo systemctl stop tailscaled"
 if [ -z $CONTAINER_ID ]; then
 	alias vim='vim -u ~/.vimrc-minimal'
 fi
+export CARGO_HOME=$HOME/.local/rust
+export FLUTTER_PATH=$HOME/.local/flutter
 export GOPATH=$HOME/.local/share/go
 export GOTMPDIR=$HOME/.cache/go-build
 export GPG_TTY=$(tty)
-export LANG="en_US.UTF-8"
-export LC_CTYPE="en_US.UTF-8"
+export QT_QPA_PLATFORMTHEME=gnome
+export RUSTUP_HOME=$HOME/.local/rust
+export RUST_SRC_PATH="$RUSTUP_HOME/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/src"
+export TMUX_TMPDIR=/var/tmp
 export PATH=$HOME/.config/emacs/bin/:$PATH
 export PATH=$HOME/.local/bin:$PATH
 export PATH=$HOME/.local/share/flatpak/exports/bin:$PATH
 export PATH=$HOME/bin:$PATH
+export PATH=$PATH:$FLUTTER_PATH/flutter/bin
+export PATH=$PATH:$FLUTTER_PATH/flutter/bin/cache/dart-sdk/bin/snapshots
 export PATH=$PATH:/usr/sbin:/usr/local/sbin
 export PATH=/var/lib/flatpak/exports/bin:$PATH
-export CARGO_HOME=$HOME/.local/rust
-export RUSTUP_HOME=$HOME/.local/rust
-export RUST_SRC_PATH="$RUSTUP_HOME/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/src"
-export TMUX_TMPDIR=/var/tmp
-export QT_QPA_PLATFORMTHEME=gnome
+export EDITOR=vim

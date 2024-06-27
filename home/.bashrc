@@ -32,5 +32,5 @@ if [ -e /run/.containerenv ]; then
 	RED='\[\033[91m\]'
 	ORANGE='\[\e[38;5;208m\]'
 	PS_CLEAR='\[\033[0m\]'
-	export PS1=${BLUE}'\u'${PS_CLEAR}'@'${ORANGE}'\h'${PS_CLEAR}':'${BBLUE}'\W'${PS_CLEAR}'$ '
+	export PS1=${BLUE}'\u'${PS_CLEAR}'@'${ORANGE}'$CONTAINER_ID'${PS_CLEAR}':'${BBLUE}'\W'${PS_CLEAR}'$ '
 fi
