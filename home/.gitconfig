@@ -12,5 +12,14 @@
 	gpgsign = true
 [credential]
 	helper = /home/luca-linux/.local/bin/git-credential-libsecret
+	credentialStore = secretservice
 [fetch]
 	prune = true
+
+[includeif "gitdir:~/Projects/chainguard/"]
+	path = ~/.gitconfig-gitsign
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
