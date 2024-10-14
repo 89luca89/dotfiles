@@ -5,10 +5,14 @@ set -o errexit
 set -o nounset
 
 minkb="$(awk '/MemTotal/ {printf "%.0f", $2 * 0.01}' /proc/meminfo)"
-echo "# Zram setup
-kernel.nmi_watchdog = 0
+echo "
+net.ipv4.ping_group_range = 0 1000
+# Zram setup
 vm.dirty_writeback_centisecs = 1500
-vm.laptop_mode = 5
+vm.dirty_expire_centisecs = 6000
+vm.dirty_ratio = 20
+vm.dirty_background_ratio = 10
+vm.laptop_mode = 2
 vm.min_free_kbytes=${minkb}
 vm.page-cluster = 0
 vm.swappiness = 180
@@ -19,98 +23,179 @@ sudo sysctl --system --quiet || :
 echo "[zram0]
 zram-size = ram" | sudo tee /etc/systemd/zram-generator.conf > /dev/null
 
-# shellcheck disable=SC2016
+# shellcheck disable=SC2016,SC1083
 echo '#!/bin/sh
 [ -e /sys/block/nvme*n* ] && echo "16384" | tee /sys/block/nvme*n*/queue/read_ahead_kb
 [ -e /sys/block/nvme*n* ] && echo "none" | tee /sys/block/nvme*n*/queue/scheduler
 [ -e /sys/block/sd* ] && echo "1" | tee /sys/block/sd*/queue/iosched/low_latency
 [ -e /sys/block/sd* ] && echo "4096" | tee /sys/block/sd*/queue/read_ahead_kb
 [ -e /sys/block/sd* ] && echo "bfq" | tee /sys/block/sd*/queue/scheduler
-
-if [ -e /usr/local/bin/ryzenadj ]; then
-	if [ "$(cat /sys/class/power_supply/AC*/online)" -eq 0 ]; then
-		/usr/local/bin/ryzenadj --power-saving
-		echo battery | sudo tee /sys/class/drm/card*/device/power_dpm_state
-		echo low | sudo tee /sys/class/drm/card*/device/power_dpm_force_performance_level
-	else
-		/usr/local/bin/ryzenadj --max-performance
-		echo performance | sudo tee /sys/class/drm/card*/device/power_dpm_state
-		echo auto | sudo tee /sys/class/drm/card*/device/power_dpm_force_performance_level
-	fi
-fi
+[ -e /sys/devices/platform/AMDI0010:03/i2c-1/i2c-PIXA3854:00/power/wakeup ] && echo disabled > /sys/devices/platform/AMDI0010:03/i2c-1/i2c-PIXA3854:00/power/wakeup
+[ -e /sys/power/resume ] && df / | tail -1 | cut -d " " -f1 | xargs realpath | xargs ls -l | awk '\'{print \$5\":\"\$6}\'' | tr -d "," > /sys/power/resume
 
 find /sys/ -wholename "*power/autosuspend" -exec sh -c "echo 1 > {}" \;
-find /sys/ -wholename "*power/control" -exec sh -c "echo auto > {}" \;' | sudo tee /etc/udev/powersave.sh > /dev/null
-sudo chmod +x /etc/udev/powersave.sh
+find /sys/ -wholename "*power/control" -exec sh -c "echo auto > {}" \;
 
-echo '# Trigger again when sleep/resume
-ACTION=="add | change | remove",KERNEL=="msr1",RUN+="/etc/udev/powersave.sh"
-ACTION=="add | change | remove",SUBSYSTEM=="power_supply",RUN+="/etc/udev/powersave.sh"
-SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="0",RUN+="/etc/udev/powersave.sh"
-SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="1",RUN+="/etc/udev/powersave.sh"
-# SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="0",RUN+="/usr/local/bin/ryzenadj --power-saving"
-# SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="1",RUN+="/usr/local/bin/ryzenadj --max-performance"
+echo battery | tee /sys/class/drm/card*/device/power_dpm_state
+echo low | tee /sys/class/drm/card*/device/power_dpm_force_performance_level
+' | sudo tee /usr/local/bin/powersave > /dev/null
+sudo chmod +x /usr/local/bin/powersave
+
+echo '#
+ACTION=="add", SUBSYSTEM=="serio", DRIVERS=="atkbd", ATTR{power/wakeup}="disabled"
+SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="0",RUN+="/usr/bin/systemctl start powersave-oneshot.service"
+SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="1",RUN+="/usr/bin/systemctl start powersave-oneshot.service"
 # Trigger on AC/BAT'  | sudo tee /etc/udev/rules.d/powersave.rules > /dev/null
 sudo udevadm control --reload
 sudo udevadm trigger
+
+echo '[Unit]
+Description=Run powersaving script on resume
+After=suspend.target
+
+[Service]
+User=root
+Type=oneshot
+ExecStart=/usr/local/bin/powersave
+TimeoutSec=0
+
+[Install]
+WantedBy=suspend.target' | sudo tee /etc/systemd/system/powersave-resume.service > /dev/null
+
+echo '
+[Unit]
+Description=Run powersaving script at boot
+After=graphical.target
+
+[Service]
+User=root
+Type=oneshot
+ExecStart=/usr/local/bin/powersave
+TimeoutSec=0
+
+[Install]
+WantedBy=graphical.target' | sudo tee /etc/systemd/system/powersave-oneshot.service > /dev/null
+sudo systemctl daemon-reload
+sudo systemctl enable powersave-resume.service powersave-oneshot.service
+sudo systemctl start powersave-oneshot.service
 
 if [ -e /etc/lvm/lvm.conf ]; then
 	sudo sed -i 's|# issue_discards = 0|issue_discards = 1|g' /etc/lvm/lvm.conf
 fi
 
-if [ -e /etc/crypttab ]; then
-	sudo sed -i 's|none luks$|none luks,discard,no-read-workqueue,no-write-workqueue|g' /etc/crypttab
-	sudo sed -i 's|none discard$|none discard,no-read-workqueue,no-write-workqueue|g' /etc/crypttab
-	sudo sed -i 's|x-initrd.attach$|x-initrd.attach,discard,no-read-workqueue,no-write-workqueue|g' /etc/crypttab
-	sudo cryptsetup --perf-no_read_workqueue --perf-no_write_workqueue --allow-discards --persistent refresh "$(sudo cat /etc/crypttab | cut -d' ' -f1)"
+	if [ -e /etc/crypttab ]; then
+		sudo sed -i 's|none luks$|none luks,discard,no-read-workqueue,no-write-workqueue|g' /etc/crypttab
+		sudo sed -i 's|none discard$|none discard,no-read-workqueue,no-write-workqueue|g' /etc/crypttab
+		sudo sed -i 's|x-initrd.attach$|x-initrd.attach,discard,no-read-workqueue,no-write-workqueue|g' /etc/crypttab
+		sudo cryptsetup --perf-no_read_workqueue --perf-no_write_workqueue --allow-discards --persistent refresh "$(sudo cat /etc/crypttab | cut -d' ' -f1)"
+	fi
+	sudo systemctl enable fstrim.timer
+	sudo fstrim -va
+
+	systemd_user_services="
+	evolution-addressbook-factory.service
+	evolution-calendar-factory.service
+	evolution-source-registry.service
+	evolution-user-prompter.service
+	tracker-extract-3.service
+	tracker-miner-fs-3.service
+	tracker-miner-fs-control-3.service
+	tracker-miner-rss-3.service
+	tracker-writeback-3.service
+	tracker-xdg-portal-3.service
+	"
+	for systemd_user_service in ${systemd_user_services}; do
+		systemctl --user disable --now "${systemd_user_service}" 2> /dev/null || :
+		systemctl --user mask --now "${systemd_user_service}" 2> /dev/null || :
+	done
+
+	xdg_user_services="
+	geoclue-demo-agent.desktop
+	orca-autostart.desktop
+	org.gnome.Evolution-alarm-notify.desktop
+	org.gnome.Software.desktop
+	tracker-miner-fs-3.desktop
+	tracker-miner-rss-3.desktop
+	"
+	for xdg_user_service in ${xdg_user_services}; do
+		sudo rm -f "/etc/xdg/autostart/${xdg_user_service}"
+	done
+
+# Swap = Ram
+if [ ! -e /swap.img ] ||
+	[ "$(du /swap.img | awk '{print $1}')" -lt "$(grep MemTotal /proc/meminfo  | awk '{print $2}')" ]; then
+
+sudo swapoff /swap.img
+sudo rm /swap.img
+sudo fallocate -l "$(grep MemTotal /proc/meminfo  | awk '{print $2}')k" /swap.img
+sudo mkswap /swap.img
+sudo chmod 0600 /swap.img
+sudo swapon -a
 fi
-sudo systemctl enable fstrim.timer
+if ! grep -q swap.img /etc/fstab; then
+	echo "/swap.img	none	swap	sw	0	0" | sudo tee -a /etc/fstab
+fi
 
-systemd_user_services="
-evolution-addressbook-factory.service
-evolution-calendar-factory.service
-evolution-source-registry.service
-evolution-user-prompter.service
-gamemoded.service.service
-gvfs-goa-volume-monitor.service
-org.freedesktop.IBus.session.GNOME.service
-tracker-extract-3.service
-tracker-miner-fs-3.service
-tracker-miner-fs-control-3.service
-tracker-miner-rss-3.service
-tracker-writeback-3.service
-tracker-xdg-portal-3.service
-"
-for systemd_user_service in ${systemd_user_services}; do
-	systemctl --user disable --now "${systemd_user_service}" 2> /dev/null || :
-	systemctl --user mask --now "${systemd_user_service}" 2> /dev/null || :
-done
+# Enable hibernation
+sudo mkdir -p /etc/polkit-1/localauthority/50-local.d
+cat << EOF | sudo tee /etc/polkit-1/localauthority/50-local.d/com.hibernate.enable-hibernate.pkla
+[Re-enable hibernate by default in upower]
+Identity=unix-user:*
+Action=org.freedesktop.upower.hibernate
+ResultActive=yes
 
-xdg_user_services="
-geoclue-demo-agent.desktop
-orca-autostart.desktop
-org.gnome.Evolution-alarm-notify.desktop
-org.gnome.Software.desktop
-tracker-miner-fs-3.desktop
-tracker-miner-rss-3.desktop
-"
-for xdg_user_service in ${xdg_user_services}; do
-	sudo rm -f "/etc/xdg/autostart/${xdg_user_service}"
-done
+[Re-enable hibernate by default in logind]
+Identity=unix-user:*
+Action=org.freedesktop.login1.hibernate;org.freedesktop.login1.handle-hibernate-key;org.freedesktop.login1;org.freedesktop.login1.hibernate-multiple-sessions;org.freedesktop.login1.hibernate-ignore-inhibit
+ResultActive=yes
+EOF
 
+# Suspend 2h + Hibernate
+grep -q ^HibernateDelaySec=7200 /etc/systemd/sleep.conf || echo HibernateDelaySec=7200 | sudo tee -a /etc/systemd/sleep.conf
+grep -q ^AllowSuspendThenHibernate=yes /etc/systemd/sleep.conf || echo AllowSuspendThenHibernate=yes | sudo tee -a /etc/systemd/sleep.conf
+grep -q ^HandleLidSwitch=suspend-then-hibernate /etc/systemd/logind.conf || echo HandleLidSwitch=suspend-then-hibernate | sudo tee -a /etc/systemd/logind.conf
+
+# Grub resume from swap file
+OFFSET="$(sudo filefrag -v /swap.img | head -4 | tail -1 | awk '{print $4}' | grep -Eo "[0-9]+")"
+RESUME="$(findmnt / -o UUID | tail -1)"
 if [ -e /etc/default/grub ]; then
 	sudo  sed -i 's|quiet"|quiet splash"|g' /etc/default/grub
-	sudo  sed -i 's|GRUB_CMDLINE_LINUX=".*"|GRUB_CMDLINE_LINUX="nowatchdog iomem=relaxed amdgpu.abmlevel=1 amdgpu.sg_display=0 drm.debug=0 drm.vblankoffdelay=1 nmi_watchdog=0 e1000e.SmartPowerDownEnable=1 i915.disable_power_well=1 i915.enable_dc=2 i915.enable_fbc=1 i915.enable_guc=3 i915.enable_psr=2 i915.enable_rc6=7 i915.modeset=1 i915.powersave=1 iwlmvm.power_scheme=3 iwlwifi.power_level=5 iwlwifi.power_save=Y pcie_aspm.policy=powersupersave pcie_aspm=force usbcore.autosuspend=1"|g' /etc/default/grub
+	sudo  sed -i "s|GRUB_CMDLINE_LINUX=\".*\"|GRUB_CMDLINE_LINUX=\"resume=UUID=${RESUME} resume_offset=${OFFSET} nowatchdog iomem=relaxed amdgpu.abmlevel=1 amdgpu.sg_display=0 drm.debug=0 drm.vblankoffdelay=1 nmi_watchdog=0 e1000e.SmartPowerDownEnable=1 i915.disable_power_well=1 i915.enable_dc=2 i915.enable_fbc=1 i915.enable_guc=3 i915.enable_psr=2 i915.enable_rc6=7 i915.modeset=1 i915.powersave=1 iwlmvm.power_scheme=3 iwlwifi.power_level=5 iwlwifi.power_save=Y pcie_aspm.policy=powersupersave pcie_aspm=force usbcore.autosuspend=1 workqueue.power_efficient=true\"|g" /etc/default/grub
 fi
 
-if [ -e /boot/efi/loader ]; then
-	sudo  sed -i 's|options.*quiet|options nowatchdog iomem=relaxed amdgpu.abmlevel=1 amdgpu.sg_display=0 drm.debug=0 drm.vblankoffdelay=1 nmi_watchdog=0 e1000e.SmartPowerDownEnable=1 i915.disable_power_well=1 i915.enable_dc=2 i915.enable_fbc=1 i915.enable_guc=3 i915.enable_psr=2 i915.enable_rc6=7 i915.modeset=1 i915.powersave=1 iwlmvm.power_scheme=3 iwlwifi.power_level=5 iwlwifi.power_save=Y pcie_aspm.policy=powersupersave pcie_aspm=force usbcore.autosuspend=1 quiet|g' /boot/loader/entries/*.conf
+if command -v apt && ! command -v flatpak; then
+	# Send snapd to the shadow realm
+	cat /proc/mounts | grep snap | awk '{print $2}' | xargs -I{} sudo umount {}
+	sudo apt remove --purge --autoremove -y snapd gnome-software-plugin-snap
+	sudo apt-mark hold snapd
+	rm -rf ~/snap
+	sudo rm -rf /snap
+	sudo rm -rf /var/snap
+	sudo rm -rf /var/lib/snapd
+
+	# Utility stuff
+	sudo add-apt-repository ppa:cappelikan/ppa
+	sudo apt update
+	sudo apt upgrade
+	sudo apt install -y mainline
+	sudo apt install -y podman gnome-session flatpak systemd-zram-generator polkitd-pkla ca-certificates curl
+	sudo mainline install-latest
+	sudo update-grub
+	sudo update-initramfs -c -k all
+
+	# Add Docker's official GPG key:
+	sudo install -m 0755 -d /etc/apt/keyrings
+	sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+	sudo chmod a+r /etc/apt/keyrings/docker.asc
+	echo \
+		"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+		$(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+		sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+			sudo apt-get update
+			sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 fi
 
-# 	if ! command -v docker; then
-# 		sudo rpm-ostree install --idempotent --apply-live gnome-themes-extra zenity openssl
-# 		sudo rpm-ostree initramfs --enable --arg="-a fido2 tpm2-tss"
-# 		# sudo systemd-cryptenroll --wipe-slot tpm2 --tpm2-device auto --tpm2-pcrs "0+1+2+3+4+5+7+9" /dev/nvme0n1p3
-# 		# sudo systemd-cryptenroll --fido2-device=auto /dev/nvme0n1p3
-# 	fi
-# fi
+if command -v rpm-ostree && ! command -v docker; then
+	sudo rpm-ostree install --idempotent --apply-live gnome-themes-extra docker docker-compose docker-buildx
+	"${HOME}"/Syncthing/bin/rpm-ostree-grub
+fi
