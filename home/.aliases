@@ -4,18 +4,23 @@ alias ll='ls -Ahl --group-directories-first --color'
 alias tree='tree -I ".git" -a'
 alias vi='vim -u ~/.vimrc-minimal'
 alias scrcpy="scrcpy --always-on-top --no-power-on --turn-screen-off --no-cleanup"
-alias tailscale-up="sudo systemctl start tailscaled && tailscale up"
-alias tailscale-down="tailscale down && sudo systemctl stop tailscaled"
+alias tailscale-up="sudo systemctl start tailscaled && sudo tailscale up"
+alias tailscale-down="sudo tailscale down && sudo systemctl stop tailscaled"
+alias tfswitch="tfswitch -b $HOME/.local/bin/terraform"
 if [ -z $CONTAINER_ID ]; then
 	alias vim='vim -u ~/.vimrc-minimal'
 fi
+if ! type __vte_prompt_command >/dev/null 2>&1; then
+	function __vte_prompt_command() {  return; }
+fi
+
 export CARGO_HOME=$HOME/.local/rust
 export FLUTTER_PATH=$HOME/.local/flutter
 export GOPATH=$HOME/.local/share/go
 export GOTMPDIR=$HOME/.cache/go-build
 export GPG_TTY=$(tty)
 export QT_QPA_PLATFORMTHEME=gnome
-export RUSTUP_HOME=$HOME/.local/rust
+export RUSTUP_HOME=/usr/local/share/rust
 export RUST_SRC_PATH="$RUSTUP_HOME/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/src"
 export TMUX_TMPDIR=/var/tmp
 export PATH=$HOME/.config/emacs/bin/:$PATH
