@@ -2,8 +2,8 @@
 
 # scroll-workspaces@gfxmonk.net
 EXTENSIONS="
-appindicatorsupport@rgcjonas.gmail.com
-upower-battery@codilia.com
+hibernate-status@dromi
+ubuntu-appindicators@ubuntu.com
 "
 
 # https://extensions.gnome.org/extension-data/VitalsCoreCoding.com.v61.shell-extension.zip
