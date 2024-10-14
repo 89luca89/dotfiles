@@ -25,9 +25,11 @@ if [ -n "${unwanted_apps}" ]; then
 	flatpak uninstall --user --unused --delete-data
 fi
 
+cp ~/bin/xdg-browser.desktop ~/.local/share/applications/
+
 default_archive="org.gnome.FileRoller.desktop"
 default_audio="io.mpv.Mpv.desktop"
-default_browser="org.chromium.Chromium.desktop"
+default_browser="xdg-browser.desktop"
 # default_browser="org.mozilla.firefox.desktop"
 default_image="org.gnome.Loupe.desktop"
 default_video="io.mpv.Mpv.desktop"
