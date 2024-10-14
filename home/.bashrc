@@ -3,6 +3,12 @@
 [ -f /etc/bash.bashrc ] && source /etc/bash.bashrc
 [ -f ~/.aliases ] && source ~/.aliases
 
+function workbox() {
+	if pwd | grep -q chainguard && [ "${CONTAINER_ID}" != "wolfi_distrobox" ] && [ "${OVERRIDE:-}" != "1" ]; then
+		distrobox enter wolfi_distrobox
+	fi
+}
+
 if [ -e /run/.containerenv ]; then
 	# Path to the bash it configuration
 	if [ ! -d "$HOME/.local/bin/fzf" ]; then
@@ -19,7 +25,7 @@ if [ -e /run/.containerenv ]; then
 	shopt -s histverify
 	shopt -s cmdhist
 
-	export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
+	export PROMPT_COMMAND="workbox;${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
 	# Complete using arrow up/down
 	bind '"\e[A": history-search-backward' 2> /dev/null
 	bind '"\e[B": history-search-forward' 2> /dev/null
