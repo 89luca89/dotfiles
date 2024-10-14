@@ -1,17 +1,14 @@
 #!/bin/sh
 
-if [ "$(dconf read /org/gnome/desktop/interface/color-scheme)" = "'prefer-dark'" ]; then
+set -x
+if [ "$(dconf read /org/gnome/desktop/interface/color-scheme | tr -d  "\n")" = "'prefer-dark'" ]; then
 	NIGHT_LIGHT=false
-	PREFER="prefer-light"
+	PREFER="default"
 	THEME="Adwaita"
-	sed -i 's/dark/light/g' "${HOME}/.config/alacritty/alacritty.yml"
-	sed -i 's/dark/light/g' "${HOME}/.config/alacritty/alacritty.toml"
 else
 	NIGHT_LIGHT=true
 	PREFER="prefer-dark"
 	THEME="Adwaita-dark"
-	sed -i 's/light/dark/g' "${HOME}/.config/alacritty/alacritty.yml"
-	sed -i 's/light/dark/g' "${HOME}/.config/alacritty/alacritty.toml"
 fi
 
 dconf write /org/gnome/desktop/interface/color-scheme "'$PREFER'"
