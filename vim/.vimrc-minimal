@@ -3,7 +3,7 @@ set autoindent shiftwidth=4 softtabstop=4 tabstop=4 smartindent smarttab
 set autoread autowrite hidden
 set colorcolumn=80 cursorline
 set hlsearch ignorecase smartcase
-set lazyredraw redrawtime=0 ttyfast
+set nolazyredraw redrawtime=0 ttyfast
 set nomodeline nofsync nowrap noswapfile nowritebackup nobackup noshowmode nofoldenable
 set path+=** wildmode=longest:full,full wildignore+=**/tags,vendor/**,coverage/**target/**,node_modules/** wildignorecase wildmode=longest:full
 set splitbelow splitright sidescroll=8 sidescrolloff=8
