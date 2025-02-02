@@ -115,6 +115,7 @@ function! s:set_bg(timer_id)
     elseif g:theme == "'prefer-dark'" && (&background == 'light' || a:timer_id == 0)
         set background=dark
         colorscheme gruvbox-material
+        highlight Normal guibg=#171717 ctermbg=16
     else
         " nothing to do
         return
