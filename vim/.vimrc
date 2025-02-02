@@ -143,6 +143,7 @@ function s:setup_lsp()
     let g:ale_floating_preview      = 1
     let g:ale_lint_on_enter         = 0
     let g:ale_lint_on_text_changed  = 0
+    let g:ale_python_pylsp_executable = "pyls"
     let g:ale_linters = {
                 \   'c':      ['cc', 'ccls', 'clangd'],
                 \   'cpp':    ['cc', 'ccls', 'clangd'],
@@ -165,15 +166,12 @@ function s:setup_lsp()
     nnoremap <buffer> <leader>vd  :<C-u>ALEGoToDefinition -vsplit<CR>
     nnoremap <buffer> <leader>vim :<C-u>ALEGoToImplementation -vsplit<CR>
     nnoremap <buffer> <leader>vtd :<C-u>ALEGoToTypeDefinition -vsplit<CR>
-    " formatters
-    autocmd FileType c,cpp     nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!clang-format -style=Chromium %<CR>:loadview<CR>
-    autocmd FileType go        nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:!gofmt -w %<CR><CR>:!goimports -w %<CR><CR>:!gofumpt -w %<CR><CR>:loadview<CR>
-    autocmd FileType json      nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!jq .<CR>
-    autocmd FileType python    nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!yapf --style=facebook %<CR>:w<CR>:%!isort --ac --float-to-top -d %<CR>:loadview<CR>
-    autocmd FileType rust      nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!rustfmt --edition 2021<CR>:loadview<CR>
-    autocmd FileType sh        nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!shfmt -s -ci -sr -kp %<CR>:loadview<CR>
 endfun
-augroup lspbindings
-    autocmd!
-    autocmd Filetype c,cpp,go,python,rust,json,yaml,yaml.*,sh call s:setup_lsp()
-augroup end
+autocmd Filetype c,cpp,go,python,rust,json,sh call s:setup_lsp()
+" formatters
+autocmd FileType c,cpp     nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!clang-format -style=Chromium %<CR>:loadview<CR>
+autocmd FileType go        nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:!gofmt -w %<CR><CR>:!goimports -w %<CR><CR>:!gofumpt -w %<CR><CR>:loadview<CR>
+autocmd FileType json      nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!jq .<CR>
+autocmd FileType python    nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!yapf --style=facebook %<CR>:w<CR>:%!isort --ac --float-to-top -d %<CR>:loadview<CR>
+autocmd FileType rust      nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:%!rustfmt --edition 2021<CR>:loadview<CR>
+autocmd FileType sh        nnoremap <buffer> <leader>i <Esc>:w<CR>:mkview<CR>:!shfmt -w -s -ci -sr -kp -fn -i=0 -p %<CR>:loadview<CR>
