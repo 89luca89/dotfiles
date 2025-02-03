@@ -8,7 +8,7 @@ set nolazyredraw redrawtime=0 ttyfast
 set nomodeline nofsync nowrap noswapfile nowritebackup nobackup noshowmode nofoldenable
 set path+=** wildmode=longest:full,full wildignore+=**/tags,vendor/**,coverage/**target/**,node_modules/** wildignorecase wildmode=longest:full
 set splitbelow splitright sidescroll=8 sidescrolloff=8
-set title number relativenumber encoding=utf8 mouse=a nrformats+=unsigned isfname-== guioptions=
+set title number encoding=utf8 mouse=a nrformats+=unsigned isfname-== guioptions=
 set undofile undolevels=10000
 " Auto-install vim-plug #######################################################
 if empty(glob('$HOME/.vim/autoload/plug.vim'))
