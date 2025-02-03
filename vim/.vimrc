@@ -107,28 +107,23 @@ nnoremap <leader>gs  :<C-u>!tig -C . status<CR><CR>
 if &term =~ '256color'
     set t_ut=
 endif
-function! s:set_bg(timer_id)
+function! SetTheme()
     let g:theme = system("dconf read /org/gnome/desktop/interface/color-scheme | tr -d \"\n\"")
-    if g:theme == "'default'" && (&background == 'dark' || a:timer_id == 0)
+    if g:theme == "'default'"
         set background=light
         colorscheme wildcharm
-    elseif g:theme == "'prefer-dark'" && (&background == 'light' || a:timer_id == 0)
+    elseif g:theme == "'prefer-dark'"
         set background=dark
         colorscheme gruvbox-material
         highlight Normal guibg=#171717 ctermbg=16
-    else
-        " nothing to do
-        return
     endif
-    highlight Normal guibg=NONE ctermbg=NONE
     highlight link myDeclaration Identifier
     highlight link myFunction Special
     highlight clear ColorColumn
     highlight link ColorColumn CursorLine
 endfun
-" Execute bg_sync every 5 seconds
-silent call timer_start(1000 * 5, function('s:set_bg'), {'repeat': -1})
-silent call s:set_bg(0)
+call SetTheme()
+nnoremap <C-e>   :<C-u>call SetTheme()<CR>
 " LSP setup ###################################################################
 " Default IDE-Style keybindings: indent/format, definition, find, references
 nnoremap <leader>d   :<C-u>vert stag <c-r>=expand("<cword>")<CR><CR>
