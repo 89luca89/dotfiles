@@ -6,6 +6,7 @@ set -o nounset
 gsettings set org.gnome.shell app-picker-layout "[{}]"
 
 gnome_dconf_backup="
+	/org/freedesktop/tracker/miner
 	/org/gnome/Console
 	/org/gnome/desktop/background
 	/org/gnome/desktop/input-sources
