@@ -1,28 +1,12 @@
 #!/bin/sh
 
-reset="$1"
-
-if [ "$1" = "reset" ]; then
-	systemctl --user stop syncthing
-	podman run --rm -ti \
-		--privileged --network host --dns 1.1.1.1 \
-		--userns keep-id --user 1000 \
-		-v "/home/$USER/Music:/home/$USER/Music:z" \
-		-v "/home/$USER/Pictures:/home/$USER/Pictures:z" \
-		-v "/home/$USER/DCIM/Camera:/home/$USER/PhoneCamera:z" \
-		-v "/home/$USER/Syncthing:/home/$USER/Syncthing:z" \
-		-v "$HOME/.var/app/syncthing-$(hostname):/var/syncthing/:z" \
-		-e STGUIADDRESS=127.0.0.1:8384 \
-		--entrypoint /bin/syncthing \
-		docker.io/syncthing/syncthing \
-		--reset-deltas
-	exit
-fi
-
-if ! podman inspect --type container syncthing > /dev/null; then
-	podman create --name syncthing \
-		--privileged --network host --dns 1.1.1.1 \
-		--userns keep-id --user 1000 \
+if ! docker inspect --type container syncthing > /dev/null; then
+	docker create --name syncthing \
+		--restart=unless-stopped \
+		--network=host \
+		--dns 1.1.1.1 \
+		--user 1000:1000 \
+		-p 8384:8384 \
 		-v "/home/$USER/Music:/home/$USER/Music:z" \
 		-v "/home/$USER/Pictures:/home/$USER/Pictures:z" \
 		-v "/home/$USER/DCIM/Camera:/home/$USER/PhoneCamera:z" \
@@ -30,7 +14,25 @@ if ! podman inspect --type container syncthing > /dev/null; then
 		-v "$HOME/.var/app/syncthing-$(hostname):/var/syncthing/:z" \
 		-e STGUIADDRESS=127.0.0.1:8384 \
 		docker.io/syncthing/syncthing
-	podman generate systemd -n syncthing > "$HOME/.config/systemd/user/syncthing.service"
-	systemctl --user daemon-reload
-	systemctl --user enable syncthing.service
+	docker start syncthing
+fi
+
+if ! docker inspect --type container tailscale > /dev/null; then
+	docker create \
+		--restart=unless-stopped \
+		--name=tailscale \
+		--hostname=tailscale \
+		--network=host \
+		--privileged \
+		-v ~/.var/app/tailscale/data-$HOSTNAME:/var/lib \
+		-v /dev/net/tun:/dev/net/tun \
+		-v /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket \
+		--cap-add=NET_ADMIN \
+		--cap-add=NET_RAW \
+		-e TS_HOSTNAME=$HOSTNAME-tailscale \
+		-e TS_STATE_DIR=/var/lib/tailscale \
+		-e TS_USERSPACE=false \
+		-e TS_AUTH_ONCE=false \
+		-e TS_EXTRA_ARGS="--accept-routes" \
+		tailscale/tailscale:latest
 fi
