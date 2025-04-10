@@ -1,7 +1,7 @@
 [ -f /etc/bash_completion ] && source /etc/bash_completion
 [ -f /etc/bashrc ] && source /etc/bashrc
 [ -f /etc/bash.bashrc ] && source /etc/bash.bashrc
-[ -f ~/.aliases ] && source ~/.aliases
+[ -f "$HOME/.aliases" ] && source ~/.aliases
 
 function workbox() {
 	if pwd | grep -q chainguard && [ "${CONTAINER_ID}" != "wolfi_distrobox" ] && [ "${OVERRIDE:-}" != "1" ]; then
@@ -30,8 +30,8 @@ if [ -e /run/.containerenv ]; then
 	bind '"\e[A": history-search-backward' 2> /dev/null
 	bind '"\e[B": history-search-forward' 2> /dev/null
 
-	[ -f ~/.fzf.bash ] && source ~/.fzf.bash
-	[ -f ~/.localrc ] && source ~/.localrc
+	[ -f "$HOME/.fzf.bash" ] && source "$HOME/.fzf.bash"
+
 	BGREEN='\[\033[1;32m\]'
 	BLUE='\[\e[38;5;39m\]'
 	BBLUE='\[\033[1;94m\]'
@@ -40,3 +40,6 @@ if [ -e /run/.containerenv ]; then
 	PS_CLEAR='\[\033[0m\]'
 	export PS1=${BLUE}'\u'${PS_CLEAR}'@'${ORANGE}'$CONTAINER_ID'${PS_CLEAR}':'${BBLUE}'\W'${PS_CLEAR}'$ '
 fi
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+[ -f "$HOME/.localrc" ] && source "$HOME/.localrc"
