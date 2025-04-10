@@ -145,16 +145,16 @@ if [ -e /etc/lvm/lvm.conf ]; then
 	sudo sed -i 's|# issue_discards = 0|issue_discards = 1|g' /etc/lvm/lvm.conf
 fi
 
-	if [ -e /etc/crypttab ]; then
-		sudo sed -i 's|none luks$|none luks,discard,no-read-workqueue,no-write-workqueue|g' /etc/crypttab
-		sudo sed -i 's|none discard$|none discard,no-read-workqueue,no-write-workqueue|g' /etc/crypttab
-		sudo sed -i 's|x-initrd.attach$|x-initrd.attach,discard,no-read-workqueue,no-write-workqueue|g' /etc/crypttab
-		sudo cryptsetup --perf-no_read_workqueue --perf-no_write_workqueue --allow-discards --persistent refresh "$(sudo cat /etc/crypttab | cut -d' ' -f1)"
-	fi
-	sudo systemctl enable fstrim.timer
-	sudo fstrim -va
+if [ -e /etc/crypttab ]; then
+	sudo sed -i 's|none luks$|none luks,discard,no-read-workqueue,no-write-workqueue|g' /etc/crypttab
+	sudo sed -i 's|none discard$|none discard,no-read-workqueue,no-write-workqueue|g' /etc/crypttab
+	sudo sed -i 's|x-initrd.attach$|x-initrd.attach,discard,no-read-workqueue,no-write-workqueue|g' /etc/crypttab
+	# sudo cryptsetup --perf-no_read_workqueue --perf-no_write_workqueue --allow-discards --persistent refresh "$(sudo cat /etc/crypttab | cut -d' ' -f1)"
+fi
+sudo systemctl enable fstrim.timer
+sudo fstrim -va
 
-	systemd_user_services="
+systemd_user_services="
 	evolution-addressbook-factory.service
 	evolution-calendar-factory.service
 	evolution-source-registry.service
