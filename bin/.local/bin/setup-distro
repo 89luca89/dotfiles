@@ -87,16 +87,16 @@ vm.mmap_rnd_bits=32
 vm.mmap_rnd_compat_bits=16
 vm.unprivileged_userfaultfd=0
 # Zram setup
-vm.dirty_writeback_centisecs = 1500
+vm.dirty_background_ratio = 10
 vm.dirty_expire_centisecs = 6000
 vm.dirty_ratio = 20
-vm.dirty_background_ratio = 10
-vm.laptop_mode = 2
-vm.min_free_kbytes=${minkb}
+vm.dirty_writeback_centisecs = 1500
+vm.laptop_mode = 5
+vm.min_free_kbytes=67584
 vm.page-cluster = 0
 vm.swappiness = 180
-vm.watermark_boost_factor = 0
-vm.watermark_scale_factor = 125"  | sudo tee /etc/sysctl.d/99-sysctl-custom.conf > /dev/null
+vm.watermark_boost_factor = 15000
+vm.watermark_scale_factor = 10"  | sudo tee /etc/sysctl.d/99-sysctl-custom.conf > /dev/null
 sudo sysctl --system --quiet || :
 
 echo "[zram0]
