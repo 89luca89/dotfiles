@@ -3,8 +3,9 @@
 # scroll-workspaces@gfxmonk.net
 EXTENSIONS="
 AlphabeticalAppGrid@stuarthayhurst
-appindicatorsupport@rgcjonas.gmail.com
 "
+# appindicatorsupport@rgcjonas.gmail.com
+# hidetopbar@mathieu.bidon.ca
 
 # https://extensions.gnome.org/extension-data/VitalsCoreCoding.com.v61.shell-extension.zip
 for extension in $EXTENSIONS; do
