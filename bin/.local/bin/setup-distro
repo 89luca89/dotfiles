@@ -165,38 +165,20 @@ systemd_user_services="
 	tracker-miner-rss-3.service
 	tracker-writeback-3.service
 	tracker-xdg-portal-3.service
-	"
-	for systemd_user_service in ${systemd_user_services}; do
-		systemctl --user disable --now "${systemd_user_service}" 2> /dev/null || :
-		systemctl --user mask --now "${systemd_user_service}" 2> /dev/null || :
-	done
+"
+for systemd_user_service in ${systemd_user_services}; do
+	systemctl --user disable --now "${systemd_user_service}" 2> /dev/null || :
+	systemctl --user mask --now "${systemd_user_service}" 2> /dev/null || :
+done
 
-	xdg_user_services="
-	geoclue-demo-agent.desktop
-	orca-autostart.desktop
-	org.gnome.Evolution-alarm-notify.desktop
-	org.gnome.Software.desktop
-	tracker-miner-fs-3.desktop
-	tracker-miner-rss-3.desktop
-	"
-	for xdg_user_service in ${xdg_user_services}; do
-		sudo rm -f "/etc/xdg/autostart/${xdg_user_service}"
-	done
-
-# Swap = Ram
-if [ ! -e /swap.img ] ||
-	[ "$(du /swap.img | awk '{print $1}')" -lt "$(grep MemTotal /proc/meminfo  | awk '{print $2}')" ]; then
-
-sudo swapoff /swap.img
-sudo rm /swap.img
-sudo fallocate -l "$(grep MemTotal /proc/meminfo  | awk '{print $2}')k" /swap.img
-sudo mkswap /swap.img
-sudo chmod 0600 /swap.img
-sudo swapon -a
-fi
-if ! grep -q swap.img /etc/fstab; then
-	echo "/swap.img	none	swap	sw	0	0" | sudo tee -a /etc/fstab
-fi
+systemd_system_services="
+	switcheroo-control.service
+	packagekit.service
+"
+for systemd_system_service in ${systemd_system_services}; do
+	sudo systemctl disable --now "${systemd_system_service}" 2> /dev/null || :
+	sudo systemctl mask --now "${systemd_system_service}" 2> /dev/null || :
+done
 
 # Enable hibernation
 sudo mkdir -p /etc/polkit-1/localauthority/50-local.d
