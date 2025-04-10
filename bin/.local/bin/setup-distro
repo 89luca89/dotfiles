@@ -1,5 +1,11 @@
 #!/bin/sh
 
+if hostname | grep -q localhost; then
+	printf "select new hostname: "
+	read -r hostname
+	sudo hostnamectl set-hostname "$hostname"
+fi
+
 set -x
 set -o errexit
 set -o nounset
