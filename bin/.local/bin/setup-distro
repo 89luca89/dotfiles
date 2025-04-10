@@ -159,6 +159,11 @@ systemd_user_services="
 	evolution-calendar-factory.service
 	evolution-source-registry.service
 	evolution-user-prompter.service
+	gvfs-goa-volume-monitor.service
+	localsearch-3.service
+	localsearch-control-3.service
+	localsearch-writeback-3.service
+	spice-vdagent.service
 	tracker-extract-3.service
 	tracker-miner-fs-3.service
 	tracker-miner-fs-control-3.service
