@@ -185,31 +185,88 @@ for systemd_system_service in ${systemd_system_services}; do
 	sudo systemctl mask --now "${systemd_system_service}" 2> /dev/null || :
 done
 
-# Enable hibernation
-sudo mkdir -p /etc/polkit-1/localauthority/50-local.d
-cat << EOF | sudo tee /etc/polkit-1/localauthority/50-local.d/com.hibernate.enable-hibernate.pkla
-[Re-enable hibernate by default in upower]
-Identity=unix-user:*
-Action=org.freedesktop.upower.hibernate
-ResultActive=yes
+# Disable ancient modules
+echo "
+install af_802154 /bin/false
+install appletalk /bin/false
+install atm /bin/false
+install ax25 /bin/false
+install can /bin/false
+install cramfs /bin/false
+install dccp /bin/false
+install decnet /bin/false
+install econet /bin/false
+install firewire-core /bin/false
+install freevxfs /bin/false
+install hfs /bin/false
+install hfsplus /bin/false
+install ipx /bin/false
+install jffs2 /bin/false
+install n-hdlc /bin/false
+install netrom /bin/false
+install p8022 /bin/false
+install p8023 /bin/false
+install psnap /bin/false
+install rds  /bin/false
+install rds /bin/false
+install rose /bin/false
+install sctp /bin/false
+install tipc /bin/false
+install udf /bin/false
+install vivid /bin/false
+install x25 /bin/false
+" | sudo tee -a /etc/modprobe.d/hardening.conf
 
-[Re-enable hibernate by default in logind]
-Identity=unix-user:*
-Action=org.freedesktop.login1.hibernate;org.freedesktop.login1.handle-hibernate-key;org.freedesktop.login1;org.freedesktop.login1.hibernate-multiple-sessions;org.freedesktop.login1.hibernate-ignore-inhibit
-ResultActive=yes
-EOF
+# Load rndis_host android usb tethering module at boot
+echo "rndis_host" | sudo tee "/etc/modules-load.d/rndis_host.conf"
+echo "" | sudo tee /etc/modprobe.d/50-blacklist-rndis.conf
 
-# Suspend 2h + Hibernate
-grep -q ^HibernateDelaySec=7200 /etc/systemd/sleep.conf || echo HibernateDelaySec=7200 | sudo tee -a /etc/systemd/sleep.conf
-grep -q ^AllowSuspendThenHibernate=yes /etc/systemd/sleep.conf || echo AllowSuspendThenHibernate=yes | sudo tee -a /etc/systemd/sleep.conf
-grep -q ^HandleLidSwitch=suspend-then-hibernate /etc/systemd/logind.conf || echo HandleLidSwitch=suspend-then-hibernate | sudo tee -a /etc/systemd/logind.conf
+KERNEL_CMDLINE=""
+KERNEL_CMDLINE="$KERNEL_CMDLINE drm.debug=0"
+KERNEL_CMDLINE="$KERNEL_CMDLINE drm.vblankoffdelay=1"
+KERNEL_CMDLINE="$KERNEL_CMDLINE e1000e.SmartPowerDownEnable=1"
+KERNEL_CMDLINE="$KERNEL_CMDLINE i915.disable_power_well=1"
+KERNEL_CMDLINE="$KERNEL_CMDLINE i915.enable_dc=2"
+KERNEL_CMDLINE="$KERNEL_CMDLINE i915.enable_fbc=1"
+KERNEL_CMDLINE="$KERNEL_CMDLINE i915.enable_guc=3"
+KERNEL_CMDLINE="$KERNEL_CMDLINE i915.enable_psr=2"
+KERNEL_CMDLINE="$KERNEL_CMDLINE i915.enable_rc6=7"
+KERNEL_CMDLINE="$KERNEL_CMDLINE i915.modeset=1"
+KERNEL_CMDLINE="$KERNEL_CMDLINE i915.powersave=1"
+KERNEL_CMDLINE="$KERNEL_CMDLINE iomem=relaxed"
+KERNEL_CMDLINE="$KERNEL_CMDLINE iwlmvm.power_scheme=3"
+KERNEL_CMDLINE="$KERNEL_CMDLINE iwlwifi.power_level=5"
+KERNEL_CMDLINE="$KERNEL_CMDLINE iwlwifi.power_save=Y"
+KERNEL_CMDLINE="$KERNEL_CMDLINE nmi_watchdog=0"
+KERNEL_CMDLINE="$KERNEL_CMDLINE nowatchdog"
+KERNEL_CMDLINE="$KERNEL_CMDLINE pcie_aspm.policy=powersupersave"
+KERNEL_CMDLINE="$KERNEL_CMDLINE pcie_aspm=force"
+KERNEL_CMDLINE="$KERNEL_CMDLINE usbcore.autosuspend=1"
+KERNEL_CMDLINE="$KERNEL_CMDLINE workqueue.power_efficient=true"
+# Hardening taken from ChromeOS and Android
+KERNEL_CMDLINE="$KERNEL_CMDLINE lockdown=confidentiality"
+# KERNEL_CMDLINE="$KERNEL_CMDLINE lockdown=integrity" # Integrity allows bpf, confidentiality is better when possible
+KERNEL_CMDLINE="$KERNEL_CMDLINE amd_iommu=on"
+# KERNEL_CMDLINE="$KERNEL_CMDLINE debugfs=off" # Need for powertop
+KERNEL_CMDLINE="$KERNEL_CMDLINE efi=disable_early_pci_dma"
+KERNEL_CMDLINE="$KERNEL_CMDLINE init_on_alloc=1"
+KERNEL_CMDLINE="$KERNEL_CMDLINE init_on_free=1"
+KERNEL_CMDLINE="$KERNEL_CMDLINE intel_iommu=on"
+KERNEL_CMDLINE="$KERNEL_CMDLINE iommu.passthrough=0"
+KERNEL_CMDLINE="$KERNEL_CMDLINE iommu.strict=1"
+KERNEL_CMDLINE="$KERNEL_CMDLINE loglevel=0"
+KERNEL_CMDLINE="$KERNEL_CMDLINE module.sig_enforce=1"
+KERNEL_CMDLINE="$KERNEL_CMDLINE page_alloc.shuffle=1"
+KERNEL_CMDLINE="$KERNEL_CMDLINE page_table_check=on"
+KERNEL_CMDLINE="$KERNEL_CMDLINE randomize_kstack_offset=1"
+KERNEL_CMDLINE="$KERNEL_CMDLINE slab_nomerge"
+KERNEL_CMDLINE="$KERNEL_CMDLINE slub_debug=FZ"
+KERNEL_CMDLINE="$KERNEL_CMDLINE vsyscall=none"
 
-# Grub resume from swap file
-OFFSET="$(sudo filefrag -v /swap.img | head -4 | tail -1 | awk '{print $4}' | grep -Eo "[0-9]+")"
-RESUME="$(findmnt / -o UUID | tail -1)"
-if [ -e /etc/default/grub ]; then
-	sudo  sed -i 's|quiet"|quiet splash"|g' /etc/default/grub
-	sudo  sed -i "s|GRUB_CMDLINE_LINUX=\".*\"|GRUB_CMDLINE_LINUX=\"resume=UUID=${RESUME} resume_offset=${OFFSET} nowatchdog iomem=relaxed amdgpu.abmlevel=1 amdgpu.sg_display=0 drm.debug=0 drm.vblankoffdelay=1 nmi_watchdog=0 e1000e.SmartPowerDownEnable=1 i915.disable_power_well=1 i915.enable_dc=2 i915.enable_fbc=1 i915.enable_guc=3 i915.enable_psr=2 i915.enable_rc6=7 i915.modeset=1 i915.powersave=1 iwlmvm.power_scheme=3 iwlwifi.power_level=5 iwlwifi.power_save=Y pcie_aspm.policy=powersupersave pcie_aspm=force usbcore.autosuspend=1 workqueue.power_efficient=true\"|g" /etc/default/grub
+# grub case
+if [ -e /etc/default/grub ] && ! grep -q "$KERNEL_CMDLINE" /etc/default/grub; then
+	sudo sed -i 's|quiet"|quiet splash"|g' /etc/default/grub
+	sudo sed -i "s|GRUB_CMDLINE_LINUX=\".*\"|GRUB_CMDLINE_LINUX=quiet splash \"$KERNEL_CMDLINE\"|g" /etc/default/grub
 fi
 
 if command -v apt && ! command -v flatpak; then
