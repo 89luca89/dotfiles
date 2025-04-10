@@ -1,0 +1,28 @@
+#!/bin/sh
+
+grayscale=$(dconf read /org/gnome/desktop/screen-time-limits/grayscale)
+
+if [ "$grayscale" = "false" ]; then
+	~/bin/gnome-gamma-tool.py -a -y -r
+	~/bin/gnome-gamma-tool.py -a -y -c 1.25 -g 0.85
+	dconf write /org/gnome/desktop/a11y/interface/high-contrast true
+	dconf write /org/gnome/desktop/screen-time-limits/daily-limit-enabled true
+	dconf write /org/gnome/desktop/screen-time-limits/daily-limit-seconds "uint32 60"
+	dconf write /org/gnome/desktop/screen-time-limits/grayscale true
+	if [ "$(dconf read /org/gnome/desktop/interface/color-scheme)" = "'prefer-dark'" ]; then
+		dconf write /org/gnome/desktop/background/primary-color "'#000000'"
+		dconf write /org/gnome/desktop/background/secondary-color "'#000000'"
+	else
+		dconf write /org/gnome/desktop/background/primary-color "'#FFFFFF'"
+		dconf write /org/gnome/desktop/background/secondary-color "'#FFFFFF'"
+	fi
+else
+	~/bin/gnome-gamma-tool.py -a -y -r
+	~/bin/gnome-gamma-tool.py -a -y -c 1.05 -g 1
+	dconf write /org/gnome/desktop/a11y/interface/high-contrast false
+	dconf write /org/gnome/desktop/screen-time-limits/daily-limit-enabled false
+	dconf write /org/gnome/desktop/screen-time-limits/daily-limit-seconds "uint32 60"
+	dconf write /org/gnome/desktop/screen-time-limits/grayscale false
+	dconf write /org/gnome/desktop/background/primary-color "'#008080'"
+	dconf write /org/gnome/desktop/background/secondary-color "'#008080'"
+fi
