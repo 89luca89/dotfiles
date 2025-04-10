@@ -269,39 +269,25 @@ if [ -e /etc/default/grub ] && ! grep -q "$KERNEL_CMDLINE" /etc/default/grub; th
 	sudo sed -i "s|GRUB_CMDLINE_LINUX=\".*\"|GRUB_CMDLINE_LINUX=quiet splash \"$KERNEL_CMDLINE\"|g" /etc/default/grub
 fi
 
-if command -v apt && ! command -v flatpak; then
-	# Send snapd to the shadow realm
-	cat /proc/mounts | grep snap | awk '{print $2}' | xargs -I{} sudo umount {}
-	sudo apt remove --purge --autoremove -y snapd gnome-software-plugin-snap
-	sudo apt-mark hold snapd
-	rm -rf ~/snap
-	sudo rm -rf /snap
-	sudo rm -rf /var/snap
-	sudo rm -rf /var/lib/snapd
-
-	# Utility stuff
-	sudo add-apt-repository ppa:cappelikan/ppa
-	sudo apt update
-	sudo apt upgrade
-	sudo apt install -y mainline
-	sudo apt install -y podman gnome-session flatpak systemd-zram-generator polkitd-pkla ca-certificates curl
-	sudo mainline install-latest
-	sudo update-grub
-	sudo update-initramfs -c -k all
-
-	# Add Docker's official GPG key:
-	sudo install -m 0755 -d /etc/apt/keyrings
-	sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-	sudo chmod a+r /etc/apt/keyrings/docker.asc
-	echo \
-		"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-		$(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-		sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-			sudo apt-get update
-			sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+# systemd-boot case
+if [ -e /etc/kernel/cmdline ] && ! grep -q "$KERNEL_CMDLINE" /etc/kernel/cmdline; then
+	sudo sed -i "s|quiet.*systemd.show_status=no|quiet $KERNEL_CMDLINE systemd.show_status=no|g" /etc/kernel/cmdline
 fi
 
-if command -v rpm-ostree && ! command -v docker; then
-	sudo rpm-ostree install --idempotent --apply-live gnome-themes-extra docker docker-compose docker-buildx
-	"${HOME}"/Syncthing/bin/rpm-ostree-grub
+if command -v /sbin/transactional-update && ! command -v docker; then
+	sudo transactional-update -c -d run sh -c "zypper dup --remove-orphaned -y && \
+		zypper in -y --force --recommends patterns-glibc-hwcaps-x86_64_v3
+		truncate -s 0 /.snapshots/swap && \
+		chattr +C /.snapshots/swap && \
+		fallocate -l 8G /.snapshots/swap && \
+		chmod 0600 /.snapshots/swap && \
+		mkswap /.snapshots/swap && \
+		echo '/.snapshots/swap none swap defaults,pri=1 0 0' >> /etc/fstab && \
+		zypper in -y docker docker-compose docker-buildx powertop cpupower gnome-terminal && \
+		systemctl enable powertop && \
+		systemctl enable docker && \
+		usermod -aG docker $USER && \
+		dracut --force --regenerate-all --parallel && \
+		/sbin/pbl --install"
+	exit $?
 fi
