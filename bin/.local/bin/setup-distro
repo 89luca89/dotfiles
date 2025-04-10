@@ -103,60 +103,43 @@ echo "[zram0]
 zram-size = ram" | sudo tee /etc/systemd/zram-generator.conf > /dev/null
 
 # shellcheck disable=SC2016,SC1083
-echo '#!/bin/sh
-[ -e /sys/block/nvme*n* ] && echo "16384" | tee /sys/block/nvme*n*/queue/read_ahead_kb
-[ -e /sys/block/nvme*n* ] && echo "none" | tee /sys/block/nvme*n*/queue/scheduler
-[ -e /sys/block/sd* ] && echo "1" | tee /sys/block/sd*/queue/iosched/low_latency
-[ -e /sys/block/sd* ] && echo "4096" | tee /sys/block/sd*/queue/read_ahead_kb
-[ -e /sys/block/sd* ] && echo "bfq" | tee /sys/block/sd*/queue/scheduler
-[ -e /sys/devices/platform/AMDI0010:03/i2c-1/i2c-PIXA3854:00/power/wakeup ] && echo disabled > /sys/devices/platform/AMDI0010:03/i2c-1/i2c-PIXA3854:00/power/wakeup
-[ -e /sys/power/resume ] && df / | tail -1 | cut -d " " -f1 | xargs realpath | xargs ls -l | awk '\'{print \$5\":\"\$6}\'' | tr -d "," > /sys/power/resume
-
-find /sys/ -wholename "*power/autosuspend" -exec sh -c "echo 1 > {}" \;
-find /sys/ -wholename "*power/control" -exec sh -c "echo auto > {}" \;
-
-echo battery | tee /sys/class/drm/card*/device/power_dpm_state
-echo low | tee /sys/class/drm/card*/device/power_dpm_force_performance_level
-' | sudo tee /usr/local/bin/powersave > /dev/null
-sudo chmod +x /usr/local/bin/powersave
-
 echo '#
+ACTION=="add", SUBSYSTEM=="acpi", DRIVERS=="button", ATTRS{hid}=="PNP0C0D", ATTR{power/wakeup}="disabled"
 ACTION=="add", SUBSYSTEM=="serio", DRIVERS=="atkbd", ATTR{power/wakeup}="disabled"
-SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="0",RUN+="/usr/bin/systemctl start powersave-oneshot.service"
-SUBSYSTEM=="power_supply",ENV{POWER_SUPPLY_ONLINE}=="1",RUN+="/usr/bin/systemctl start powersave-oneshot.service"
-# Trigger on AC/BAT'  | sudo tee /etc/udev/rules.d/powersave.rules > /dev/null
+ACTION=="add", SUBSYSTEM=="i2c", DRIVERS=="i2c_hid_acpi", ATTRS{name}=="PIXA3854:00", ATTR{power/wakeup}="disabled"
+ACTION=="add|change", SUBSYSTEM=="acpi", ATTR{power/control}="auto"
+ACTION=="add|change", SUBSYSTEM=="ahci", ATTR{power/control}="auto"
+ACTION=="add|change", SUBSYSTEM=="block", ATTR{power/control}="auto"
+ACTION=="add|change", SUBSYSTEM=="i2c", ATTR{power/control}="auto"
+ACTION=="add|change", SUBSYSTEM=="net", KERNEL=="enp*", RUN+="/usr/sbin/ethtool -s %k wol d"
+ACTION=="add|change", SUBSYSTEM=="net", KERNEL=="wlp*", RUN+="/usr/sbin/iw dev %k set power_save on"
+ACTION=="add|change", SUBSYSTEM=="pci", ATTR{power/control}="auto"
+ACTION=="add|change", SUBSYSTEM=="scsi", ATTR{power/control}="auto"
+ACTION=="add|change", SUBSYSTEM=="scsi_host", KERNEL=="host*", ATTR{link_power_management_policy}="min_power"
+ACTION=="add|change", SUBSYSTEM=="usb", ATTR{power/autosuspend}="1"
+ACTION=="add|change", SUBSYSTEM=="workqueue", ATTR{power/control}="auto"
+ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/iosched/low_latency}="1"
+ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/scheduler}="bfq"
+ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/read_ahead_kb}="4096"
+ACTION=="add|change", KERNEL=="nvme[0-9]n[0-9]", ATTR{queue/scheduler}="none"
+ACTION=="add|change", KERNEL=="nvme[0-9]n[0-9]", ATTR{queue/read_ahead_kb}="16384"
+# Trigger on AC/BAT
+# SUBSYSTEM=="power_supply",ATTR{online}=="1",RUN+="/usr/bin/powerprofilesctl set performance"
+# SUBSYSTEM=="power_supply",ATTR{online}=="0",RUN+="/usr/bin/powerprofilesctl set power-saver"
+'  | sudo tee /etc/udev/rules.d/powersave.rules > /dev/null
 sudo udevadm control --reload
 sudo udevadm trigger
 
-echo '[Unit]
-Description=Run powersaving script on resume
-After=suspend.target
+echo "[Unit]
+Description=Run udev trigger after wake
+After=suspend.target hibernate.target hybrid-sleep.target suspend-then-hibernate.target
 
 [Service]
-User=root
-Type=oneshot
-ExecStart=/usr/local/bin/powersave
-TimeoutSec=0
+ExecStart=/usr/bin/udevadm trigger
 
 [Install]
-WantedBy=suspend.target' | sudo tee /etc/systemd/system/powersave-resume.service > /dev/null
-
-echo '
-[Unit]
-Description=Run powersaving script at boot
-After=graphical.target
-
-[Service]
-User=root
-Type=oneshot
-ExecStart=/usr/local/bin/powersave
-TimeoutSec=0
-
-[Install]
-WantedBy=graphical.target' | sudo tee /etc/systemd/system/powersave-oneshot.service > /dev/null
-sudo systemctl daemon-reload
-sudo systemctl enable powersave-resume.service powersave-oneshot.service
-sudo systemctl start powersave-oneshot.service
+WantedBy=suspend.target hibernate.target hybrid-sleep.target suspend-then-hibernate.target" | sudo tee /etc/systemd/system/udev-suspend.service
+sudo systemctl enable --now udev-suspend.service
 
 if [ -e /etc/lvm/lvm.conf ]; then
 	sudo sed -i 's|# issue_discards = 0|issue_discards = 1|g' /etc/lvm/lvm.conf
