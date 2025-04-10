@@ -5,9 +5,9 @@
 [core]
 	askpass = ""
 [tig]
-  main-view-date-display = relative-compact
-  main-view-author-display = abbreviated
-  main-view-id-display = yes
+	main-view-date-display = relative-compact
+	main-view-author-display = abbreviated
+	main-view-id-display = yes
 [commit]
 	gpgsign = true
 [credential]
