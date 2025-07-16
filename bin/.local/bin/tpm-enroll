@@ -1,0 +1,67 @@
+#!/bin/bash
+set -e
+
+BOOT_ROOT="/boot/efi"
+if [ ! -e "$BOOT_ROOT/EFI" ]; then
+	BOOT_ROOT="/boot"
+fi
+
+# Automatically regenerate TPM policy on any file update in /boot
+if [ ! -e /etc/systemd/system/tpm2-reenroll-watch.path ]; then
+	tee /etc/systemd/system/tpm2-reenroll-watch.path << EOF
+[Unit]
+Description=Monitor /boot for changes requiring TPM2 re-enrollment
+[Path]
+PathModified=${BOOT_ROOT}/EFI/systemd/
+PathModified=${BOOT_ROOT}/EFI/Linux/
+PathModified=${BOOT_ROOT}/loader/entries/
+PathModified=${BOOT_ROOT}/loader/loader.conf
+PathModified=/usr/lib/modules/
+Unit=tpm2-reenroll-watch.service
+[Install]
+WantedBy=multi-user.target
+EOF
+	tee /etc/systemd/system/tpm2-reenroll-watch.service << EOF
+[Unit]
+Description=Schedule TPM2 re-enrollment
+After=tpm2-boot-monitor.path
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/tpm-enroll
+User=root
+EOF
+	systemctl enable --now tpm2-reenroll-watch.path
+fi
+
+##############################################################################
+# PCR 0
+/usr/lib/systemd/systemd-pcrlock lock-firmware-code
+# PCR 1
+# /usr/lib/systemd/systemd-pcrlock lock-firmware-config
+# PCR 4
+/usr/lib/systemd/systemd-pcrlock lock-pe "${BOOT_ROOT}"/EFI/systemd/systemd-bootx64.efi \
+	--pcrlock=/var/lib/pcrlock.d/640-boot-loader-efi-application.pcrlock.d/generated.pcrlock
+# PCR 5
+/usr/lib/systemd/systemd-pcrlock lock-gpt /dev/nvme0n1
+/usr/lib/systemd/systemd-pcrlock lock-raw "${BOOT_ROOT}"/loader/loader.conf --pcr 5 --pcrlock=/var/lib/pcrlock.d/641-sdboot-loader-conf.pcrlock.d/generated.pcrlock
+# PCR 7
+/usr/lib/systemd/systemd-pcrlock lock-secureboot-authority
+/usr/lib/systemd/systemd-pcrlock lock-secureboot-policy
+# SKIP PCR 8 is not used by systemd-boot
+# SKIP PCR 9 Do not use for systemd-stub(7) UKIs, as the initrd is combined dynamically from various sources and hence does not take a single input, like this command.
+# SKIP PCR 10 is for IMA, not used
+# PCR 11 (+ 4 for UKI binary)
+for i in "${BOOT_ROOT}"/EFI/Linux/*; do
+	pcrlock="/var/lib/pcrlock.d/650-kernel-efi-application.pcrlock.d/uki-$(basename "${i}").pcrlock"
+	if [ -e "${pcrlock}" ]; then
+		pcrlock="/var/lib/pcrlock.d/650-kernel-efi-application.pcrlock.d/uki-$(basename "${i}")-$(date +%s).pcrlock"
+	fi
+	/usr/lib/systemd/systemd-pcrlock lock-uki --location=770 "${i}" --pcrlock="${pcrlock}"
+	find /var/lib/pcrlock.d/650-kernel-efi-application.pcrlock.d -type f -exec sha256sum {} + | sort | awk '!seen[$1]++{next} {print $2}' | xargs -d '\n' rm -f
+done
+# PCR 15
+/usr/lib/systemd/systemd-pcrlock lock-machine-id
+##############################################################################
+# Avoiding 1 as it's noisy, 6 is not supported by pcrlock, 11 and 15 are more meant to be used at runtime
+/usr/lib/systemd/systemd-pcrlock make-policy --location=770
+cp -f /var/lib/systemd/pcrlock.json "${BOOT_ROOT}"/EFI/systemd/pcrlock.json

@@ -1,0 +1,74 @@
+#!/bin/sh
+
+# Send snapd to the shadow realm
+grep  snap /proc/mounts | awk '{print $2}' | xargs -I{} sudo umount {} || :
+sudo  apt remove --purge --autoremove \
+	apport* whoopsie \
+	cloud-init* switcheroo-control* \
+	snapd* ubuntu-pro* \
+	gnome-software* \
+	software-properties-* \
+	update-manager* unattended-upgrades*
+sudo  apt autoremove --purge
+sudo  apt-mark hold snapd
+rm  -rf ~/snap
+sudo  rm -rf /snap
+sudo  rm -rf /var/snap
+sudo  rm -rf /var/lib/snapd
+
+################# SYSTEMD-BOOT SETUP ##########################################
+sudo  apt install --autoremove --purge \
+	systemd-boot systemd-ukify \
+	dracut tpm2-tools \
+	sbsigntool efibootmgr binutils mokutil
+sudo  apt-mark hold grub2* shim*
+
+# Enable UKIs
+echo "layout=uki" | sudo tee /etc/kernel/install.conf
+sudo  bootctl install
+for i in  /usr/lib/modules/*; do
+	version="$(basename "$i")"
+	sudo kernel-install add "${version}" /boot/vmlinuz-"${version}"
+done
+sudo  efibootmgr show | grep -Ei "shim|grub" |
+	cut -d' ' -f1 | grep -Eo "[0-9]+" | xargs -I{} sudo efibootmgr -B -b {}
+################# SYSTEMD-BOOT SETUP ##########################################
+
+################# SECURE BOOT SETUP ###########################################
+wget -c https://download.opensuse.org/repositories/home:/jloeser:/secureboot/xUbuntu_24.04/amd64/sbctl_0.17-15.1_amd64.deb
+sudo apt install ./sbctl_0.17-15.1_amd64.deb && rm ./sbctl_0.17-15.1_amd64.deb
+if  sudo sbctl status | grep -q 'sbctl is not installed'; then
+	sudo sbctl create-keys
+	sudo sbctl enroll-keys --microsoft --firmware-builtin
+	sudo sbctl verify | grep ' not ' | cut -d' ' -f2 | xargs -I{} sudo sbctl sign -s {}
+fi
+sudo  tee /etc/kernel/install.d/99-sbctl.install << EOF
+#!/bin/sh
+sbctl verify | grep ' not ' | cut -d' ' -f2 | xargs -I{} sbctl sign -s {}
+EOF
+sudo  chmod +x /etc/kernel/install.d/99-sbctl.install
+################# SECURE BOOT SETUP ###########################################
+
+# Utility stuff
+sudo  apt update
+sudo  apt upgrade
+sudo  apt install --autoremove --purge \
+	apt-file vim tmux git curl gnome-terminal \
+	docker.io docker-compose docker-buildx \
+	podman crun \
+	flatpak \
+	powertop \
+	systemd-zram-generator \
+	openssh-server
+sudo  systemctl enable --now docker
+sudo  systemctl enable --now powertop
+sudo  usermod -aG docker "$USER"
+
+# Firewall security
+sudo  ufw enable
+sudo  ufw default deny incoming
+sudo  ufw allow OpenSSH
+
+# Fix swap setup
+[  -e /etc/systemd/zram-generator.conf.dpkg-old ] &&
+	sudo mv /etc/systemd/zram-generator.conf.dpkg-old /etc/systemd/zram-generator.conf

@@ -1,6 +1,7 @@
 #!/bin/sh
 
-if hostname | grep -q localhost; then
+. /etc/os-release
+if grep -q localhost /etc/hostname; then
 	printf "select new hostname: "
 	read -r hostname
 	sudo hostnamectl set-hostname "$hostname"
@@ -12,7 +13,6 @@ set -o nounset
 
 minkb="$(awk '/MemTotal/ {printf "%.0f", $2 * 0.01}' /proc/meminfo)"
 echo "
-net.ipv4.ping_group_range = 0 1000
 # Hardening
 dev.tty.ldisc_autoload=0
 fs.protected_fifos=2
@@ -20,8 +20,10 @@ fs.protected_hardlinks=1
 fs.protected_regular=2
 fs.protected_symlinks=1
 fs.suid_dumpable=0
+kernel.bpf_stats_enabled = 0
 kernel.core_uses_pid=1
 kernel.dmesg_restrict=1
+kernel.ftrace_enabled = 0
 kernel.kexec_load_disabled=1
 kernel.kptr_restrict=2
 kernel.panic=60
@@ -31,14 +33,16 @@ kernel.panic_on_unrecovered_nmi=1
 kernel.perf_event_paranoid=3
 kernel.printk=3 3 3 3
 kernel.randomize_va_space=2
-kernel.sysrq=4
+kernel.sysrq=0
 kernel.unprivileged_bpf_disabled=1
-kernel.yama.ptrace_scope=2
+kernel.yama.ptrace_scope=3
 net.core.bpf_jit_harden=2
+net.core.default_qdisc=fq_codel
 net.ipv4.conf.all.accept_redirects=0
 net.ipv4.conf.all.accept_source_route=0
 net.ipv4.conf.all.arp_announce=2
 net.ipv4.conf.all.arp_ignore=1
+net.ipv4.conf.all.drop_gratuitous_arp=1
 net.ipv4.conf.all.log_martians=1
 net.ipv4.conf.all.rp_filter=1
 net.ipv4.conf.all.secure_redirects=0
@@ -46,6 +50,7 @@ net.ipv4.conf.all.send_redirects=0
 net.ipv4.conf.all.shared_media=1
 net.ipv4.conf.default.accept_redirects=0
 net.ipv4.conf.default.accept_source_route=0
+net.ipv4.conf.default.drop_gratuitous_arp=1
 net.ipv4.conf.default.log_martians=1
 net.ipv4.conf.default.rp_filter=1
 net.ipv4.conf.default.secure_redirects=0
@@ -56,15 +61,20 @@ net.ipv4.icmp_echo_ignore_broadcasts=1
 net.ipv4.icmp_ignore_bogus_error_responses=1
 net.ipv4.icmp_ratelimit=100
 net.ipv4.icmp_ratemask=88089
+net.ipv4.tcp_challenge_ack_limit=1000
+net.ipv4.tcp_congestion_control=bbr
 net.ipv4.tcp_dsack=0
 net.ipv4.tcp_fack=0
 net.ipv4.tcp_max_syn_backlog=2048
+net.ipv4.tcp_moderate_rcvbuf=1
+net.ipv4.tcp_no_metrics_save=1
 net.ipv4.tcp_rfc1337=1
-net.ipv4.tcp_sack=0
+net.ipv4.tcp_sack=1
 net.ipv4.tcp_syn_retries=5
 net.ipv4.tcp_synack_retries=2
 net.ipv4.tcp_syncookies=1
-net.ipv4.tcp_timestamps=0
+net.ipv4.tcp_timestamps=1
+net.ipv4.tcp_window_scaling=1
 net.ipv6.conf.all.accept_ra=0
 net.ipv6.conf.all.accept_redirects=0
 net.ipv6.conf.all.accept_source_route=0
@@ -118,14 +128,9 @@ ACTION=="add|change", SUBSYSTEM=="scsi", ATTR{power/control}="auto"
 ACTION=="add|change", SUBSYSTEM=="scsi_host", KERNEL=="host*", ATTR{link_power_management_policy}="min_power"
 ACTION=="add|change", SUBSYSTEM=="usb", ATTR{power/autosuspend}="1"
 ACTION=="add|change", SUBSYSTEM=="workqueue", ATTR{power/control}="auto"
-ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/iosched/low_latency}="1"
-ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/scheduler}="bfq"
-ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/read_ahead_kb}="4096"
-ACTION=="add|change", KERNEL=="nvme[0-9]n[0-9]", ATTR{queue/scheduler}="none"
-ACTION=="add|change", KERNEL=="nvme[0-9]n[0-9]", ATTR{queue/read_ahead_kb}="16384"
-# Trigger on AC/BAT
-# SUBSYSTEM=="power_supply",ATTR{online}=="1",RUN+="/usr/bin/powerprofilesctl set performance"
-# SUBSYSTEM=="power_supply",ATTR{online}=="0",RUN+="/usr/bin/powerprofilesctl set power-saver"
+ACTION=="add|change", KERNEL=="sd[a-z][0-9]", RUN+="/usr/sbin/blockdev --setra 8192 /dev/%k"
+ACTION=="add|change", KERNEL=="nvme[0-9]n[0-9]p[0-9]", RUN+="/usr/sbin/blockdev --setra 32768 /dev/%k"
+ACTION=="add|change", KERNEL=="dm-[0-9]", RUN+="/usr/sbin/blockdev --setra 32768 /dev/%k"
 '  | sudo tee /etc/udev/rules.d/powersave.rules > /dev/null
 sudo udevadm control --reload
 sudo udevadm trigger
@@ -145,45 +150,22 @@ if [ -e /etc/lvm/lvm.conf ]; then
 	sudo sed -i 's|# issue_discards = 0|issue_discards = 1|g' /etc/lvm/lvm.conf
 fi
 
-if [ -e /etc/crypttab ]; then
-	sudo sed -i 's|none luks$|none luks,discard,no-read-workqueue,no-write-workqueue|g' /etc/crypttab
-	sudo sed -i 's|none discard$|none discard,no-read-workqueue,no-write-workqueue|g' /etc/crypttab
-	sudo sed -i 's|x-initrd.attach$|x-initrd.attach,discard,no-read-workqueue,no-write-workqueue|g' /etc/crypttab
-	# sudo cryptsetup --perf-no_read_workqueue --perf-no_write_workqueue --allow-discards --persistent refresh "$(sudo cat /etc/crypttab | cut -d' ' -f1)"
+LUKS_DEVICES="$(lsblk --list --fs | grep nvme | grep LUKS | cut -d' ' -f1)"
+if [ -n "$LUKS_DEVICES" ]; then
+	if [ -e /etc/crypttab ]; then
+		if ! sudo grep discard /etc/crypttab; then
+			for disk in $(sudo grep -v '^#' /etc/crypttab | cut -d' ' -f1); do
+				sudo cryptsetup --allow-discards --persistent refresh "$disk"
+			done
+		fi
+		sudo sed -i 's|none $|none luks,x-initrd.attach,discard,tpm2-device=auto,tpm2-pcrlock=/boot/efi/EFI/systemd/pcrlock.json|g' /etc/crypttab
+		sudo sed -i 's|none luks$|none luks,x-initrd.attach,discard,tpm2-device=auto,tpm2-pcrlock=/boot/efi/EFI/systemd/pcrlock.json|g' /etc/crypttab
+		sudo sed -i 's|none discard$|none luks,x-initrd.attach,discard,tpm2-device=auto,tpm2-pcrlock=/boot/efi/EFI/systemd/pcrlock.json|g' /etc/crypttab
+		sudo sed -i 's|x-initrd.attach$|luks,x-initrd.attach,discard,tpm2-device=auto,tpm2-pcrlock=/boot/efi/EFI/systemd/pcrlock.json|g' /etc/crypttab
+	fi
+	sudo systemctl enable fstrim.timer
+	sudo fstrim -va
 fi
-sudo systemctl enable fstrim.timer
-sudo fstrim -va
-
-systemd_user_services="
-	evolution-addressbook-factory.service
-	evolution-calendar-factory.service
-	evolution-source-registry.service
-	evolution-user-prompter.service
-	gvfs-goa-volume-monitor.service
-	localsearch-3.service
-	localsearch-control-3.service
-	localsearch-writeback-3.service
-	spice-vdagent.service
-	tracker-extract-3.service
-	tracker-miner-fs-3.service
-	tracker-miner-fs-control-3.service
-	tracker-miner-rss-3.service
-	tracker-writeback-3.service
-	tracker-xdg-portal-3.service
-"
-for systemd_user_service in ${systemd_user_services}; do
-	systemctl --user disable --now "${systemd_user_service}" 2> /dev/null || :
-	systemctl --user mask --now "${systemd_user_service}" 2> /dev/null || :
-done
-
-systemd_system_services="
-	switcheroo-control.service
-	packagekit.service
-"
-for systemd_system_service in ${systemd_system_services}; do
-	sudo systemctl disable --now "${systemd_system_service}" 2> /dev/null || :
-	sudo systemctl mask --now "${systemd_system_service}" 2> /dev/null || :
-done
 
 # Disable ancient modules
 echo "
@@ -217,44 +199,22 @@ install vivid /bin/false
 install x25 /bin/false
 " | sudo tee -a /etc/modprobe.d/hardening.conf
 
-# Load rndis_host android usb tethering module at boot
-echo "rndis_host" | sudo tee "/etc/modules-load.d/rndis_host.conf"
-echo "" | sudo tee /etc/modprobe.d/50-blacklist-rndis.conf
-
 KERNEL_CMDLINE=""
-KERNEL_CMDLINE="$KERNEL_CMDLINE drm.debug=0"
-KERNEL_CMDLINE="$KERNEL_CMDLINE drm.vblankoffdelay=1"
-KERNEL_CMDLINE="$KERNEL_CMDLINE e1000e.SmartPowerDownEnable=1"
-KERNEL_CMDLINE="$KERNEL_CMDLINE i915.disable_power_well=1"
-KERNEL_CMDLINE="$KERNEL_CMDLINE i915.enable_dc=2"
-KERNEL_CMDLINE="$KERNEL_CMDLINE i915.enable_fbc=1"
-KERNEL_CMDLINE="$KERNEL_CMDLINE i915.enable_guc=3"
-KERNEL_CMDLINE="$KERNEL_CMDLINE i915.enable_psr=2"
-KERNEL_CMDLINE="$KERNEL_CMDLINE i915.enable_rc6=7"
-KERNEL_CMDLINE="$KERNEL_CMDLINE i915.modeset=1"
-KERNEL_CMDLINE="$KERNEL_CMDLINE i915.powersave=1"
-KERNEL_CMDLINE="$KERNEL_CMDLINE iomem=relaxed"
-KERNEL_CMDLINE="$KERNEL_CMDLINE iwlmvm.power_scheme=3"
-KERNEL_CMDLINE="$KERNEL_CMDLINE iwlwifi.power_level=5"
-KERNEL_CMDLINE="$KERNEL_CMDLINE iwlwifi.power_save=Y"
+KERNEL_CMDLINE="$KERNEL_CMDLINE amdgpu.abmlevel=0"
 KERNEL_CMDLINE="$KERNEL_CMDLINE nmi_watchdog=0"
 KERNEL_CMDLINE="$KERNEL_CMDLINE nowatchdog"
 KERNEL_CMDLINE="$KERNEL_CMDLINE pcie_aspm.policy=powersupersave"
 KERNEL_CMDLINE="$KERNEL_CMDLINE pcie_aspm=force"
 KERNEL_CMDLINE="$KERNEL_CMDLINE usbcore.autosuspend=1"
-KERNEL_CMDLINE="$KERNEL_CMDLINE workqueue.power_efficient=true"
-# Hardening taken from ChromeOS and Android
-KERNEL_CMDLINE="$KERNEL_CMDLINE lockdown=confidentiality"
-# KERNEL_CMDLINE="$KERNEL_CMDLINE lockdown=integrity" # Integrity allows bpf, confidentiality is better when possible
+KERNEL_CMDLINE="$KERNEL_CMDLINE lockdown=confidentiality" # lockdown=integrity" # Integrity allows bpf, confidentiality is better when possible
+KERNEL_CMDLINE="$KERNEL_CMDLINE loglevel=0"
 KERNEL_CMDLINE="$KERNEL_CMDLINE amd_iommu=on"
-# KERNEL_CMDLINE="$KERNEL_CMDLINE debugfs=off" # Need for powertop
-KERNEL_CMDLINE="$KERNEL_CMDLINE efi=disable_early_pci_dma"
-KERNEL_CMDLINE="$KERNEL_CMDLINE init_on_alloc=1"
-KERNEL_CMDLINE="$KERNEL_CMDLINE init_on_free=1"
 KERNEL_CMDLINE="$KERNEL_CMDLINE intel_iommu=on"
 KERNEL_CMDLINE="$KERNEL_CMDLINE iommu.passthrough=0"
 KERNEL_CMDLINE="$KERNEL_CMDLINE iommu.strict=1"
-KERNEL_CMDLINE="$KERNEL_CMDLINE loglevel=0"
+KERNEL_CMDLINE="$KERNEL_CMDLINE efi=disable_early_pci_dma"
+KERNEL_CMDLINE="$KERNEL_CMDLINE init_on_alloc=1"
+KERNEL_CMDLINE="$KERNEL_CMDLINE init_on_free=1"
 KERNEL_CMDLINE="$KERNEL_CMDLINE module.sig_enforce=1"
 KERNEL_CMDLINE="$KERNEL_CMDLINE page_alloc.shuffle=1"
 KERNEL_CMDLINE="$KERNEL_CMDLINE page_table_check=on"
@@ -262,32 +222,46 @@ KERNEL_CMDLINE="$KERNEL_CMDLINE randomize_kstack_offset=1"
 KERNEL_CMDLINE="$KERNEL_CMDLINE slab_nomerge"
 KERNEL_CMDLINE="$KERNEL_CMDLINE slub_debug=FZ"
 KERNEL_CMDLINE="$KERNEL_CMDLINE vsyscall=none"
+# KERNEL_CMDLINE="$KERNEL_CMDLINE debugfs=off" # Need for powertop
 
 # grub case
 if [ -e /etc/default/grub ] && ! grep -q "$KERNEL_CMDLINE" /etc/default/grub; then
 	sudo sed -i 's|quiet"|quiet splash"|g' /etc/default/grub
-	sudo sed -i "s|GRUB_CMDLINE_LINUX=\".*\"|GRUB_CMDLINE_LINUX=quiet splash \"$KERNEL_CMDLINE\"|g" /etc/default/grub
+	sudo sed -i "s|GRUB_CMDLINE_LINUX=\".*\"|GRUB_CMDLINE_LINUX=\"quiet splash $KERNEL_CMDLINE\"|g" /etc/default/grub
 fi
 
 # systemd-boot case
-if [ -e /etc/kernel/cmdline ] && ! grep -q "$KERNEL_CMDLINE" /etc/kernel/cmdline; then
-	sudo sed -i "s|quiet.*systemd.show_status=no|quiet $KERNEL_CMDLINE systemd.show_status=no|g" /etc/kernel/cmdline
+if [ ! -e /etc/kernel/cmdline ]; then
+	. /etc/default/grub
+	echo "root=$(findmnt -n -o SOURCE /) $GRUB_CMDLINE_LINUX $GRUB_CMDLINE_LINUX_DEFAULT" | sudo tee /etc/kernel/cmdline
+elif ! grep -q "$KERNEL_CMDLINE" /etc/kernel/cmdline; then
+	sudo sed -i "s|quiet|quiet $KERNEL_CMDLINE|g" /etc/kernel/cmdline
 fi
 
-if command -v /sbin/transactional-update && ! command -v docker; then
-	sudo transactional-update -c -d run sh -c "zypper dup --remove-orphaned -y && \
-		zypper in -y --force --recommends patterns-glibc-hwcaps-x86_64_v3
-		truncate -s 0 /.snapshots/swap && \
-		chattr +C /.snapshots/swap && \
-		fallocate -l 8G /.snapshots/swap && \
-		chmod 0600 /.snapshots/swap && \
-		mkswap /.snapshots/swap && \
-		echo '/.snapshots/swap none swap defaults,pri=1 0 0' >> /etc/fstab && \
-		zypper in -y docker docker-compose docker-buildx powertop cpupower gnome-terminal && \
-		systemctl enable powertop && \
-		systemctl enable docker && \
-		usermod -aG docker $USER && \
-		dracut --force --regenerate-all --parallel && \
-		/sbin/pbl --install"
-	exit $?
-fi
+# TPM enroller
+sudo cp "$(dirname "${0}")/tpm-enroll" /usr/local/bin/
+
+systemd_user_services="
+	evolution-addressbook-factory.service
+	evolution-calendar-factory.service
+	evolution-source-registry.service
+	evolution-user-prompter.service
+	gvfs-goa-volume-monitor.service
+	localsearch-3.service
+	localsearch-control-3.service
+	localsearch-writeback-3.service
+	spice-vdagent.service
+	tracker-extract-3.service
+	tracker-miner-fs-3.service
+	tracker-miner-fs-control-3.service
+	tracker-miner-rss-3.service
+	tracker-writeback-3.service
+	tracker-xdg-portal-3.service
+"
+for systemd_user_service in ${systemd_user_services}; do
+	systemctl --user disable --now "${systemd_user_service}" 2> /dev/null || :
+	systemctl --user mask --now "${systemd_user_service}" 2> /dev/null || :
+done
+
+# Distro specific stuff
+"$(dirname "${0}")/setup-${ID}"

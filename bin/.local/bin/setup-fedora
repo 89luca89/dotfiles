@@ -1,0 +1,64 @@
+#!/bin/sh
+sudo dnf remove \
+	PackageKit* \
+	abrt* \
+	gnome-calendar* \
+	gnome-characters* \
+	gnome-connections* \
+	gnome-contacts* \
+	gnome-font-viewer* \
+	gnome-maps* \
+	gnome-software \
+	gnome-text-editor* \
+	gnome-tour* \
+	gnome-user-docs* \
+	gnome-weather* \
+	ibus \
+	ibut-anthy \
+	ibut-anthy-python \
+	ibut-chewing \
+	ibut-gtk3 \
+	ibut-gtk4 \
+	ibut-hangul \
+	ibut-libpinyin \
+	ibut-m17n \
+	ibut-setuptyping-booster \
+	libreoffice* \
+	loupe* \
+	totem \
+	yelp*
+
+##############################################################################
+sudo tee /etc/kernel/install.conf << EOF
+BOOT_ROOT=/boot/efi
+layout=uki
+initrd_generator=dracut
+uki_generator=ukify
+EOF
+
+sudo dnf copr enable chenxiaolong/sbctl
+sudo dnf install sbctl systemd-ukify systemd-devel
+
+sudo firewall-cmd --set-default-zone=drop
+sudo firewall-cmd --permanent --add-port=22/tcp
+sudo firewall-cmd --reload
+################# SECURE BOOT SETUP ##########################################
+if sudo sbctl status | grep -q 'sbctl is not installed'; then
+	sudo sbctl create-keys
+	sudo sbctl enroll-keys --firmware-builtin
+	sudo sbctl verify 2> /dev/null | grep ' not ' | cut -d' ' -f2 | xargs -I{} sudo sbctl sign -s {}
+fi
+################# SECURE BOOT SETUP ###########################################
+sudo kernel-install -v add-all
+##############################################################################
+sudo dnf install \
+	vim tmux git curl gnome-terminal \
+	docker docker-compose docker-buildx \
+	podman crun \
+	powertop
+
+sudo systemctl enable --now docker
+sudo systemctl enable --now powertop
+sudo systemctl disable --now NetworkManager-wait-online.service
+sudo systemctl mask NetworkManager-wait-online.service
+sudo usermod -aG docker "$USER"
