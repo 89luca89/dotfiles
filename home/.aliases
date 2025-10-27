@@ -7,7 +7,7 @@ alias mail='vim /tmp/mail.eml'
 alias dbox="distrobox-enter default_distrobox -- bash -l -c 'tmux a || tmux'"
 alias wolfi="unset TMUX && distrobox-enter wolfi_distrobox -- bash -l -c 'cd /home/luca-linux/Projects/chainguard/ && tmux a || tmux'"
 alias libvirt="DBX_CONTAINER_MANAGER=docker distrobox enter libvirt"
-alias vim='vi -u ~/.vimrc-minimal'
+alias vi='vi -u ~/.vimrc-minimal'
 if ! type __vte_prompt_command >/dev/null 2>&1; then
 	function __vte_prompt_command() {  return; }
 fi
