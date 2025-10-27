@@ -1,15 +1,13 @@
 # BASIC ALIASES
-alias cp='cp --reflink=auto'
+alias cp='cp --reflink=auto --sparse=always'
 alias ll='ls -Ahl --group-directories-first --color'
 alias tfswitch="tfswitch -b $HOME/.local/bin/terraform"
 alias tree='tree -I ".git" -a'
-alias vi='vim -u ~/.vimrc-minimal'
+alias mail='vim /tmp/mail.eml'
 alias dbox="distrobox-enter default_distrobox -- bash -l -c 'tmux a || tmux'"
 alias wolfi="unset TMUX && distrobox-enter wolfi_distrobox -- bash -l -c 'cd /home/luca-linux/Projects/chainguard/ && tmux a || tmux'"
 alias libvirt="DBX_CONTAINER_MANAGER=docker distrobox enter libvirt"
-if [ -z $CONTAINER_ID ]; then
-	alias vim='vim -u ~/.vimrc-minimal'
-fi
+alias vim='vi -u ~/.vimrc-minimal'
 if ! type __vte_prompt_command >/dev/null 2>&1; then
 	function __vte_prompt_command() {  return; }
 fi
@@ -27,3 +25,8 @@ export PATH=$HOME/.local/share/flatpak/exports/bin:$PATH
 export PATH=$HOME/bin:$PATH
 export PATH=$PATH:/usr/sbin:/usr/local/sbin
 export EDITOR=vim
+
+alias light="echo -n light > ~/.local/share/theme"
+alias dark="echo -n dark > ~/.local/share/theme"
+alias cgwork-create="cg work create --machine-type n4-standard-32 --lifetime 120h --data-disk-type hyperdisk-balanced --boot-disk-type hyperdisk-balanced --zone europe-west2-a"
+alias cgwork="gcloud compute ssh  --project chainguard-workstations --zone europe-west2-a luca-dimaio-work-v2 --command \"~/.local/bin/distrobox enter wolfi_distrobox -- sh -c 'tmux a || tmux'\" -- -t"
