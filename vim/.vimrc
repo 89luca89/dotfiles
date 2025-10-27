@@ -2,7 +2,6 @@ set nocompatible                   " Modern Vim features, not Vi compatible
 let g:loaded_2html_plugin=1        " Disables :TOhtml command (converts buffer to HTML with syntax highlighting)
 let g:loaded_getscriptPlugin=1     " Disables :GetScript command (script downloader from vim.org)
 let g:loaded_logipat=1             " Disables :LogiPat command (logical pattern matching tool)
-" let g:loaded_matchparen=1          " Disables bracket matching - reduces CPU usage on cursor movement
 let g:loaded_tarPlugin=1           " Disables ability to browse and edit files inside .tar archives
 let g:loaded_tutor_mode_plugin=1   " Disables :Tutor command (interactive Vim tutorial)
 let g:loaded_vimballPlugin=1       " Disables support for .vba (Vimball) plugin installation format
