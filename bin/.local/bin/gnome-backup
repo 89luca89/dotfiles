@@ -7,7 +7,7 @@ gsettings set org.gnome.shell app-picker-layout "[{}]"
 
 gnome_dconf_backup="
 	/org/freedesktop/tracker/miner
-	/org/gnome/Console
+	/org/gnome/desktop/a11y
 	/org/gnome/desktop/background
 	/org/gnome/desktop/input-sources
 	/org/gnome/desktop/interface
@@ -31,7 +31,7 @@ gnome_dconf_backup="
 dest_folder="$HOME/dotfiles/_desktop/"
 mkdir  -p "${dest_folder}"
 for f in  ${gnome_dconf_backup}; do
-	dconf dump "${f}/" > "${dest_folder}/$(echo "${f}" | sed 's/\//./g').conf"
+	dconf dump "${f}/" | grep -Ev "cursor-theme|icon-theme|picture-uri" > "${dest_folder}/$(echo "${f}" | sed 's/\//./g').conf"
 done
 
 cp ~/.config/background "$dest_folder"
