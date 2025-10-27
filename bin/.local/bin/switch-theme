@@ -2,16 +2,14 @@
 
 set -x
 if [ "$(dconf read /org/gnome/desktop/interface/color-scheme | tr -d  "\n")" = "'prefer-dark'" ]; then
-	NIGHT_LIGHT=false
 	PREFER="default"
 	THEME="Adwaita"
-	COLOR="#FFFFFF"
+	COLOR="#999999"
 	echo light > ~/.local/share/theme
 else
-	NIGHT_LIGHT=true
 	PREFER="prefer-dark"
 	THEME="Adwaita-dark"
-	COLOR="#000000"
+	COLOR="#999999"
 	echo dark > ~/.local/share/theme
 fi
 
@@ -21,7 +19,8 @@ if [ "$(dconf read /org/gnome/desktop/a11y/interface/high-contrast)" = "true" ];
  dconf write /org/gnome/desktop/background/primary-color "'$COLOR'"
  dconf write /org/gnome/desktop/background/secondary-color "'$COLOR'"
 else
- dconf write /org/gnome/desktop/background/primary-color "'#008080'"
- dconf write /org/gnome/desktop/background/secondary-color "'#008080'"
+ dconf write /org/gnome/desktop/background/primary-color "'#406A95'"
+ dconf write /org/gnome/desktop/background/secondary-color "'#406A95'"
 fi
-# dconf write /org/gnome/settings-daemon/plugins/color/night-light-enabled "$NIGHT_LIGHT"
+
+kill -s USR1 $(pgrep vim)
