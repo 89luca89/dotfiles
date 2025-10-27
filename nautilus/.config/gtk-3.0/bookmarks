@@ -1,6 +1,4 @@
-file:///home/luca-linux/Desktop
-file:///home/luca-linux/Syncthing
-file:///home/luca-linux/Pictures/Screenshots Screenshots
-sftp://fileserver@raspberrypi-2:2223/data rasp2-data
-sftp://fileserver@raspberrypi-1:2223/data rasp1-data
 file:///home/luca-linux/Downloads Downloads
+file:///home/luca-linux/Syncthing Syncthing
+file:///home/luca-linux/Desktop Desktop
+file:///home/luca-linux/Pictures/Screenshots Screenshots
