@@ -11,7 +11,6 @@ set -x
 set -o errexit
 set -o nounset
 
-minkb="$(awk '/MemTotal/ {printf "%.0f", $2 * 0.01}' /proc/meminfo)"
 echo "
 # Hardening
 dev.tty.ldisc_autoload=0
@@ -20,10 +19,12 @@ fs.protected_hardlinks=1
 fs.protected_regular=2
 fs.protected_symlinks=1
 fs.suid_dumpable=0
-kernel.bpf_stats_enabled = 0
+kernel.bpf_stats_enabled=0
+kernel.core_pattern=|/bin/false
 kernel.core_uses_pid=1
 kernel.dmesg_restrict=1
-kernel.ftrace_enabled = 0
+kernel.ftrace_enabled=0
+kernel.io_uring_disabled=2
 kernel.kexec_load_disabled=1
 kernel.kptr_restrict=2
 kernel.panic=60
@@ -92,6 +93,8 @@ net.ipv6.conf.default.dad_transmits=0
 net.ipv6.conf.default.max_addresses=1
 net.ipv6.conf.default.router_solicitations=0
 net.ipv6.conf.default.use_tempaddr=2
+net.ipv6.icmp.echo_ignore_all=1
+vm.max_map_count=1048576
 vm.mmap_min_addr=65536
 vm.mmap_rnd_bits=32
 vm.mmap_rnd_compat_bits=16
@@ -158,10 +161,10 @@ if [ -n "$LUKS_DEVICES" ]; then
 				sudo cryptsetup --allow-discards --persistent refresh "$disk"
 			done
 		fi
-		sudo sed -i 's|none $|none luks,x-initrd.attach,discard,tpm2-device=auto,tpm2-pcrlock=/boot/efi/EFI/systemd/pcrlock.json|g' /etc/crypttab
-		sudo sed -i 's|none luks$|none luks,x-initrd.attach,discard,tpm2-device=auto,tpm2-pcrlock=/boot/efi/EFI/systemd/pcrlock.json|g' /etc/crypttab
-		sudo sed -i 's|none discard$|none luks,x-initrd.attach,discard,tpm2-device=auto,tpm2-pcrlock=/boot/efi/EFI/systemd/pcrlock.json|g' /etc/crypttab
-		sudo sed -i 's|x-initrd.attach$|luks,x-initrd.attach,discard,tpm2-device=auto,tpm2-pcrlock=/boot/efi/EFI/systemd/pcrlock.json|g' /etc/crypttab
+		sudo sed -i 's|none $|none luks,x-initrd.attach,discard,tpm2-device=auto|g' /etc/crypttab
+		sudo sed -i 's|none luks$|none luks,x-initrd.attach,discard,tpm2-device=auto|g' /etc/crypttab
+		sudo sed -i 's|none discard$|none luks,x-initrd.attach,discard,tpm2-device=auto|g' /etc/crypttab
+		sudo sed -i 's|x-initrd.attach$|luks,x-initrd.attach,discard,tpm2-device=auto|g' /etc/crypttab
 	fi
 	sudo systemctl enable fstrim.timer
 	sudo fstrim -va
@@ -169,34 +172,88 @@ fi
 
 # Disable ancient modules
 echo "
+blacklist cdrom
+blacklist cyber2000fb
+blacklist cyblafb
+blacklist gx1fb
+blacklist hgafb
+blacklist kyrofb
+blacklist lxfb
+blacklist matroxfb_base
+blacklist neofb
+blacklist nvidiafb
+blacklist pm2fb
+blacklist s1d13xxxfb
+blacklist sisfb
+blacklist sr_mod
+blacklist tdfxfb
+blacklist udlfb
+blacklist vesafb
+blacklist vfb
+blacklist vt8623fb
+install adfs /bin/false
 install af_802154 /bin/false
+install affs /bin/false
+install afs /bin/false
 install appletalk /bin/false
 install atm /bin/false
 install ax25 /bin/false
+install befs /bin/false
 install can /bin/false
+install ceph /bin/false
+install cifs /bin/false
+install coda /bin/false
 install cramfs /bin/false
 install dccp /bin/false
 install decnet /bin/false
+install dv1394 /bin/false
 install econet /bin/false
 install firewire-core /bin/false
+install firewire-net /bin/false
+install firewire-ohci /bin/false
+install firewire-sbp2 /bin/false
+install firewire_core /bin/false
+install firewire_ohci /bin/false
+install firewire_sbp2 /bin/false
 install freevxfs /bin/false
-install hfs /bin/false
-install hfsplus /bin/false
+install gfs2 /bin/false
+install gnss /bin/false
+install gnss-mtk /bin/false
+install gnss-serial /bin/false
+install gnss-sirf /bin/false
+install gnss-ubx /bin/false
+install gnss-usb /bin/false
 install ipx /bin/false
 install jffs2 /bin/false
+install jfs /bin/false
+install kafs /bin/false
+install ksmbd /bin/false
+install minix /bin/false
 install n-hdlc /bin/false
 install netrom /bin/false
+install nilfs2 /bin/false
+install ocfs2 /bin/false
+install ohci1394 /bin/false
+install orangefs /bin/false
 install p8022 /bin/false
 install p8023 /bin/false
 install psnap /bin/false
+install raw1394 /bin/false
 install rds  /bin/false
 install rds /bin/false
+install reiserfs /bin/false
+install romfs /bin/false
 install rose /bin/false
+install sbp2 /bin/false
 install sctp /bin/false
+install sysv /bin/false
 install tipc /bin/false
+install ubifs /bin/false
 install udf /bin/false
+install video1394 /bin/false
 install vivid /bin/false
 install x25 /bin/false
+install zonefs /bin/false
 " | sudo tee -a /etc/modprobe.d/hardening.conf
 
 KERNEL_CMDLINE=""
@@ -208,7 +265,7 @@ KERNEL_CMDLINE="$KERNEL_CMDLINE pcie_aspm=force"
 KERNEL_CMDLINE="$KERNEL_CMDLINE usbcore.autosuspend=1"
 KERNEL_CMDLINE="$KERNEL_CMDLINE lockdown=confidentiality" # lockdown=integrity" # Integrity allows bpf, confidentiality is better when possible
 KERNEL_CMDLINE="$KERNEL_CMDLINE loglevel=0"
-KERNEL_CMDLINE="$KERNEL_CMDLINE amd_iommu=on"
+KERNEL_CMDLINE="$KERNEL_CMDLINE amd_iommu=force_isolation"
 KERNEL_CMDLINE="$KERNEL_CMDLINE intel_iommu=on"
 KERNEL_CMDLINE="$KERNEL_CMDLINE iommu.passthrough=0"
 KERNEL_CMDLINE="$KERNEL_CMDLINE iommu.strict=1"
@@ -222,6 +279,11 @@ KERNEL_CMDLINE="$KERNEL_CMDLINE randomize_kstack_offset=1"
 KERNEL_CMDLINE="$KERNEL_CMDLINE slab_nomerge"
 KERNEL_CMDLINE="$KERNEL_CMDLINE slub_debug=FZ"
 KERNEL_CMDLINE="$KERNEL_CMDLINE vsyscall=none"
+KERNEL_CMDLINE="$KERNEL_CMDLINE oops=panic"
+KERNEL_CMDLINE="$KERNEL_CMDLINE random.trust_bootloader=off"
+KERNEL_CMDLINE="$KERNEL_CMDLINE random.trust_cpu=off"
+KERNEL_CMDLINE="$KERNEL_CMDLINE rd.emergency=halt"
+KERNEL_CMDLINE="$KERNEL_CMDLINE rd.shell=0"
 # KERNEL_CMDLINE="$KERNEL_CMDLINE debugfs=off" # Need for powertop
 
 # grub case
@@ -237,9 +299,6 @@ if [ ! -e /etc/kernel/cmdline ]; then
 elif ! grep -q "$KERNEL_CMDLINE" /etc/kernel/cmdline; then
 	sudo sed -i "s|quiet|quiet $KERNEL_CMDLINE|g" /etc/kernel/cmdline
 fi
-
-# TPM enroller
-sudo cp "$(dirname "${0}")/tpm-enroll" /usr/local/bin/
 
 systemd_user_services="
 	evolution-addressbook-factory.service
@@ -263,5 +322,27 @@ for systemd_user_service in ${systemd_user_services}; do
 	systemctl --user mask --now "${systemd_user_service}" 2> /dev/null || :
 done
 
+systemd_system_services="
+	NetworkManager-wait-online
+	geoclue
+	nfs-idmapd
+	nfs-mountd
+	nfsdcld
+	rpc-gssd
+	rpc-statd
+	rpc-statd-notify
+	rpcbind
+"
+for service in $systemd_system_services; do
+	sudo systemctl disable --now "$service"
+	sudo systemctl mask "$service"
+done
+
+# TPM enroller
+sudo cp "$(dirname "${0}")/tpm-enroll" /usr/local/bin/
+
 # Distro specific stuff
 "$(dirname "${0}")/setup-${ID}"
+
+# TPM
+sudo systemd-cryptenroll --tpm2-device=auto --wipe-slot=tpm2 --tpm2-pcrs="0+1+2+3+7" /dev/nvme0n1p2
