@@ -1,13 +1,10 @@
 #!/bin/sh
 
-# scroll-workspaces@gfxmonk.net
 EXTENSIONS="
 AlphabeticalAppGrid@stuarthayhurst
+appindicatorsupport@rgcjonas.gmail.com
 "
-# appindicatorsupport@rgcjonas.gmail.com
-# hidetopbar@mathieu.bidon.ca
 
-# https://extensions.gnome.org/extension-data/VitalsCoreCoding.com.v61.shell-extension.zip
 for extension in $EXTENSIONS; do
 	if ! gnome-extensions list | grep --quiet "${extension}"; then
 		busctl --user call org.gnome.Shell.Extensions \
@@ -29,3 +26,4 @@ for f in  .*.conf; do
 	dconf_path="$(echo "${f}" | sed 's/conf//g' | sed 's/\./\//g')"
 	dconf load "${dconf_path}" < "${f}"
 done
+gnome-extensions list --disabled | xargs -I{} sh -c "gnome-extensions enable {} && gnome-extensions disable {}"
