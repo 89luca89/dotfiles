@@ -16,6 +16,19 @@
 [fetch]
 	prune = true
 
+[sendemail]
+	smtpEncryption = tls
+	smtpServer = smtp.gmail.com
+	smtpUser = luca.dimaio1@gmail.com
+	smtpServerPort = 587
+
+[credential "https://github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential
+
 [includeif "gitdir:~/Projects/chainguard/"]
 	path = ~/.gitconfig-gitsign
 [filter "lfs"]
