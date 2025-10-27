@@ -16,23 +16,3 @@ if ! docker inspect --type container syncthing > /dev/null; then
 		docker.io/syncthing/syncthing
 	docker start syncthing
 fi
-
-if ! docker inspect --type container tailscale > /dev/null; then
-	docker create \
-		--restart=unless-stopped \
-		--name=tailscale \
-		--hostname=tailscale \
-		--network=host \
-		--privileged \
-		-v ~/.var/app/tailscale/data-$HOSTNAME:/var/lib \
-		-v /dev/net/tun:/dev/net/tun \
-		-v /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket \
-		--cap-add=NET_ADMIN \
-		--cap-add=NET_RAW \
-		-e TS_HOSTNAME=$HOSTNAME-tailscale \
-		-e TS_STATE_DIR=/var/lib/tailscale \
-		-e TS_USERSPACE=false \
-		-e TS_AUTH_ONCE=false \
-		-e TS_EXTRA_ARGS="--accept-routes" \
-		tailscale/tailscale:latest
-fi
