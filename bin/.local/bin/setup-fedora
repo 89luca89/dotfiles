@@ -25,31 +25,36 @@ sudo dnf remove \
 	ibut-setuptyping-booster \
 	libreoffice* \
 	loupe* \
+	open-vm* \
+	qemu-guest-agent \
 	totem \
+	virtualbox-guest-additions \
 	yelp*
+
+sudo firewall-cmd --set-default-zone=drop
+sudo firewall-cmd --permanent --add-port=22/tcp
+sudo firewall-cmd --reload
 
 ##############################################################################
 sudo tee /etc/kernel/install.conf << EOF
 BOOT_ROOT=/boot/efi
 layout=uki
-initrd_generator=dracut
 uki_generator=ukify
+initrd_generator=dracut
 EOF
 
 sudo dnf copr enable chenxiaolong/sbctl
 sudo dnf install sbctl systemd-ukify systemd-devel
-
-sudo firewall-cmd --set-default-zone=drop
-sudo firewall-cmd --permanent --add-port=22/tcp
-sudo firewall-cmd --reload
 ################# SECURE BOOT SETUP ##########################################
 if sudo sbctl status | grep -q 'sbctl is not installed'; then
+	read -n 1 -p "Input Selection:" "mainmenuinput"
+	sudo kernel-install -v add-all
 	sudo sbctl create-keys
 	sudo sbctl enroll-keys --firmware-builtin
 	sudo sbctl verify 2> /dev/null | grep ' not ' | cut -d' ' -f2 | xargs -I{} sudo sbctl sign -s {}
 fi
 ################# SECURE BOOT SETUP ###########################################
-sudo kernel-install -v add-all
+
 ##############################################################################
 sudo dnf install \
 	vim tmux git curl gnome-terminal \
@@ -57,8 +62,11 @@ sudo dnf install \
 	podman crun \
 	powertop
 
+sudo usermod -aG docker "$USER"
 sudo systemctl enable --now docker
 sudo systemctl enable --now powertop
-sudo systemctl disable --now NetworkManager-wait-online.service
-sudo systemctl mask NetworkManager-wait-online.service
-sudo usermod -aG docker "$USER"
+
+sudo dnf swap tuned-ppd power-profiles-daemon
+powerprofilesctl set power-saver
+powerprofilesctl configure-action amdgpu_panel_power --enable
+powerprofilesctl configure-action amdgpu_dpm --enable
