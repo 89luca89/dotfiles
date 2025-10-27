@@ -6,11 +6,9 @@ if ! cd "$HOME/dotfiles" > /dev/null; then
 	exit 1
 fi
 
-# alacritty/.config/alacritty
 FOLDERS="
 bin/.local/bin
 home/
-linters/.config
 nautilus/.config/gtk-3.0/
 pipewire/.config/pipewire
 pipewire/.config/wireplumber
