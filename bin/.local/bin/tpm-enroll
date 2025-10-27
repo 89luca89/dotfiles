@@ -51,6 +51,9 @@ fi
 # SKIP PCR 9 Do not use for systemd-stub(7) UKIs, as the initrd is combined dynamically from various sources and hence does not take a single input, like this command.
 # SKIP PCR 10 is for IMA, not used
 # PCR 11 (+ 4 for UKI binary)
+mkdir -p /var/lib/pcrlock.d/650-kernel-efi-application.pcrlock.d/
+# Remove all older kernels, only keep the active ones
+find /var/lib/pcrlock.d/650-kernel-efi-application.pcrlock.d/ -maxdepth 1 -type f ! -name "*$(uname -r)*" -print -delete
 for i in "${BOOT_ROOT}"/EFI/Linux/*; do
 	pcrlock="/var/lib/pcrlock.d/650-kernel-efi-application.pcrlock.d/uki-$(basename "${i}").pcrlock"
 	if [ -e "${pcrlock}" ]; then
