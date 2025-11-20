@@ -8,3 +8,5 @@
 	format = x509
 [gitsign]
 	connectorID = https://accounts.google.com
+[user]
+	email = luca.dimaio@chainguard.dev
