@@ -1,12 +1,4 @@
 set nocompatible                   " Modern Vim features, not Vi compatible
-let g:loaded_2html_plugin=1        " Disables :TOhtml command (converts buffer to HTML with syntax highlighting)
-let g:loaded_getscriptPlugin=1     " Disables :GetScript command (script downloader from vim.org)
-let g:loaded_logipat=1             " Disables :LogiPat command (logical pattern matching tool)
-let g:loaded_tarPlugin=1           " Disables ability to browse and edit files inside .tar archives
-let g:loaded_tutor_mode_plugin=1   " Disables :Tutor command (interactive Vim tutorial)
-let g:loaded_vimballPlugin=1       " Disables support for .vba (Vimball) plugin installation format
-let g:loaded_zipPlugin=1           " Disables ability to browse and edit files inside .zip archives
-let g:loaded_spellfile_plugin=1    " Disables automatic spell file downloading
 let g:gitgutter_eager=0            " Don't update gitgutter eagerly
 let g:netrw_altv = 1
 let g:netrw_banner = 0
@@ -54,6 +46,8 @@ endif
 call plug#begin('~/.vim/plugged')
 Plug 'ap/vim-buftabline'
 Plug 'airblade/vim-gitgutter'
+Plug 'junegunn/fzf.vim' | Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'tpope/vim-sleuth'
 Plug 'dense-analysis/ale'
 call plug#end()
 " #############################################################################
@@ -64,13 +58,13 @@ augroup general
 	autocmd VimResized  * wincmd = " equalize
 	" Auto close quickfix when I select something
 	autocmd FileType qf   nnoremap <buffer> <cr> <cr>:<C-u>lclose<cr>
-	" Strip whitespaces and extra newlines
-	autocmd BufWritePre * if &ft!~?'markdown'|%s/\($\n\s*\)\+\%$//e|endif
-	autocmd BufWritePre * if &ft!~?'markdown'|%s/\s\+$//e|endif
 	" When editing a file, always jump to the last cursor position
 	autocmd BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
 	" Auto day/night theme
 	autocmd BufEnter,SigUSR1 * call ToggleTheme()
+	" Disable MatchParen for files with a line with more than 1k chars
+	autocmd BufWinEnter * exe max(map(getline(1,'$'), 'len(v:val)')) > 1000 ? 'NoMatchParen' : ''
+	autocmd Syntax * syntax match myFunction    '\v[[:alpha:]_]\w*\ze\s*\('
 augroup end
 " Toggle light/dark mode ######################################################
 function! ToggleTheme()
@@ -78,17 +72,20 @@ function! ToggleTheme()
 	colorscheme lunaperche
 	if theme == "light"
 		set background=light
+		highlight Normal ctermbg=15
 	else
 		set background=dark
+		highlight Normal ctermbg=233
 	endif
-	highlight Normal ctermbg=NONE
 	highlight StatusLineNC cterm=NONE ctermbg=NONE
 	highlight VertSplit ctermbg=NONE
-	highlight clear Comment
 	highlight clear StatusLine
 	highlight clear TabLine
 	highlight clear TabLineFill
-	highlight link Comment NonText
+	highlight clear Type
+	highlight link Type Keyword
+	highlight link Function Keyword
+	highlight link myFunction Function
 endfun
 " Shortcuts ###################################################################
 let mapleader=' '
@@ -103,18 +100,19 @@ nnoremap <C-c>              :<C-u>bp<bar>sp<bar>bn<bar>bd<cr>
 " Copy to clipboard
 vnoremap <C-c>              y:call system('wl-copy', @")<cr>
 " Fuzzy finding
-nnoremap <leader><Tab>      :<C-u>call feedkeys(":buffer \<Tab>", 't')<cr>
-nnoremap <leader><leader>   :<C-u>lgetexpr system(&grepprg . ' -l .<bar>sed "s/\(.*\)/\1:1: /"')<bar>lopen<cr>/
+nnoremap <leader><Tab>      :<C-u>Buffers<cr>
+nnoremap <leader><leader>   :<C-u>Files<cr>
+nnoremap <leader>t          :<C-u>Tags<cr>
+nnoremap <leader>f          :<C-u>RG<cr>
 nnoremap <leader>n          :<C-u>Lexplore<cr>
 nnoremap <leader>o          :<C-u>args `find . -type f -iname '**'`<Left><Left><Left>
-nnoremap <leader>t          :<C-u>call feedkeys(":tag \<Tab>", 't')<cr>
 " Git helpers
 nnoremap <leader>gd         :<C-u>!git difftool --tool=vimdiff --no-prompt <C-r>=expand('%')<cr><cr>
 nnoremap <leader>gb         :<C-u>!tig blame +<C-r>=line('.')<cr> -- <C-r>=expand('%')<cr><cr>
 nnoremap <leader>gs         :<C-u>!tig -C . status<cr><cr>
 " IDE-Like functionality (non-LSP)
 nnoremap <leader>d          :<C-u>vert stag <c-r>=expand("<cword>")<cr><cr>
-nnoremap <leader>f          :<C-u>cgetexpr system(&grepprg . ' ""')<bar>copen<C-Left><Right>
+nnoremap <leader>F          :<C-u>cgetexpr system(&grepprg . ' ""')<bar>copen<C-Left><Right>
 nnoremap <leader>fr         :<C-u>cgetexpr system(&grepprg . ' "\<<c-r>=expand("<cword>")<cr>\>"')<bar>copen<cr>
 " Dev setup ###################################################################
 " Formatters for different languages
@@ -124,7 +122,7 @@ autocmd FileType json       setlocal equalprg=jq\ --tab
 autocmd FileType python     setlocal equalprg=yapf\ --style=facebook
 autocmd FileType sh         setlocal equalprg=shfmt\ -s\ -ci\ -sr\ -kp\ -fn\ -i=0
 " Format code
-nnoremap <leader>i          :<C-u>mkview<cr>:w<cr>gg=G:loadview<cr>
+nnoremap <leader>i          :<C-u>mkview<cr>:w<cr>gg=G:loadview<cr>:%s/\s\+$//e<cr>
 " Project wide Linters for different languages
 autocmd FileType c          nnoremap <buffer> <leader>l <Esc>:<C-u>cgetexpr system('clang-tidy -p compile-commands.json ' . expand('%') . ' <bar>grep ' . expand('%'))<bar>copen<cr>
 autocmd FileType go         nnoremap <buffer> <leader>l <Esc>:<C-u>cgetexpr system("golangci-lint run ./... --color never --out-format tab")<bar>copen<cr>
@@ -135,7 +133,6 @@ autocmd FileType yaml       nnoremap <buffer> <leader>l <Esc>:<C-u>cgetexpr syst
 " Setup ALE as LSP client when dependencies are met ###########################
 set complete=.,w,b,u,t,i,d
 set completeopt=menu,menuone,popup,noselect,noinsert
-let g:ale_completion_enabled=1
 let g:ale_floating_preview=1
 let g:ale_hover_cursor=0
 let g:ale_lint_on_enter =0

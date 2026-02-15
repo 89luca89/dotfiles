@@ -1,5 +1,4 @@
 set nocompatible                   " Modern Vim features, not Vi compatible
-set nocompatible                   " Modern Vim features, not Vi compatible
 let g:loaded_2html_plugin=1        " Disables :TOhtml command (converts buffer to HTML with syntax highlighting)
 let g:loaded_getscriptPlugin=1     " Disables :GetScript command (script downloader from vim.org)
 let g:loaded_logipat=1             " Disables :LogiPat command (logical pattern matching tool)
