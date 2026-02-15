@@ -29,8 +29,8 @@
 	helper = 
 	helper = !/usr/bin/gh auth git-credential
 
-[includeif "gitdir:~/Projects/chainguard/"]
-	path = ~/.gitconfig-gitsign
+# [includeif "gitdir:~/Projects/chainguard/"]
+# 	path = ~/.gitconfig-gitsign
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
