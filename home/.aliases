@@ -31,7 +31,39 @@ alias dark="echo -n dark > ~/.local/share/theme && kill -s USR1 \$(pgrep vim)"
 alias cgwork-create="cg work create --machine-type n4-standard-32 --lifetime 120h --data-disk-type hyperdisk-balanced --boot-disk-type hyperdisk-balanced --zone europe-west2-a"
 alias cgwork="gcloud compute ssh  --project chainguard-workstations --zone europe-west2-a luca-dimaio-work-v2 --command \"~/.local/bin/distrobox enter wolfi_distrobox -- sh -c 'tmux a || tmux'\" -- -t"
 
-# Isolate claude into container, so that we can use --dangerously-skip-permissions for unattended actions.
-alias claude-container="podman run --env TERM=$TERM --env HOME=$HOME --userns=keep-id --rm -ti -v \$HOME/.claude:\$HOME/.claude:z -v \$HOME/.claude.json:\$HOME/.claude.json:z -v \$HOME/dotfiles:\$HOME/dotfiles:z -v \$(pwd):\$(pwd):z --workdir \$(pwd) localhost/claude:latest"
-alias claude-code="claude-container --permission-mode plan --dangerously-skip-permissions --append-system-prompt-file $HOME/dotfiles/claude/coding-prompt.md" # proper agent mode, always plan
-alias claude="claude-container --dangerously-skip-permissions --append-system-prompt-file $HOME/dotfiles/claude/chat-prompt.md" # use claude cli more like a chat than an agent
+# Sandboxed claude container for --dangerously-skip-permissions usage.
+claude-container() {
+	workdir=$(pwd)
+	if [ "$workdir" = "$HOME" ]; then
+		workdir="$HOME/.claude/scratch"
+		mkdir -p "$workdir"
+	fi
+	PODMAN_SOCK="${XDG_RUNTIME_DIR}/podman/podman.sock"
+	if [ ! -S "$PODMAN_SOCK" ]; then
+		echo "Starting podman socket..."
+		systemctl --user start podman.socket
+	fi
+	podman run \
+		--env TERM="$TERM" --env HOME="$HOME" \
+		-e DOCKER_HOST=unix://$PODMAN_SOCK \
+		-e CONTAINER_HOST=unix://$PODMAN_SOCK \
+		--userns=keep-id --rm -ti \
+		--cap-drop=ALL \
+		--security-opt label=disable \
+		--security-opt no-new-privileges \
+		--read-only \
+		--memory=4g --cpus=4 --pids-limit=2048 \
+		--ulimit core=0:0 \
+		--tmpfs /tmp:rw,size=512m \
+		--tmpfs /var/tmp:rw,size=512m \
+		--tmpfs /run:rw,size=256m \
+		--tmpfs /home/"${USER}":rw \
+		-v "${PODMAN_SOCK}:${PODMAN_SOCK}:z" \
+		-v "$HOME/.claude.json:$HOME/.claude.json:z" \
+		-v "$HOME/.claude:$HOME/.claude:z" \
+		-v "$workdir:$workdir:z" \
+		--workdir "$workdir" \
+		localhost/claude:latest "$@"
+}
+alias claude-code="claude-container --permission-mode plan --dangerously-skip-permissions --append-system-prompt-file $HOME/.claude/coding-prompt.md"
+alias claude="claude-container --append-system-prompt-file $HOME/.claude/chat-prompt.md"

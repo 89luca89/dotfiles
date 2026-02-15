@@ -1,10 +1,20 @@
-FROM alpine:latest
+FROM alpine:latest AS builder
 
 RUN apk add --update-cache bash curl nodejs libgcc libstdc++ ripgrep
-RUN curl -fsSL https://claude.ai/install.sh | bash 
+RUN curl -fsSL https://claude.ai/install.sh | bash
 
 FROM alpine:latest
 
-COPY --from=0 /root/.local/share/claude/versions/* /usr/local/bin/claude
-RUN apk add --update-cache bash coreutils curl wget nodejs python3 git && rm -rf /var/cache/apk/*
+COPY --from=builder /root/.local/share/claude/versions/* /usr/local/bin/claude
+RUN apk add --update-cache \
+    bash coreutils git openssh-client curl wget \
+    build-base cmake \
+    go \
+    nodejs npm \
+    python3 py3-pip \
+    ripgrep jq shellcheck \
+    podman \
+    docker-cli \
+    && rm -rf /var/cache/apk/*
+
 ENTRYPOINT ["/usr/local/bin/claude"]
