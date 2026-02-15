@@ -13,7 +13,6 @@ nautilus/.config/gtk-3.0/
 pipewire/.config/pipewire
 pipewire/.config/wireplumber
 ssh/.ssh
-claude/.claude
 vim/
 "
 
@@ -22,3 +21,5 @@ for i in $FOLDERS; do
 	mkdir -p "$HOME/$TARGET_DIR"
 	find "$i" -mindepth 1 -maxdepth 1 -exec sh -xc "ln -sf ${HOME}/dotfiles/\$0 ${HOME}/${TARGET_DIR}/" {} \;
 done
+
+cp "${HOME}/dotfiles/claude/.claude/"* "${HOME}/.claude/"
