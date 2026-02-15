@@ -22,8 +22,10 @@ shopt -s cmdhist
 # Complete using arrow up/down
 bind '"\e[A": history-search-backward' 2> /dev/null
 bind '"\e[B": history-search-forward' 2> /dev/null
+tty >/dev/null && stty werase undef
+tty >/dev/null && bind '"\C-w": backward-kill-word'
 # PS1
 export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
-export PS1="${CONTAINER_ID:-$HOSTNAME}:\W\$ "
+export PS1="\[\033[1m\]${CONTAINER_ID:-$HOSTNAME}\[\033[0m\]:\W\$ "
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
