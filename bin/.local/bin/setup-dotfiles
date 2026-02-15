@@ -13,6 +13,7 @@ nautilus/.config/gtk-3.0/
 pipewire/.config/pipewire
 pipewire/.config/wireplumber
 ssh/.ssh
+claude/.claude
 vim/
 "
 
