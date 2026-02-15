@@ -2,6 +2,7 @@ com.github.finefindus.eyedropper
 dev.deedles.Trayscale
 # Media
 org.gimp.GIMP
+com.github.PintaProject.Pinta
 # Office
 com.github.xournalpp.xournalpp
 org.libreoffice.LibreOffice
@@ -13,9 +14,12 @@ org.gnome.Calculator
 org.gnome.FileRoller
 org.gnome.Loupe
 org.gnome.Papers
-org.gnome.Rhythmbox3
 org.gnome.TextEditor
 org.gnome.World.Secrets
 org.gnome.gitlab.somas.Apostrophe
+com.ranfdev.DistroShelf
+org.gnome.Evolution
 org.gtk.Gtk3theme.Adwaita-dark
 org.telegram.desktop
+de.haeckerfelix.Fragments
+org.gnome.Rhythmbox3
