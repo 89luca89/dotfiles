@@ -257,7 +257,7 @@ install zonefs /bin/false
 " | sudo tee -a /etc/modprobe.d/hardening.conf
 
 KERNEL_CMDLINE=""
-KERNEL_CMDLINE="$KERNEL_CMDLINE amdgpu.abmlevel=0"
+KERNEL_CMDLINE="$KERNEL_CMDLINE amdgpu.sg_display=0" # Workaround, some APU will flicker white
 KERNEL_CMDLINE="$KERNEL_CMDLINE nmi_watchdog=0"
 KERNEL_CMDLINE="$KERNEL_CMDLINE nowatchdog"
 KERNEL_CMDLINE="$KERNEL_CMDLINE pcie_aspm.policy=powersupersave"

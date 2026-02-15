@@ -43,11 +43,13 @@ uki_generator=ukify
 initrd_generator=dracut
 EOF
 
+sudo bootctl set-timeout 0
+
 sudo dnf copr enable chenxiaolong/sbctl
 sudo dnf install sbctl systemd-ukify systemd-devel
+read -n 1 -p "Input Selection:" "mainmenuinput"
 ################# SECURE BOOT SETUP ##########################################
 if sudo sbctl status | grep -q 'sbctl is not installed'; then
-	read -n 1 -p "Input Selection:" "mainmenuinput"
 	sudo kernel-install -v add-all
 	sudo sbctl create-keys
 	sudo sbctl enroll-keys --firmware-builtin

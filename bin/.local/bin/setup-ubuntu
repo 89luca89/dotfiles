@@ -24,6 +24,7 @@ sudo apt install --autoremove --purge \
 sudo apt remove --autoremove --purge --allow-remove-essential \
 	grub2* shim*
 sudo apt-mark hold grub2* shim*
+sudo bootctl set-timeout 0
 
 # Enable UKIs
 sudo tee /etc/kernel/install.conf << EOF
@@ -45,6 +46,7 @@ sudo efibootmgr show | grep -Ei "shim|grub" |
 ################# SECURE BOOT SETUP ###########################################
 wget -c https://download.opensuse.org/repositories/home:/jloeser:/secureboot/xUbuntu_24.04/amd64/sbctl_0.17-15.1_amd64.deb
 sudo apt install ./sbctl_0.17-15.1_amd64.deb && rm ./sbctl_0.17-15.1_amd64.deb
+read -n 1 -p "Input Selection:" "mainmenuinput"
 if sudo sbctl status | grep -q 'sbctl is not installed'; then
 	sudo sbctl create-keys
 	sudo sbctl enroll-keys --microsoft --firmware-builtin
