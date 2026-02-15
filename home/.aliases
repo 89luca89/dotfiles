@@ -61,6 +61,9 @@ claude-container() {
 		-v "${PODMAN_SOCK}:${PODMAN_SOCK}:z" \
 		-v "$HOME/.claude.json:$HOME/.claude.json:z" \
 		-v "$HOME/.claude:$HOME/.claude:z" \
+		-v "$HOME/.claude/settings.json:$HOME/.claude/settings.json:ro,z" \
+		-v "$HOME/.claude/coding-prompt.md:$HOME/.claude/coding-prompt.md:ro,z" \
+		-v "$HOME/.claude/chat-prompt.md:$HOME/.claude/chat-prompt.md:ro,z" \
 		-v "$workdir:$workdir:z" \
 		--workdir "$workdir" \
 		localhost/claude:latest "$@"
