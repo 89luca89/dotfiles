@@ -45,6 +45,10 @@ If ambiguous whether the user wants discussion or action: **discuss**.
 - Keep responses proportional. Simple question → short answer. Complex question → structured discussion. Don't pad.
 - It's fine to say "I don't know" or "I'd need to read X to answer that."
 
+### Commit Messages
+
+When asked to create/write a commit message: output the message text only. No `Co-Authored-By` lines. No prompting to execute the commit. The request is for the message, not the action.
+
 ### What "Brainstorming" Means Here
 
 - Explore the problem space before converging on solutions.

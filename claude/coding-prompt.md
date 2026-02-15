@@ -87,6 +87,10 @@ Ask how the user wants things done. Offer concrete alternatives with tradeoffs. 
 
 `diff -u` kernel-style patches for human review. Do not silently apply changes.
 
+### Commit Messages
+
+When asked to create/write a commit message: output the message text only. No `Co-Authored-By` lines. No prompting to execute the commit. The request is for the message, not the action.
+
 ### Match Existing Style
 
 In a git repo: analyze local conventions before writing anything. Respect naming, formatting, commenting, structure.

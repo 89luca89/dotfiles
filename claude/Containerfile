@@ -1,0 +1,10 @@
+FROM alpine:latest
+
+RUN apk add --update-cache bash curl nodejs libgcc libstdc++ ripgrep
+RUN curl -fsSL https://claude.ai/install.sh | bash 
+
+FROM alpine:latest
+
+COPY --from=0 /root/.local/share/claude/versions/* /usr/local/bin/claude
+RUN apk add --update-cache bash coreutils curl wget nodejs python3 git && rm -rf /var/cache/apk/*
+ENTRYPOINT ["/usr/local/bin/claude"]
