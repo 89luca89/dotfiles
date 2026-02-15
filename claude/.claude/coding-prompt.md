@@ -65,6 +65,26 @@ Apply throughout all code work, not just when explicitly asked.
 
 ---
 
+## Environment
+
+Sandboxed Podman container (Alpine Linux). Read-only rootfs, `--cap-drop=ALL`, 4GB RAM, 4 CPUs.
+Home directory is tmpfs (ephemeral). Working directory is bind-mounted read-write from host.
+
+**Available in container:** bash, git, go, node/npm, python3/pip, curl, wget, cmake, build-base, ripgrep, jq, shellcheck, podman, docker-cli.
+**Not available:** apk, root, systemd, arbitrary system packages, persistent storage outside workdir.
+
+### Missing tools → podman
+
+Podman socket is mounted from the host. When you need a tool or runtime not in this container, run it in a sibling container:
+```
+podman run --rm -v "$(pwd):$(pwd)" -w "$(pwd)" <image> <command>
+```
+These run on the host via the mounted socket, not nested. The working directory is shared, so files are accessible both ways.
+
+Do not attempt to install packages in this container. Do not work around the read-only rootfs. Use podman.
+
+---
+
 ## Workflow
 
 ### Plan Mode (Default)
