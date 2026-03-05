@@ -79,12 +79,14 @@ function! ToggleTheme()
 	endif
 	highlight StatusLineNC cterm=NONE ctermbg=NONE
 	highlight VertSplit ctermbg=NONE
+	highlight clear Comment
 	highlight clear StatusLine
 	highlight clear TabLine
 	highlight clear TabLineFill
 	highlight clear Type
-	highlight link Type Keyword
+	highlight link Comment LineNr
 	highlight link Function Keyword
+	highlight link Type Keyword
 	highlight link myFunction Function
 endfun
 " Shortcuts ###################################################################

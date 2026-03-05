@@ -161,5 +161,5 @@ for d in ~/.var/app/*; do
 		clean_folder "$d"
 	fi
 done
-
-find "$HOME/.var/app" -iname cache -type d -exec rm -rf {} +
+rm -rf "${HOME}/.var/app/org.chromium.Chromium/cache"
+# find "$HOME/.var/app" -iname cache -type d -exec echo rm -rf {} +
