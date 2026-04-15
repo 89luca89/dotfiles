@@ -1,4 +1,9 @@
 #!/bin/sh
+
+sudo dnf install -y \
+	https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-"$(rpm -E %fedora)".noarch.rpm \
+	https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-"$(rpm -E %fedora)".noarch.rpm
+
 sudo dnf remove \
 	PackageKit* \
 	abrt* \
@@ -13,6 +18,7 @@ sudo dnf remove \
 	gnome-tour* \
 	gnome-user-docs* \
 	gnome-weather* \
+	decibels papers evince mediawriter \
 	ibus \
 	ibut-anthy \
 	ibut-anthy-python \
@@ -27,7 +33,7 @@ sudo dnf remove \
 	loupe* \
 	open-vm* \
 	qemu-guest-agent \
-	totem \
+	totem showtime \
 	virtualbox-guest-additions \
 	yelp*
 
@@ -68,7 +74,11 @@ sudo usermod -aG docker "$USER"
 sudo systemctl enable --now docker
 sudo systemctl enable --now powertop
 
-sudo dnf swap tuned-ppd power-profiles-daemon
-powerprofilesctl set power-saver
-powerprofilesctl configure-action amdgpu_panel_power --enable
-powerprofilesctl configure-action amdgpu_dpm --enable
+if ! grep Intel /proc/cpuinfo; then
+	sudo dnf swap tuned-ppd power-profiles-daemon
+	powerprofilesctl set power-saver
+	powerprofilesctl configure-action amdgpu_panel_power --enable
+	powerprofilesctl configure-action amdgpu_dpm --enable
+else
+	sudo dnf install -y intel-media-driver libva-*-driver
+fi

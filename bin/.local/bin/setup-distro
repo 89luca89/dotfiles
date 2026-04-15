@@ -36,7 +36,6 @@ kernel.printk=3 3 3 3
 kernel.randomize_va_space=2
 kernel.sysrq=0
 kernel.unprivileged_bpf_disabled=1
-kernel.yama.ptrace_scope=3
 net.core.bpf_jit_harden=2
 net.core.default_qdisc=fq_codel
 net.ipv4.conf.all.accept_redirects=0
@@ -257,33 +256,44 @@ install zonefs /bin/false
 " | sudo tee -a /etc/modprobe.d/hardening.conf
 
 KERNEL_CMDLINE=""
-KERNEL_CMDLINE="$KERNEL_CMDLINE amdgpu.sg_display=0" # Workaround, some APU will flicker white
-KERNEL_CMDLINE="$KERNEL_CMDLINE nmi_watchdog=0"
-KERNEL_CMDLINE="$KERNEL_CMDLINE nowatchdog"
-KERNEL_CMDLINE="$KERNEL_CMDLINE pcie_aspm.policy=powersupersave"
-KERNEL_CMDLINE="$KERNEL_CMDLINE pcie_aspm=force"
-KERNEL_CMDLINE="$KERNEL_CMDLINE usbcore.autosuspend=1"
-KERNEL_CMDLINE="$KERNEL_CMDLINE lockdown=confidentiality" # lockdown=integrity" # Integrity allows bpf, confidentiality is better when possible
-KERNEL_CMDLINE="$KERNEL_CMDLINE loglevel=0"
 KERNEL_CMDLINE="$KERNEL_CMDLINE amd_iommu=force_isolation"
+KERNEL_CMDLINE="$KERNEL_CMDLINE amd_pstate=active"
+KERNEL_CMDLINE="$KERNEL_CMDLINE amdgpu.dcfeaturemask=0xB"
+KERNEL_CMDLINE="$KERNEL_CMDLINE amdgpu.sg_display=0" # Workaround, some APU will flicker white
+KERNEL_CMDLINE="$KERNEL_CMDLINE drm.vblankoffdelay=1"
+KERNEL_CMDLINE="$KERNEL_CMDLINE efi=disable_early_pci_dma"
+KERNEL_CMDLINE="$KERNEL_CMDLINE i915.enable_dc=4"
+KERNEL_CMDLINE="$KERNEL_CMDLINE i915.enable_fbc=1"
+KERNEL_CMDLINE="$KERNEL_CMDLINE i915.enable_panel_replay=1"
+KERNEL_CMDLINE="$KERNEL_CMDLINE i915.enable_psr=1"
+KERNEL_CMDLINE="$KERNEL_CMDLINE xe.enable_dc=4"
+KERNEL_CMDLINE="$KERNEL_CMDLINE xe.enable_fbc=1"
+KERNEL_CMDLINE="$KERNEL_CMDLINE xe.enable_panel_replay=1"
+KERNEL_CMDLINE="$KERNEL_CMDLINE xe.enable_psr=1"
+KERNEL_CMDLINE="$KERNEL_CMDLINE init_on_alloc=1"
 KERNEL_CMDLINE="$KERNEL_CMDLINE intel_iommu=on"
 KERNEL_CMDLINE="$KERNEL_CMDLINE iommu.passthrough=0"
-KERNEL_CMDLINE="$KERNEL_CMDLINE iommu.strict=1"
-KERNEL_CMDLINE="$KERNEL_CMDLINE efi=disable_early_pci_dma"
-KERNEL_CMDLINE="$KERNEL_CMDLINE init_on_alloc=1"
-KERNEL_CMDLINE="$KERNEL_CMDLINE init_on_free=1"
+KERNEL_CMDLINE="$KERNEL_CMDLINE lockdown=confidentiality" # lockdown=integrity" # Integrity allows bpf, confidentiality is better when possible
+KERNEL_CMDLINE="$KERNEL_CMDLINE loglevel=0"
 KERNEL_CMDLINE="$KERNEL_CMDLINE module.sig_enforce=1"
+KERNEL_CMDLINE="$KERNEL_CMDLINE nmi_watchdog=0"
+KERNEL_CMDLINE="$KERNEL_CMDLINE nowatchdog"
+KERNEL_CMDLINE="$KERNEL_CMDLINE oops=panic"
 KERNEL_CMDLINE="$KERNEL_CMDLINE page_alloc.shuffle=1"
 KERNEL_CMDLINE="$KERNEL_CMDLINE page_table_check=on"
-KERNEL_CMDLINE="$KERNEL_CMDLINE randomize_kstack_offset=1"
-KERNEL_CMDLINE="$KERNEL_CMDLINE slab_nomerge"
-KERNEL_CMDLINE="$KERNEL_CMDLINE slub_debug=FZ"
-KERNEL_CMDLINE="$KERNEL_CMDLINE vsyscall=none"
-KERNEL_CMDLINE="$KERNEL_CMDLINE oops=panic"
+KERNEL_CMDLINE="$KERNEL_CMDLINE pcie_aspm.policy=powersupersave"
+KERNEL_CMDLINE="$KERNEL_CMDLINE pcie_aspm=force"
 KERNEL_CMDLINE="$KERNEL_CMDLINE random.trust_bootloader=off"
 KERNEL_CMDLINE="$KERNEL_CMDLINE random.trust_cpu=off"
+KERNEL_CMDLINE="$KERNEL_CMDLINE randomize_kstack_offset=1"
 KERNEL_CMDLINE="$KERNEL_CMDLINE rd.emergency=halt"
 KERNEL_CMDLINE="$KERNEL_CMDLINE rd.shell=0"
+KERNEL_CMDLINE="$KERNEL_CMDLINE rtc_cmos.use_acpi_alarm=1"
+KERNEL_CMDLINE="$KERNEL_CMDLINE slab_nomerge"
+KERNEL_CMDLINE="$KERNEL_CMDLINE snd_hda_intel.power_save=1"
+KERNEL_CMDLINE="$KERNEL_CMDLINE usbcore.autosuspend=1"
+KERNEL_CMDLINE="$KERNEL_CMDLINE vsyscall=none"
+KERNEL_CMDLINE="$KERNEL_CMDLINE workqueue.power_efficient=Y"
 # KERNEL_CMDLINE="$KERNEL_CMDLINE debugfs=off" # Need for powertop
 
 # grub case
