@@ -101,6 +101,10 @@ nnoremap <Tab>              :<C-u>bn<cr>
 nnoremap <C-c>              :<C-u>bp<bar>sp<bar>bn<bar>bd<cr>
 " Copy to clipboard
 vnoremap <C-c>              y:call system('wl-copy', @")<cr>
+vnoremap <C-X>              y:call system('wl-copy-remote', @")<cr>
+" Escape
+tnoremap <Esc>              <C-\><C-n>
+inoremap jj                 <Esc>
 " Fuzzy finding
 nnoremap <leader><Tab>      :<C-u>Buffers<cr>
 nnoremap <leader><leader>   :<C-u>Files<cr>
