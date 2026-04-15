@@ -1,3 +1,4 @@
+com.github.tchx84.Flatseal
 com.github.finefindus.eyedropper
 dev.deedles.Trayscale
 # Media
@@ -22,4 +23,6 @@ org.gnome.Evolution
 org.gtk.Gtk3theme.Adwaita-dark
 org.telegram.desktop
 de.haeckerfelix.Fragments
+#
 org.gnome.Rhythmbox3
+com.obsproject.Studio
