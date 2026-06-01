@@ -26,3 +26,12 @@ de.haeckerfelix.Fragments
 #
 org.gnome.Rhythmbox3
 com.obsproject.Studio
+#
+runtime/org.freedesktop.Platform.VAAPI.Intel/x86_64/18.08
+runtime/org.freedesktop.Platform.VAAPI.Intel/x86_64/19.08
+runtime/org.freedesktop.Platform.VAAPI.Intel/x86_64/20.08
+runtime/org.freedesktop.Platform.VAAPI.Intel/x86_64/21.08
+runtime/org.freedesktop.Platform.VAAPI.Intel/x86_64/22.08
+runtime/org.freedesktop.Platform.VAAPI.Intel/x86_64/23.08
+runtime/org.freedesktop.Platform.VAAPI.Intel/x86_64/24.08
+runtime/org.freedesktop.Platform.VAAPI.Intel/x86_64/25.08
