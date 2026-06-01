@@ -55,10 +55,7 @@ augroup general
 	autocmd! general
 	" Keep equal proportions when windows resized
 	autocmd VimResized  * wincmd = " equalize
-	" Auto close quickfix when I select something
-	autocmd FileType qf   nnoremap <buffer> <cr> <cr>:<C-u>lclose<cr>
-	" When editing a file, always jump to the last cursor position
-	autocmd BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+	autocmd! FileType fzf tnoremap <buffer> <Esc> <C-c>
 	" Auto day/night theme
 	autocmd BufEnter,SigUSR1 * call ToggleTheme()
 	" Disable MatchParen for files with a line with more than 1k chars
@@ -68,24 +65,13 @@ augroup end
 " Toggle light/dark mode ######################################################
 function! ToggleTheme()
 	let theme = trim(readfile(expand('~/.local/share/theme'))[0])
-	colorscheme lunaperche
 	if theme == "light"
 		set background=light
-		highlight Normal ctermbg=15
+		colorscheme wildcharm
 	else
 		set background=dark
-		highlight Normal ctermbg=233
+		colorscheme retrobox
 	endif
-	highlight StatusLineNC cterm=NONE ctermbg=NONE
-	highlight VertSplit ctermbg=NONE
-	highlight clear Comment
-	highlight clear StatusLine
-	highlight clear TabLine
-	highlight clear TabLineFill
-	highlight clear Type
-	highlight link Comment LineNr
-	highlight link Function Keyword
-	highlight link Type Keyword
 	highlight link myFunction Function
 endfun
 " Shortcuts ###################################################################
@@ -115,26 +101,7 @@ nnoremap <leader>o          :<C-u>args `find . -type f -iname '**'`<Left><Left><
 nnoremap <leader>gd         :<C-u>!git difftool --tool=vimdiff --no-prompt <C-r>=expand('%')<cr><cr>
 nnoremap <leader>gb         :<C-u>!tig blame +<C-r>=line('.')<cr> -- <C-r>=expand('%')<cr><cr>
 nnoremap <leader>gs         :<C-u>!tig -C . status<cr><cr>
-" IDE-Like functionality (non-LSP)
-nnoremap <leader>d          :<C-u>vert stag <c-r>=expand("<cword>")<cr><cr>
-nnoremap <leader>F          :<C-u>cgetexpr system(&grepprg . ' ""')<bar>copen<C-Left><Right>
-nnoremap <leader>fr         :<C-u>cgetexpr system(&grepprg . ' "\<<c-r>=expand("<cword>")<cr>\>"')<bar>copen<cr>
 " Dev setup ###################################################################
-" Formatters for different languages
-autocmd FileType c,cpp      setlocal equalprg=clang-format
-autocmd FileType go         setlocal equalprg=goimports
-autocmd FileType json       setlocal equalprg=jq\ --tab
-autocmd FileType python     setlocal equalprg=yapf\ --style=facebook
-autocmd FileType sh         setlocal equalprg=shfmt\ -s\ -ci\ -sr\ -kp\ -fn\ -i=0
-" Format code
-nnoremap <leader>i          :<C-u>mkview<cr>:w<cr>gg=G:loadview<cr>:%s/\s\+$//e<cr>
-" Project wide Linters for different languages
-autocmd FileType c          nnoremap <buffer> <leader>l <Esc>:<C-u>cgetexpr system('clang-tidy -p compile-commands.json ' . expand('%') . ' <bar>grep ' . expand('%'))<bar>copen<cr>
-autocmd FileType go         nnoremap <buffer> <leader>l <Esc>:<C-u>cgetexpr system("golangci-lint run ./... --color never --out-format tab")<bar>copen<cr>
-autocmd FileType json       nnoremap <buffer> <leader>l <Esc>:<C-u>cgetexpr system('jq . ' . expand('%') . ' > /dev/null')<bar>copen<cr>
-autocmd FileType python     nnoremap <buffer> <leader>l <Esc>:<C-u>cgetexpr system("flake8 -j auto --max-line-length 80")<bar>copen<cr>
-autocmd FileType sh         nnoremap <buffer> <leader>l <Esc>:<C-u>cgetexpr system("shellcheck -f gcc -a -Sstyle " . expand('%'))<bar>copen<cr>
-autocmd FileType yaml       nnoremap <buffer> <leader>l <Esc>:<C-u>cgetexpr system("yamllint --format parsable " . expand('%'))<bar>copen<cr>
 " Setup ALE as LSP client when dependencies are met ###########################
 set complete=.,w,b,u,t,i,d
 set completeopt=menu,menuone,popup,noselect,noinsert
@@ -142,17 +109,41 @@ let g:ale_floating_preview=1
 let g:ale_hover_cursor=0
 let g:ale_lint_on_enter =0
 let g:ale_lint_on_text_changed=0
-if executable('clangd') && executable('gopls') && executable('jedi-language-server')
-	let g:ale_linters={
-				\   'go':     ['gopls'],
-				\   'json':   ['jq'],
-				\   'python': ['jedils', 'pylint', 'mypy'],
-				\}
-	" Set up LSP completion and commands
-	autocmd FileType c,go,python  setlocal omnifunc=ale#completion#OmniFunc
-	autocmd FileType c,go,python  nnoremap <buffer> <leader>k  :<C-u>ALEHover<cr>
-	autocmd FileType c,go,python  nnoremap <buffer> <C-]>      :<C-u>ALEGoToDefinition<cr>
-	autocmd FileType c,go,python  nnoremap <buffer> <leader>d  :<C-u>ALEGoToDefinition -vsplit<cr>
-	autocmd FileType c,go,python  nnoremap <buffer> <leader>fr :<C-u>ALEFindReferences<cr>
-	autocmd FileType c,go,python  nnoremap <buffer> <leader>r  :<C-u>ALERename<cr>
-endif
+let g:ale_linters={
+			\   'go':     ['gopls'],
+			\   'json':   ['jq'],
+			\   'python': ['jedils', 'pylint', 'mypy'],
+			\   'rust':   ['analyzer'],
+			\}
+let g:ale_fixers = {
+			\   '*':      ['trim_whitespace','remove_trailing_lines'],
+			\   'c':      ['clang-format'],
+			\   'cpp':    ['clang-format'],
+			\   'go':     ['goimports'],
+			\   'json':   ['jq'],
+			\   'python': ['yapf'],
+			\   'rust':   ['rustfmt'],
+			\   'sh':     ['shfmt'],
+			\}
+let g:ale_json_jq_options     = '--tab'
+let g:ale_python_yapf_options = '--style=facebook'
+let g:ale_sh_shfmt_options    = '-s -ci -sr -kp -fn -i=0'
+" Set up LSP completion and commands
+nnoremap <leader>i :<C-u>ALEFix<cr>
+nnoremap <leader>d          :<C-u>vert stag <c-r>=expand("<cword>")<cr><cr>
+nnoremap <leader>F          :<C-u>cgetexpr system(&grepprg . ' ""')<bar>copen<C-Left><Right>
+nnoremap <leader>fr         :<C-u>cgetexpr system(&grepprg . ' "\<<c-r>=expand("<cword>")<cr>\>"')<bar>copen<cr>
+autocmd FileType c,cpp,,go,python,rust  setlocal omnifunc=ale#completion#OmniFunc
+autocmd FileType c,cpp,,go,python,rust  nnoremap <buffer> <leader>k  :<C-u>ALEHover<cr>
+autocmd FileType c,cpp,,go,python,rust  nnoremap <buffer> <C-]>      :<C-u>ALEGoToDefinition<cr>
+autocmd FileType c,cpp,,go,python,rust  nnoremap <buffer> <leader>d  :<C-u>ALEGoToDefinition -vsplit<cr>
+autocmd FileType c,cpp,,go,python,rust  nnoremap <buffer> <leader>fr :<C-u>ALEFindReferences<cr>
+autocmd FileType c,cpp,,go,python,rust  nnoremap <buffer> <leader>r  :<C-u>ALERename<cr>
+" Project wide Linters for different languages
+autocmd FileType c,cpp      nnoremap <buffer> <leader>l <Esc>:<C-u>cgetexpr system('clang-tidy -p compile-commands.json ' . expand('%') . ' <bar>grep ' . expand('%'))<bar>copen<cr>
+autocmd FileType go         nnoremap <buffer> <leader>l <Esc>:<C-u>cgetexpr system("golangci-lint run ./... --color never --out-format tab")<bar>copen<cr>
+autocmd FileType json       nnoremap <buffer> <leader>l <Esc>:<C-u>cgetexpr system('jq . ' . expand('%') . ' > /dev/null')<bar>copen<cr>
+autocmd FileType python     nnoremap <buffer> <leader>l <Esc>:<C-u>cgetexpr system("flake8 -j auto --max-line-length 80")<bar>copen<cr>
+autocmd FileType rust       nnoremap <buffer> <leader>l <Esc>:<C-u>cgetexpr system("cargo clippy --message-format short 2>&1")<bar>copen<cr>
+autocmd FileType sh         nnoremap <buffer> <leader>l <Esc>:<C-u>cgetexpr system("shellcheck -f gcc -a -Sstyle " . expand('%'))<bar>copen<cr>
+autocmd FileType yaml       nnoremap <buffer> <leader>l <Esc>:<C-u>cgetexpr system("yamllint --format parsable " . expand('%'))<bar>copen<cr>
