@@ -12,92 +12,6 @@ set -o errexit
 set -o nounset
 
 echo "
-# Hardening
-dev.tty.ldisc_autoload=0
-fs.protected_fifos=2
-fs.protected_hardlinks=1
-fs.protected_regular=2
-fs.protected_symlinks=1
-fs.suid_dumpable=0
-kernel.bpf_stats_enabled=0
-kernel.core_pattern=|/bin/false
-kernel.core_uses_pid=1
-kernel.dmesg_restrict=1
-kernel.ftrace_enabled=0
-kernel.io_uring_disabled=2
-kernel.kexec_load_disabled=1
-kernel.kptr_restrict=2
-kernel.panic=60
-kernel.panic_on_io_nmi=1
-kernel.panic_on_oops=1
-kernel.panic_on_unrecovered_nmi=1
-kernel.perf_event_paranoid=3
-kernel.printk=3 3 3 3
-kernel.randomize_va_space=2
-kernel.sysrq=0
-kernel.unprivileged_bpf_disabled=1
-net.core.bpf_jit_harden=2
-net.core.default_qdisc=fq_codel
-net.ipv4.conf.all.accept_redirects=0
-net.ipv4.conf.all.accept_source_route=0
-net.ipv4.conf.all.arp_announce=2
-net.ipv4.conf.all.arp_ignore=1
-net.ipv4.conf.all.drop_gratuitous_arp=1
-net.ipv4.conf.all.log_martians=1
-net.ipv4.conf.all.rp_filter=1
-net.ipv4.conf.all.secure_redirects=0
-net.ipv4.conf.all.send_redirects=0
-net.ipv4.conf.all.shared_media=1
-net.ipv4.conf.default.accept_redirects=0
-net.ipv4.conf.default.accept_source_route=0
-net.ipv4.conf.default.drop_gratuitous_arp=1
-net.ipv4.conf.default.log_martians=1
-net.ipv4.conf.default.rp_filter=1
-net.ipv4.conf.default.secure_redirects=0
-net.ipv4.conf.default.send_redirects=0
-net.ipv4.conf.default.shared_media=1
-net.ipv4.icmp_echo_ignore_all=1
-net.ipv4.icmp_echo_ignore_broadcasts=1
-net.ipv4.icmp_ignore_bogus_error_responses=1
-net.ipv4.icmp_ratelimit=100
-net.ipv4.icmp_ratemask=88089
-net.ipv4.tcp_challenge_ack_limit=1000
-net.ipv4.tcp_congestion_control=bbr
-net.ipv4.tcp_dsack=0
-net.ipv4.tcp_fack=0
-net.ipv4.tcp_max_syn_backlog=2048
-net.ipv4.tcp_moderate_rcvbuf=1
-net.ipv4.tcp_no_metrics_save=1
-net.ipv4.tcp_rfc1337=1
-net.ipv4.tcp_sack=1
-net.ipv4.tcp_syn_retries=5
-net.ipv4.tcp_synack_retries=2
-net.ipv4.tcp_syncookies=1
-net.ipv4.tcp_timestamps=1
-net.ipv4.tcp_window_scaling=1
-net.ipv6.conf.all.accept_ra=0
-net.ipv6.conf.all.accept_redirects=0
-net.ipv6.conf.all.accept_source_route=0
-net.ipv6.conf.all.autoconf=0
-net.ipv6.conf.all.router_solicitations=0
-net.ipv6.conf.all.use_tempaddr=2
-net.ipv6.conf.default.accept_ra=0
-net.ipv6.conf.default.accept_ra_defrtr=0
-net.ipv6.conf.default.accept_ra_pinfo=0
-net.ipv6.conf.default.accept_ra_rtr_pref=0
-net.ipv6.conf.default.accept_redirects=0
-net.ipv6.conf.default.accept_source_route=0
-net.ipv6.conf.default.autoconf=0
-net.ipv6.conf.default.dad_transmits=0
-net.ipv6.conf.default.max_addresses=1
-net.ipv6.conf.default.router_solicitations=0
-net.ipv6.conf.default.use_tempaddr=2
-net.ipv6.icmp.echo_ignore_all=1
-vm.max_map_count=1048576
-vm.mmap_min_addr=65536
-vm.mmap_rnd_bits=32
-vm.mmap_rnd_compat_bits=16
-vm.unprivileged_userfaultfd=0
 # Zram setup
 vm.dirty_background_ratio = 10
 vm.dirty_expire_centisecs = 6000
@@ -107,43 +21,47 @@ vm.laptop_mode = 5
 vm.min_free_kbytes=67584
 vm.page-cluster = 0
 vm.swappiness = 180
-vm.watermark_boost_factor = 15000
-vm.watermark_scale_factor = 10"  | sudo tee /etc/sysctl.d/99-sysctl-custom.conf > /dev/null
+vm.watermark_boost_factor = 0
+vm.watermark_scale_factor = 1" | sudo tee /etc/sysctl.d/99-sysctl-custom.conf > /dev/null
 sudo sysctl --system --quiet || :
 
 echo "[zram0]
 zram-size = ram" | sudo tee /etc/systemd/zram-generator.conf > /dev/null
 
-# shellcheck disable=SC2016,SC1083
 echo '#
 ACTION=="add", SUBSYSTEM=="acpi", DRIVERS=="button", ATTRS{hid}=="PNP0C0D", ATTR{power/wakeup}="disabled"
 ACTION=="add", SUBSYSTEM=="serio", DRIVERS=="atkbd", ATTR{power/wakeup}="disabled"
-ACTION=="add", SUBSYSTEM=="i2c", DRIVERS=="i2c_hid_acpi", ATTRS{name}=="PIXA3854:00", ATTR{power/wakeup}="disabled"
 ACTION=="add|change", SUBSYSTEM=="acpi", ATTR{power/control}="auto"
 ACTION=="add|change", SUBSYSTEM=="ahci", ATTR{power/control}="auto"
 ACTION=="add|change", SUBSYSTEM=="block", ATTR{power/control}="auto"
 ACTION=="add|change", SUBSYSTEM=="i2c", ATTR{power/control}="auto"
+ACTION=="add|change", SUBSYSTEM=="thunderbolt", ATTR{power/control}="auto"
 ACTION=="add|change", SUBSYSTEM=="net", KERNEL=="enp*", RUN+="/usr/sbin/ethtool -s %k wol d"
 ACTION=="add|change", SUBSYSTEM=="net", KERNEL=="wlp*", RUN+="/usr/sbin/iw dev %k set power_save on"
 ACTION=="add|change", SUBSYSTEM=="pci", ATTR{power/control}="auto"
 ACTION=="add|change", SUBSYSTEM=="scsi", ATTR{power/control}="auto"
+ACTION=="add|change", SUBSYSTEM=="pci", ATTR{power/wakeup}="disabled"
+ACTION=="add|change", SUBSYSTEM=="usb", ATTR{power/wakeup}="disabled"
+ACTION=="add|change", SUBSYSTEM=="thunderbolt", ATTR{power/wakeup}="disabled"
 ACTION=="add|change", SUBSYSTEM=="scsi_host", KERNEL=="host*", ATTR{link_power_management_policy}="min_power"
 ACTION=="add|change", SUBSYSTEM=="usb", ATTR{power/autosuspend}="1"
+ACTION=="add|change", SUBSYSTEM=="usb", ATTR{power/autosuspend_delay_ms}="500"
 ACTION=="add|change", SUBSYSTEM=="workqueue", ATTR{power/control}="auto"
-ACTION=="add|change", KERNEL=="sd[a-z][0-9]", RUN+="/usr/sbin/blockdev --setra 8192 /dev/%k"
-ACTION=="add|change", KERNEL=="nvme[0-9]n[0-9]p[0-9]", RUN+="/usr/sbin/blockdev --setra 32768 /dev/%k"
-ACTION=="add|change", KERNEL=="dm-[0-9]", RUN+="/usr/sbin/blockdev --setra 32768 /dev/%k"
-'  | sudo tee /etc/udev/rules.d/powersave.rules > /dev/null
+ACTION=="add|change", KERNEL=="sd[a-z][0-9]", RUN+="/usr/sbin/blockdev --setra 4096 /dev/%k"
+ACTION=="add|change", KERNEL=="nvme[0-9]n[0-9]p[0-9]", RUN+="/usr/sbin/blockdev --setra 4096 /dev/%k"
+ACTION=="add|change", KERNEL=="dm-[0-9]", RUN+="/usr/sbin/blockdev --setra 4096 /dev/%k"
+' | sudo tee /etc/udev/rules.d/powersave.rules > /dev/null
 sudo udevadm control --reload
 sudo udevadm trigger
+
+echo "[connection]
+wifi.powersave = 3" | sudo tee /etc/NetworkManager/conf.d/wifi-powersave.conf
 
 echo "[Unit]
 Description=Run udev trigger after wake
 After=suspend.target hibernate.target hybrid-sleep.target suspend-then-hibernate.target
-
 [Service]
 ExecStart=/usr/bin/udevadm trigger
-
 [Install]
 WantedBy=suspend.target hibernate.target hybrid-sleep.target suspend-then-hibernate.target" | sudo tee /etc/systemd/system/udev-suspend.service
 sudo systemctl enable --now udev-suspend.service
@@ -169,44 +87,30 @@ if [ -n "$LUKS_DEVICES" ]; then
 	sudo fstrim -va
 fi
 
-# Disable ancient modules
-echo "
-blacklist cdrom
-blacklist cyber2000fb
-blacklist cyblafb
-blacklist gx1fb
-blacklist hgafb
-blacklist kyrofb
-blacklist lxfb
-blacklist matroxfb_base
-blacklist neofb
-blacklist nvidiafb
-blacklist pm2fb
-blacklist s1d13xxxfb
-blacklist sisfb
-blacklist sr_mod
-blacklist tdfxfb
-blacklist udlfb
-blacklist vesafb
-blacklist vfb
-blacklist vt8623fb
-install adfs /bin/false
+echo "install adfs /bin/false
 install af_802154 /bin/false
 install affs /bin/false
 install afs /bin/false
+install algif_aead /bin/false
 install appletalk /bin/false
 install atm /bin/false
 install ax25 /bin/false
 install befs /bin/false
 install can /bin/false
+install cdrom /bin/false
 install ceph /bin/false
 install cifs /bin/false
 install coda /bin/false
 install cramfs /bin/false
+install cyber2000fb /bin/false
+install cyblafb /bin/false
 install dccp /bin/false
 install decnet /bin/false
 install dv1394 /bin/false
 install econet /bin/false
+install esp4 /bin/false
+install esp6 /bin/false
+install f2fs /bin/false
 install firewire-core /bin/false
 install firewire-net /bin/false
 install firewire-ohci /bin/false
@@ -214,6 +118,7 @@ install firewire-sbp2 /bin/false
 install firewire_core /bin/false
 install firewire_ohci /bin/false
 install firewire_sbp2 /bin/false
+install floppy /bin/false
 install freevxfs /bin/false
 install gfs2 /bin/false
 install gnss /bin/false
@@ -222,93 +127,96 @@ install gnss-serial /bin/false
 install gnss-sirf /bin/false
 install gnss-ubx /bin/false
 install gnss-usb /bin/false
+install gx1fb /bin/false
+install hfs /bin/false
+install hfsplus /bin/false
+install hgafb /bin/false
 install ipx /bin/false
 install jffs2 /bin/false
 install jfs /bin/false
 install kafs /bin/false
 install ksmbd /bin/false
+install kyrofb /bin/false
+install llc /bin/false
+install lxfb /bin/false
+install matroxfb_base /bin/false
 install minix /bin/false
 install n-hdlc /bin/false
+install neofb /bin/false
 install netrom /bin/false
+install nfsd /bin/false
 install nilfs2 /bin/false
+install nvidiafb /bin/false
 install ocfs2 /bin/false
 install ohci1394 /bin/false
+install omfs /bin/false
 install orangefs /bin/false
 install p8022 /bin/false
 install p8023 /bin/false
+install pm2fb /bin/false
 install psnap /bin/false
+install qnx4 /bin/false
+install qnx6 /bin/false
 install raw1394 /bin/false
-install rds  /bin/false
 install rds /bin/false
 install reiserfs /bin/false
 install romfs /bin/false
 install rose /bin/false
+install rxrpc /bin/false
+install s1d13xxxfb /bin/false
 install sbp2 /bin/false
 install sctp /bin/false
+install sisfb /bin/false
+install sr_mod /bin/false
 install sysv /bin/false
+install tdfxfb /bin/false
 install tipc /bin/false
 install ubifs /bin/false
 install udf /bin/false
+install udlfb /bin/false
+install ufs /bin/false
+install vesafb /bin/false
+install vfb /bin/false
 install video1394 /bin/false
 install vivid /bin/false
+install vt8623fb /bin/false
 install x25 /bin/false
-install zonefs /bin/false
-" | sudo tee -a /etc/modprobe.d/hardening.conf
+install zonefs /bin/false" | sudo tee /etc/modprobe.d/hardening.conf > /dev/null
+
+echo "options amdgpu dcfeaturemask=0x38B ppfeaturemask=0xffffbfff sg_display=0 aspm=1
+options i915 enable_dc=4 enable_dmc_wl=1 enable_dpcd_backlight=1 enable_fbc=1 enable_flipq=1 enable_panel_replay=1 enable_psr2_sel_fetch=1 enable_psr=1
+options xe enable_dc=4 enable_dmc_wl=1 enable_dpcd_backlight=1 enable_fbc=1 enable_flipq=1 enable_panel_replay=1 enable_psr2_sel_fetch=1 enable_psr=1
+options ath9k ps_enable=1
+options btusb enable_autosuspend=y
+options iwlmvm power_scheme=3
+options iwlwifi power_save=Y power_level=5
+options mt7921e disable_aspm=0
+options mt7925e disable_aspm=0
+options rtw88 disable_lps_deep=N
+options rtw89_core disable_ps_mode=N
+options rtw89_pci disable_aspm_l1=0 disable_aspm_l1ss=0 disable_clkreq=N
+options snd_ac97_codec power_save=1
+options snd_hda_intel power_save=1 power_save_controller=y" | sudo tee /etc/modprobe.d/powersave.conf > /dev/null
 
 KERNEL_CMDLINE=""
-KERNEL_CMDLINE="$KERNEL_CMDLINE amd_iommu=force_isolation"
-KERNEL_CMDLINE="$KERNEL_CMDLINE amd_pstate=active"
-KERNEL_CMDLINE="$KERNEL_CMDLINE amdgpu.dcfeaturemask=0xB"
-KERNEL_CMDLINE="$KERNEL_CMDLINE amdgpu.sg_display=0" # Workaround, some APU will flicker white
-KERNEL_CMDLINE="$KERNEL_CMDLINE drm.vblankoffdelay=1"
 KERNEL_CMDLINE="$KERNEL_CMDLINE efi=disable_early_pci_dma"
-KERNEL_CMDLINE="$KERNEL_CMDLINE i915.enable_dc=4"
-KERNEL_CMDLINE="$KERNEL_CMDLINE i915.enable_fbc=1"
-KERNEL_CMDLINE="$KERNEL_CMDLINE i915.enable_panel_replay=1"
-KERNEL_CMDLINE="$KERNEL_CMDLINE i915.enable_psr=1"
-KERNEL_CMDLINE="$KERNEL_CMDLINE xe.enable_dc=4"
-KERNEL_CMDLINE="$KERNEL_CMDLINE xe.enable_fbc=1"
-KERNEL_CMDLINE="$KERNEL_CMDLINE xe.enable_panel_replay=1"
-KERNEL_CMDLINE="$KERNEL_CMDLINE xe.enable_psr=1"
-KERNEL_CMDLINE="$KERNEL_CMDLINE init_on_alloc=1"
-KERNEL_CMDLINE="$KERNEL_CMDLINE intel_iommu=on"
-KERNEL_CMDLINE="$KERNEL_CMDLINE iommu.passthrough=0"
-KERNEL_CMDLINE="$KERNEL_CMDLINE lockdown=confidentiality" # lockdown=integrity" # Integrity allows bpf, confidentiality is better when possible
+KERNEL_CMDLINE="$KERNEL_CMDLINE iommu.strict=1"
+KERNEL_CMDLINE="$KERNEL_CMDLINE rd.emergency=reboot"
+KERNEL_CMDLINE="$KERNEL_CMDLINE rd.shell=0"
+KERNEL_CMDLINE="$KERNEL_CMDLINE preempt=lazy"
+KERNEL_CMDLINE="$KERNEL_CMDLINE amd_pstate=active"
+KERNEL_CMDLINE="$KERNEL_CMDLINE intel_pstate=active"
+KERNEL_CMDLINE="$KERNEL_CMDLINE drm.vblankoffdelay=1"
 KERNEL_CMDLINE="$KERNEL_CMDLINE loglevel=0"
-KERNEL_CMDLINE="$KERNEL_CMDLINE module.sig_enforce=1"
 KERNEL_CMDLINE="$KERNEL_CMDLINE nmi_watchdog=0"
 KERNEL_CMDLINE="$KERNEL_CMDLINE nowatchdog"
-KERNEL_CMDLINE="$KERNEL_CMDLINE oops=panic"
-KERNEL_CMDLINE="$KERNEL_CMDLINE page_alloc.shuffle=1"
-KERNEL_CMDLINE="$KERNEL_CMDLINE page_table_check=on"
+KERNEL_CMDLINE="$KERNEL_CMDLINE nvme_core.default_ps_max_latency_us=5000000"
 KERNEL_CMDLINE="$KERNEL_CMDLINE pcie_aspm.policy=powersupersave"
 KERNEL_CMDLINE="$KERNEL_CMDLINE pcie_aspm=force"
-KERNEL_CMDLINE="$KERNEL_CMDLINE random.trust_bootloader=off"
-KERNEL_CMDLINE="$KERNEL_CMDLINE random.trust_cpu=off"
-KERNEL_CMDLINE="$KERNEL_CMDLINE randomize_kstack_offset=1"
-KERNEL_CMDLINE="$KERNEL_CMDLINE rd.emergency=halt"
-KERNEL_CMDLINE="$KERNEL_CMDLINE rd.shell=0"
 KERNEL_CMDLINE="$KERNEL_CMDLINE rtc_cmos.use_acpi_alarm=1"
-KERNEL_CMDLINE="$KERNEL_CMDLINE slab_nomerge"
-KERNEL_CMDLINE="$KERNEL_CMDLINE snd_hda_intel.power_save=1"
 KERNEL_CMDLINE="$KERNEL_CMDLINE usbcore.autosuspend=1"
-KERNEL_CMDLINE="$KERNEL_CMDLINE vsyscall=none"
 KERNEL_CMDLINE="$KERNEL_CMDLINE workqueue.power_efficient=Y"
-# KERNEL_CMDLINE="$KERNEL_CMDLINE debugfs=off" # Need for powertop
-
-# grub case
-if [ -e /etc/default/grub ] && ! grep -q "$KERNEL_CMDLINE" /etc/default/grub; then
-	sudo sed -i 's|quiet"|quiet splash"|g' /etc/default/grub
-	sudo sed -i "s|GRUB_CMDLINE_LINUX=\".*\"|GRUB_CMDLINE_LINUX=\"quiet splash $KERNEL_CMDLINE\"|g" /etc/default/grub
-fi
-
-# systemd-boot case
-if [ ! -e /etc/kernel/cmdline ]; then
-	. /etc/default/grub
-	echo "root=$(findmnt -n -o SOURCE /) $GRUB_CMDLINE_LINUX $GRUB_CMDLINE_LINUX_DEFAULT" | sudo tee /etc/kernel/cmdline
-elif ! grep -q "$KERNEL_CMDLINE" /etc/kernel/cmdline; then
-	sudo sed -i "s|quiet|quiet $KERNEL_CMDLINE|g" /etc/kernel/cmdline
-fi
+KERNEL_CMDLINE="$KERNEL_CMDLINE lru_gen.enabled=7"
 
 systemd_user_services="
 	evolution-addressbook-factory.service
@@ -334,25 +242,85 @@ done
 
 systemd_system_services="
 	NetworkManager-wait-online
+	abrt-journal-core
+	abrt-oops
+	abrt-xorg
+	abrtd
 	geoclue
+	motd-news.timer
 	nfs-idmapd
 	nfs-mountd
 	nfsdcld
+	packagekit
 	rpc-gssd
 	rpc-statd
 	rpc-statd-notify
 	rpcbind
 "
 for service in $systemd_system_services; do
-	sudo systemctl disable --now "$service"
-	sudo systemctl mask "$service"
+	sudo systemctl disable --now "$service" || :
+	sudo systemctl mask "$service" || :
 done
 
-# TPM enroller
-sudo cp "$(dirname "${0}")/tpm-enroll" /usr/local/bin/
+###############  Bootup
+# grub case
+if [ -e /etc/default/grub ] && ! grep -q "$KERNEL_CMDLINE" /etc/default/grub; then
+	sudo sed -i 's|quiet"|quiet splash"|g' /etc/default/grub
+	sudo sed -i "s|GRUB_CMDLINE_LINUX=\".*\"|GRUB_CMDLINE_LINUX=\"quiet splash $KERNEL_CMDLINE\"|g" /etc/default/grub
+fi
+
+# systemd-boot case
+if ! grep -q "$KERNEL_CMDLINE" /etc/kernel/cmdline; then
+	sudo sed -i "s|quiet|quiet $KERNEL_CMDLINE|g" /etc/kernel/cmdline
+fi
+
+sudo kernel-install -v add-all
+
+exit
 
 # Distro specific stuff
 "$(dirname "${0}")/setup-${ID}"
 
 # TPM
-sudo systemd-cryptenroll --tpm2-device=auto --wipe-slot=tpm2 --tpm2-pcrs="0+1+2+3+7" /dev/nvme0n1p2
+if [ ! -e "/etc/kernel/pcr-private-key.pem" ]; then
+	bits=2048
+	if sudo tpm2_testparms rsa4096 2> /dev/null; then
+		bits=4096
+	fi
+	sudo openssl genrsa -out /etc/kernel/pcr-private-key.pem "$bits"
+	sudo openssl rsa -pubout -in /etc/kernel/pcr-private-key.pem -out /etc/kernel/pcr-public-key.pem
+	sudo chmod 600 /etc/kernel/pcr-private-key.pem
+
+	echo "[UKI]
+PCRBanks=sha256
+
+[PCRSignature:initrd]
+PCRPrivateKey=/etc/kernel/pcr-private-key.pem
+PCRPublicKey=/etc/kernel/pcr-public-key.pem
+Phases=enter-initrd enter-initrd:leave-initrd:sysinit:ready" | sudo tee /etc/kernel/uki.conf > /dev/null
+	sudo kernel-install -v add-all
+fi
+
+# Recoverky UKI
+if ! sudo ls /boot/efi/EFI/Linux/recovery.efi; then
+	kver=$(uname -r)
+	sudo dracut --force --kver "$kver" /tmp/recovery-initrd.img
+	sudo ukify build \
+		--linux="/usr/lib/modules/$kver/vmlinuz" \
+		--initrd=/tmp/recovery-initrd.img \
+		--cmdline="$(cat /etc/kernel/cmdline) rd.break=pre-mount" \
+		--uname="$kver" \
+		--output=/boot/efi/EFI/Linux/recovery.efi
+	sudo sbctl sign -s /boot/efi/EFI/Linux/recovery.efi
+fi
+
+for i in /dev/*; do
+	if sudo cryptsetup luksUUID "$i" 2> /dev/null; then
+		sudo systemd-cryptenroll \
+			--tpm2-device=auto \
+			--wipe-slot=tpm2 \
+			--tpm2-pcrs="0+1+2+3+7" \
+			--tpm2-public-key-pcrs=11 --tpm2-public-key=/etc/kernel/pcr-public-key.pem \
+			"$i"
+	fi
+done

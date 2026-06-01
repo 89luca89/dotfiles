@@ -24,7 +24,9 @@ sudo apt install --autoremove --purge \
 sudo apt remove --autoremove --purge --allow-remove-essential \
 	grub2* shim*
 sudo apt-mark hold grub2* shim*
-sudo bootctl set-timeout 0
+
+echo "timeout 0
+default $(cat /etc/machine-id)-*" | sudo tee /boot/efi/loader/loader.conf
 
 # Enable UKIs
 sudo tee /etc/kernel/install.conf << EOF
@@ -63,13 +65,26 @@ sudo chmod +x /etc/kernel/install.d/99-sbctl.install
 sudo apt update
 sudo apt upgrade
 sudo apt install --autoremove --purge \
-	apt-file vim tmux git curl gnome-terminal \
-	docker.io docker-compose docker-buildx \
-	podman crun \
+	android-tools \
+	apt-file \
+	btop \
+	crun \
+	curl \
+	docker-buildx \
+	docker-compose \
+	docker.io \
 	flatpak \
+	git \
+	lm-sensors \
+	mosh \
+	openssh-server \
+	podman \
 	powertop \
+	runc \
 	systemd-zram-generator \
-	openssh-server
+	tailscale \
+	tmux \
+	vim
 sudo systemctl enable --now docker
 sudo systemctl enable --now powertop
 sudo usermod -aG docker "$USER"

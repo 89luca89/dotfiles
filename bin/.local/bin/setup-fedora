@@ -7,41 +7,14 @@ sudo dnf install -y \
 sudo dnf remove \
 	PackageKit* \
 	abrt* \
-	gnome-calendar* \
-	gnome-characters* \
-	gnome-connections* \
-	gnome-contacts* \
-	gnome-font-viewer* \
-	gnome-maps* \
-	gnome-software \
-	gnome-text-editor* \
-	gnome-tour* \
-	gnome-user-docs* \
-	gnome-weather* \
-	decibels papers evince mediawriter \
-	ibus \
-	ibut-anthy \
-	ibut-anthy-python \
-	ibut-chewing \
-	ibut-gtk3 \
-	ibut-gtk4 \
-	ibut-hangul \
-	ibut-libpinyin \
-	ibut-m17n \
-	ibut-setuptyping-booster \
-	libreoffice* \
-	loupe* \
-	open-vm* \
-	qemu-guest-agent \
-	totem showtime \
-	virtualbox-guest-additions \
-	yelp*
-
-sudo firewall-cmd --set-default-zone=drop
-sudo firewall-cmd --permanent --add-port=22/tcp
-sudo firewall-cmd --reload
+	cockpit* \
+	gnome-software
 
 ##############################################################################
+
+sudo dnf copr enable chenxiaolong/sbctl
+sudo dnf install sbctl systemd-ukify systemd-devel shim-unsigned-x64
+
 sudo tee /etc/kernel/install.conf << EOF
 BOOT_ROOT=/boot/efi
 layout=uki
@@ -49,30 +22,54 @@ uki_generator=ukify
 initrd_generator=dracut
 EOF
 
-sudo bootctl set-timeout 0
+echo "timeout 0
+default $(cat /etc/machine-id)-*" | sudo tee /boot/efi/loader/loader.conf
 
-sudo dnf copr enable chenxiaolong/sbctl
-sudo dnf install sbctl systemd-ukify systemd-devel
-read -n 1 -p "Input Selection:" "mainmenuinput"
-################# SECURE BOOT SETUP ##########################################
 if sudo sbctl status | grep -q 'sbctl is not installed'; then
 	sudo kernel-install -v add-all
+
+	sudo rm -rf "/boot/efi/$(cat /etc/machine-id)" "/boot/efi/loader/entries"
+	sudo ln -sf /dev/null /etc/kernel/install.d/51-dracut-rescue.install
+
 	sudo sbctl create-keys
 	sudo sbctl enroll-keys --firmware-builtin
+	sudo cp /usr/share/shim/*/x64/* /boot/efi/EFI/systemd/
 	sudo sbctl verify 2> /dev/null | grep ' not ' | cut -d' ' -f2 | xargs -I{} sudo sbctl sign -s {}
 fi
-################# SECURE BOOT SETUP ###########################################
 
 ##############################################################################
+
 sudo dnf install \
-	vim tmux git curl gnome-terminal \
-	docker docker-compose docker-buildx \
-	podman crun \
-	powertop
+	android-tools \
+	btop \
+	crun \
+	curl \
+	docker \
+	docker-buildx \
+	docker-compose \
+	git \
+	lm_sensors \
+	mosh \
+	podman \
+	powertop \
+	runc \
+	tailscale \
+	tmux \
+	vim
 
 sudo usermod -aG docker "$USER"
-sudo systemctl enable --now docker
+sudo systemctl disable --now docker.service || :
+sudo systemctl enable --now docker.socket
 sudo systemctl enable --now powertop
+
+##############################################################################
+
+sudo firewall-cmd --set-default-zone=drop
+sudo firewall-cmd --permanent --add-port=22/tcp
+sudo firewall-cmd --permanent --add-service=mosh
+sudo firewall-cmd --reload
+
+##############################################################################
 
 if ! grep Intel /proc/cpuinfo; then
 	sudo dnf swap tuned-ppd power-profiles-daemon
@@ -80,5 +77,18 @@ if ! grep Intel /proc/cpuinfo; then
 	powerprofilesctl configure-action amdgpu_panel_power --enable
 	powerprofilesctl configure-action amdgpu_dpm --enable
 else
-	sudo dnf install -y intel-media-driver libva-*-driver
+	sudo dnf install -y intel-media-driver libva-*-driver intel-lpmd
+	sudo mkdir -p /etc/systemd/system/intel_lpmd.service.d/
+	sudo cp "$(dirname "$(realpath "$0")")/../../../intel-ppd/intel_lpmd_config.xml" /etc/intel_lpmd/
+	sudo cp "$(dirname "$(realpath "$0")")/../../../intel-ppd/override.conf" /etc/systemd/system/intel_lpmd.service.d/
+fi
+
+##############################################################################
+
+if findmnt / | grep btrfs; then
+	sudo dnf install -y snapper
+	sudo snapper -c root create-config /
+	sudo snapper -c root set-config TIMELINE_CREATE=no
+	sudo restorecon -rv /.snapshots
+	sudo snapper -c root create -d "fresh install"
 fi
