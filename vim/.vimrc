@@ -14,7 +14,7 @@ set hidden
 set backspace=indent,eol,start
 set isfname-==
 set nrformats-=octal
-set autoindent noexpandtab shiftround smartindent smarttab
+set autoindent noexpandtab shiftround smarttab smartindent copyindent preserveindent
 set shiftwidth=8 softtabstop=8 tabstop=8 textwidth=0
 set formatoptions+=j
 set nomodeline
@@ -46,9 +46,8 @@ endif
 call plug#begin('~/.vim/plugged')
 Plug 'ap/vim-buftabline'
 Plug 'airblade/vim-gitgutter'
-Plug 'junegunn/fzf.vim' | Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'tpope/vim-sleuth'
 Plug 'dense-analysis/ale'
+Plug 'junegunn/fzf.vim' | Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 call plug#end()
 " #############################################################################
 " Enable filetype detection and syntax highlighting - moved to bottom for best performance
