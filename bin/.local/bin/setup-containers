@@ -1,11 +1,12 @@
 #!/bin/sh
 
-if ! docker inspect --type container syncthing > /dev/null; then
-	docker create --name syncthing \
+if ! podman inspect --type container syncthing > /dev/null; then
+	podman create --name syncthing \
 		--restart=unless-stopped \
+		--security-opt=label=disable \
 		--network=host \
 		--dns 1.1.1.1 \
-		--user 1000:1000 \
+		--userns=keep-id \
 		-p 8384:8384 \
 		-v "/home/$USER/Music:/home/$USER/Music:z" \
 		-v "/home/$USER/Pictures:/home/$USER/Pictures:z" \
@@ -14,5 +15,7 @@ if ! docker inspect --type container syncthing > /dev/null; then
 		-v "$HOME/.var/app/syncthing-$(hostname):/var/syncthing/:z" \
 		-e STGUIADDRESS=127.0.0.1:8384 \
 		docker.io/syncthing/syncthing
-	docker start syncthing
+	podman start syncthing
+	podman generate systemd --name syncthing > ~/.config/systemd/user/syncthing.service
+	systemctl --user enable --now syncthing.service
 fi
