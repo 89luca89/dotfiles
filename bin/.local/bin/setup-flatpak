@@ -28,6 +28,4 @@ fi
 cp ~/bin/xdg-browser.desktop ~/.local/share/applications/
 
 default_browser="xdg-browser.desktop"
-# default_browser="org.mozilla.firefox.desktop"
-
 xdg-settings set default-web-browser "${default_browser}"

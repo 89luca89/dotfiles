@@ -1,8 +1,8 @@
 #!/bin/sh
 
+# appindicatorsupport@rgcjonas.gmail.com
 EXTENSIONS="
 AlphabeticalAppGrid@stuarthayhurst
-appindicatorsupport@rgcjonas.gmail.com
 "
 
 for extension in $EXTENSIONS; do
@@ -21,7 +21,7 @@ dest_folder="$HOME/dotfiles/_desktop/"
 cp "$dest_folder/background" ~/.config/background
 
 # Restore gnome settings
-cd "${dest_folder}"
+cd "${dest_folder}" || exit
 for f in  .*.conf; do
 	dconf_path="$(echo "${f}" | sed 's/conf//g' | sed 's/\./\//g')"
 	dconf load "${dconf_path}" < "${f}"
