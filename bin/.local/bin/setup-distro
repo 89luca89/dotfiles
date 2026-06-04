@@ -137,7 +137,6 @@ install jfs /bin/false
 install kafs /bin/false
 install ksmbd /bin/false
 install kyrofb /bin/false
-install llc /bin/false
 install lxfb /bin/false
 install matroxfb_base /bin/false
 install minix /bin/false
