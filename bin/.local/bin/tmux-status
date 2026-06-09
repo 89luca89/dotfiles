@@ -1,0 +1,78 @@
+#!/bin/sh
+# ~/.config/tmux/status.sh
+# Feeds tmux status-right. Runs as your user, so wpctl/powerprofilesctl work.
+
+bat=$(ls -d /sys/class/power_supply/BAT* 2> /dev/null | head -n1)
+
+if [ -n "$bat" ]; then
+	cap=$(cat "$bat/capacity" 2> /dev/null)
+	status=$(cat "$bat/status" 2> /dev/null)
+	case "$status" in
+		Charging) flag="⚡" ;;
+		Discharging) flag="🔋" ;;
+		Full) flag="🔌" ;;
+		"Not charging") flag="🔌" ;;
+		*) flag="🪫" ;;
+	esac
+	# Watt draw: prefer power_now (uW); else current_now x voltage_now
+	if [ -r "$bat/power_now" ]; then
+		watt=$(awk '{printf "%.1f", $1/1000000}' "$bat/power_now")
+	elif [ -r "$bat/current_now" ] && [ -r "$bat/voltage_now" ]; then
+		watt=$(awk -v i="$(cat "$bat/current_now")" -v v="$(cat "$bat/voltage_now")" \
+			'BEGIN{printf "%.1f", (i/1000000)*(v/1000000)}')
+	else
+		watt="-"
+	fi
+	batseg="${flag}${cap}% ${watt}W"
+	if [ "$status" = "Discharging" ]; then
+		# Energy remaining (Wh): prefer energy_now (uWh); else charge_now x nominal voltage.
+		# Use voltage_min_design (nominal) rather than voltage_now (instantaneous, ~12% high under load).
+		if [ -r "$bat/energy_now" ]; then
+			wh=$(awk '{printf "%.1f", $1/1000000}' "$bat/energy_now")
+		elif [ -r "$bat/charge_now" ] && [ -r "$bat/voltage_min_design" ]; then
+			wh=$(awk -v c="$(cat "$bat/charge_now")" -v v="$(cat "$bat/voltage_min_design")" \
+				'BEGIN{printf "%.1f", (c/1000000)*(v/1000000)}')
+		elif [ -r "$bat/charge_now" ] && [ -r "$bat/voltage_now" ]; then
+			wh=$(awk -v c="$(cat "$bat/charge_now")" -v v="$(cat "$bat/voltage_now")" \
+				'BEGIN{printf "%.1f", (c/1000000)*(v/1000000)}')
+		else
+			wh=""
+		fi
+		# Runtime estimate at current draw = wh / watt
+		eta=""
+		if [ -n "$wh" ] && [ "$watt" != "-" ]; then
+			eta=$(awk -v wh="$wh" -v w="$watt" 'BEGIN{
+				if (w+0 > 0) {
+					m = wh / w * 60
+					printf "%dh%02dm", int(m/60), int(m)%60
+				}
+			}')
+		fi
+		[ -n "$wh" ] && batseg="${batseg} ${wh}Wh"
+		[ -n "$eta" ] && batseg="${batseg} ${eta}"
+	fi
+	batseg="${batseg} |"
+fi
+
+# Volume (PipeWire). For ALSA swap to: amixer get Master | awk -F'[][]' ...
+v=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ 2> /dev/null)
+if echo "$v" | grep -q MUTED; then
+	vol="mute"
+elif [ -n "$v" ]; then
+	vol="$(echo "$v" | awk '{print int($2*100)}')%"
+else
+	vol="-"
+fi
+
+bldir=$(ls -d /sys/class/backlight/*/ 2> /dev/null | head -n1)
+if [ -n "$bldir" ]; then
+	bri="$(($(cat "$bldir/actual_brightness") * 100 / $(cat "$bldir/max_brightness")))%"
+else
+	bri="-"
+fi
+
+prof=$(cat /sys/firmware/acpi/platform_profile)
+clock=$(date '+%a %d %b %H:%M')
+
+printf '%s%s| 🔈%s | 🔆%s | %s' \
+	"$batseg" "${prof:--}" "$vol" "${bri:--}" "$clock"
