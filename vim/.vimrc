@@ -65,13 +65,15 @@ augroup end
 " Toggle light/dark mode ######################################################
 function! ToggleTheme()
 	let theme = trim(readfile(expand('~/.local/share/theme'))[0])
+	colorscheme lunaperche
 	if theme == "light"
 		set background=light
-		colorscheme wildcharm
 	else
 		set background=dark
-		colorscheme retrobox
 	endif
+	highlight clear StatusLine
+	highlight clear TabLineFill
+	highlight clear VertSplit
 	highlight link myFunction Function
 endfun
 " Shortcuts ###################################################################
@@ -102,7 +104,6 @@ nnoremap <leader>gd         :<C-u>!git difftool --tool=vimdiff --no-prompt <C-r>
 nnoremap <leader>gb         :<C-u>!tig blame +<C-r>=line('.')<cr> -- <C-r>=expand('%')<cr><cr>
 nnoremap <leader>gs         :<C-u>!tig -C . status<cr><cr>
 " Dev setup ###################################################################
-" Setup ALE as LSP client when dependencies are met ###########################
 set complete=.,w,b,u,t,i,d
 set completeopt=menu,menuone,popup,noselect,noinsert
 let g:ale_floating_preview=1
@@ -128,7 +129,6 @@ let g:ale_fixers = {
 let g:ale_json_jq_options     = '--tab'
 let g:ale_python_yapf_options = '--style=facebook'
 let g:ale_sh_shfmt_options    = '-s -ci -sr -kp -fn -i=0'
-" Set up LSP completion and commands
 nnoremap <leader>i :<C-u>ALEFix<cr>
 nnoremap <leader>d          :<C-u>vert stag <c-r>=expand("<cword>")<cr><cr>
 nnoremap <leader>F          :<C-u>cgetexpr system(&grepprg . ' ""')<bar>copen<C-Left><Right>
