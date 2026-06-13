@@ -1,0 +1,11 @@
+# labwc reads KEY=value lines here (no `export`).
+XKB_DEFAULT_LAYOUT=us
+# US international with AltGr dead keys:
+XKB_DEFAULT_VARIANT=altgr-intl
+MOZ_ENABLE_WAYLAND=1
+# cursor theme/size (so it's not the tiny default X cursor)
+XCURSOR_THEME=Adwaita
+XCURSOR_SIZE=24
+# QT_QPA_PLATFORM=wayland
+# Hint apps to prefer Wayland:
+# _JAVA_AWT_WM_NONREPARENTING=1

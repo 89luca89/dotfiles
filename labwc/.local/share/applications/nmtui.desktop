@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Network (nmtui)
+GenericName=Network Manager
+Comment=Configure network connections (Wi-Fi, Ethernet, VPN) with nmtui
+Exec=foot --app-id=nmtui --title=Network nmtui
+Icon=network-wireless
+Terminal=false
+Categories=Network;Settings;System;
+Keywords=network;wifi;wi-fi;ethernet;vpn;nmtui;connection;networkmanager;
+StartupNotify=false

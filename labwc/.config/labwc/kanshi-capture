@@ -1,0 +1,9 @@
+#!/bin/sh
+# kanshi-capture [profile-name]  -> prints a kanshi profile for the current layout
+name="${1:-profile}"
+wlr-randr --json | jq -r --arg n "$name" '
+  "profile \($n) {",
+  (.[] | if .enabled then
+     "    output \"\(.name)\" enable mode \((.modes[]|select(.current).width))x\((.modes[]|select(.current).height)) position \(.position.x),\(.position.y) scale \(.scale)"
+   else "    output \"\(.name)\" disable" end),
+  "}"'

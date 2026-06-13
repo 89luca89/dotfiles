@@ -1,0 +1,42 @@
+# labwc autostart — keep it minimal.
+# Notification bubbles (no panel/taskbar):
+mako &
+kanshi &
+
+# Wallpaper (optional; drop a file and uncomment):
+# swaybg -i ~/.config/labwc/wallpaper.jpg -m fill &
+
+# PipeWire/WirePlumber are socket-activated user services on Fedora,
+# so they don't need starting here.
+systemctl --user start labwc-session.target
+
+# Idle -> lock at 5min, suspend at 15min, lock before sleep.
+swayidle -w \
+    timeout 300 'swaylock -c 101010 -f' \
+    timeout 360 'wlopm --off "*"' resume 'wlopm --on "*"' \
+    timeout 900 'idle-suspend' \
+    before-sleep 'swaylock -c 101010 -f' \
+    after-resume 'kanshictl reload' &
+
+swaybg -c 101010 &
+
+# Night-light / color temperature (optional):
+# gammastep -l 45.0:9.0 &
+
+# --- desktop integration ---
+# Make the session env visible to D-Bus-activated services (portals, etc.)
+dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP &
+
+# polkit auth agent (password prompts for privileged actions)
+/usr/libexec/polkit-gnome-authentication-agent-1 &
+
+# Secret Service / keyring (git/wifi/app secrets). For SSH agent too.
+eval "$(gnome-keyring-daemon --start --components=secrets,ssh)"
+export SSH_AUTH_SOCK
+dbus-update-activation-environment --systemd SSH_AUTH_SOCK &
+
+# initial theme (dark); flip live with theme-toggle / Super+Shift+T
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark'
+gsettings set org.gnome.desktop.interface icon-theme 'Adwaita'
+gsettings set org.gnome.desktop.interface cursor-theme 'Adwaita'

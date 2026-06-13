@@ -1,0 +1,14 @@
+#!/bin/sh
+# Session/power actions via fuzzel dmenu.
+choice=$(printf 'Lock\nLogout\nSuspend\nReboot\nShutdown\nPowersave\nBalanced\nPerformance' \
+  | fuzzel --dmenu --prompt "power> ")
+case "$choice" in
+  Lock)     swaylock  -c 101010 -f ;;
+  Logout)   pkill -TERM -x labwc ;;   # labwc exits cleanly on SIGTERM -> back to TTY
+  Suspend)  systemctl suspend ;;
+  Reboot)   systemctl reboot ;;
+  Shutdown) systemctl poweroff ;;
+  Powersave)  powerprofilesctl set power-saver ;;
+  Balanced)  powerprofilesctl set balanced ;;
+  Performance)  powerprofilesctl set performance ;;
+esac

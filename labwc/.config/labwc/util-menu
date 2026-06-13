@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# TUI/utility launcher via fuzzel dmenu.
+# TUIs open in a foot terminal; GUIs launch directly.
+declare -A apps=(
+  ["Audio mixer  (wiremix)"]="foot wiremix --tab output"
+  ["Network      (nmtui)"]="foot nmtui"
+  ["Bluetooth    (blueman)"]="blueman-manager"
+  ["Files        (nautilus)"]="nautilus"
+  ["Monitor      (btop)"]="foot btop"
+  ["Disks        (gnome-disks)"]="gnome-disks"
+  ["Displays     (wdisplays)"]="wdisplays"
+)
+choice=$(printf '%s\n' "${!apps[@]}" | sort | fuzzel --dmenu --prompt "utils> ")
+[ -n "$choice" ] && setsid -f ${apps[$choice]} >/dev/null 2>&1

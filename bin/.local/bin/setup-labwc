@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+rm -rf ~/.config/labwc
+ln -sf "${HOME}/dotfiles/labwc/.config/labwc" ~/.config/labwc
+ln -sf "${HOME}/dotfiles/labwc/.config/systemd/user/*" ~/.config/systemd/user/
+
+sudo dnf dnf install -y \
+	xorg-x11-server-Xwayland labwc foot fuzzel mako swaybg wlopm wl-clipboard brightnessctl \
+	pipewire wireplumber pipewire-pulseaudio \
+	xdg-user-dirs xdg-utils xdg-desktop-portal xdg-desktop-portal-wlr xdg-desktop-portal-gtk flatpak \
+	wiremix pamixer alsa-utils \
+	bluez bluez-tools blueman nm-connection-editor NetworkManager-tui NetworkManager-openvpn \
+	wdisplays wlr-randr kanshi gammastep colord \
+	nautilus gnome-disk-utility udisks2 \
+	swayidle swaylock libnotify \
+	mate-polkit gnome-keyring \
+	udiskie gvfs gvfs-mtp gvfs-smb \
+	grim slurp swappy \
+	gsettings-desktop-schemas dconf adwaita-icon-theme adwaita-cursor-theme \
+	google-noto-sans-fonts google-noto-emoji-fonts jetbrains-mono-fonts
+
+systemctl --user daemon-reload
+systemctl --user enable --now pipewire 
+systemctl --user enable labwc-session.target

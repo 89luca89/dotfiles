@@ -1,0 +1,156 @@
+<?xml version="1.0"?>
+<labwc_config>
+
+  <core>
+    <gap>4</gap>
+    <decoration>server</decoration>
+  </core>
+
+  <!-- open new windows centered on the active output (default is "cascade").
+       Windows already open unmaximized by default; this only sets position. -->
+  <placement>
+    <policy>center</policy>
+  </placement>
+
+  <!-- 9 workspaces. popupTime is the workspace-switch OSD (ms); 0 disables it. -->
+  <desktops number="9" popupTime="600" prefix="ws" />
+
+  <!-- named regions for quarter-tiling via SnapToRegion -->
+  <regions>
+    <region name="top-left"     x="0%"  y="0%"  width="50%" height="50%" />
+    <region name="top-right"    x="50%" y="0%"  width="50%" height="50%" />
+    <region name="bottom-left"  x="0%"  y="50%" width="50%" height="50%" />
+    <region name="bottom-right" x="50%" y="50%" width="50%" height="50%" />
+  </regions>
+<windowSwitcher preview="yes" outlines="yes">
+  <osd show="yes" />
+  <fields>
+    <field content="workspace" width="12%" />
+    <field content="icon" width="8%" />
+    <field content="trimmed_identifier" width="30%" />
+    <field content="title" width="50%" />
+  </fields>
+</windowSwitcher>
+
+<keyboard>
+  <!-- launcher + terminal -->
+  <keybind key="W-space"><action name="Execute" command="fuzzel" /></keybind>
+  <keybind key="W-t"><action name="Execute" command="foot" /></keybind>
+  <keybind key="W-Return"><action name="Execute" command="foot -m tmux" /></keybind>
+
+  <!-- distrobox dev container + tmux, GNOME-style Ctrl+Alt+T -->
+  <keybind key="C-A-t">
+    <action name="Execute" command="foot distrobox enter default_distrobox -- bash -l -c 'tmux a || tmux'" />
+  </keybind>
+
+  <!-- launchers + theme toggle -->
+  <keybind key="W-Escape"><action name="Execute" command="~/.config/labwc/util-menu" /></keybind>
+  <keybind key="W-x"><action name="Execute" command="~/.config/labwc/power-menu" /></keybind>
+  <keybind key="W-i"><action name="Execute" command="~/.config/labwc/notify-status" /></keybind>
+  <keybind key="W-d"><action name="Execute" command="switch-theme" /></keybind>
+
+  <!-- screenshots: whole / window(=region) / region -> clipboard+save -->
+  <keybind key="Print"><action name="Execute" command="~/.config/labwc/screenshot screen" /></keybind>
+  <keybind key="A-Print"><action name="Execute" command="~/.config/labwc/screenshot window" /></keybind>
+  <keybind key="S-Print"><action name="Execute" command="~/.config/labwc/screenshot region" /></keybind>
+
+  <!-- window management -->
+  <keybind key="W-q"><action name="Close" /></keybind>
+  <keybind key="W-f"><action name="ToggleFullscreen" /></keybind>
+  <keybind key="A-Tab"><action name="NextWindow" workspace="all" /></keybind>
+  <keybind key="A-S-Tab"><action name="PreviousWindow" workspace="all" /></keybind>
+  <!-- go to workspace 1..9 -->
+  <keybind key="W-1"><action name="GoToDesktop" to="1" /></keybind>
+  <keybind key="W-2"><action name="GoToDesktop" to="2" /></keybind>
+  <keybind key="W-3"><action name="GoToDesktop" to="3" /></keybind>
+  <keybind key="W-4"><action name="GoToDesktop" to="4" /></keybind>
+  <keybind key="W-5"><action name="GoToDesktop" to="5" /></keybind>
+  <keybind key="W-6"><action name="GoToDesktop" to="6" /></keybind>
+  <keybind key="W-7"><action name="GoToDesktop" to="7" /></keybind>
+  <keybind key="W-8"><action name="GoToDesktop" to="8" /></keybind>
+  <keybind key="W-9"><action name="GoToDesktop" to="9" /></keybind>
+
+  <!-- send focused window to workspace 1..9 (follows) -->
+  <keybind key="W-S-1"><action name="SendToDesktop" to="1" /></keybind>
+  <keybind key="W-S-2"><action name="SendToDesktop" to="2" /></keybind>
+  <keybind key="W-S-3"><action name="SendToDesktop" to="3" /></keybind>
+  <keybind key="W-S-4"><action name="SendToDesktop" to="4" /></keybind>
+  <keybind key="W-S-5"><action name="SendToDesktop" to="5" /></keybind>
+  <keybind key="W-S-6"><action name="SendToDesktop" to="6" /></keybind>
+  <keybind key="W-S-7"><action name="SendToDesktop" to="7" /></keybind>
+  <keybind key="W-S-8"><action name="SendToDesktop" to="8" /></keybind>
+  <keybind key="W-S-9"><action name="SendToDesktop" to="9" /></keybind>
+
+  <!-- adjacent workspace navigation (Prior/Next = PageUp/PageDown) -->
+  <keybind key="W-Prior"><action name="GoToDesktop" to="left" wrap="yes" /></keybind>
+  <keybind key="W-Next"><action name="GoToDesktop" to="right" wrap="yes" /></keybind>
+
+  <!-- tiling / snapping (workspaces are on Super+number) -->
+  <keybind key="W-Left"><action name="SnapToEdge" direction="left" /></keybind>
+  <keybind key="W-Right"><action name="SnapToEdge" direction="right" /></keybind>
+  <keybind key="W-S-Left"><action name="SnapToRegion" region="top-left" /></keybind>
+  <keybind key="W-S-Right"><action name="SnapToRegion" region="top-right" /></keybind>
+  <keybind key="W-A-Left"><action name="SnapToRegion" region="bottom-left" /></keybind>
+  <keybind key="W-A-Right"><action name="SnapToRegion" region="bottom-right" /></keybind>
+  <keybind key="W-Up"><action name="Maximize" /></keybind>
+  <keybind key="W-Down"><action name="UnSnap" /></keybind>
+
+  <!-- session -->
+  <keybind key="W-l"><action name="Execute" command="swaylock -c 101010 -f" /></keybind>
+
+  <!-- media + brightness (run on the HOST) -->
+  <keybind key="XF86AudioRaiseVolume"><action name="Execute" command="wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+" /></keybind>
+  <keybind key="XF86AudioLowerVolume"><action name="Execute" command="wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-" /></keybind>
+  <keybind key="XF86AudioMute"><action name="Execute" command="wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle" /></keybind>
+  <keybind key="XF86AudioMicMute"><action name="Execute" command="wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle" /></keybind>
+  <keybind key="XF86MonBrightnessUp"><action name="Execute" command="brightnessctl set 5%+" /></keybind>
+  <keybind key="XF86MonBrightnessDown"><action name="Execute" command="brightnessctl set 5%-" /></keybind>
+
+  <keybind key="W-w"><action name="Execute" command="gtk-launch xdg-browser.desktop" /></keybind>
+  <keybind key="W-s"><action name="Execute" command="flatpak run org.gnome.World.Secrets" /></keybind>
+  <keybind key="W-m">
+    <action name="ShowMenu" menu="client-menu"><atCursor>no</atCursor></action>
+  </keybind>
+  <keybind key="W-S-Right">
+    <action name="MoveToOutput" direction="right" wrap="yes" />
+  </keybind>
+  <keybind key="W-S-Up">
+    <action name="MoveToOutput" direction="up" wrap="yes" />
+  </keybind>
+  <keybind key="W-S-Left">
+    <action name="MoveToOutput" direction="left" wrap="yes" />
+  </keybind>
+  <keybind key="W-S-Down">
+    <action name="MoveToOutput" direction="down" wrap="yes" />
+  </keybind>
+</keyboard>
+
+<mouse>
+    <default/>
+    <context name="Root">
+      <mousebind button="Right" action="Press"><action name="ShowMenu" menu="root-menu" /></mousebind>
+    </context>
+    <context name="Iconify"><mousebind button="Left" action="Click"><action name="Iconify" /></mousebind></context>
+    <context name="Maximize"><mousebind button="Left" action="Click"><action name="ToggleMaximize" /></mousebind></context>
+    <context name="Close"><mousebind button="Left" action="Click"><action name="Close" /></mousebind></context>
+  </mouse>
+  <libinput>
+  <!-- touchpad -->
+  <device category="touchpad">
+    <pointerSpeed>0.3</pointerSpeed>        <!-- -1.0 (slow) .. 1.0 (fast); 0.0 = default -->
+    <accelProfile>adaptive</accelProfile>   <!-- speed-based acceleration -->
+    <naturalScroll>yes</naturalScroll>
+    <tap>yes</tap>
+    <disableWhileTyping>yes</disableWhileTyping>
+    <scrollMethod>twofinger</scrollMethod>
+    <clickMethod>clickfinger</clickMethod>
+  </device>
+
+  <!-- mouse -->
+  <device category="non-touch">
+    <pointerSpeed>0.5</pointerSpeed>
+    <accelProfile>adaptive</accelProfile>       <!-- no acceleration: constant 1:1 -->
+    <naturalScroll>no</naturalScroll>
+  </device>
+</libinput>
+</labwc_config>

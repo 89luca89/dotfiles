@@ -1,0 +1,6 @@
+#!/bin/sh
+# Pop the tmux-status line as a desktop notification (mako).
+# Uses the dotfiles' status script; point STATUS elsewhere if you prefer.
+STATUS="$HOME/.local/bin/tmux-status"
+[ -x "$STATUS" ] || STATUS="tmux-status"   # fall back to PATH
+notify-send -t 0 "System status" "$("$STATUS" 2>/dev/null)"
