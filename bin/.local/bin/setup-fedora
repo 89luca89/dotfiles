@@ -8,6 +8,8 @@ sudo dnf remove \
 	PackageKit* \
 	abrt* \
 	cockpit* \
+	smartmontools* \
+	rsyslog* \
 	gnome-software
 
 ##############################################################################
@@ -73,22 +75,12 @@ sudo firewall-cmd --reload
 
 if ! grep Intel /proc/cpuinfo; then
 	sudo dnf swap tuned-ppd power-profiles-daemon
-	powerprofilesctl set power-saver
-	powerprofilesctl configure-action amdgpu_panel_power --enable
-	powerprofilesctl configure-action amdgpu_dpm --enable
+	sudo powerprofilesctl set power-saver
+	sudo powerprofilesctl configure-action amdgpu_panel_power --enable
+	sudo powerprofilesctl configure-action amdgpu_dpm --enable
 else
 	sudo dnf install -y intel-media-driver libva-*-driver intel-lpmd
 	sudo mkdir -p /etc/systemd/system/intel_lpmd.service.d/
 	sudo cp "$(dirname "$(realpath "$0")")/../../../intel-ppd/intel_lpmd_config.xml" /etc/intel_lpmd/
 	sudo cp "$(dirname "$(realpath "$0")")/../../../intel-ppd/override.conf" /etc/systemd/system/intel_lpmd.service.d/
-fi
-
-##############################################################################
-
-if findmnt / | grep btrfs; then
-	sudo dnf install -y snapper
-	sudo snapper -c root create-config /
-	sudo snapper -c root set-config TIMELINE_CREATE=no
-	sudo restorecon -rv /.snapshots
-	sudo snapper -c root create -d "fresh install"
 fi
