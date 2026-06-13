@@ -6,11 +6,13 @@ if [ "$(dconf read /org/gnome/desktop/interface/color-scheme | tr -d  "\n")" = "
 	THEME="Adwaita"
 	COLOR="#999999"
 	echo light > ~/.local/share/theme
+	kill -USR2 $(pgrep foot)
 else
 	PREFER="prefer-dark"
 	THEME="Adwaita-dark"
 	COLOR="#999999"
 	echo dark > ~/.local/share/theme
+	kill -USR1 $(pgrep foot)
 fi
 
 dconf write /org/gnome/desktop/interface/color-scheme "'$PREFER'"

@@ -8,6 +8,7 @@ fi
 
 FOLDERS="
 bin/.local/bin
+foot/.config/foot
 home/
 nautilus/.config/gtk-3.0/
 pipewire/.config/pipewire
