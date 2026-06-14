@@ -217,6 +217,18 @@ KERNEL_CMDLINE="$KERNEL_CMDLINE usbcore.autosuspend=1"
 KERNEL_CMDLINE="$KERNEL_CMDLINE workqueue.power_efficient=Y"
 KERNEL_CMDLINE="$KERNEL_CMDLINE lru_gen.enabled=7"
 
+sudo mkdir -p /etc/systemd/journald.conf.d
+echo "[Journal]
+Storage=persistent
+SystemMaxUse=100M
+SystemMaxFileSize=20M
+RuntimeMaxUse=50M
+MaxRetentionSec=2week
+Compress=yes" | sudo tee /etc/systemd/journald.conf.d/00-size.conf > /dev/null
+sudo systemctl daemon-reload
+sudo systemctl restart systemd-journald
+sudo journalctl --vacuum-size=100M
+
 systemd_user_services="
 	evolution-addressbook-factory.service
 	evolution-calendar-factory.service
