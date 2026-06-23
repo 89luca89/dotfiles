@@ -10,6 +10,7 @@ sudo dnf remove \
 	cockpit* \
 	smartmontools* \
 	rsyslog* \
+	open-vm* qemu-guest-agent virtualbox-guest-additions \
 	gnome-software
 
 ##############################################################################

@@ -74,5 +74,5 @@ fi
 prof=$(cat /sys/firmware/acpi/platform_profile)
 clock=$(date '+%a %d %b %H:%M')
 
-printf '%s%s| 🔈%s | 🔆%s | %s' \
-	"$batseg" "${prof:--}" "$vol" "${bri:--}" "$clock"
+printf '%s%s| 🔈%s | 🔆%s | %s | %s '  \
+	"$batseg" "${prof:--}" "$vol" "${bri:--}" "$clock" "$(hostname)"
