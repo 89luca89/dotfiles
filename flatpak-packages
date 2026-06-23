@@ -1,32 +1,27 @@
-com.github.tchx84.Flatseal
 com.github.finefindus.eyedropper
+com.github.tchx84.Flatseal
 dev.deedles.Trayscale
 # Media
-org.gimp.GIMP
 com.github.PintaProject.Pinta
+org.gimp.GIMP
 # Office
 com.github.xournalpp.xournalpp
 org.libreoffice.LibreOffice
 #Browserandoffice
-org.mozilla.firefox
 org.chromium.Chromium
+org.mozilla.firefox
 # Gnome
-org.gnome.Calculator
-org.gnome.FileRoller
-org.gnome.Loupe
-org.gnome.Papers
-org.gnome.TextEditor
+com.ranfdev.DistroShelf
+de.haeckerfelix.Fragments
+org.gnome.Evolution
 org.gnome.World.Secrets
 org.gnome.gitlab.somas.Apostrophe
-com.ranfdev.DistroShelf
-org.gnome.Evolution
-org.gtk.Gtk3theme.Adwaita-dark
 org.telegram.desktop
-de.haeckerfelix.Fragments
 #
-org.gnome.Rhythmbox3
 com.obsproject.Studio
+org.gnome.Rhythmbox3
 #
+org.gtk.Gtk3theme.Adwaita-dark
 runtime/org.freedesktop.Platform.VAAPI.Intel/x86_64/18.08
 runtime/org.freedesktop.Platform.VAAPI.Intel/x86_64/19.08
 runtime/org.freedesktop.Platform.VAAPI.Intel/x86_64/20.08
