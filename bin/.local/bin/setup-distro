@@ -22,11 +22,12 @@ vm.min_free_kbytes=67584
 vm.page-cluster = 0
 vm.swappiness = 180
 vm.watermark_boost_factor = 0
-vm.watermark_scale_factor = 1" | sudo tee /etc/sysctl.d/99-sysctl-custom.conf > /dev/null
+vm.watermark_scale_factor = 10" | sudo tee /etc/sysctl.d/99-sysctl-custom.conf > /dev/null
 sudo sysctl --system --quiet || :
 
 echo "[zram0]
-zram-size = ram" | sudo tee /etc/systemd/zram-generator.conf > /dev/null
+zram-size = ram
+compression-algorithm = zstd"| sudo tee /etc/systemd/zram-generator.conf > /dev/null
 
 echo '#
 ACTION=="add", SUBSYSTEM=="acpi", DRIVERS=="button", ATTRS{hid}=="PNP0C0D", ATTR{power/wakeup}="disabled"
