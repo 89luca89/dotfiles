@@ -28,3 +28,5 @@ export EDITOR=vim
 
 alias light="echo -n light > ~/.local/share/theme && kill -s USR1 \$(pgrep vim) 2>/dev/null"
 alias dark="echo -n dark > ~/.local/share/theme && kill -s USR1 \$(pgrep vim) 2>/dev/null"
+
+alias claude="~/Projects/Personal/clampdown/clampdown claude --gh --append-system-prompt-file ~/dotfiles/chat/AGENTS.md -- --dangerously-skip-permissions  --effort max --model claude-opus-4-8[1m]"
