@@ -88,7 +88,8 @@ if [ -n "$LUKS_DEVICES" ]; then
 	sudo fstrim -va
 fi
 
-echo "install adfs /bin/false
+echo "install act_pedit /bin/false
+install adfs /bin/false
 install af_802154 /bin/false
 install affs /bin/false
 install afs /bin/false
@@ -159,6 +160,7 @@ install qnx4 /bin/false
 install qnx6 /bin/false
 install raw1394 /bin/false
 install rds /bin/false
+install rds_tcp /bin/false
 install reiserfs /bin/false
 install romfs /bin/false
 install rose /bin/false
@@ -181,6 +183,8 @@ install video1394 /bin/false
 install vivid /bin/false
 install vt8623fb /bin/false
 install x25 /bin/false
+install xfrm_algo /bin/false
+install xfrm_user /bin/false
 install zonefs /bin/false" | sudo tee /etc/modprobe.d/hardening.conf > /dev/null
 
 echo "options amdgpu dcfeaturemask=0x38B ppfeaturemask=0xffffbfff sg_display=0 aspm=1
