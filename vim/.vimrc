@@ -38,7 +38,7 @@ set tags+=tags.**/tags
 syntax sync fromstart
 " Auto-install vim-plug #######################################################
 if empty(glob('$HOME/.vim/autoload/plug.vim'))
-	silent !mkdir -"$HOME/.vim/"{autoload,plugged,undo,view,spell}
+	silent !mkdir -p "$HOME/.vim/"{autoload,plugged,undo,view,spell}
 	silent !wget -qO "$HOME/.vim/autoload/plug.vim" "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
 	autocmd VimEnter * PlugInstall --sync|q
 endif
