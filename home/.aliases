@@ -25,8 +25,11 @@ export PATH=$HOME/.local/share/flatpak/exports/bin:$PATH
 export PATH=$HOME/bin:$PATH
 export PATH=$PATH:/usr/sbin:/usr/local/sbin
 export EDITOR=vim
+export COLORTERM=truecolor
 
 alias light="echo -n light > ~/.local/share/theme && kill -s USR1 \$(pgrep vim) 2>/dev/null"
 alias dark="echo -n dark > ~/.local/share/theme && kill -s USR1 \$(pgrep vim) 2>/dev/null"
 
-alias claude="~/Projects/Personal/clampdown/clampdown claude --gh --append-system-prompt-file ~/dotfiles/chat/AGENTS.md -- --dangerously-skip-permissions  --effort max --model claude-opus-4-8[1m]"
+alias claude="~/Projects/Personal/clampdown/clampdown claude --gh --append-system-prompt-file ~/dotfiles/chats/AGENTS.md -- --autocompact 384k --dangerously-skip-permissions  --effort max --model claude-opus-4-7[1m]"
+alias claude-opencode="~/Projects/Personal/clampdown/clampdown claude --env-file ~/.config/clampdown/clampdownrc-opencode --gh --append-system-prompt-file ~/dotfiles/chats/AGENTS.md -- --autocompact 384k --dangerously-skip-permissions  --effort max"
+alias pi="~/Projects/Personal/clampdown/clampdown pi --env-file ~/.config/clampdown/clampdownrc-pi --gh --append-system-prompt-file ~/dotfiles/chats/AGENTS.md -- --model opencode-go/deepseek-v4.1-flash --thinking high"
