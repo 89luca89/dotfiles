@@ -1,0 +1,902 @@
+<?xml version="1.0"?>
+
+<!--
+  Per-process CPU affinity seed for intel_lpmd's UseProcessCPUSet
+  overlay. Tailored to a Fedora + GNOME laptop:
+    systemd + dbus-broker + firewalld + sssd
+    PipeWire audio, GNOME Shell on Wayland, GDM, ibus
+    NetworkManager, wpa_supplicant, avahi-daemon
+    cups + cups-browsed (network printing over mDNS, kept enabled)
+    intel_lpmd + power-profiles-daemon + tuned-ppd shim
+    dnf / rpm / rpm-ostree / flatpak
+    docker + podman
+    tailscaled
+
+  Classification tiers (low priority -> high):
+    background       - no UI, no display: system services, daemons,
+                       indexers. Pinned to L-cores only.
+    utility          - non-interactive helper work above background.
+    user_initiated   - user-launched workloads incl. GUI apps,
+                       browsers, terminals, IDEs. Default GUI tier.
+    user_interactive - focused-window owner. intel_lpmd promotes a
+                       PID to this tier on focus change (via
+                       LPM_SET_FOCUS_PID from a compositor helper)
+                       and demotes on focus loss. Compositor +
+                       display-server + session stack stays here
+                       regardless of focus.
+    realtime         - PipeWire / audio engines.
+
+  Named groups in <Cores> resolve at runtime against the current
+  intel_lpmd state's ActiveCPUs:
+      ActivePcores = P-cores  intersect ActiveCPUs (0-5)
+      ActiveEcores = E-cores  intersect ActiveCPUs (6-13)
+      ActiveLcores = LP-cores intersect ActiveCPUs (14-15)
+  On Arrow Lake-H in Balanced: state has ActiveCPUs=6-15, so
+  ActivePcores is empty and Realtime / UserInteractive /
+  UserInitiated collapse to E+L. In Performance (LPMD_OFF)
+  ActiveCPUs=all-16, so P+E+L classes actually use P-cores.
+
+  Process names below match /proc/<pid>/comm, TRUNCATED TO 15 chars.
+  Entries never seen on this box are inert - no PID matches, no
+  cpuset applied - so a few just-in-case entries are cheap.
+-->
+
+<ProcessCpusetConfig>
+
+    <ClassDefaults>
+        <Realtime>
+            <Cores>ActivePcores,ActiveEcores,ActiveLcores</Cores>
+        </Realtime>
+        <UserInteractive>
+            <Cores>ActivePcores,ActiveEcores,ActiveLcores</Cores>
+        </UserInteractive>
+        <UserInitiated>
+            <Cores>ActivePcores,ActiveEcores,ActiveLcores</Cores>
+        </UserInitiated>
+        <Utility>
+            <Cores>ActiveEcores,ActiveLcores</Cores>
+        </Utility>
+        <Background>
+            <Cores>ActiveLcores</Cores>
+        </Background>
+    </ClassDefaults>
+
+    <!--
+      Catch-all for user-session PIDs whose comm doesn't match any
+      <Process> below. Resets inherited restrictive masks from an
+      ancestor (e.g. make/cc1 spawned by gnome-terminal, which is
+      user_initiated -> P+E+L). System-slice PIDs are NEVER touched
+      by <DefaultProcess>: they either match a <Process> below or
+      are left alone.
+    -->
+    <DefaultProcess>
+        <Classification>unclassified</Classification>
+        <ActiveCores>ActivePcores,ActiveEcores,ActiveLcores</ActiveCores>
+        <AffinityAllThreads>1</AffinityAllThreads>
+    </DefaultProcess>
+
+    <!-- ===================================================== -->
+    <!-- =============== SYSTEMD CORE (background) =========== -->
+    <!-- ===================================================== -->
+    <!--
+      PID 1 (comm="systemd") is intentionally NOT listed. Placing
+      it in a cpuset cgroup makes it react to cgroup changes,
+      causing a service-restart loop. The per-user systemd
+      instance (also comm="systemd") is skipped for the same
+      reason. Leave both unconstrained.
+    -->
+    <Process>
+        <Name>systemd-journal</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>systemd-udevd</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>systemd-logind</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>systemd-resolve</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>systemd-timesyn</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>systemd-oomd</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>systemd-homed</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>systemd-userdbd</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>systemd-machine</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>systemd-coredum</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <!-- systemd-userwork, per-user worker helper -->
+        <Name>systemd-userwor</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>(sd-pam)</Name>
+        <Classification>background</Classification>
+    </Process>
+
+    <!-- ===================================================== -->
+    <!-- =============== NETWORK / CONNECTIVITY ============== -->
+    <!-- ===================================================== -->
+
+    <Process>
+        <Name>NetworkManager</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>nm-dispatcher</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>wpa_supplicant</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <!-- mDNS/DNS-SD, kept enabled for network printing -->
+        <Name>avahi-daemon</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>sshd</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <!-- OpenSSH >= 9.8 per-connection worker -->
+        <Name>sshd-session</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>chronyd</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>firewalld</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>tailscaled</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>mosh-server</Name>
+        <Classification>background</Classification>
+    </Process>
+
+    <!-- ===================================================== -->
+    <!-- =============== SYSTEM / IPC / SECURITY ============= -->
+    <!-- ===================================================== -->
+
+    <Process>
+        <Name>dbus-broker</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>dbus-broker-lau</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>polkitd</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>accounts-daemon</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>sssd</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>sssd_be</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>sssd_nss</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>sssd_pam</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>sssd_kcm</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>gssproxy</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>rtkit-daemon</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>auditd</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>crond</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>atd</Name>
+        <Classification>background</Classification>
+    </Process>
+
+    <!-- ===================================================== -->
+    <!-- =============== HARDWARE / POWER ==================== -->
+    <!-- ===================================================== -->
+
+    <Process>
+        <Name>thermald</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>intel_lpmd</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>tuned</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <!-- tuned power-profiles-daemon shim -->
+        <Name>tuned-ppd</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <!-- comm truncated from "power-profiles-daemon" -->
+        <Name>power-profiles-</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>irqbalance</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>upowerd</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>udisksd</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>fwupd</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>bluetoothd</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <!-- Thunderbolt / USB4 device manager -->
+        <Name>boltd</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <!-- Kept enabled: network printing -->
+        <Name>cupsd</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <!-- Kept enabled: driverless-print discovery -->
+        <Name>cups-browsed</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>colord</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <!-- comm truncated from "switcheroo-control" -->
+        <Name>switcheroo-cont</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <!-- comm truncated from "iio-sensor-proxy" -->
+        <Name>iio-sensor-prox</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <!-- comm truncated from "low-memory-monitor" -->
+        <Name>low-memory-moni</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>rngd</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>geoclue</Name>
+        <Classification>background</Classification>
+    </Process>
+
+    <!-- ===================================================== -->
+    <!-- =============== FEDORA UPDATES / PACKAGING ========== -->
+    <!-- ===================================================== -->
+
+    <Process>
+        <Name>dnf</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>dnf-makecache</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>dnf-automatic</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>rpm</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>rpm-ostree</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>flatpak</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <!-- comm truncated from "flatpak-system-helper" -->
+        <Name>flatpak-system-</Name>
+        <Classification>background</Classification>
+    </Process>
+
+    <!-- ===================================================== -->
+    <!-- =============== CONTAINERS / RUNTIMES =============== -->
+    <!-- ===================================================== -->
+
+    <Process>
+        <Name>dockerd</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>containerd</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>containerd-shim</Name>
+        <Classification>background</Classification>
+    </Process>
+
+    <!-- ===================================================== -->
+    <!-- =============== GNOME BACKGROUND HELPERS ============ -->
+    <!-- ===================================================== -->
+
+    <Process>
+        <Name>gvfsd</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>gvfsd-fuse</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>gvfsd-trash</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>gvfsd-metadata</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>gvfs-udisks2-vo</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>gvfs-mtp-volume</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>gvfs-goa-volume</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>gvfs-afc-volume</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>gvfs-gphoto2-vo</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>gnome-keyring-d</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>tracker-miner-f</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>tracker-extract</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>localsearch-3</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>evolution-calen</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>evolution-addre</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>evolution-sourc</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>goa-daemon</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>goa-identity-se</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>at-spi-bus-laun</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>at-spi2-registr</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>xdg-desktop-por</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>xdg-document-po</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>xdg-permission-</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <!-- Flatpak / portal D-Bus proxy helper -->
+        <Name>xdg-dbus-proxy</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>gnome-shell-cal</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>gjs</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <!-- comm truncated from "gnome-remote-desktop" -->
+        <Name>gnome-remote-de</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>dconf-service</Name>
+        <Classification>background</Classification>
+    </Process>
+
+    <!-- ===================================================== -->
+    <!-- =============== GNOME SETTINGS DAEMON =============== -->
+    <!-- ===================================================== -->
+
+    <Process>
+        <Name>gsd-a11y-settin</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>gsd-color</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>gsd-datetime</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>gsd-housekeepin</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>gsd-keyboard</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>gsd-media-keys</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>gsd-power</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>gsd-print-notif</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>gsd-printer</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>gsd-rfkill</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>gsd-screensaver</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>gsd-sharing</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>gsd-smartcard</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>gsd-sound</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>gsd-wacom</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>gsd-disk-utilit</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>gsd-usb-protect</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>gsd-wwan</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>gsd-xsettings</Name>
+        <Classification>background</Classification>
+    </Process>
+
+    <!-- ===================================================== -->
+    <!-- =============== MISC HELPERS ======================== -->
+    <!-- ===================================================== -->
+
+    <Process>
+        <Name>alsactl</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <!-- Per-user resource arbitration daemon (Fedora) -->
+        <Name>uresourced</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>glib-pacrunner</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>agetty</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>gcr-ssh-agent</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>fusermount3</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>sftp-server</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <!-- tmux server (session multiplexer, backgrounded from
+             the launching shell) -->
+        <Name>tmux: server</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>tmux</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <!-- Input-method background bits -->
+        <Name>ibus-dconf</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>ibus-portal</Name>
+        <Classification>background</Classification>
+    </Process>
+    <Process>
+        <Name>ibus-engine-sim</Name>
+        <Classification>background</Classification>
+    </Process>
+
+    <!-- ===================================================== -->
+    <!-- =============== AUDIO (realtime) ==================== -->
+    <!-- ===================================================== -->
+
+    <Process>
+        <Name>pipewire</Name>
+        <Classification>realtime</Classification>
+    </Process>
+    <Process>
+        <Name>pipewire-pulse</Name>
+        <Classification>realtime</Classification>
+    </Process>
+    <Process>
+        <Name>wireplumber</Name>
+        <Classification>realtime</Classification>
+    </Process>
+
+    <!-- ===================================================== -->
+    <!-- =============== DISPLAY / SESSION =================== -->
+    <!--
+      Compositor + display server + session-manager stack. Stays
+      at user_interactive regardless of which app has focus - this
+      layer always drives the visible UI.
+    -->
+    <!-- ===================================================== -->
+
+    <Process>
+        <Name>gdm</Name>
+        <Classification>user_interactive</Classification>
+    </Process>
+    <Process>
+        <Name>gdm-session-wor</Name>
+        <Classification>user_interactive</Classification>
+    </Process>
+    <Process>
+        <Name>gdm-wayland-ses</Name>
+        <Classification>user_interactive</Classification>
+    </Process>
+    <Process>
+        <Name>gdm-x-session</Name>
+        <Classification>user_interactive</Classification>
+    </Process>
+    <Process>
+        <!-- Xorg fallback session (GNOME defaults to Wayland
+             on Fedora, but Xorg is the choose-at-login backup) -->
+        <Name>Xorg</Name>
+        <Classification>user_interactive</Classification>
+    </Process>
+    <Process>
+        <Name>Xwayland</Name>
+        <Classification>user_interactive</Classification>
+    </Process>
+    <Process>
+        <Name>gnome-shell</Name>
+        <Classification>user_interactive</Classification>
+    </Process>
+    <Process>
+        <Name>mutter</Name>
+        <Classification>user_interactive</Classification>
+    </Process>
+    <Process>
+        <Name>gnome-session-b</Name>
+        <Classification>user_interactive</Classification>
+    </Process>
+    <Process>
+        <Name>gnome-session-c</Name>
+        <Classification>user_interactive</Classification>
+    </Process>
+    <Process>
+        <Name>gnome-session-i</Name>
+        <Classification>user_interactive</Classification>
+    </Process>
+    <Process>
+        <Name>gnome-session-s</Name>
+        <Classification>user_interactive</Classification>
+    </Process>
+    <Process>
+        <Name>mutter-x11-fram</Name>
+        <Classification>user_interactive</Classification>
+    </Process>
+    <!-- Input methods that must stay responsive to keystrokes -->
+    <Process>
+        <Name>ibus-daemon</Name>
+        <Classification>user_interactive</Classification>
+    </Process>
+    <Process>
+        <Name>ibus-x11</Name>
+        <Classification>user_interactive</Classification>
+    </Process>
+    <Process>
+        <Name>ibus-extension-</Name>
+        <Classification>user_interactive</Classification>
+    </Process>
+    <Process>
+        <Name>ibus-engine-tb</Name>
+        <Classification>user_interactive</Classification>
+    </Process>
+
+    <!-- ===================================================== -->
+    <!-- =============== DESKTOP APPS (user_initiated) =======
+         Default tier for GUI apps. intel_lpmd's focus helper
+         promotes whichever app owns the focused window to
+         user_interactive, and reverts it on focus loss. -->
+    <!-- ===================================================== -->
+
+    <!-- File manager / terminals / GNOME utilities -->
+    <Process>
+        <Name>nautilus</Name>
+        <Classification>user_initiated</Classification>
+    </Process>
+    <Process>
+        <Name>gnome-terminal-</Name>
+        <Classification>user_initiated</Classification>
+    </Process>
+    <Process>
+        <Name>gnome-console</Name>
+        <Classification>user_initiated</Classification>
+    </Process>
+    <Process>
+        <Name>gnome-control-c</Name>
+        <Classification>user_initiated</Classification>
+    </Process>
+    <Process>
+        <Name>gnome-calculato</Name>
+        <Classification>user_initiated</Classification>
+    </Process>
+    <Process>
+        <Name>gnome-text-edit</Name>
+        <Classification>user_initiated</Classification>
+    </Process>
+    <Process>
+        <Name>gnome-system-mo</Name>
+        <Classification>user_initiated</Classification>
+    </Process>
+    <Process>
+        <Name>gnome-logs</Name>
+        <Classification>user_initiated</Classification>
+    </Process>
+    <Process>
+        <Name>gnome-disks</Name>
+        <Classification>user_initiated</Classification>
+    </Process>
+    <Process>
+        <!-- Fedora's default image viewer (replaces eog) -->
+        <Name>loupe</Name>
+        <Classification>user_initiated</Classification>
+    </Process>
+    <Process>
+        <!-- Fedora's default PDF viewer (replaces evince) -->
+        <Name>papers</Name>
+        <Classification>user_initiated</Classification>
+    </Process>
+    <Process>
+        <Name>totem</Name>
+        <Classification>user_initiated</Classification>
+    </Process>
+    <!-- Media -->
+    <Process>
+        <Name>vlc</Name>
+        <Classification>user_initiated</Classification>
+    </Process>
+    <Process>
+        <Name>mpv</Name>
+        <Classification>user_initiated</Classification>
+    </Process>
+    <!-- Browsers -->
+    <Process>
+        <Name>firefox</Name>
+        <Classification>user_initiated</Classification>
+    </Process>
+    <Process>
+        <!-- Firefox content processes -->
+        <Name>Web Content</Name>
+        <Classification>user_initiated</Classification>
+    </Process>
+    <Process>
+        <!-- Firefox site-isolated content processes -->
+        <Name>Isolated Web Co</Name>
+        <Classification>user_initiated</Classification>
+    </Process>
+    <Process>
+        <Name>chrome</Name>
+        <Classification>user_initiated</Classification>
+    </Process>
+    <Process>
+        <Name>chromium</Name>
+        <Classification>user_initiated</Classification>
+    </Process>
+    <Process>
+        <Name>brave</Name>
+        <Classification>user_initiated</Classification>
+    </Process>
+    <Process>
+        <!-- WebKitGTK content/web process (Evolution, Epiphany,
+             GNOME Online Accounts auth dialog). comm truncated
+             from "WebKitWebProcess". -->
+        <Name>WebKitWebProces</Name>
+        <Classification>user_initiated</Classification>
+    </Process>
+    <!-- Mail / office / IDE -->
+    <Process>
+        <Name>thunderbird</Name>
+        <Classification>user_initiated</Classification>
+    </Process>
+    <Process>
+        <Name>code</Name>
+        <Classification>user_initiated</Classification>
+    </Process>
+    <Process>
+        <Name>evolution</Name>
+        <Classification>user_initiated</Classification>
+    </Process>
+    <Process>
+        <Name>evolution-alarm</Name>
+        <Classification>user_initiated</Classification>
+    </Process>
+    <!-- Privilege elevation / systemd CLI -->
+    <Process>
+        <Name>sudo</Name>
+        <Classification>user_initiated</Classification>
+    </Process>
+    <Process>
+        <Name>systemctl</Name>
+        <Classification>user_initiated</Classification>
+    </Process>
+    <Process>
+        <!-- Interactive container CLI (short-lived) -->
+        <Name>podman</Name>
+        <Classification>user_initiated</Classification>
+    </Process>
+    <!-- Interactive shells -->
+    <Process>
+        <Name>bash</Name>
+        <Classification>user_initiated</Classification>
+    </Process>
+    <Process>
+        <Name>zsh</Name>
+        <Classification>user_initiated</Classification>
+    </Process>
+    <Process>
+        <Name>fish</Name>
+        <Classification>user_initiated</Classification>
+    </Process>
+
+    <!--
+      Example: a Steam-launched game with a dedicated CPU profile.
+      Uncomment and adapt when a game is added. Set <AllowSession>1
+      so the game gets pinned even when launched from a login-session
+      scope, and <AffinityAllThreads>1 so every TID inherits the mask.
+    -->
+    <!--
+    <Process>
+        <Name>Spaceship*</Name>
+        <AllowSession>1</AllowSession>
+        <Classification>game_profile_mixed</Classification>
+        <AffinityAllThreads>1</AffinityAllThreads>
+    </Process>
+    -->
+
+</ProcessCpusetConfig>

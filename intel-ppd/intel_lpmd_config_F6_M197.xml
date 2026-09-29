@@ -1,0 +1,351 @@
+<?xml version="1.0"?>
+
+<!--
+Intel Energy Optimizer (LPMD) configuration for Arrow Lake-H
+(family 6, model 0xC5 / 197).
+
+  Performance (PerformanceDef=-1) -> LPMD_OFF  -> all CPUs active
+  Balanced    (BalancedDef= 0)    -> LPMD_AUTO -> E+L cores only (P-cores parked)
+  Powersaver  (PowersaverDef= 1)  -> LPMD_ON   -> 4 E-cores + 2 LP-E cores
+
+Design: P-cores are NEVER used in Balanced mode. All WLT states use
+ActiveLcores=ALL + ActiveEcores=ALL (topology-portable, not hardcoded
+CPU numbers). EPP/EPB vary per WLT state to spread the power-performance
+tradeoff across E+L cores. If the user wants P-cores, they select
+Performance mode or disable LPMD.
+-->
+
+<Configuration>
+    <!--
+        CPU format example: 1,2,4..6,8-10
+        Used by the force-on path (PowersaverDef=1 -> DEFAULT_ON ->
+        CPUMASK_LPM_DEFAULT). Balanced runs through <States> below
+        and does not consult this value.
+
+        Set to 4 E-cores (10-13) + 2 LP-E cores (14-15) = 6 threads.
+        LP-only (empty -> auto-detected 14-15) leaves the machine too
+        starved for single-thread work; 6 threads keeps a browser +
+        terminal + video call responsive while parking the other 4
+        E-cores and all P-cores. Under EPP=255 (set by PPD's power-
+        saver profile), the E-cores sit at low freq most of the time,
+        so the added draw over LP-only is small.
+    -->
+    <lp_mode_cpus>10,11,12,13,14,15</lp_mode_cpus>
+
+    <!--
+        EPP applied in the Powersaver force-on path.
+        0-255: Valid EPP value (255 = strongest power bias)
+           -1: Don't change EPP
+
+        build_default_states() copies this into DEFAULT_ON's state
+        (lpmd_state_machine.c ~L889). Set to 255 explicitly rather
+        than relying on PPD's power-saver profile writing 255 for
+        us — this keeps powersaver frugal even if PPD is replaced
+        by tuned, disabled, or absent. Balanced still uses the
+        per-<State> EPP values below (192/64/128) untouched.
+    -->
+    <lp_mode_epp>255</lp_mode_epp>
+
+    <!--
+        Mode values
+        0: Cgroup v2
+        1: Cgroup v2 isolate
+        2: CPU idle injection
+    -->
+    <Mode>1</Mode>
+
+    <!--
+        Default behavior when Performance power setting is used
+        -1: force off. (Never enter Low Power Mode)
+         1: force on. (Always stay in Low Power Mode)
+         0: auto. (opportunistic Low Power Mode enter/exit)
+    -->
+    <PerformanceDef>-1</PerformanceDef>
+
+    <!--
+        Default behavior when Balanced power setting is used
+        -1: force off. (Never enter Low Power Mode)
+         1: force on. (Always stay in Low Power Mode)
+         0: auto. (opportunistic Low Power Mode enter/exit)
+    -->
+    <BalancedDef>0</BalancedDef>
+
+    <!--
+        Default behavior when Power saver setting is used
+        -1: force off. (Never enter Low Power Mode)
+         1: force on. (Always stay in Low Power Mode)
+         0: auto. (opportunistic Low Power Mode enter/exit)
+    -->
+    <PowersaverDef>1</PowersaverDef>
+
+    <!--
+        Use HFI LPM hints
+        0 : No
+        1 : Yes
+    -->
+    <HfiLpmEnable>0</HfiLpmEnable>
+
+    <!--
+        Use WLT hints
+        0 : No
+        1 : Yes
+    -->
+    <WLTHintEnable>1</WLTHintEnable>
+
+    <!--
+        Use WLT hint Poll enable
+        0 : No  — event-driven only, daemon sleeps between WLT hints.
+        1 : Yes — polls every DEF_POLLING_INTERVAL (100 ms in lpmd.h)
+                  as a safety net if events miss.
+
+        Set to 0 to match upstream M181 (also Arrow Lake). In event-
+        driven mode the daemon costs nothing while WLT is stable —
+        wakes only on real hints from the thermal_netlink socket. If
+        the journal ever shows the daemon stuck in the wrong state,
+        flip to 1.
+    -->
+    <WLTHintPollEnable>0</WLTHintPollEnable>
+
+    <!--
+        POST-V0.1.0: WLT debounce (ms). Filters transient WLT hints
+        so the daemon only reacts to sustained ones. The WLT=0<->1
+        flip on this box oscillates ~2x/sec; 1024 ms collapses that
+        to one settle-then-fire per second at most, cutting sysfs
+        write churn.
+
+        Also makes WLTHintPollEnable=0 (event-driven, above) fully
+        safe: a missed netlink event no longer strands the daemon
+        in a stale state for more than the debounce window.
+
+        v0.1.0 rejects the whole config on unknown Configuration
+        elements, so this stays wrapped in an XML comment. To enable
+        once Fedora ships >= v0.1.1 (upstream main has it since
+        2025-Q3), delete the two comment markers around the element
+        below.
+    -->
+    <!-- POST-V0.1.0: <WLTHintNotificationDelay>1024</WLTHintNotificationDelay> -->
+
+    <!--
+        Use HFI SUV hints
+        0 : No
+        1 : Yes
+        NOTE: SUV mode support was removed from the daemon (May 2025).
+        The parser accepts this element but discards the value.
+        Kept here for forward compatibility if the feature is restored.
+    -->
+    <HfiSuvEnable>0</HfiSuvEnable>
+
+    <!--
+        WLT hint mask: ANDed with the raw hardware WLT hint before
+        matching against each state's WLTType.
+        15 (0x0F) keeps the low 4 bits, which covers the defined
+        WLT classifications (0=Idle, 1=Battery Life, 2=Sustained, 3=Bursty).
+        Arrow Lake currently only produces values 0-3, so mask=15
+        is a no-op today — it serves as a forward-compatibility guard
+        in case future firmware uses upper bits for extended flags.
+        Set to -1 to disable masking entirely.
+    -->
+    <WLTHintMask>15</WLTHintMask>
+
+    <!--
+        Global utilization thresholds (0-100). Used by the legacy
+        UTIL_POWER fallback path when no per-state <States> config
+        exists. Since this config defines <States>, these globals
+        are not consumed — but kept for documentation and in case
+        the <States> block is removed.
+
+        util_entry_threshold: max system-wide load (%) to enter LPM.
+        util_exit_threshold: max busiest-CPU load (%) to stay in LPM
+          (despite the name, it gates entry matching, not exit).
+        Clearing both disables the util monitor entirely.
+
+        Disabled here: in AUTO mode, all states resolve to E+L cores
+        (P-cores always parked), so load-based exit is unnecessary —
+        the CPU mask never changes, only EPP/EPB varies by WLT state.
+
+        <util_entry_threshold>10</util_entry_threshold>
+        <util_exit_threshold>95</util_exit_threshold>
+    -->
+
+    <!--
+        EntryDelayMS / ExitDelayMS / EntryHystMS / ExitHystMS are
+        currently parsed but have no runtime effect. Omitted here.
+    -->
+
+    <!--
+        Ignore ITMT setting during LP-mode enter/exit
+        0: disable ITMT upon LP-mode enter and re-enable ITMT upon LP-mode exit
+        1: do not touch ITMT setting during LP-mode enter/exit
+
+        Arrow Lake-H supports Turbo Boost Max Technology 3.0, but ITMT
+        is effectively a no-op here for two reasons:
+        1. lpmd parks P-cores via cgroup isolation — ITMT tells the
+           scheduler to *prefer* P-cores, the opposite of what LPM does.
+        2. On kernel 6.14+, the toggle moved from sysctl to debugfs and
+           is only created when a driver (intel_pstate / HFI) registers
+           ITMT priorities. On kernel 6.17 with Arrow Lake-H, the toggle
+           file is not created, so the daemon logs ERR and continues.
+        Kept at 0 for consistency with upstream configs (F6_M170/189/204).
+    -->
+    <IgnoreITMT>0</IgnoreITMT>
+
+    <!--
+        POST-V0.1.0: Per-process cpuset overlay. The daemon reads a
+        companion seed file (/etc/intel_lpmd/process_cpuset.xml) that
+        bins named processes into classes (realtime, user_interactive,
+        user_initiated, utility, background, game_profile_*) and
+        applies the per-class <Cores> mask from the <ClassDefaults>
+        block inside <States> below to each process's transient
+        cgroup.
+
+        Biggest lever on this box: Background -> L-cores only pins
+        systemd-*, dbus-broker, NetworkManager, tracker-miner, gsd-*,
+        and ~40 more chatty low-duty daemons to the 2 L-cores in
+        every PPD profile, including Performance. A focus helper
+        promotes the currently-focused PID to user_interactive so
+        the frontmost app stays on P-cores when Performance is
+        selected.
+
+        v0.1.0 rejects the whole config on this element. To enable
+        once Fedora ships >= v0.1.1: uncomment the line below AND
+        the matching <ClassDefaults> block inside <States> at the
+        same time (grep POST-V0.1.0 to find both).
+
+        Requires /etc/intel_lpmd/process_cpuset.xml installed
+        alongside; setup-fedora ships that from
+        ../intel-ppd/process_cpuset.xml.
+    -->
+    <!-- POST-V0.1.0: <UseProcessCPUSet>1</UseProcessCPUSet> -->
+
+    <!--
+        SoC Power Slider (BalancedSliderAC/DC, SliderOffsetAC/DC): omitted.
+        The slider is a Panther Lake hardware debut — Arrow Lake does not
+        expose the slider mailbox via the int340x thermal driver, so the
+        processor_thermal_soc_slider module loads but does not register a
+        platform-profile device. See F6_M204 config for Panther Lake values.
+    -->
+
+    <!--
+        WorkLoad Type hint states for Arrow Lake-H.
+
+        P-cores (0-5) are NEVER activated in Balanced/AUTO mode. Every
+        state binds ActiveCPUs=6-15 (8 E-cores + 2 LP-E cores), which
+        is what Speed Shift / Thread Director gets to schedule on.
+        Fedora's package is a post-0.1.0 git snapshot
+        (0.1.0^git20260608.40d18a6 plus the Arrow Lake-H patch), so it
+        parses <WLTTypeMask> and the <ActivePcores/Ecores/Lcores> tags;
+        explicit ActiveCPUs is kept anyway.
+
+        WLT 0 and WLT 1 are matched by a single <WLTTypeMask>3</...>
+        state. Splitting them into separate states with identical
+        EPP/EPB is not free: process_epp_epb() writes EPP and EPB for
+        every online CPU on each state entry with no compare-before-
+        write, and the WLT hardware oscillates between 0 and 1 a few
+        times per second. The mask keeps choose_next_state() returning
+        the same index, so need_enter() skips the transition entirely.
+
+        EPP/EPB rationale per WLT class:
+
+          WLT 0/1 UTIL_IDLE     EPP=192  EPB=8   power-biased
+          WLT 2   UTIL_SUSTAIN  EPP=64   EPB=4   perf-biased, sustained work
+          WLT 3   UTIL_BURSTY   EPP=128  EPB=6   balanced, absorbs bursts
+
+        Invalid WLT values (e.g. WLT_INVALID=4 from sysfs read
+        failures, WLT_MASK from firmware not producing them yet) hit
+        no state and the daemon holds its prior state (STATE_NONE in
+        choose_next_state).
+    -->
+    <States>
+        <CPUFamily> 6 </CPUFamily>
+        <CPUModel> 197 </CPUModel>
+        <CPUConfig> * </CPUConfig>
+
+        <!--
+            POST-V0.1.0: Per-class default cpu masks for the
+            process_cpuset overlay. Group tokens resolve at runtime
+            against the CURRENT state's ActiveCPUs:
+              ActivePcores = P-cores  intersect ActiveCPUs (0-5)
+              ActiveEcores = E-cores  intersect ActiveCPUs (6-13)
+              ActiveLcores = LP-cores intersect ActiveCPUs (14-15)
+
+            Every state below has ActiveCPUs=6-15, so ActivePcores is
+            empty in Balanced/Powersaver and Realtime / UserInteractive
+            / UserInitiated collapse to E+L there. In Performance
+            (LPMD_OFF) ActiveCPUs covers all 16 threads, so those
+            classes actually get P-cores.
+
+            Rationale:
+              Realtime         P+E+L  audio must not be starved
+              UserInteractive  P+E+L  focused app; peak on P
+              UserInitiated    P+E+L  default GUI app; focus helper
+                                        moves it to UserInteractive
+                                        while its window has focus
+              Utility          E+L    indexers, telemetry
+              Background       L      chatty daemons; the win
+              GameProfile*            explicit spec per game
+
+            v0.1.0 silently ignores unknown state-level elements, so
+            leaving this uncommented would be a no-op on Fedora's
+            current daemon. Kept wrapped in a comment anyway so we
+            uncomment it in lockstep with <UseProcessCPUSet>1</...>
+            above (grep POST-V0.1.0 to find both).
+        -->
+        <!-- POST-V0.1.0:
+        <ClassDefaults>
+            <Realtime>
+                <Cores>ActivePcores,ActiveEcores,ActiveLcores</Cores>
+            </Realtime>
+            <UserInteractive>
+                <Cores>ActivePcores,ActiveEcores,ActiveLcores</Cores>
+            </UserInteractive>
+            <UserInitiated>
+                <Cores>ActivePcores,ActiveEcores,ActiveLcores</Cores>
+            </UserInitiated>
+            <Utility>
+                <Cores>ActiveEcores,ActiveLcores</Cores>
+            </Utility>
+            <Background>
+                <Cores>ActiveLcores</Cores>
+            </Background>
+            <GameProfileCPU>
+                <Cores>ActivePcores</Cores>
+            </GameProfileCPU>
+            <GameProfileGPU>
+                <Cores>ActivePcores,ActiveEcores</Cores>
+            </GameProfileGPU>
+            <GameProfileMixed>
+                <Cores>ActivePcores,ActiveEcores</Cores>
+            </GameProfileMixed>
+        </ClassDefaults>
+        -->
+
+        <State>
+            <ID> 1 </ID>
+            <Name> UTIL_IDLE </Name>
+            <WLTTypeMask> 3 </WLTTypeMask>
+            <ActiveCPUs> 6-15 </ActiveCPUs>
+            <IRQMigrate>1</IRQMigrate>
+            <EPP>192</EPP>
+            <EPB>8</EPB>
+        </State>
+        <State>
+            <ID> 3 </ID>
+            <Name> UTIL_SUSTAIN </Name>
+            <WLTType> 2 </WLTType>
+            <ActiveCPUs> 6-15 </ActiveCPUs>
+            <IRQMigrate>1</IRQMigrate>
+            <EPP>64</EPP>
+            <EPB>4</EPB>
+        </State>
+        <State>
+            <ID> 4 </ID>
+            <Name> UTIL_BURSTY </Name>
+            <WLTType> 3 </WLTType>
+            <ActiveCPUs> 6-15 </ActiveCPUs>
+            <IRQMigrate>1</IRQMigrate>
+            <EPP>128</EPP>
+            <EPB>6</EPB>
+        </State>
+    </States>
+
+</Configuration>
