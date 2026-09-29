@@ -9,8 +9,8 @@ if [ "$grayscale" = "false" ]; then
 	dconf write /org/gnome/desktop/screen-time-limits/grayscale true
 	gnome-gamma-tool.py -y -c 1.15 -g 0.85
 else
-	# gnome-gamma-tool.py -r
-	gnome-gamma-tool.py -a -y -c 1.05 -g 1
+	gnome-gamma-tool.py -r
+	# gnome-gamma-tool.py -a -y -c 1.05 -g 1
 	dconf write /org/gnome/desktop/a11y/interface/high-contrast false
 	dconf write /org/gnome/desktop/screen-time-limits/daily-limit-enabled false
 	dconf write /org/gnome/desktop/screen-time-limits/daily-limit-seconds "uint32 60"

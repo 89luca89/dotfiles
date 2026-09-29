@@ -2,7 +2,6 @@ com.github.finefindus.eyedropper
 com.github.tchx84.Flatseal
 dev.deedles.Trayscale
 # Media
-com.github.PintaProject.Pinta
 org.gimp.GIMP
 # Office
 com.github.xournalpp.xournalpp
@@ -11,8 +10,6 @@ org.libreoffice.LibreOffice
 org.chromium.Chromium
 org.mozilla.firefox
 # Gnome
-com.ranfdev.DistroShelf
-de.haeckerfelix.Fragments
 org.gnome.Evolution
 org.gnome.World.Secrets
 org.gnome.gitlab.somas.Apostrophe
