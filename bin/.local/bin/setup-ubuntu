@@ -93,6 +93,7 @@ sudo usermod -aG docker "$USER"
 sudo ufw enable
 sudo ufw default deny incoming
 sudo ufw allow OpenSSH
+sudo ufw allow mosh
 
 # Fix swap setup
 [ -e /etc/systemd/zram-generator.conf.dpkg-old ] &&

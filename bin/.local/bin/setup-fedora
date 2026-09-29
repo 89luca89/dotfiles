@@ -10,6 +10,7 @@ sudo dnf remove \
 	cockpit* \
 	smartmontools* \
 	rsyslog* \
+	libreoffice* \
 	open-vm* qemu-guest-agent virtualbox-guest-additions \
 	gnome-software
 
@@ -74,14 +75,25 @@ sudo firewall-cmd --reload
 
 ##############################################################################
 
+sudo systemctl disable --now thermald.service || :
 if ! grep Intel /proc/cpuinfo; then
 	sudo dnf swap tuned-ppd power-profiles-daemon
-	sudo powerprofilesctl set power-saver
 	sudo powerprofilesctl configure-action amdgpu_panel_power --enable
 	sudo powerprofilesctl configure-action amdgpu_dpm --enable
+	sudo powerprofilesctl set power-saver
 else
 	sudo dnf install -y intel-media-driver libva-*-driver intel-lpmd
 	sudo mkdir -p /etc/systemd/system/intel_lpmd.service.d/
-	sudo cp "$(dirname "$(realpath "$0")")/../../../intel-ppd/intel_lpmd_config.xml" /etc/intel_lpmd/
+	# Snapshot the packaged Arrow Lake-H config once, so the upstream
+	# default is recoverable after our override lands on top.
+	sudo cp /etc/intel_lpmd/intel_lpmd_config_F6_M197.xml /etc/intel_lpmd/intel_lpmd_config_F6_M197.xml.orig || :
+	sudo cp "$(dirname "$(realpath "$0")")/../../../intel-ppd/intel_lpmd_config_F6_M197.xml" /etc/intel_lpmd/
+	# Companion seed for the POST-V0.1.0 UseProcessCPUSet overlay in
+	# intel_lpmd_config_F6_M197.xml.
+	sudo cp /etc/intel_lpmd/process_cpuset.xml /etc/intel_lpmd/process_cpuset.xml.orig || :
+	sudo cp "$(dirname "$(realpath "$0")")/../../../intel-ppd/process_cpuset.xml" /etc/intel_lpmd/
 	sudo cp "$(dirname "$(realpath "$0")")/../../../intel-ppd/override.conf" /etc/systemd/system/intel_lpmd.service.d/
+	sudo systemctl daemon-reload
+	sudo systemctl enable intel_lpmd.service
+	sudo systemctl restart intel_lpmd.service
 fi
