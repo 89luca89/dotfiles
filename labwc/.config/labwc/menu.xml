@@ -2,19 +2,19 @@
 <openbox_menu>
   <menu id="root-menu" label="labwc">
     <item label="Terminal">
-      <action name="Execute" command="foot" />
+      <action name="Execute" command="footclient" />
     </item>
     <item label="Launcher">
       <action name="Execute" command="fuzzel" />
     </item>
     <item label="Dev container (distrobox + tmux)">
-      <action name="Execute" command="foot distrobox enter default_distrobox -- bash -l -c 'tmux a || tmux'" />
+      <action name="Execute" command="footclient distrobox enter default_distrobox -- bash -l -c 'tmux a || tmux'" />
     </item>
     <item label="Utilities…">
-      <action name="Execute" command="util-menu" />
+      <action name="Execute" command="~/.config/labwc/util-menu" />
     </item>
     <item label="Power…">
-      <action name="Execute" command="power-menu" />
+      <action name="Execute" command="~/.config/labwc/power-menu" />
     </item>
     <separator />
     <item label="Reconfigure">

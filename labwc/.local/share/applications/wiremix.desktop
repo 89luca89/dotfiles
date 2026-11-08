@@ -3,9 +3,10 @@ Type=Application
 Name=Audio (wiremix)
 GenericName=Audio Manager
 Comment=Configure Audio with wiremix
-Exec=foot --app-id=wiremix --title=Audio wiremix --tab output
+TryExec=wiremix
+Exec=footclient --app-id=wiremix --title=Audio wiremix --tab output
 Icon=audio-headset
 Terminal=false
 Categories=Audio;Settings;System;
-Keywords=audio;speakier;wiremix;
+Keywords=audio;speaker;wiremix;
 StartupNotify=false

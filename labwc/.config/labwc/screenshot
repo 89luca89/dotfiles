@@ -1,10 +1,10 @@
 #!/bin/sh
 # screenshot [screen|region|window]
-# Saves to ~/Pictures/screenshots, copies to clipboard, and notifies.
+# Saves to ~/Pictures/Screenshots, copies to clipboard, and notifies.
 # NOTE: labwc has no IPC for the focused window's geometry, so "window" is a
 # region select (drag the window). Whole-screen and region are exact.
 mode=${1:-screen}
-dir="${XDG_PICTURES_DIR:-$HOME/Pictures}/screenshots"
+dir="${XDG_PICTURES_DIR:-$HOME/Pictures}/Screenshots"
 mkdir -p "$dir"
 f="$dir/$(date +%Y%m%d-%H%M%S).png"
 
@@ -20,5 +20,3 @@ esac
 [ -f "$f" ] || exit 0
 wl-copy < "$f"
 notify-send "Screenshot" "Copied to clipboard + $f" -i "$f"
-# To preview/annotate instead of (or before) saving, pipe through swappy:
-#   grim -g "$geo" - | swappy -f -

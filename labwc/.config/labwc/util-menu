@@ -2,11 +2,11 @@
 # TUI/utility launcher via fuzzel dmenu.
 # TUIs open in a foot terminal; GUIs launch directly.
 declare -A apps=(
-  ["Audio mixer  (wiremix)"]="foot wiremix --tab output"
-  ["Network      (nmtui)"]="foot nmtui"
+  ["Audio mixer  (wiremix)"]="footclient wiremix --tab output"
+  ["Network      (nmtui)"]="footclient nmtui"
   ["Bluetooth    (blueman)"]="blueman-manager"
   ["Files        (nautilus)"]="nautilus"
-  ["Monitor      (btop)"]="foot btop"
+  ["Monitor      (btop)"]="footclient btop"
   ["Disks        (gnome-disks)"]="gnome-disks"
   ["Displays     (wdisplays)"]="wdisplays"
 )

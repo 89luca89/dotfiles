@@ -3,7 +3,7 @@ Type=Application
 Name=Network (nmtui)
 GenericName=Network Manager
 Comment=Configure network connections (Wi-Fi, Ethernet, VPN) with nmtui
-Exec=foot --app-id=nmtui --title=Network nmtui
+Exec=footclient --app-id=nmtui --title=Network nmtui
 Icon=network-wireless
 Terminal=false
 Categories=Network;Settings;System;
