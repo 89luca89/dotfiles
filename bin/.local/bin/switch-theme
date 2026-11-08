@@ -1,18 +1,21 @@
 #!/bin/sh
 
-set -x
-if [ "$(dconf read /org/gnome/desktop/interface/color-scheme | tr -d  "\n")" = "'prefer-dark'" ]; then
+# SIGUSR1/SIGUSR2 switch the foot server's windows, and later ones, to dark/light
+case $1 in
+light | dark) theme=$1 ;;
+"") [ "$(dconf read /org/gnome/desktop/interface/color-scheme)" = "'prefer-dark'" ] && theme=light || theme=dark ;;
+*) echo "usage: switch-theme [light|dark]" >&2 && exit 1 ;;
+esac
+if [ "$theme" = light ]; then
 	PREFER="default"
 	THEME="Adwaita"
 	COLOR="#999999"
-	echo light > ~/.local/share/theme
-	kill -USR2 $(pgrep foot)
+	pkill -x -USR2 foot
 else
 	PREFER="prefer-dark"
 	THEME="Adwaita-dark"
 	COLOR="#999999"
-	echo dark > ~/.local/share/theme
-	kill -USR1 $(pgrep foot)
+	pkill -x -USR1 foot
 fi
 
 dconf write /org/gnome/desktop/interface/color-scheme "'$PREFER'"
@@ -24,5 +27,3 @@ else
  dconf write /org/gnome/desktop/background/primary-color "'#406A95'"
  dconf write /org/gnome/desktop/background/secondary-color "'#406A95'"
 fi
-
-kill -s USR1 $(pgrep vim)
