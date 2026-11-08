@@ -4,32 +4,24 @@ alias ll='ls -Ahl --group-directories-first --color'
 alias tfswitch="tfswitch -b $HOME/.local/bin/terraform"
 alias tree='tree -I ".git" -a'
 alias mail='vim /tmp/mail.eml'
-alias dbox="distrobox-enter default_distrobox -- bash -l -c 'tmux a || tmux'"
-alias wolfi="unset TMUX && distrobox-enter wolfi_distrobox -- bash -l -c 'cd /home/luca-linux/Projects/chainguard/ && tmux a || tmux'"
 alias libvirt="DBX_CONTAINER_MANAGER=docker distrobox enter libvirt"
 alias vi='vi -u ~/.vimrc-minimal'
-if ! type __vte_prompt_command >/dev/null 2>&1; then
-	function __vte_prompt_command() {  return; }
-fi
 export CARGO_HOME=$HOME/.local/rust
 export GOPATH=$HOME/.local/share/go
 export GOTMPDIR=$HOME/.cache/go-build
-export GPG_TTY=$(tty)
+tty >/dev/null && export GPG_TTY=$(tty)
 export QT_QPA_PLATFORMTHEME=gnome
-export RUSTUP_HOME=$HOME/local/share/rust
-export RUST_SRC_PATH="$RUSTUP_HOME/toolchains/stable-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/src"
+export RUSTUP_HOME=$HOME/.local/share/rust
 export TMUX_TMPDIR=/var/tmp
 export PATH=$CARGO_HOME/bin/:$PATH
 export PATH=$HOME/.local/bin:$PATH
 export PATH=$HOME/.local/share/flatpak/exports/bin:$PATH
 export PATH=$HOME/bin:$PATH
 export PATH=$PATH:/usr/sbin:/usr/local/sbin
+PATH=$(printf %s "$PATH" | awk -v RS=: '!seen[$0]++ {printf "%s%s", sep, $0; sep = ":"}')
 export EDITOR=vim
 export COLORTERM=truecolor
 
-alias light="echo -n light > ~/.local/share/theme && kill -s USR1 \$(pgrep vim) 2>/dev/null"
-alias dark="echo -n dark > ~/.local/share/theme && kill -s USR1 \$(pgrep vim) 2>/dev/null"
-
-alias claude="~/Projects/Personal/clampdown/clampdown claude --gh --append-system-prompt-file ~/dotfiles/chats/AGENTS.md -- --autocompact 384k --dangerously-skip-permissions  --effort max --model claude-opus-4-7[1m]"
-alias claude-opencode="~/Projects/Personal/clampdown/clampdown claude --env-file ~/.config/clampdown/clampdownrc-opencode --gh --append-system-prompt-file ~/dotfiles/chats/AGENTS.md -- --autocompact 384k --dangerously-skip-permissions  --effort max"
-alias pi="~/Projects/Personal/clampdown/clampdown pi --env-file ~/.config/clampdown/clampdownrc-pi --gh --append-system-prompt-file ~/dotfiles/chats/AGENTS.md -- --model opencode-go/deepseek-v4.1-flash --thinking high"
+alias claude="~/Projects/Personal/clampdown/clampdown claude --gh --append-system-prompt-file ~/dotfiles/chats/AGENTS.md -- --autocompact 384k --dangerously-skip-permissions  --effort max --model 'claude-opus-4-7[1m]'"
+alias claude-opus="~/Projects/Personal/clampdown/clampdown claude --gh --append-system-prompt-file ~/dotfiles/chats/AGENTS.md -- --dangerously-skip-permissions  --effort max --model claude-opus-5-5"
+alias pi="~/Projects/Personal/clampdown/clampdown pi --env-file ~/.config/clampdown/clampdownrc-pi --gh --append-system-prompt-file ~/dotfiles/chats/AGENTS.md -- --model opencode-go/glm-5.3-flash --thinking max"

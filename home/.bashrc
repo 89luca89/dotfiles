@@ -11,8 +11,9 @@ if  [ ! -d "$HOME/.local/bin/fzf" ]; then
 fi
 
 # HISTORY SIZE
+[ -z "$TMUX" ] && export TERM=xterm-256color
 export HISTFILE="$HOME"/.histfile
-export HISTCONTROL=ignoredups:erasedups # no duplicate entries
+export HISTCONTROL=ignoreboth:erasedups # no duplicate entries
 export HISTSIZE=100000                # big big history
 export HISTFILESIZE=100000            # big big history
 shopt -s histappend                   # append to history, don't overwrite it
@@ -25,7 +26,7 @@ bind '"\e[B": history-search-forward' 2> /dev/null
 tty >/dev/null && stty werase undef
 tty >/dev/null && bind '"\C-w": backward-kill-word'
 # PS1
-export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
-export PS1="\[\033[1m\]${CONTAINER_ID:-$HOSTNAME}\[\033[0m\]:\W\$ "
+PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
+export PS1="\W $ "
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
