@@ -46,9 +46,18 @@ sudo efibootmgr show | grep -Ei "shim|grub" |
 ################# SYSTEMD-BOOT SETUP ##########################################
 
 ################# SECURE BOOT SETUP ###########################################
-wget -c https://download.opensuse.org/repositories/home:/jloeser:/secureboot/xUbuntu_24.04/amd64/sbctl_0.17-15.1_amd64.deb
-sudo apt install ./sbctl_0.17-15.1_amd64.deb && rm ./sbctl_0.17-15.1_amd64.deb
-read -n 1 -p "Input Selection:" "mainmenuinput"
+. /etc/os-release
+repo="https://download.opensuse.org/repositories/home:/jloeser:/secureboot/xUbuntu_${VERSION_ID}"
+if key=$(wget -qO- "${repo}/Release.key"); then
+	printf '%s\n' "$key" | sudo tee /etc/apt/keyrings/sbctl.asc > /dev/null
+	echo "deb [signed-by=/etc/apt/keyrings/sbctl.asc] ${repo}/ /" | sudo tee /etc/apt/sources.list.d/sbctl.list > /dev/null
+	sudo apt update
+	sudo apt install sbctl
+else
+	echo "No sbctl build for Ubuntu ${VERSION_ID} (${repo}), skipping it" >&2
+fi
+printf 'Input Selection: '
+read -r _
 if sudo sbctl status | grep -q 'sbctl is not installed'; then
 	sudo sbctl create-keys
 	sudo sbctl enroll-keys --microsoft --firmware-builtin
@@ -65,15 +74,19 @@ sudo chmod +x /etc/kernel/install.d/99-sbctl.install
 sudo apt update
 sudo apt upgrade
 sudo apt install --autoremove --purge \
-	android-tools \
+	adb \
 	apt-file \
 	btop \
 	crun \
 	curl \
 	docker-buildx \
-	docker-compose \
+	docker-compose-v2 \
 	docker.io \
+	fastboot \
 	flatpak \
+	foot \
+	foot-terminfo \
+	foot-themes \
 	git \
 	lm-sensors \
 	mosh \
@@ -82,9 +95,18 @@ sudo apt install --autoremove --purge \
 	powertop \
 	runc \
 	systemd-zram-generator \
-	tailscale \
 	tmux \
 	vim
+repo="https://pkgs.tailscale.com/stable/ubuntu"
+if key=$(wget -qO- "${repo}/${VERSION_CODENAME}.gpg"); then
+	printf '%s\n' "$key" | sudo tee /etc/apt/keyrings/tailscale.asc > /dev/null
+	echo "deb [signed-by=/etc/apt/keyrings/tailscale.asc] ${repo} ${VERSION_CODENAME} main" | sudo tee /etc/apt/sources.list.d/tailscale.list > /dev/null
+	sudo apt update
+	sudo apt install tailscale
+	tailscale status > /dev/null || sudo tailscale up
+else
+	echo "No Tailscale build for Ubuntu ${VERSION_CODENAME} (${repo}), skipping it" >&2
+fi
 sudo systemctl enable --now docker
 sudo systemctl enable --now powertop
 sudo usermod -aG docker "$USER"
@@ -95,6 +117,12 @@ sudo ufw default deny incoming
 sudo ufw allow OpenSSH
 sudo ufw allow mosh
 
+# mosh-server otherwise waits forever for a client that's gone (Termux
+# killed), keeping a stale tmux client attached; give up after a day
+echo "SetEnv MOSH_SERVER_NETWORK_TMOUT=86400" | sudo tee /etc/ssh/sshd_config.d/50-mosh.conf > /dev/null
+sudo systemctl reload ssh || :
+
 # Fix swap setup
-[ -e /etc/systemd/zram-generator.conf.dpkg-old ] &&
+if [ -e /etc/systemd/zram-generator.conf.dpkg-old ]; then
 	sudo mv /etc/systemd/zram-generator.conf.dpkg-old /etc/systemd/zram-generator.conf
+fi
