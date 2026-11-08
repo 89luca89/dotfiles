@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+# free-mem — honest "what's actually used vs free"
+#
+# Splits memory into four buckets:
+#   Allocated  pages that won't shrink under memory pressure
+#              (anon + shmem + slab unreclaim + vmalloc + stacks + page tables + ...)
+#   Cache      page cache + reclaimable slab; the kernel hands these back
+#              to anyone who asks for memory
+#   Free       truly idle pages
+#   Available  what new allocations can claim right now (kernel's MemAvailable)
+#
+# Usage:
+#   free-mem        breakdown
+#   free-mem -q     print only MemAvailable in KiB (for scripting)
+
+set -u
+
+quiet=0
+case "${1:-}" in
+	-q|--quiet) quiet=1 ;;
+	-h|--help)
+		sed -n '2,/^$/p' "$0" | sed 's/^# \?//'
+		exit 0 ;;
+	"") ;;
+	*) echo "unknown arg: $1" >&2; exit 2 ;;
+esac
+
+declare -A m
+while IFS=':' read -r k v; do
+	v=${v//[!0-9]/}
+	m[$k]=${v:-0}
+done < /proc/meminfo
+
+total=${m[MemTotal]}
+free=${m[MemFree]}
+avail=${m[MemAvailable]}
+cache=$(( m[Buffers] + m[Cached] - m[Shmem] + m[SReclaimable] ))
+allocated=$(( total - free - cache ))
+
+if (( quiet )); then
+	echo "$avail"
+	exit 0
+fi
+
+hr() {
+	local kb=$1
+	if (( kb < 1024 )); then
+		printf "%5d KiB" "$kb"
+	elif (( kb < 1048576 )); then
+		printf "%3d.%d MiB" $((kb / 1024)) $(( kb * 10 / 1024 % 10 ))
+	else
+		printf "%3d.%02d GiB" $((kb / 1048576)) $(( kb * 100 / 1048576 % 100 ))
+	fi
+}
+
+pct() {
+	(( $2 == 0 )) && { printf "  0.0%%"; return; }
+	printf "%3d.%d%%" $(( 100 * $1 / $2 )) $(( 1000 * $1 / $2 % 10 ))
+}
+
+printf "Total       %s\n" "$(hr "$total")"
+printf "  Allocated %s  %s   anon + shmem + slab + vmalloc + stacks (not reclaimable)\n" \
+	"$(hr "$allocated")" "$(pct "$allocated" "$total")"
+printf "  Cache     %s  %s   buffers + page cache - shmem + sreclaim (reclaimable)\n" \
+	"$(hr "$cache")" "$(pct "$cache" "$total")"
+printf "  Free      %s  %s   idle pages\n" \
+	"$(hr "$free")" "$(pct "$free" "$total")"
+printf "\n"
+printf "Available   %s  %s   <- usable for new allocations\n" \
+	"$(hr "$avail")" "$(pct "$avail" "$total")"
+used=$(( total - avail ))
+printf "Used        %s  %s   = total - available (what 'free' reports)\n" \
+	"$(hr "$used")" "$(pct "$used" "$total")"

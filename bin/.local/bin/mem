@@ -1,0 +1,155 @@
+#!/usr/bin/env bash
+# mem [-v] PID [PID...] — what each process is actually using
+#
+# Reports memory using PSS (Proportional Set Size): shared pages are
+# divided among their sharers, so summing PSS across processes never
+# overcounts. Σ PSS ≈ total userspace RAM in use.
+#
+# Columns (default):
+#   TOTAL  PSS + SwapPss — the headline "actual memory" number
+#   PSS    in-RAM share (splits shared pages fairly across sharers)
+#   USS    unique set size (private memory only) — floor; pages that
+#          vanish if the process exits even if others share its libs
+#   SWAP   PSS-weighted swap usage
+# With -v also:
+#   RSS    resident set size — counts shared libs N times per sharer
+#
+# Reading /proc/PID/smaps_rollup needs same uid as the process, or root.
+# Kernel threads and zombies have no memory map and are skipped.
+#
+# Usage:
+#   mem 1234 5678
+#   mem $(pgrep firefox)
+#   sudo mem $(pgrep -f sshd)
+#   mem -v $(pgrep chrome)        # include RSS column
+
+set -u
+
+verbose=0
+while [[ ${1:-} == -* ]]; do
+	case "$1" in
+		-v|--verbose) verbose=1; shift ;;
+		-h|--help)
+			sed -n '2,/^$/p' "$0" | sed 's/^# \?//'
+			exit 0 ;;
+		--) shift; break ;;
+		*) echo "unknown flag: $1" >&2; exit 2 ;;
+	esac
+done
+
+if (( $# == 0 )); then
+	cat <<-EOF >&2
+	usage: $(basename "$0") [-v] PID [PID...]
+	       $(basename "$0") \$(pgrep NAME)
+	EOF
+	exit 2
+fi
+
+hr() {
+	local kb=${1:-0}
+	if (( kb < 1024 )); then
+		printf "%5d KiB" "$kb"
+	elif (( kb < 1048576 )); then
+		printf "%3d.%d MiB" $((kb / 1024)) $(( kb * 10 / 1024 % 10 ))
+	else
+		printf "%3d.%02d GiB" $((kb / 1048576)) $(( kb * 100 / 1048576 % 100 ))
+	fi
+}
+
+if (( verbose )); then
+	printf "%7s  %-20s %11s %11s %11s %11s %11s\n" \
+		"PID" "COMM" "TOTAL" "PSS" "USS" "SWAP" "RSS"
+else
+	printf "%7s  %-20s %11s %11s %11s %11s\n" \
+		"PID" "COMM" "TOTAL" "PSS" "USS" "SWAP"
+fi
+
+tot_pss=0 tot_uss=0 tot_rss=0 tot_swap=0
+seen=0 kthreads=0 denied=0 gone=0
+
+for pid in "$@"; do
+	if [[ ! $pid =~ ^[0-9]+$ ]]; then
+		printf "ignoring non-numeric arg: %s\n" "$pid" >&2
+		continue
+	fi
+
+	rollup="/proc/$pid/smaps_rollup"
+
+	if ! data=$(cat "$rollup" 2>/dev/null); then
+		if grep -q '^VmSize:' "/proc/$pid/status" 2>/dev/null; then
+			(( denied++ ))
+		elif [[ -e $rollup ]]; then
+			(( kthreads++ ))
+		else
+			(( gone++ ))
+		fi
+		continue
+	fi
+
+	comm=$(cat "/proc/$pid/comm" 2>/dev/null) || comm="?"
+	comm=${comm%$'\n'}
+
+	read -r pss uss rss swap < <(
+		awk '
+			/^Pss:/             { pss=$2 }
+			/^Private_Clean:/   { pc=$2 }
+			/^Private_Dirty:/   { pd=$2 }
+			/^Rss:/             { rss=$2 }
+			/^SwapPss:/         { swap=$2 }
+			END {
+				printf "%d %d %d %d\n", pss+0, pc+pd+0, rss+0, swap+0
+			}
+		' <<< "$data"
+	)
+	pss=${pss:-0}; uss=${uss:-0}; rss=${rss:-0}; swap=${swap:-0}
+	total=$((pss + swap))
+
+	if (( verbose )); then
+		printf "%7d  %-20.20s %11s %11s %11s %11s %11s\n" \
+			"$pid" "$comm" \
+			"$(hr "$total")" "$(hr "$pss")" "$(hr "$uss")" \
+			"$(hr "$swap")" "$(hr "$rss")"
+	else
+		printf "%7d  %-20.20s %11s %11s %11s %11s\n" \
+			"$pid" "$comm" \
+			"$(hr "$total")" "$(hr "$pss")" "$(hr "$uss")" "$(hr "$swap")"
+	fi
+
+	tot_pss=$((tot_pss + pss))
+	tot_uss=$((tot_uss + uss))
+	tot_rss=$((tot_rss + rss))
+	tot_swap=$((tot_swap + swap))
+	(( seen++ ))
+done
+
+if (( seen > 1 )); then
+	tot_total=$((tot_pss + tot_swap))
+	if (( verbose )); then
+		printf "%7s  %-20s %11s %11s %11s %11s %11s\n" \
+			"" "" "----------" "----------" "----------" "----------" "----------"
+		printf "%7s  %-20s %11s %11s %11s %11s %11s\n" \
+			"TOTAL" "($seen procs)" \
+			"$(hr "$tot_total")" "$(hr "$tot_pss")" "$(hr "$tot_uss")" \
+			"$(hr "$tot_swap")" "$(hr "$tot_rss")"
+	else
+		printf "%7s  %-20s %11s %11s %11s %11s\n" \
+			"" "" "----------" "----------" "----------" "----------"
+		printf "%7s  %-20s %11s %11s %11s %11s\n" \
+			"TOTAL" "($seen procs)" \
+			"$(hr "$tot_total")" "$(hr "$tot_pss")" "$(hr "$tot_uss")" \
+			"$(hr "$tot_swap")"
+	fi
+fi
+
+skipped=$(( kthreads + denied + gone ))
+if (( skipped > 0 )); then
+	notes=()
+	(( kthreads > 0 )) && notes+=("$kthreads kthread(s) or zombie(s)")
+	(( denied   > 0 )) && notes+=("$denied denied (try sudo)")
+	(( gone     > 0 )) && notes+=("$gone vanished")
+	printf -v joined '%s, ' "${notes[@]}"
+	printf "\nSkipped %d pid(s): %s\n" "$skipped" "${joined%, }" >&2
+fi
+
+(( seen == 0 )) && exit 1
+exit 0
