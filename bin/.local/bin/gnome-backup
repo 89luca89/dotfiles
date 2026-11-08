@@ -28,7 +28,6 @@ gnome_dconf_backup="
 	/org/gnome/settings-daemon/plugins/media-keys
 	/org/gnome/settings-daemon/plugins/power
 	/org/gnome/shell
-	/org/gnome/terminal/legacy
 	/org/gtk/gtk4/settings/file-chooser
 	/org/gtk/settings/file-chooser
 "

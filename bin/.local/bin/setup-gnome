@@ -1,8 +1,8 @@
 #!/bin/sh
 
-# appindicatorsupport@rgcjonas.gmail.com
 EXTENSIONS="
 AlphabeticalAppGrid@stuarthayhurst
+appindicatorsupport@rgcjonas.gmail.com
 "
 
 for extension in $EXTENSIONS; do
