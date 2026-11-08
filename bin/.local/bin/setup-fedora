@@ -51,6 +51,8 @@ sudo dnf install \
 	docker \
 	docker-buildx \
 	docker-compose \
+	foot \
+	foot-terminfo \
 	git \
 	lm_sensors \
 	mosh \
@@ -71,12 +73,23 @@ sudo systemctl enable --now powertop
 sudo firewall-cmd --set-default-zone=drop
 sudo firewall-cmd --permanent --add-port=22/tcp
 sudo firewall-cmd --permanent --add-service=mosh
+# drop also blocks mDNS replies, which avahi needs to find the network printer
+sudo firewall-cmd --permanent --add-service=mdns
 sudo firewall-cmd --reload
+
+# mosh-server otherwise waits forever for a client that's gone (Termux
+# killed), keeping a stale tmux client attached; give up after a day
+echo "SetEnv MOSH_SERVER_NETWORK_TMOUT=86400" | sudo tee /etc/ssh/sshd_config.d/50-mosh.conf > /dev/null
+sudo systemctl enable --now sshd tailscaled
+sudo systemctl reload sshd
+tailscale status > /dev/null || sudo tailscale up
+printf '%s\n' "[org/gnome/settings-daemon/plugins/power]" "sleep-inactive-ac-type='nothing'" | sudo tee /etc/dconf/db/gdm.d/95-power > /dev/null
+sudo dconf update
 
 ##############################################################################
 
 sudo systemctl disable --now thermald.service || :
-if ! grep Intel /proc/cpuinfo; then
+if ! grep -q Intel /proc/cpuinfo; then
 	sudo dnf swap tuned-ppd power-profiles-daemon
 	sudo powerprofilesctl configure-action amdgpu_panel_power --enable
 	sudo powerprofilesctl configure-action amdgpu_dpm --enable
