@@ -11,7 +11,7 @@ flatpak_packages="$(cat "${HOME}/dotfiles/flatpak-packages" | grep -v '#')"
 # shellcheck disable=SC2086
 flatpak install --user --noninteractive --assumeyes flathub ${flatpak_packages}
 
-installed_apps="$( flatpak list --user --app --columns=app | tail -n +1)"
+installed_apps="$( flatpak list --user --app --columns=app)"
 unwanted_apps=""
 for app in ${installed_apps}; do
 	if ! echo "${app}" | grep -qE "$(echo "${flatpak_packages}" | tr ' ' '|')"; then
