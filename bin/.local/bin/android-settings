@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+# Backup / restore the Android settings provider (system, secure, global) over
+# adb, preserving values that contain spaces. Set MODE below. All hardcoded.
+#
+# Captured: everything in the three namespaces, which is most personalization
+# that lives in the provider: Material You theme
+# (theme_customization_overlay_packages), quick-settings tiles (sysui_qs_tiles),
+# lock screen options, accessibility, font scale, sound and Do-Not-Disturb,
+# many notification and privacy toggles.
+#
+# NOT captured, because it does not live in the settings provider, so a restore
+# cannot reproduce it: per-app notification channels, launcher/home-screen
+# layout, wallpaper image, saved Wi-Fi networks and passwords, screen-lock
+# PIN/pattern and biometrics, per-app data, and default-app/role choices
+# (browser, dialer, SMS). Those need their own backups.
+#
+# On a new phone, install the apps that settings reference (QS tiles, theme
+# overlays) before restoring, or those entries are silently dropped.
+
+set -u
+
+MODE="${1:-backup}"                                    # backup | restore
+ADB=(adb)                                       # e.g. ADB=(adb -s SERIAL)
+FILE="$HOME/android-settings.bak"               # backup destination / restore source
+DEVTMP=/data/local/tmp/android-settings.bak
+
+# Keys never restored: device identity, provisioning and hardware state.
+# Restoring these onto another phone is pointless or harmful.
+EXCLUDE='android_id|adb_enabled|development_settings_enabled|device_provisioned|user_setup_complete|boot_count|bluetooth_address|bluetooth_name|.*_serial'
+
+adbsh() { "${ADB[@]}" shell "$@"; }
+
+if ! "${ADB[@]}" get-state >/dev/null 2>&1; then
+  echo "No device. Connect one and enable USB debugging." >&2
+  exit 1
+fi
+
+backup() {
+  : > "$FILE"
+  for ns in system secure global; do
+    echo "# namespace: $ns" >> "$FILE"
+    adbsh settings list "$ns" >> "$FILE"
+  done
+  echo "Backed up $(grep -c '=' "$FILE") settings to $FILE"
+}
+
+restore() {
+  "${ADB[@]}" push "$FILE" "$DEVTMP" >/dev/null
+  # Read and write on-device so values with spaces never hit the host shell.
+  # base64 the regex: adb re-parses args on the device, so its | would become
+  # shell pipes. base64 has no shell metacharacters, so it survives intact.
+  excl_b64=$(printf '%s' "$EXCLUDE" | base64 | tr -d '\n')
+  adbsh sh -s -- "$DEVTMP" "$excl_b64" <<'ONDEV'
+f="$1"; excl=$(printf '%s' "$2" | base64 -d); ns=""
+tr -d '\r' < "$f" > "$f.nocr" 2>/dev/null && f="$f.nocr"
+while IFS= read -r line; do
+  case "$line" in
+    '# namespace: '*) ns=${line#\# namespace: }; echo "restoring $ns"; continue;;
+    ''|'#'*)          continue;;
+  esac
+  key=${line%%=*}
+  val=${line#*=}
+  [ -n "$ns" ] || continue
+  printf '%s\n' "$key" | grep -qE "^($excl)$" && continue
+  settings put "$ns" "$key" "$val" 2>/dev/null
+done < "$f"
+echo "Restore complete."
+ONDEV
+}
+
+case "$MODE" in
+  backup)  backup;;
+  restore) restore;;
+  *) echo "Set MODE to backup or restore." >&2; exit 1;;
+esac

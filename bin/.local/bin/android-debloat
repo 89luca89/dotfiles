@@ -1,0 +1,390 @@
+#!/bin/bash
+
+cd /tmp || exit 2
+
+PACKAGE_KEEP="
+com.google.android.gms
+com.google.android.gsf
+com.google.android.carrier
+android.auto_generated_rro__
+com.android.DeviceAsWebcam
+com.android.bips
+com.android.calculator2
+com.android.cameraextensions
+com.android.carrierconfig
+com.android.carrierconfig.overlay.common
+com.android.companiondevicemanager
+com.android.companiondevicemanager.auto_generated_characteristics_rro
+com.android.credentialmanager
+com.android.deskclock
+com.android.emergency
+com.android.musicfx
+com.android.networkstack.overlay
+com.android.nfc.auto_generated_rro_product__
+com.android.nfc.auto_generated_rro_vendor__
+com.android.nfc.overlay
+com.android.phone.auto_generated_characteristics_rro
+com.android.pixeldisplayservice
+com.android.pixeldisplayservice.*
+com.android.providers.downloads.ui
+com.android.providers.icccust
+com.android.providers.media.overlay.*
+com.android.providers.settings.auto_generated_rro_vendor__
+com.android.providers.telephony.auto_generated_characteristics_rro
+com.android.safetycenter.resources
+com.android.se.overlay.target
+com.android.settings.future.overlay.*
+com.android.settings.identitychecksettingsoverlay
+com.android.settings.overlay.*
+com.android.smspush
+com.android.stk
+com.android.storagemanager
+com.android.wallpaper
+com.android.wifi.resources.overlay.*
+com.google.android.GoogleCamera
+com.google.android.apps.camera.*
+com.google.android.apps.nexuslauncher
+com.google.android.apps.wallpaper
+com.google.android.apps.wellbeing
+com.google.android.apps.work.*
+com.google.android.bluetooth
+com.google.android.captiveportallogin
+com.google.android.cellbroadcastservice
+com.google.android.connectivity.resources
+com.google.android.connectivity.resources.*
+com.google.android.documentsui
+com.google.android.documentsui.*
+com.google.android.euicc
+com.google.android.euiccoverlay
+com.google.android.ext.*
+com.google.android.grilservice
+com.google.android.haptics.overlay.*
+com.google.android.iwlan
+com.google.android.microdroid.empty_payload
+com.google.android.modulemetadata
+com.google.android.networkstack
+com.google.android.networkstack.tethering
+com.google.android.networkstack.tethering.*
+com.google.android.nfc
+com.google.android.nfc.*
+com.google.android.overlay.*
+com.google.android.packageinstaller
+com.google.android.permissioncontroller
+com.google.android.photopicker
+com.google.android.pixelnfc
+com.google.android.providers.media.module
+com.google.android.repairmode
+com.google.android.rkpdapp
+com.google.android.sdksandbox
+com.google.android.settings.intelligence
+com.google.android.settings.overlay.*
+com.google.android.soundpicker
+com.google.android.systemui.gxoverlay
+com.google.android.systemui.overlay.*
+com.google.android.telephony
+com.google.android.uwb.resources
+com.google.android.virtualmachine.res
+com.google.android.webview
+com.google.android.wifi.dialog
+com.google.android.wifi.resources
+com.google.android.wifi.resources.*
+com.google.euiccpixel
+com.google.euiccpixel.overlay.*
+com.google.euiccpixel.permissions
+com.google.pixel.camera.*
+com.google.pixel.iwlan
+com.motorola.camera3
+com.motorola.camera3.*
+com.motorola.launcherconfig
+com.motorola.mobiledesktop.core
+com.motorola.nfc
+com.whatsapp
+org.simalliance.openmobileapi.*
+"
+
+DEGOOGLE="
+com.google.android.configupdater
+com.google.android.gms
+com.google.android.gsf
+android.autoinstalls.config.google.nexus
+com.android.appsearch.aiseal.config
+com.android.bookmarkprovider
+com.android.captiveportallogin.overlay
+com.android.chrome
+com.android.devicelockcontroller
+com.android.egg
+com.android.healthconnect.overlay
+com.android.hotwordenrollment.okgoogle
+com.android.hotwordenrollment.xgoogle
+com.android.omadm.service
+com.android.simappdialog
+com.android.vending
+com.android.wallpaperbackup
+com.dolby.daxservice
+com.google.RilConfigService
+com.google.SSRestartDetector
+com.google.ambient.streaming
+com.google.android.accessibility.soundamplifier
+com.google.android.accessibility.switchaccess
+com.google.android.adservices.api
+com.google.android.aicore
+com.google.android.apps.access.wifi.consumer
+com.google.android.apps.accessibility.voiceaccess
+com.google.android.apps.adm
+com.google.android.apps.ads.publisher
+com.google.android.apps.adwords
+com.google.android.apps.ai.icons
+com.google.android.apps.assistant
+com.google.android.apps.authenticator2
+com.google.android.apps.blogger
+com.google.android.apps.books
+com.google.android.apps.carrier.carrierwifi
+com.google.android.apps.carrier.log
+com.google.android.apps.cbrsnetworkmonitor
+com.google.android.apps.chromecast.app
+com.google.android.apps.cloudprint
+com.google.android.apps.cultural
+com.google.android.apps.currents
+com.google.android.apps.customization.pixel
+com.google.android.apps.diagnosticstool
+com.google.android.apps.docs
+com.google.android.apps.docs.editors.docs
+com.google.android.apps.docs.editors.sheets
+com.google.android.apps.docs.editors.slides
+com.google.android.apps.dreamliner
+com.google.android.apps.dynamite
+com.google.android.apps.emojiwallpaper
+com.google.android.apps.enterprise.cpanel
+com.google.android.apps.enterprise.dmagent
+com.google.android.apps.fireball
+com.google.android.apps.fitness
+com.google.android.apps.freighter
+com.google.android.apps.giant
+com.google.android.apps.googleassistant
+com.google.android.apps.handwriting.ime
+com.google.android.apps.hangoutsdialer
+com.google.android.apps.inbox
+com.google.android.apps.inputmethod.hindi
+com.google.android.apps.internal.betterbug
+com.google.android.apps.kids.familylink
+com.google.android.apps.kids.familylinkhelper
+com.google.android.apps.m4b
+com.google.android.apps.magazines
+com.google.android.apps.magicportrait
+com.google.android.apps.maps
+com.google.android.apps.mapslite
+com.google.android.apps.meetings
+com.google.android.apps.messaging
+com.google.android.apps.navlite
+com.google.android.apps.nbu.files
+com.google.android.apps.nbu.paisa.user
+com.google.android.apps.paidtasks
+com.google.android.apps.pdfviewer
+com.google.android.apps.photos
+com.google.android.apps.photos.scanner
+com.google.android.apps.pixel.customizationbundle
+com.google.android.apps.pixel.dcservice
+com.google.android.apps.pixel.nowplaying
+com.google.android.apps.pixel.relationships
+com.google.android.apps.pixel.support
+com.google.android.apps.plus
+com.google.android.apps.podcasts
+com.google.android.apps.privacy.wildlife
+com.google.android.apps.pulse
+com.google.android.apps.recorder
+com.google.android.apps.restore
+com.google.android.apps.retaildemo.preload
+com.google.android.apps.safetyhub
+com.google.android.apps.santatracker
+com.google.android.apps.scone
+com.google.android.apps.searchlite
+com.google.android.apps.setupwizard.searchselector
+com.google.android.apps.subscriptions.red
+com.google.android.apps.tachyon
+com.google.android.apps.tasks
+com.google.android.apps.tips
+com.google.android.apps.tips.overlay.felix
+com.google.android.apps.translate
+com.google.android.apps.travel.onthego
+com.google.android.apps.turbo
+com.google.android.apps.tycho
+com.google.android.apps.uploader
+com.google.android.apps.vega
+com.google.android.apps.walletnfcrel
+com.google.android.apps.wallpaper.pixel
+com.google.android.apps.wearables.maestro.companion
+com.google.android.apps.weather
+com.google.android.apps.work.clouddpc
+com.google.android.apps.youtube.creator
+com.google.android.apps.youtube.gaming
+com.google.android.apps.youtube.kids
+com.google.android.apps.youtube.mango
+com.google.android.apps.youtube.music
+com.google.android.apps.youtube.vr
+com.google.android.appsearch.apk
+com.google.android.as
+com.google.android.as.oss
+com.google.android.calculator
+com.google.android.calendar
+com.google.android.carrierlocation
+com.google.android.carriersetup
+com.google.android.cellbroadcastreceiver
+com.google.android.compos.payload
+com.google.android.contactkeys
+com.google.android.contacts
+com.google.android.deskclock
+com.google.android.dialer
+com.google.android.dreamlinerupdater
+com.google.android.factoryota
+com.google.android.federatedcompute
+com.google.android.feedback
+com.google.android.flipendo
+com.google.android.glasses.core
+com.google.android.gm
+com.google.android.gms.location.history
+com.google.android.gms.supervision
+com.google.android.googlequicksearchbox
+com.google.android.googlequicksearchbox.nga_resources
+com.google.android.hardwareinfo
+com.google.android.health.connect.backuprestore
+com.google.android.healthconnect.controller
+com.google.android.hotspot2.osulogin
+com.google.android.inputmethod.latin
+com.google.android.markup
+com.google.android.marvin.talkback
+com.google.android.odad
+com.google.android.ondevicepersonalization.services
+com.google.android.onetimeinitializer
+com.google.android.overlay.glanceablehubconfig
+com.google.android.overlay.glanceablehubsettings2022
+com.google.android.overlay.gservicesconfig
+com.google.android.overlay.udfpsoverlay
+com.google.android.pcs
+com.google.android.pixel.setupwizard.overlay.expressive
+com.google.android.pixel.setupwizard.overlayfelix
+com.google.android.pixelmigrate
+com.google.android.projection.gearhead
+com.google.android.retaildemo
+com.google.android.safetycenter.resources
+com.google.android.safetycore
+com.google.android.sdksandbox
+com.google.android.server.deviceconfig.resources
+com.google.android.settings.overlay.pixelvpnconfig
+com.google.android.setupwizard
+com.google.android.storagemanager
+com.google.android.systemui.overlay.pixelvpnconfig
+com.google.android.tag
+com.google.android.tetheringentitlement
+com.google.android.tts
+com.google.android.turboadapter
+com.google.android.uvexposurereporter
+com.google.android.verifier
+com.google.android.verifier.overlay
+com.google.android.videos
+com.google.android.wallpaper.effects
+com.google.android.webapp.service
+com.google.android.wfcactivation
+com.google.android.youtube
+com.google.ar.core
+com.google.assistant.hubui
+com.google.audio.hearing.visualization.accessibility.scribe
+com.google.mainline.adservices
+com.google.mainline.telemetry
+com.google.omadm.trigger
+com.google.pixel.livewallpaper
+com.google.pixel.wallpapers23
+com.ironsrc.aura.appmanager.tmo
+com.metro.minus1
+com.metropcs.metrozone
+com.motorola.audiorecorder
+com.motorola.dolby.dolbyui
+com.nuance.nmc.sihome.metropcs
+com.qorvo.uwb.vendorservice
+com.rjio.slc
+com.shannon.rcsservice
+com.tmobile.echolocate.system
+com.tmobile.m1
+com.tmobile.rsuadapter.qualcomm
+com.tmobile.rsuapp
+com.tmobile.rsusrv
+com.verizon.mips.services
+com.verizon.services
+com.vzw.apnlib
+"
+
+PACKAGE_KEEP_WORK="
+com.android.chrome
+com.google.android.apps.maps
+com.google.android.inputmethod.latin
+com.google.android.configupdater
+"
+
+printf '%s\n' "$PACKAGE_KEEP" |
+	sed -e '/^[[:space:]]*$/d' \
+		-e 's/\./\\./g' \
+		-e 's/\\\.\*$/\\..*/' \
+		-e 's/^/^/' \
+		-e 's/$/$/' > /tmp/keep_list
+
+# Get recommended and advanced list from UAD, ensure degogole, and sort
+wget -qnvc 'https://github.com/Universal-Debloater-Alliance/universal-android-debloater-next-generation/raw/refs/heads/main/resources/assets/uad_lists.json'
+
+PACKAGE_REMOVE="$(cat uad_lists.json | jq -r 'to_entries[] | select(.value.removal == "Recommended" or .value.removal == "Advanced") | .key' | sort -u)"
+PACKAGE_REMOVE="$PACKAGE_REMOVE $DEGOOGLE"
+PACKAGE_REMOVE="$(echo "$PACKAGE_REMOVE" | sort -u)"
+echo "$PACKAGE_REMOVE" > /tmp/remove_list
+
+PACKAGE_REMOVE="$(grep -Evf /tmp/keep_list /tmp/remove_list)"
+
+user=0
+[ -n "$1" ] && user=$1
+
+if [ "$1" = "all" ]; then
+	users="$(adb shell pm list users | cut -d':' -f1 | cut -d'{' -f2 | tail -n+2)"
+	for i in $users; do
+		sh "${0}" "$i"
+	done
+	exit
+fi
+
+if [ "$user" -ne 0 ]; then
+	echo "$PACKAGE_REMOVE" | sort -u > /tmp/remove_list
+	echo "$PACKAGE_KEEP_WORK" | sort -u > /tmp/keep_work_list
+	for pkg in $PACKAGE_KEEP_WORK; do
+		adb shell pm install-existing --user 10 "$pkg" > /dev/null 2>&1
+	done
+	PACKAGE_REMOVE="$(comm -23 /tmp/remove_list /tmp/keep_work_list)"
+fi
+
+echo "########### Removing unwanted packages for user $user ..."
+PACKAGE_LIST="$(adb shell pm list packages -e --user "${user}")"
+for package in $PACKAGE_REMOVE; do
+	if echo "$PACKAGE_LIST" | grep -Eq ":${package}\.|:${package}$"; then
+		subpkges="$(echo "$PACKAGE_LIST" | grep ":${package}" | cut -d':' -f2-)"
+		for subpkg in $subpkges; do
+			echo "$subpkg selected from $package"
+		done
+	fi
+done
+printf "%s" "########### Do you want to proceed? [y/N] "
+read -r response
+response="${response:-"N"}"
+if [ "$response" = "Y" ] || [ "$response" = "y" ]; then
+	printf "%s" "########### Do you want to uninstall or disable? [u/D] "
+	read -r response_uninstall
+	response_uninstall="${response_uninstall:-"D"}"
+
+	for package in $PACKAGE_REMOVE; do
+		if echo "$PACKAGE_LIST" | grep -Eq ":${package}\.|:${package}$"; then
+			subpkges="$(echo "$PACKAGE_LIST" | grep ":${package}" | cut -d':' -f2-)"
+			for subpkg in $subpkges; do
+				echo "disabling $subpkg for user $user"
+				adb shell pm disable-user --user "$user" "${subpkg}" 2> /dev/null || echo "FAILED $subpkg"
+				if [ "$response_uninstall" = "u" ] || [ "$response_uninstall" = "U" ]; then
+					echo "uninstalling $package for user $user"
+					adb shell pm uninstall --user "$user" "${package}"
+				fi
+			done
+		fi
+	done
+fi
