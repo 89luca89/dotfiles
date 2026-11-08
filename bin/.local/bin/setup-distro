@@ -38,7 +38,6 @@ ACTION=="add|change", SUBSYSTEM=="block", ATTR{power/control}="auto"
 ACTION=="add|change", SUBSYSTEM=="i2c", ATTR{power/control}="auto"
 ACTION=="add|change", SUBSYSTEM=="thunderbolt", ATTR{power/control}="auto"
 ACTION=="add|change", SUBSYSTEM=="net", KERNEL=="enp*", RUN+="/usr/sbin/ethtool -s %k wol d"
-ACTION=="add|change", SUBSYSTEM=="net", KERNEL=="wlp*", RUN+="/usr/sbin/iw dev %k set power_save on"
 ACTION=="add|change", SUBSYSTEM=="pci", ATTR{power/control}="auto"
 ACTION=="add|change", SUBSYSTEM=="scsi", ATTR{power/control}="auto"
 ACTION=="add|change", SUBSYSTEM=="pci", ATTR{power/wakeup}="disabled"
@@ -105,11 +104,6 @@ install cifs /bin/false
 install coda /bin/false
 install cramfs /bin/false
 install cyber2000fb /bin/false
-install cyblafb /bin/false
-install dccp /bin/false
-install decnet /bin/false
-install dv1394 /bin/false
-install econet /bin/false
 install esp4 /bin/false
 install esp6 /bin/false
 install f2fs /bin/false
@@ -117,9 +111,6 @@ install firewire-core /bin/false
 install firewire-net /bin/false
 install firewire-ohci /bin/false
 install firewire-sbp2 /bin/false
-install firewire_core /bin/false
-install firewire_ohci /bin/false
-install firewire_sbp2 /bin/false
 install floppy /bin/false
 install freevxfs /bin/false
 install gfs2 /bin/false
@@ -133,7 +124,6 @@ install gx1fb /bin/false
 install hfs /bin/false
 install hfsplus /bin/false
 install hgafb /bin/false
-install ipx /bin/false
 install jffs2 /bin/false
 install jfs /bin/false
 install kafs /bin/false
@@ -149,7 +139,6 @@ install nfsd /bin/false
 install nilfs2 /bin/false
 install nvidiafb /bin/false
 install ocfs2 /bin/false
-install ohci1394 /bin/false
 install omfs /bin/false
 install orangefs /bin/false
 install p8022 /bin/false
@@ -158,19 +147,15 @@ install pm2fb /bin/false
 install psnap /bin/false
 install qnx4 /bin/false
 install qnx6 /bin/false
-install raw1394 /bin/false
 install rds /bin/false
 install rds_tcp /bin/false
-install reiserfs /bin/false
 install romfs /bin/false
 install rose /bin/false
 install rxrpc /bin/false
 install s1d13xxxfb /bin/false
-install sbp2 /bin/false
 install sctp /bin/false
 install sisfb /bin/false
 install sr_mod /bin/false
-install sysv /bin/false
 install tdfxfb /bin/false
 install tipc /bin/false
 install ubifs /bin/false
@@ -179,7 +164,6 @@ install udlfb /bin/false
 install ufs /bin/false
 install vesafb /bin/false
 install vfb /bin/false
-install video1394 /bin/false
 install vivid /bin/false
 install vt8623fb /bin/false
 install x25 /bin/false
@@ -195,10 +179,8 @@ options xe enable_dc=4 enable_dmc_wl=1 enable_dpcd_backlight=1 enable_fbc=1 enab
 options ath9k ps_enable=1
 options btusb enable_autosuspend=y
 options iwlmvm power_scheme=3
-options iwlwifi power_save=Y power_level=5
 options mt7921e disable_aspm=0
 options mt7925e disable_aspm=0
-options rtw88 disable_lps_deep=N
 options rtw89_core disable_ps_mode=N
 options rtw89_pci disable_aspm_l1=0 disable_aspm_l1ss=0 disable_clkreq=N
 options snd_ac97_codec power_save=1
@@ -281,6 +263,8 @@ for service in $systemd_system_services; do
 	sudo systemctl mask "$service" || :
 done
 
+sudo mkdir -p /etc/ssh/sshd_config.d
+printf '%s\n' "PasswordAuthentication no" "PermitRootLogin prohibit-password" | sudo tee /etc/ssh/sshd_config.d/40-hardening.conf > /dev/null
 ###############  Bootup
 # grub case
 if [ -e /etc/default/grub ] && ! grep -q "$KERNEL_CMDLINE" /etc/default/grub; then
@@ -289,6 +273,11 @@ if [ -e /etc/default/grub ] && ! grep -q "$KERNEL_CMDLINE" /etc/default/grub; th
 fi
 
 # systemd-boot case
+# kernel-install falls back to /proc/cmdline when this file is missing, and the
+# recovery UKI below reads it: seed it so the options above get added
+if [ ! -e /etc/kernel/cmdline ]; then
+	tr ' ' '\n' < /proc/cmdline | grep -v -e '^BOOT_IMAGE=' -e '^initrd=' | paste -sd ' ' | sudo tee /etc/kernel/cmdline > /dev/null
+fi
 if ! grep -q "$KERNEL_CMDLINE" /etc/kernel/cmdline; then
 	sudo sed -i "s|quiet|quiet $KERNEL_CMDLINE|g" /etc/kernel/cmdline
 fi
@@ -297,6 +286,9 @@ sudo kernel-install -v add-all
 
 # Distro specific stuff
 "$(dirname "${0}")/setup-${ID}"
+
+# one foot process serves every window; labwc launches footclient
+systemctl --user enable foot-server.socket foot-server.service || :
 
 # TPM
 if [ ! -e "/etc/kernel/pcr-private-key.pem" ]; then
@@ -331,7 +323,7 @@ if ! sudo ls /boot/efi/EFI/Linux/recovery.efi; then
 	sudo sbctl sign -s /boot/efi/EFI/Linux/recovery.efi
 fi
 
-for i in /dev/*; do
+for i in $(lsblk -rnpo NAME,FSTYPE,SUBSYSTEMS | awk '$2 == "crypto_LUKS" && $3 !~ /usb/ {print $1}'); do
 	if sudo cryptsetup luksUUID "$i" 2> /dev/null; then
 		sudo systemd-cryptenroll \
 			--tpm2-device=auto \
