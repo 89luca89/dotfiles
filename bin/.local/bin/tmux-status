@@ -1,5 +1,5 @@
 #!/bin/sh
-# ~/.config/tmux/status.sh
+# ~/.local/bin/tmux-status
 # Feeds tmux status-right. Runs as your user, so wpctl/powerprofilesctl work.
 
 bat=$(ls -d /sys/class/power_supply/BAT* 2> /dev/null | head -n1)
@@ -14,17 +14,18 @@ if [ -n "$bat" ]; then
 		"Not charging") flag="🔌" ;;
 		*) flag="🪫" ;;
 	esac
-	# Watt draw: prefer power_now (uW); else current_now x voltage_now
-	if [ -r "$bat/power_now" ]; then
-		watt=$(awk '{printf "%.1f", $1/1000000}' "$bat/power_now")
-	elif [ -r "$bat/current_now" ] && [ -r "$bat/voltage_now" ]; then
-		watt=$(awk -v i="$(cat "$bat/current_now")" -v v="$(cat "$bat/voltage_now")" \
-			'BEGIN{printf "%.1f", (i/1000000)*(v/1000000)}')
-	else
-		watt="-"
-	fi
-	batseg="${flag}${cap}% ${watt}W"
+	batseg="${flag}${cap}%"
 	if [ "$status" = "Discharging" ]; then
+		# Watt draw: prefer power_now (uW); else current_now x voltage_now
+		if [ -r "$bat/power_now" ]; then
+			watt=$(awk '{printf "%.1f", $1/1000000}' "$bat/power_now")
+		elif [ -r "$bat/current_now" ] && [ -r "$bat/voltage_now" ]; then
+			watt=$(awk -v i="$(cat "$bat/current_now")" -v v="$(cat "$bat/voltage_now")" \
+				'BEGIN{printf "%.1f", (i/1000000)*(v/1000000)}')
+		else
+			watt="-"
+		fi
+		batseg="${batseg} ${watt}W"
 		# Energy remaining (Wh): prefer energy_now (uWh); else charge_now x nominal voltage.
 		# Use voltage_min_design (nominal) rather than voltage_now (instantaneous, ~12% high under load).
 		if [ -r "$bat/energy_now" ]; then
@@ -64,15 +65,20 @@ else
 	vol="-"
 fi
 
-bldir=$(ls -d /sys/class/backlight/*/ 2> /dev/null | head -n1)
-if [ -n "$bldir" ]; then
-	bri="$(($(cat "$bldir/actual_brightness") * 100 / $(cat "$bldir/max_brightness")))%"
-else
-	bri="-"
-fi
+prof=$(cat /sys/firmware/acpi/platform_profile 2> /dev/null)
+format_status()
+{
+	out="$(date '+%d/%m %H:%M') | $(hostname)"
+	[ "$3" != "-" ] && out="🔈$3 | $out"
+	case $2 in
+		performance) out="⚡ | $out" ;;
+		balanced) out="⚖ | $out" ;;
+		power-saver|low-power) out="🌱 | $out" ;;
+		"") ;;
+		*) out="$2 | $out" ;;
+	esac
+	[ -n "$1" ] && out="${1% |} | $out"
+	printf '%s ' "$out"
+}
 
-prof=$(cat /sys/firmware/acpi/platform_profile)
-clock=$(date '+%a %d %b %H:%M')
-
-printf '%s%s| 🔈%s | 🔆%s | %s | %s '  \
-	"$batseg" "${prof:--}" "$vol" "${bri:--}" "$clock" "$(hostname)"
+format_status "$batseg" "${prof}" "$vol"
