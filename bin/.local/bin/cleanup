@@ -48,10 +48,18 @@ FILES=(
 	"./.localrc"
 	"./.fzf.bash"
 	"./.histfile"
+	"./.claude.json"
+	"./.gitconfig-edera"
+	"./.bash_logout"
+	"./.profile"
+	"./.viminfo"
+	"./.zshrc"
 )
 pushd ~/ || exit 127
 find . -maxdepth 1 -type f -empty -delete
-for dir in $(find . -maxdepth 1 -type f | tail -n+2); do
+# -print0 and mapfile: no name splits or globs, and the prompts below keep reading stdin
+mapfile -d '' -t entries < <(find . -mindepth 1 -maxdepth 1 -type f -print0)
+for dir in "${entries[@]}"; do
 	if [[ ! " ${FILES[@]} " =~ " ${dir} " ]]; then
 		clean_folder "$dir"
 	fi
@@ -60,9 +68,14 @@ popd || exit 1
 
 FOLDERS=(
 	"./.cache"
+	"./.claude"
 	"./.config"
+	"./.ctags.d"
+	"./.docker"
 	"./.gnupg"
+	"./.kube"
 	"./.local"
+	"./.pi"
 	"./.ssh"
 	"./.var"
 	"./.vim"
@@ -76,11 +89,13 @@ FOLDERS=(
 	"./Syncthing"
 	"./Videos"
 	"./VirtualMachines"
+	"./bin"
 	"./dotfiles"
 )
 pushd ~/ || exit 127
 find . -maxdepth 1 -type d -empty -delete
-for dir in $(find . -maxdepth 1 -type d | tail -n+2); do
+mapfile -d '' -t entries < <(find . -mindepth 1 -maxdepth 1 -type d -print0)
+for dir in "${entries[@]}"; do
 	if [[ ! " ${FOLDERS[@]} " =~ " ${dir} " ]]; then
 		clean_folder "$dir"
 	fi
@@ -89,21 +104,28 @@ popd || exit 1
 
 CONFIG_FOLDERS=(
 	"./autostart"
+	"./clampdown"
 	"./cni"
 	"./dconf"
+	"./foot"
+	"./gh"
 	"./gnome-session"
 	"./gtk-2.0"
 	"./gtk-3.0"
 	"./gtk-4.0"
 	"./ibus"
+	"./kanshi"
 	"./nautilus"
+	"./neomutt"
 	"./pipewire"
 	"./pulse"
 	"./systemd"
+	"./wireplumber"
 )
 pushd ~/.config || exit 127
 find . -maxdepth 1 -type d -empty -delete
-for dir in $(find . -maxdepth 1 -type d | tail -n+2); do
+mapfile -d '' -t entries < <(find . -mindepth 1 -maxdepth 1 -type d -print0)
+for dir in "${entries[@]}"; do
 	if [[ ! " ${CONFIG_FOLDERS[@]} " =~ " ${dir} " ]]; then
 		clean_folder "$dir"
 	fi
@@ -118,7 +140,8 @@ LOCAL_FOLDERS=(
 )
 pushd ~/.local/ || exit 127
 find . -maxdepth 1 -type d -empty -delete
-for dir in $(find . -maxdepth 1 -type d | tail -n+2); do
+mapfile -d '' -t entries < <(find . -mindepth 1 -maxdepth 1 -type d -print0)
+for dir in "${entries[@]}"; do
 	if [[ ! " ${LOCAL_FOLDERS[@]} " =~ " ${dir} " ]]; then
 		clean_folder "$dir"
 	fi
@@ -128,8 +151,10 @@ popd || exit 1
 LOCAL_FOLDERS=(
 	"./applications"
 	"./bash-completion"
+	"./clampdown"
 	"./containers"
 	"./flatpak"
+	"./gh"
 	"./gnome-settings-daemon"
 	"./gnome-shell"
 	"./go"
@@ -140,11 +165,14 @@ LOCAL_FOLDERS=(
 	"./keyrings"
 	"./man"
 	"./nautilus"
+	"./nix"
+	"./rust"
 )
 
 pushd ~/.local/share || exit 127
 find . -maxdepth 1 -type d -empty -delete
-for dir in $(find . -maxdepth 1 -type d | tail -n+2); do
+mapfile -d '' -t entries < <(find . -mindepth 1 -maxdepth 1 -type d -print0)
+for dir in "${entries[@]}"; do
 	if [[ ! " ${LOCAL_FOLDERS[@]} " =~ " ${dir} " ]]; then
 		clean_folder "$dir"
 	fi
