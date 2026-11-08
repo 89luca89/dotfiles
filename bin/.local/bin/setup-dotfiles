@@ -5,6 +5,7 @@ mkdir -p ~/.config ~/.local/bin
 if ! cd "$HOME/dotfiles" > /dev/null; then
 	exit 1
 fi
+repo=$(pwd -P)
 
 FOLDERS="
 bin/.local/bin
@@ -18,7 +19,23 @@ vim/
 "
 
 for i in $FOLDERS; do
-	TARGET_DIR="$(echo "$i" | cut -d'/' -f2-)"
-	mkdir -p "$HOME/$TARGET_DIR"
-	find "$i" -mindepth 1 -maxdepth 1 -exec sh -xc "ln -sf ${HOME}/dotfiles/\$0 ${HOME}/${TARGET_DIR}/" {} \;
+	TARGET_DIR="$HOME/$(echo "$i" | cut -d'/' -f2-)"
+	TARGET_DIR="${TARGET_DIR%/}"
+	find "$i" ! -type d | while read -r f; do
+		rel=${f#"${i%/}"/}
+		dest=$TARGET_DIR/$rel
+		top=$TARGET_DIR/${rel%%/*}
+		if [ "$top" != "$dest" ] && [ -L "$top" ]; then
+			case $(readlink "$top") in "$HOME"/dotfiles/*) rm "$top" ;; esac
+		fi
+		mkdir -p "${dest%/*}"
+		case $(readlink -f "${dest%/*}") in
+		"$repo" | "$repo"/*)
+			echo "skipping $dest: it would be written inside the repo" >&2
+			continue
+			;;
+		esac
+		[ "$(readlink "$dest")" = "$HOME/dotfiles/$f" ] || ln -sfTv "$HOME/dotfiles/$f" "$dest"
+	done
+	find "$TARGET_DIR" -maxdepth 2 -xtype l -lname "$HOME/dotfiles/*" -printf 'removed %p\n' -delete
 done
