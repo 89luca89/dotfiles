@@ -1,0 +1,21 @@
+#!/bin/sh
+
+repo=$(dirname "$(realpath "$0")")
+
+if ! command -v mosh > /dev/null; then
+	pkg update -y
+	pkg install -y mosh openssh
+fi
+
+mkdir -p "$HOME/.termux/colors" "$HOME/.ssh" "$PREFIX/bin"
+
+ln -sfn "$repo/termux/.termux/colors/dark.properties"   "$HOME/.termux/colors/dark.properties"
+ln -sfn "$repo/termux/.termux/colors/light.properties"  "$HOME/.termux/colors/light.properties"
+ln -sfn "$repo/termux/.termux/termux.properties"    "$HOME/.termux/termux.properties"
+ln -sfn "$repo/termux/.termux/theme"                "$HOME/.termux/theme"
+ln -sfn "$repo/termux/.ssh/config"                  "$HOME/.ssh/config"
+ln -sfn "$repo/home/.bashrc"                        "$HOME/.bashrc"
+ln -sfn "$repo/home/.aliases"                       "$HOME/.aliases"
+ln -sfn "$repo/home/.tmux.conf"                     "$HOME/.tmux.conf"
+ln -sfn "$repo/vim/.vimrc"                          "$HOME/.vimrc"
+ln -sfn "$repo/termux/bin/connect"                  "$PREFIX/bin/connect"

@@ -1,0 +1,12 @@
+#!/data/data/com.termux/files/usr/bin/sh
+# theme [dark|light]: switch Termux's palette; no argument toggles
+cd ~/.termux || exit 1
+t=$1
+if [ -z "$t" ]; then
+	if [ "$(cat colors.properties 2> /dev/null)" = "$(cat colors/dark.properties)" ]; then
+		t=light
+	else
+		t=dark
+	fi
+fi
+cp "colors/$t.properties" colors.properties && termux-reload-settings

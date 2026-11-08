@@ -1,0 +1,32 @@
+#!/bin/sh
+# osc52-copy: like wl-copy, but copies to the clipboard of the terminal you
+# are attached from (Termux, foot), so it works over ssh and mosh.
+#
+# Usage:
+#   osc52-copy some text
+#   git rev-parse HEAD | osc52-copy
+
+if [ $# -gt 0 ]; then
+	b64=$(printf %s "$*" | base64 -w0)
+else
+	b64=$(base64 -w0)
+fi
+if [ -z "$b64" ]; then
+	echo "osc52-copy: nothing to copy" >&2
+	exit 1
+fi
+# Termux up to 0.119.0-beta.3 aborts OSC strings over 8192 chars ("52;c;" +
+# base64) and prints the rest on screen; mosh truncates them at 16 KiB.
+if [ ${#b64} -gt 8184 ]; then
+	echo "osc52-copy: input exceeds 6138 bytes, too large for OSC 52" >&2
+	exit 1
+fi
+
+if [ -n "$TMUX" ]; then
+	# tmux ignores OSC 52 from panes (set-clipboard external), but with -w it
+	# sends the buffer to the attached client itself.
+	printf %s "$b64" | base64 -d | tmux load-buffer -w -
+else
+	# mosh forwards OSC 52 only with the "c" selection
+	printf '\033]52;c;%s\007' "$b64" > /dev/tty
+fi
