@@ -3,3 +3,7 @@ applications/.local/share/applications/mime*
 applications/.local/share/applications/userapp*
 *.lock
 *~$
+.secrets/
+*.token
+.pi
+.claude
