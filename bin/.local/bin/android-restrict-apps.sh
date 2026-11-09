@@ -169,7 +169,7 @@ SETTINGS=(
 	# enable_firewall clamps every uid outside the Doze whitelist, which
 	# NETWORK_ALLOW does not cover; keep-alive apps need:
 	#   adb shell dumpsys deviceidle whitelist +PKG
-	"global battery_saver_constants enable_firewall=true,enable_datasaver=true,enable_night_mode=true,force_all_apps_standby=true,force_background_check=true,disable_aod=true,disable_launch_boost=true,disable_optional_sensors=true,disable_animation=false,disable_vibration=false,enable_quick_doze=true,defer_full_backup=true,defer_keyvalue_backup=true,enable_brightness_adjustment=false,adjust_brightness_factor=1.0,advertise_is_enabled=true,location_mode=1,soundtrigger_mode=1"
+	"global battery_saver_constants enable_firewall=true,enable_datasaver=true,enable_night_mode=true,force_all_apps_standby=true,force_background_check=true,disable_aod=true,disable_launch_boost=false,disable_optional_sensors=true,disable_animation=false,disable_vibration=false,enable_quick_doze=true,defer_full_backup=true,defer_keyvalue_backup=true,enable_brightness_adjustment=false,adjust_brightness_factor=1.0,advertise_is_enabled=true,location_mode=1,soundtrigger_mode=1"
 )
 
 # ---- GMS-specific policy -------------------------------------------------
