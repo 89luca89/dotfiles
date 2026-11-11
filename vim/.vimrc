@@ -1,3 +1,4 @@
+let g:markdown_fenced_languages = ['diff', 'c', 'cpp', 'go', 'rust', 'python', 'sh', 'bash']
 let g:netrw_altv = 1
 let g:netrw_banner = 0
 let g:netrw_browse_split = 4
@@ -49,6 +50,7 @@ Plug 'airblade/vim-gitgutter'
 Plug 'dense-analysis/ale'
 Plug 'junegunn/fzf.vim' | Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 call plug#end()
+syntax sync fromstart
 " #############################################################################
 augroup general
 	autocmd! general
