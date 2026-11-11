@@ -27,6 +27,6 @@ tty >/dev/null && stty werase undef
 tty >/dev/null && bind '"\C-w": backward-kill-word'
 # PS1
 PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
-export PS1="\W $ "
+export PS1="${CONTAINER_ID:+📦 }\W $ "
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
