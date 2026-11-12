@@ -1,0 +1,90 @@
+{
+  "version": "2026.714.1952",
+  "developerMode": true,
+  "rulesets": [
+    "+adguard-mobile",
+    "+block-lan",
+    "+dpollock-0",
+    "+adguard-spyware-url",
+    "+annoyances-overlays",
+    "+annoyances-social",
+    "+annoyances-widgets",
+    "+annoyances-others",
+    "+annoyances-notifications",
+    "+ublock-experimental",
+    "+ubol-tests",
+    "+spa-0",
+    "+ukr-0",
+    "+vie-1",
+    "+tha-0",
+    "+tur-0",
+    "+spa-1",
+    "+svn-0",
+    "+swe-1",
+    "+rou-1",
+    "+rus-0",
+    "+rus-1",
+    "+pol-0",
+    "+pol-3",
+    "+nor-0",
+    "+jpn-1",
+    "+kor-1",
+    "+ltu-0",
+    "+lva-0",
+    "+mkd-0",
+    "+nld-0",
+    "+isl-0",
+    "+isr-0",
+    "+deu-0",
+    "+est-0",
+    "+fin-0",
+    "+fra-0",
+    "+grc-0",
+    "+hun-0",
+    "+idn-0",
+    "+ind-0",
+    "+irn-0",
+    "+chn-0"
+  ],
+  "filteringModes": {
+    "none": [],
+    "basic": [],
+    "optimal": [],
+    "complete": [
+      "all-urls"
+    ]
+  },
+  "customFilters": [
+    [
+      "www.youtube.com",
+      [
+        "#guide [title=\"Shorts\"], .ytd-mini-guide-entry-renderer[title=\"Shorts\"]",
+        "#related ytd-compact-video-renderer:has([overlay-style=\"SHORTS\"])",
+        "#rich-shelf-header",
+        "#video-preview-container",
+        ".ytd-rich-section-renderer.style-scope > .ytd-rich-shelf-renderer.style-scope",
+        "[tab-title=\"Shorts\"]",
+        "div.ytGridShelfViewModelGridShelfRow.ytd-item-section-renderer",
+        "yt-shelf-header-layout",
+        "ytd-browse[page-subtype=\"subscriptions\"] ytd-grid-video-renderer:has([overlay-style=\"SHORTS\"])",
+        "ytd-browse[page-subtype=\"subscriptions\"] ytd-rich-item-renderer:has([overlay-style=\"SHORTS\"])",
+        "ytd-browse[page-subtype=\"subscriptions\"] ytd-video-renderer:has([overlay-style=\"SHORTS\"])",
+        "ytd-reel-shelf-renderer",
+        "ytd-rich-section-renderer:nth-of-type(4)",
+        "ytd-search ytd-video-renderer:has([overlay-style=\"SHORTS\"])",
+        "{\"selector\":\"#cinematics.ytd-watch-flexy\",\"action\":[\"remove\",\"\"],\"raw\":\"#cinematics.ytd-watch-flexy:remove()\"}",
+        "{\"selector\":\"ytd-browse[page-subtype=\\\"home\\\"] :is(ytd-rich-grid-row, #contents.ytd-rich-grid-row)\",\"action\":[\"style\",\"display: contents !important\"],\"cssable\":true,\"raw\":\"ytd-browse[page-subtype=\\\"home\\\"] :is(ytd-rich-grid-row, #contents.ytd-rich-grid-row):style(display: contents !important)\"}"
+      ]
+    ],
+    [
+      "youtube.com",
+      [
+        "#guide",
+        "#scrim",
+        "[is-shorts]",
+        "ytd-search ytd-item-section-renderer > #contents > :is(:not(ytd-video-renderer, ytd-channel-renderer, ytd-playlist-renderer, yt-showing-results-for-renderer), ytd-video-renderer:has([aria-label=\"Shorts\"])), ytd-secondary-search-container-renderer",
+        "{\"selector\":\"ytd-app[guide-persistent-and-visible] ytd-page-manager.ytd-app\",\"action\":[\"style\",\"margin-left:0px!important\"],\"cssable\":true,\"raw\":\"ytd-app[guide-persistent-and-visible] ytd-page-manager.ytd-app:style(margin-left:0px!important)\"}"
+      ]
+    ]
+  ]
+}

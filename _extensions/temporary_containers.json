@@ -1,0 +1,108 @@
+{
+  "version": "1.9.2",
+  "date": 1714997633618,
+  "preferences": {
+    "automaticMode": {
+      "active": true,
+      "newTab": "navigation"
+    },
+    "notifications": false,
+    "container": {
+      "namePrefix": "tmp",
+      "color": "blue",
+      "colorRandom": false,
+      "colorRandomExcluded": [],
+      "icon": "circle",
+      "iconRandom": false,
+      "iconRandomExcluded": [],
+      "numberMode": "keep",
+      "removal": 0
+    },
+    "iconColor": "default",
+    "isolation": {
+      "reactivateDelay": 0,
+      "global": {
+        "navigation": {
+          "action": "never"
+        },
+        "mouseClick": {
+          "middle": {
+            "action": "never",
+            "container": "default"
+          },
+          "ctrlleft": {
+            "action": "never",
+            "container": "default"
+          },
+          "left": {
+            "action": "never",
+            "container": "default"
+          }
+        },
+        "excluded": {},
+        "excludedContainers": []
+      },
+      "domain": [],
+      "mac": {
+        "action": "enabled"
+      }
+    },
+    "browserActionPopup": false,
+    "pageAction": true,
+    "contextMenu": true,
+    "contextMenuBookmarks": false,
+    "keyboardShortcuts": {
+      "AltC": true,
+      "AltP": true,
+      "AltN": true,
+      "AltShiftC": false,
+      "AltX": false,
+      "AltO": false,
+      "AltI": false
+    },
+    "replaceTabs": true,
+    "closeRedirectorTabs": {
+      "active": true,
+      "delay": 2000,
+      "domains": [
+        "t.co",
+        "outgoing.prod.mozaws.net",
+        "slack-redir.net"
+      ]
+    },
+    "ignoreRequests": [
+      "addons.mozilla.org",
+      "www.youtube.com",
+      "web.telegram.org",
+      "consent.youtube.com",
+      "youtu.be",
+      "app.wallabag.it",
+      "bazqux.com",
+      "m.youtube.com",
+      "about:blank"
+    ],
+    "cookies": {
+      "domain": {}
+    },
+    "scripts": {
+      "active": false,
+      "domain": {}
+    },
+    "deletesHistory": {
+      "active": false,
+      "automaticMode": "never",
+      "contextMenu": false,
+      "contextMenuBookmarks": false,
+      "containerAlwaysPerDomain": "never",
+      "containerIsolation": "never",
+      "containerRemoval": 0,
+      "containerMouseClicks": "never",
+      "statistics": false
+    },
+    "statistics": true,
+    "ui": {
+      "expandPreferences": true,
+      "popupDefaultTab": "isolation-global"
+    }
+  }
+}
