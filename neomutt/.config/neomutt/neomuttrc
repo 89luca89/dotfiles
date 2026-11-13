@@ -1,0 +1,11 @@
+source ~/.config/neomutt/common
+set from = "Luca Di Maio <luca.dimaio1@gmail.com>"
+set imap_user = "luca.dimaio1@gmail.com"
+set smtp_user = "luca.dimaio1@gmail.com"
+ifdef my_personal_pass 'set imap_pass = $my_personal_pass smtp_pass = $my_personal_pass'
+set folder = "imaps://imap.gmail.com/"
+set spool_file = "+INBOX"
+set postponed = "+[Gmail]/Drafts"
+set trash = "+[Gmail]/Trash"
+set smtp_url = "smtps://smtp.gmail.com/"
+unset record

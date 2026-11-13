@@ -1,0 +1,46 @@
+bind index,pager g noop
+bind index gg first-entry
+bind index G last-entry
+bind pager gg top
+bind pager G bottom
+bind index,pager R group-reply
+bind index V tag-entry
+bind index,pager \Cd half-down
+bind index,pager \Cu half-up
+bind index,pager \Cf next-page
+bind index,pager \Cb previous-page
+bind pager j next-line
+bind pager k previous-line
+uncolor *
+color index bold default default ~U
+color index color13 default ~F
+color index color8 default ~D
+color index_number color8 default
+color index_date color8 default
+color index_size color8 default
+color index_author color4 default
+color index_flags color13 default
+color index_subject color2 default "~s '^\\[(PATCH|RFC)'"
+color tree color8 default
+color header color8 default "^(Date|To|Cc):"
+color header color4 default "^From:"
+color header bold default default "^Subject:"
+color quoted color6 default
+color quoted1 color4 default
+color quoted2 color5 default
+color signature color8 default
+color markers color8 default
+color body color4 default "(https?|ftp)://[^ \t>)]+"
+color body color13 default "^(Signed-off|Reviewed|Acked|Tested|Reported|Suggested|Co-developed)-by:.*"
+color body color13 default "^(Fixes|Link|Closes):.*"
+color body bold default default "^(> ?)*(diff --git|index [0-9a-f]+\\.\\.|--- |\\+\\+\\+ ).*"
+color body color6 default "^(> ?)*@@ .*"
+color body color2 default "^(> ?)*\\+([^+].*)?$"
+color body color1 default "^(> ?)*-([^ -].*|  .*| \\*.*)?$"
+set use_threads = threads
+set sort = reverse-last-date
+set sort_aux = date
+set index_format = "%4C %Z %[%b %d %H:%M] %-15.15L (%<l?%4l&%4c>) %s"
+set beep_new
+set timeout = 60
+source "[ ! -f ~/.config/neomutt/secrets.gpg ] || gpg -dq ~/.config/neomutt/secrets.gpg |"

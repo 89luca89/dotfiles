@@ -12,6 +12,7 @@ bin/.local/bin
 foot/.config/foot
 home/
 nautilus/.config/gtk-3.0/
+neomutt/.config/neomutt
 pipewire/.config/pipewire
 pipewire/.config/wireplumber
 ssh/.ssh

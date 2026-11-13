@@ -1,0 +1,11 @@
+source ~/.config/neomutt/common
+set from = "Luca Di Maio <luca@edera.dev>"
+set imap_user = "luca@edera.dev"
+set smtp_user = "luca@edera.dev"
+ifdef my_work_pass 'set imap_pass = $my_work_pass smtp_pass = $my_work_pass'
+set folder = "imaps://imap.gmail.com/"
+set spool_file = "+INBOX"
+set postponed = "+[Gmail]/Drafts"
+set trash = "+[Gmail]/Trash"
+set smtp_url = "smtps://smtp.gmail.com/"
+unset record

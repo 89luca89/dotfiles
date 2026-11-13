@@ -4,6 +4,7 @@ alias ll='ls -Ahl --group-directories-first --color'
 alias tfswitch="tfswitch -b $HOME/.local/bin/terraform"
 alias tree='tree -I ".git" -a'
 alias mail='vim /tmp/mail.eml'
+alias neomutt-work='neomutt -F ~/.config/neomutt/work'
 alias libvirt="DBX_CONTAINER_MANAGER=docker distrobox enter libvirt"
 alias vi='vi -u ~/.vimrc-minimal'
 export CARGO_HOME=$HOME/.local/rust
