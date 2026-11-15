@@ -119,6 +119,7 @@ CONFIG_FOLDERS=(
 	"./neomutt"
 	"./pipewire"
 	"./pulse"
+	"./slk"
 	"./systemd"
 	"./wireplumber"
 )
@@ -167,6 +168,7 @@ LOCAL_FOLDERS=(
 	"./nautilus"
 	"./nix"
 	"./rust"
+	"./slk"
 )
 
 pushd ~/.local/share || exit 127

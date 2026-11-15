@@ -1,0 +1,11 @@
+#!/bin/sh
+
+has() { tmux list-windows -F '#W' | grep -qx "$1"; }
+
+if ! has work || ! has personal; then
+	[ ! -f ~/.config/neomutt/secrets.gpg ] || gpg -dq ~/.config/neomutt/secrets.gpg > /dev/null
+fi
+has slack || tmux new-window -db -t :1 -c ~ -n slack 'PATH=~/.local/share/slk/bin:$PATH WAYLAND_DISPLAY=none slk'
+has work || tmux new-window -da -t slack -c ~ -n work 'neomutt -F ~/.config/neomutt/work'
+has personal || tmux new-window -da -t work -c ~ -n personal neomutt
+tmux select-window -t work
