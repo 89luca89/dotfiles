@@ -5,6 +5,8 @@ bind pager gg top
 bind pager G bottom
 bind index,pager R group-reply
 bind index V tag-entry
+bind index,pager D delete-thread
+bind index,pager U undelete-thread
 bind index,pager \Cd half-down
 bind index,pager \Cu half-up
 bind index,pager \Cf next-page
@@ -14,6 +16,7 @@ bind pager k previous-line
 uncolor *
 color index bold default default ~U
 color index color13 default ~F
+color index color1 default "~((~f notifications@github.com ~B merged ~B 'into main') | (~B closed ~B 'as completed') | (~f notifications@github.com ~B 'closed #') | (~f notifications@github.com ~B 'approved this pull request'))"
 color index color8 default ~D
 color index_number color8 default
 color index_date color8 default
@@ -40,7 +43,18 @@ color body color1 default "^(> ?)*-([^ -].*|  .*| \\*.*)?$"
 set use_threads = threads
 set sort = reverse-last-date
 set sort_aux = date
-set index_format = "%4C %Z %[%b %d %H:%M] %-15.15L (%<l?%4l&%4c>) %s"
+set index_format = "%4C %Z %[%b %d %H:%M] %-15.15L (%<l?%4l&%4c>) %@merged@%@closed@%@approved@%@xenlist@%@bots@%@alerts@%@notes@%s"
 set beep_new
 set timeout = 60
+set pager_index_lines = 10
+set pager_stop = no
+set pager_context = 3
+set message_cache_dir = ~/.cache/neomutt/messages
+index-format-hook merged "~(~f notifications@github.com ~B merged ~B 'into main')" "Merged "
+index-format-hook closed "~((~B closed ~B 'as completed') | (~f notifications@github.com ~B 'closed #'))" "Closed "
+index-format-hook approved "~(~f notifications@github.com ~B 'approved this pull request')" "Approved "
+index-format-hook xenlist "~(!~C luca@edera\\.dev ~h '^List-Id:.*<xen-devel\\.lists\\.xenproject\\.org>')" "xen-list "
+index-format-hook bots "~((~f notifications@linear\\.app ~s unread) | ~h '^From:.*edera-rebase-app\\[bot\\]' | ~B dependabot)" "Bots "
+index-format-hook alerts "~(~f notifications@linear\\.app ~s alerts)" "Alerts "
+index-format-hook notes "~(~f gemini ~s notes:)" "Notes "
 source "[ ! -f ~/.config/neomutt/secrets.gpg ] || gpg -dq ~/.config/neomutt/secrets.gpg |"
