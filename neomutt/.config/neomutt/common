@@ -16,10 +16,18 @@ bind pager j next-line
 bind pager k previous-line
 bind pager <up> previous-line
 bind pager <down> next-line
+macro index gi "<change-folder>=INBOX<enter>" "go to inbox"
+macro index ga "<change-folder>=[Gmail]/All Mail<enter>" "go to all mail"
+macro index gs "<change-folder>=[Gmail]/Sent Mail<enter>" "go to sent mail"
+macro index gd "<change-folder>=[Gmail]/Drafts<enter>" "go to drafts"
 uncolor *
 color index bold default default ~U
 color index color13 default ~F
 color index color1 default "~((~f notifications@github.com ~B merged ~B 'into main') | (~B closed ~B 'as completed') | (~f notifications@github.com ~B 'closed #') | (~f notifications@github.com ~B 'approved this pull request'))"
+color index color1 default "~(~C xen-devel@lists\\.xenproject\\.org !~C luca@edera\\.dev)"
+color index color1 default "~((~f notifications@linear\\.app ~s unread) | ~f 'edera-rebase-app\\[bot\\]|dependabot\\[bot\\]')"
+color index color1 default "~(~f notifications@linear\\.app ~s alerts)"
+color index color1 default "~(~f gemini ~s notes:)"
 color index color8 default ~D
 color index_number color8 default
 color index_date color8 default
@@ -47,20 +55,16 @@ color body color1 default "^(> ?)*-([^ -].*|  .*| \\*.*)?$"
 set use_threads = threads
 set sort = reverse-last-date
 set sort_aux = date
-set index_format = "%4C %Z %[%b %d %H:%M] %-15.15L (%<l?%4l&%4c>) %@merged@%@closed@%@approved@%@xenlist@%@bots@%@alerts@%@notes@%s"
+set index_format = "%4C %Z %[%b %d %H:%M] %-15.15L (%<l?%4l&%4c>) %s"
 set beep_new
 set timeout = 60
 set pager_index_lines = 10
 set pager_stop = no
 set pager_context = 3
 set message_cache_dir = ~/.cache/neomutt/messages
+set header_cache = ~/.cache/neomutt/headers
+set alias_file = ~/.config/neomutt/aliases
 auto_view text/html
 alternative_order text/plain text/html
-index-format-hook merged "~(~f notifications@github.com ~B merged ~B 'into main')" "Merged "
-index-format-hook closed "~((~B closed ~B 'as completed') | (~f notifications@github.com ~B 'closed #'))" "Closed "
-index-format-hook approved "~(~f notifications@github.com ~B 'approved this pull request')" "Approved "
-index-format-hook xenlist "~(!~C luca@edera\\.dev ~h '^List-Id:.*<xen-devel\\.lists\\.xenproject\\.org>')" "xen-list "
-index-format-hook bots "~((~f notifications@linear\\.app ~s unread) | ~h '^From:.*edera-rebase-app\\[bot\\]' | ~B dependabot)" "Bots "
-index-format-hook alerts "~(~f notifications@linear\\.app ~s alerts)" "Alerts "
-index-format-hook notes "~(~f gemini ~s notes:)" "Notes "
 source "[ ! -f ~/.config/neomutt/secrets.gpg ] || gpg -dq ~/.config/neomutt/secrets.gpg |"
+source "[ ! -f ~/.config/neomutt/aliases ] || cat ~/.config/neomutt/aliases |"
