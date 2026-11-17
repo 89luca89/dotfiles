@@ -9,21 +9,12 @@ esac
 if [ "$theme" = light ]; then
 	PREFER="default"
 	THEME="Adwaita"
-	COLOR="#999999"
 	pkill -x -USR2 foot
 else
 	PREFER="prefer-dark"
 	THEME="Adwaita-dark"
-	COLOR="#999999"
 	pkill -x -USR1 foot
 fi
 
 dconf write /org/gnome/desktop/interface/color-scheme "'$PREFER'"
 dconf write /org/gnome/desktop/interface/gtk-theme "'$THEME'"
-if [ "$(dconf read /org/gnome/desktop/a11y/interface/high-contrast)" = "true" ]; then
- dconf write /org/gnome/desktop/background/primary-color "'$COLOR'"
- dconf write /org/gnome/desktop/background/secondary-color "'$COLOR'"
-else
- dconf write /org/gnome/desktop/background/primary-color "'#406A95'"
- dconf write /org/gnome/desktop/background/secondary-color "'#406A95'"
-fi
