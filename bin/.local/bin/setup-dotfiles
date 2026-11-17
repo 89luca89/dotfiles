@@ -40,3 +40,5 @@ for i in $FOLDERS; do
 	done
 	find "$TARGET_DIR" -maxdepth 2 -xtype l -lname "$HOME/dotfiles/*" -printf 'removed %p\n' -delete
 done
+
+[ -e ~/.config/slk/config.toml ] || install -Dm644 slk/config.toml ~/.config/slk/config.toml

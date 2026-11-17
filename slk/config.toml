@@ -1,0 +1,17 @@
+[notifications]
+notify_command = 'printf "\a" > /dev/tty'
+on_keyword = ["luca"]
+
+[appearance]
+theme = "ANSI Dark"
+transparent_background = true
+image_protocol = "off"
+show_avatars = false
+timestamp_format = "15:04"
+compact = true
+
+[sidebar]
+enter_keeps_focus = true
+
+[marks]
+show_jump_overlay = false
