@@ -11,8 +11,11 @@ bind index,pager \Cd half-down
 bind index,pager \Cu half-up
 bind index,pager \Cf next-page
 bind index,pager \Cb previous-page
+macro index,pager \Cr "<imap-fetch-mail><enter-command>echo 'Checked for new mail'<enter>"
 bind pager j next-line
 bind pager k previous-line
+bind pager <up> previous-line
+bind pager <down> next-line
 uncolor *
 color index bold default default ~U
 color index color13 default ~F
@@ -33,6 +36,7 @@ color quoted1 color4 default
 color quoted2 color5 default
 color signature color8 default
 color markers color8 default
+color status default default
 color body color4 default "(https?|ftp)://[^ \t>)]+"
 color body color13 default "^(Signed-off|Reviewed|Acked|Tested|Reported|Suggested|Co-developed)-by:.*"
 color body color13 default "^(Fixes|Link|Closes):.*"
@@ -50,6 +54,8 @@ set pager_index_lines = 10
 set pager_stop = no
 set pager_context = 3
 set message_cache_dir = ~/.cache/neomutt/messages
+auto_view text/html
+alternative_order text/plain text/html
 index-format-hook merged "~(~f notifications@github.com ~B merged ~B 'into main')" "Merged "
 index-format-hook closed "~((~B closed ~B 'as completed') | (~f notifications@github.com ~B 'closed #'))" "Closed "
 index-format-hook approved "~(~f notifications@github.com ~B 'approved this pull request')" "Approved "
