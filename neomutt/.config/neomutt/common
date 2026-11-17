@@ -11,7 +11,7 @@ bind index,pager \Cd half-down
 bind index,pager \Cu half-up
 bind index,pager \Cf next-page
 bind index,pager \Cb previous-page
-macro index,pager \Cr "<imap-fetch-mail><enter-command>echo 'Checked for new mail'<enter>"
+macro index,pager \Cr "<imap-fetch-mail><enter-command>color normal default default<enter><enter-command>echo 'Checked for new mail'<enter>"
 bind pager j next-line
 bind pager k previous-line
 bind pager <up> previous-line
